@@ -7,7 +7,7 @@
 name = "efootprint-interface"
 version = "0.0.1"
 description = "Digital service environmental footprint model interface"
-authors = ["Vincent Villet", "Hugo Rince", "Mohamed Amine Chalouati"]
+authors = ["Vincent Villet", "Hugo Rince", "Mohamed Amine Chalouati", "Arnaud Flaesch"]
 readme = "README.md"
 package-mode = false
 
@@ -41,3 +41,4 @@ exclude = '''
 python = "^3.10"
 efootprint = "^1.2"
 django = "^5.0"
+pylint = "^3.1.0"

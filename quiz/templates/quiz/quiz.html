@@ -1,13 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>e-footprint</title>
 </head>
+
 <body>
-    <form action="response" method="POST"> {% csrf_token %}
-        <input type="text" name="json" value='{
+  <form action="response" method="POST"> {% csrf_token %}
+    <input type="text" name="json" value='{
     "System": {
         "system 1 + its uuid": {
             "name": "system 1",
@@ -490,7 +491,8 @@
         }
     }
 }'>
-        <input type="submit" />
-    </form>
+    <input type="submit" />
+  </form>
 </body>
+
 </html>
