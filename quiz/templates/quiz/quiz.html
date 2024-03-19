@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-  <meta charset="UTF-8">
-  <title>e-footprint</title>
-</head>
-
-<body>
+{% block content %}
   <form action="response" method="POST"> {% csrf_token %}
     <input type="text" name="json" value='{
     "System": {
@@ -493,6 +487,4 @@
 }'>
     <input type="submit" />
   </form>
-</body>
-
-</html>
+{% endblock %}

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static tailwind_tags %}
+  <meta charset="UTF-8">
+  <title>e-footprint</title>
+  {% tailwind_css %}
+</head>
+<body>
+  <div id="sidebar">
+    {% block sidebar %}
+
+    {% endblock %}
+  </div>
+  <main id="content">
+    {% block content %}
+
+    {% endblock %}
+  </main>
+</body>
+</html>
