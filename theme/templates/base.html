@@ -1,21 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full w-full">
+
 <head>
   {% load static tailwind_tags %}
   <meta charset="UTF-8">
   <title>e-footprint</title>
+  <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico" />
   {% tailwind_css %}
 </head>
-<body>
-  <div id="sidebar">
-    {% block sidebar %}
 
-    {% endblock %}
+<body class="h-full w-full flex flex-row">
+  <div class="bg-slate-700 h-full p-4 text-grey-1 bg-black-1 basis-1/6">
+    <h1 class="text-white-1 font-bold">E-footprint</h1>
+
+    <hr class="border-gray-100 border-solid" />
+
+    <div class="flex flex-row gap-x-1.5"><span>Home</span><span>Understand</span></div>
+    <div class="flex flex-row gap-x-1.5"><span>Forms</span><span>Analyze</span></div>
+    <div class="flex flex-row gap-x-1.5"><span>Leaf</span><span>Plan for Eco-design</span></div>
+
+    <hr class="border-gray-100 border-solid"  />
+
+    <div id="text-grey-4">
+      <div class="flex flex-row gap-x-1.5"><span>Question</span><span>Help</span></div>
+      <div class="flex flex-row gap-x-1.5"><span>Gear</span><span>Settings</span></div>
+      <div class="flex flex-row gap-x-1.5"><span>User</span><span>Account</span></div>
+    </div>
   </div>
-  <main id="content">
+
+  <main class="bg-slate-500 h-full w-full">
     {% block content %}
 
     {% endblock %}
   </main>
+
 </body>
+
 </html>

@@ -1,9 +1,23 @@
-from django.http import HttpResponse
+import json
 from django.shortcuts import render
+from efootprint.api_utils.json_to_system import json_to_system
 
+
+def home(request):
+    return render(request, "home.html")
 
 def index(request):
     return render(request, "quiz/quiz.html")
 
 def response(request):
-    return render(request, "quiz/response.html", context={"response": request.POST['json']})
+    jsondata = json.loads(request.POST['json'])
+    # compute calculated attributes with e-footprint
+    response_objs, flat_obj_dict = json_to_system(jsondata)
+
+    usage_patterns = [response_objs["UsagePattern"][key] for key in list(response_objs["UsagePattern"].keys())]
+
+    user_journeys = [pattern.user_journey for pattern in usage_patterns]
+
+    services = [response_objs["Service"][key] for key in list(response_objs["Service"].keys())]
+
+    return render(request, "quiz/response.html", context={"usagePatterns": usage_patterns, "userJourneys": user_journeys, "services": services})
