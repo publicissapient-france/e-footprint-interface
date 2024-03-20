@@ -2,12 +2,21 @@ import json
 from django.shortcuts import render
 from efootprint.api_utils.json_to_system import json_to_system
 
-
 def home(request):
     return render(request, "home.html")
 
-def index(request):
+def quiz(request):
     return render(request, "quiz/quiz.html")
+
+def form(request):
+    return render(request, "quiz/form.html")
+
+
+def form_service(request):
+    return render(request, "quiz/form-services.html")
+
+def form_usage_pattern(request):
+    return render(request, "quiz/form-usage-pattern.html")
 
 def response(request):
     jsondata = json.loads(request.POST['json'])

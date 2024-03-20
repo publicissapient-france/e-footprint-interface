@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex flex-row h-full w-full">
+  <div class="bg-grey-11 basis-1/4 p-4">
+    {% include "../trail.html" with back='/' %}
+  </div>
+
+  <div class="flex flex-col bg-grey-12 basis-3/4 text-grey-1 space-y-6 p-4">
+    <h1 class="text-center text-white-1 font-bold">Service quiz</h1>
+
+
+    <div class="flex flew-row">
+      <div class="basis-1/12">
+        ICONE
+      </div>
+
+      <div class="flex flex-col basis-11/12 space-y-6">
+        <div>
+          <h3>Customer journey(s)</h3>
+          <a>How to find this information ?</a>
+        </div>
+
+        <div>
+          <p>Your customers typically first <input /></p>
+          <p>Then they <input /></p>
+          <p>And then they <input /></p>
+        </div>
+
+        <div><button class="bg-black-1 rounded border-solid border-2 border-white-1"> + Add a step</button></div>
+      </div>
+    </div>
+
+
+
+    <div class="mx-auto space-x-1">
+      <button class="border-2 border-white-1 border-solid rounded hover:bg-white-1 hover:text-black-1 ">I don't know</button>
+      <a href="/quiz/form-service">
+        <button  class="border-2 border-white-1 border-solid rounded bg-white-1 text-black-1 hover:bg-black-1 hover:text-white-1">Continue</button>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
