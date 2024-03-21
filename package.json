@@ -4,7 +4,8 @@
   "description": "Tests E2E de l'interface E-footprint",
   "scripts": {
     "start": "poetry run python manage.py runserver",
-    "test": "npm run cy:run",
+    "test": "poetry run python manage.py test",
+    "test:e2e": "npm run cy:run",
     "cy:open": "cypress open",
     "cy:run": "cypress run"
   },
