@@ -5,7 +5,7 @@
     <div class="text-white-1 font-bold">{{userJourneyStep.name}}</div>
 
     <div>
-      <div class="p-1 rounded text-grey-1 bg-grey-2">last 5 min</div>
+      <div class="p-1 rounded text-grey-1 bg-grey-2">{% include './display-value.html' with object=userJourneyStep.data_download %}</div>
       <div class="p-1 rounded text-grey-1 bg-grey-2">uploads 300 mb of data</div>
     </div>
   </div>
