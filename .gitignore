@@ -162,3 +162,5 @@ cython_debug/
 .idea/
 
 node_modules
+
+System footprints.html

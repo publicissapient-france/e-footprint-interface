@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div id="graph-container">
-{{systemFootprint | safe}}
-  </div>
+  {% include "./graph-container.html" with systemFootprint=systemFootprint %}
   <div class="flex flex-col flex-1">
     <div class="flex flex-row flex-1">
       <div class="flex flex-col basis-1/6 p-1 bg-grey-5 gap-y-2">
