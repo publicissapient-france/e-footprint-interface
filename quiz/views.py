@@ -20,6 +20,7 @@ def analyze(request):
 
 def response(request):
     jsondata = json.loads(request.POST['json'])
+    request.session["system_data"] = jsondata
     # compute calculated attributes with e-footprint
     response_objs, flat_obj_dict = json_to_system(jsondata)
 
@@ -32,3 +33,7 @@ def response(request):
         system = obj
     system_footprint = system.plot_footprints_by_category_and_object("System footprints.html")
     return render(request, "quiz/response.html", context={"systemFootprint": system_footprint._repr_html_(),"usagePatterns": usage_patterns, "userJourneys": user_journeys, "services": services})
+
+def update_value(request):
+  response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
+  import pdb; pdb.set_trace()
