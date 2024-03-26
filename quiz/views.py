@@ -28,5 +28,7 @@ def response(request):
     user_journeys = [pattern.user_journey for pattern in usage_patterns]
 
     services = [response_objs["Service"][key] for key in list(response_objs["Service"].keys())]
-
-    return render(request, "quiz/response.html", context={"usagePatterns": usage_patterns, "userJourneys": user_journeys, "services": services})
+    for key, obj in response_objs["System"].items():
+        system = obj
+    system_footprint = system.plot_footprints_by_category_and_object("System footprints.html")
+    return render(request, "quiz/response.html", context={"systemFootprint": system_footprint._repr_html_(),"usagePatterns": usage_patterns, "userJourneys": user_journeys, "services": services})
