@@ -1,6 +1,6 @@
-<form hx-post="./update-value" hx-target="#graph-container" hx-swap="innerHTML" hx-vals='{"e-footprint-obj": "{{ object.modeling_obj_container.id }}", "attr_name": "{{ object.attr_name_in_mod_obj_container }}" }'>
-  <input class="text-black-1"  name="{{object.modeling_obj_container.id}}" value={{ object.value.magnitude }} />
+  <input hx-trigger="keyup changed delay:1s" hx-post="./update-value" hx-target="#graph-container" hx-swap="innerHTML"
+    hx-vals='{"key": "{{key}}","e-footprint-obj": "{{ object.modeling_obj_container.id }}", "attr_name": "{{ object.attr_name_in_mod_obj_container }}" }'
+    name="{{object.modeling_obj_container.id}}" value={{ object.value.magnitude }}
+    class="text-black-1"/>
   <div>{{object.value.units}}</div>
   <div>{{object.attr_name_in_mod_obj_container}}</div>
-  <button>Submit</button>
-</form>

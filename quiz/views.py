@@ -26,7 +26,7 @@ def response(request):
     return render(request, "quiz/response.html", context=context)
 
 def update_value(request):
-    request.session["system_data"]["UserJourneyStep"][request.POST["e-footprint-obj"]][request.POST["attr_name"]]['value'] = float(request.POST[request.POST["e-footprint-obj"]])
+    request.session["system_data"][request.POST["key"]][request.POST["e-footprint-obj"]][request.POST["attr_name"]]['value'] = float(request.POST[request.POST["e-footprint-obj"]])
     context = get_context_from_json(request.session["system_data"])
     return render(request, "quiz/graph-container.html", context=context)
 

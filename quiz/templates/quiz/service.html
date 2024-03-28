@@ -13,7 +13,7 @@
       <div class="text-white-1">Server 1</div>
     </div>
     <div class="flex flex-row gap-1">
-      <div class="p-1 rounded text-grey-1 bg-grey-2">2 cores CPU</div>
+      <div class="p-1 rounded text-grey-1 bg-grey-2">{% include './display-value.html' with key='Service' object=service.base_cpu_consumption %}</div>
       <div class="p-1 rounded text-grey-1 bg-grey-2">Autoscalling configuration</div>
     </div>
   </div>
@@ -24,8 +24,8 @@
       <div class="text-white-1">Storage 1</div>
     </div>
     <div class="flex flex-row gap-1">
-      <div class="p-1 rounded text-grey-1 bg-grey-2">1 u.TB storage capacity</div>
-      <div class="p-1 rounded text-grey-1 bg-grey-2">Replication factor of 2</div>
+      <div class="p-1 rounded text-grey-1 bg-grey-2">{% include './display-value.html' with key='Storage' object=service.storage.storage_capacity %}</div>
+      <div class="p-1 rounded text-grey-1 bg-grey-2">{% include './display-value.html' with key='Storage' object=service.storage.data_replication_factor %}</div>
     </div>
   </div>
 </div>

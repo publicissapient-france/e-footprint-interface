@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full w-full">
+<html lang="en" class="min-h-full min-w-full">
 
 <head>
   {% load static tailwind_tags %}
@@ -10,8 +10,8 @@
   {% tailwind_css %}
 </head>
 
-<body class="h-full w-full flex flex-row" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-  <div class="bg-slate-700 h-full p-4 text-grey-1 bg-black-1 basis-1/6">
+<body class="min-h-full min-w-full flex flex-row" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  <div class="bg-slate-700 min-h-full p-4 text-grey-1 bg-black-1 basis-1/6">
     <h1 class="text-white-1 font-bold"><a href="/">E-footprint</a></h1>
 
     <hr class="border-solid" />
