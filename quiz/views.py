@@ -5,18 +5,44 @@ from efootprint.api_utils.json_to_system import json_to_system
 def home(request):
     return render(request, "home.html")
 
+def understand(request):
+    return render(request, "quiz/understand.html")
+
+# Analyze views
+
+def analyze_onboarding(request):
+    return render(request, "quiz/analyze/onboarding.html")
+
+def analyze_user_journeys(request):
+    user_journeys_steps = [""]
+    return render(request, "quiz/analyze/user-journeys.html", context={"user_journeys_steps": user_journeys_steps})
+
+def add_user_journey_step(request):
+    user_journeys_steps = []
+    for key, obj in request.POST.items():
+      user_journeys_steps.append(obj)
+    user_journeys_steps.append("")
+    return render(request, "quiz/analyze/user-journeys.html", context={"user_journeys_steps": user_journeys_steps})
+
+def analyze_apis(request):
+    return render(request, "quiz/analyze/apis.html")
+
+def analyze_usage_patterns(request):
+    return render(request, "quiz/analyze/usage-patterns.html")
+
+def analyze(request):
+    return render(request, "quiz/analyze/analyze.html")
+
+
+
 def form(request):
     return render(request, "quiz/form.html")
-
 
 def form_service(request):
     return render(request, "quiz/form-services.html")
 
 def form_usage_pattern(request):
     return render(request, "quiz/form-usage-pattern.html")
-
-def analyze(request):
-    return render(request, "quiz/analyze.html")
 
 def response(request):
     jsondata = json.loads(request.POST['json'])

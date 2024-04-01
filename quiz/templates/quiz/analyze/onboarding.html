@@ -1,0 +1,56 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="min-h-screen bg-grey-12 flex flex-col">
+  <h1 class="text-2xl font-bold text-center text-white-1 mt-8">Start mapping your service</h1>
+
+  <div class="flex flex-col flex-1 justify-center space-y-2">
+    <div class="flex flex-row bg-grey-6 mx-32 p-4 rounded space-x-4">
+      <div class="relative w-32 h-32 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl">
+        <img class="w-24 h-24" src="/static/icons/user-journey-icon.svg" alt="User journey" />
+      </div>
+
+      <div class="flex flex-row flex-1 justify-between items-center">
+        <div class="flex flex-col">
+          <p class="text-white-1 font-bold">Set User Journeys</p>
+          <p class="text-white-1">Define the characteristics of your service and estimate the characteristics of services called along your customers' journey...</p>
+          <p class="text-grey-2">Read more...</p>
+        </div>
+        <a href="/quiz/analyze/user-journeys"><button class="h-min bg-white-1 mr-2 px-8 py-4 rounded-full">Start</button></a>
+      </div>
+    </div>
+
+    <div class="flex flex-row bg-grey-6 mx-32 p-4 rounded space-x-4">
+      <div class="relative w-32 h-32 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl">
+        <img class="w-24 h-24" src="/static/icons/api-icon.svg" alt="API" />
+      </div>
+
+      <div class="flex flex-row flex-1 justify-between items-center">
+        <div class="flex flex-col">
+          <p class="text-white-1 font-bold">Add APIs</p>
+          <p class="text-white-1">Lorem</p>
+          <p class="text-grey-2">Read more...</p>
+        </div>
+        <a href="/quiz/analyze/apis"><button class="h-min bg-white-1 mr-2 px-8 py-4 rounded-full">Start</button></a>
+      </div>
+    </div>
+
+    <div class="flex flex-row bg-grey-6 mx-32 p-4 rounded space-x-4">
+      <div class="relative w-32 h-32 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl">
+        <img class="w-24 h-24" src="/static/icons/usage-icon.svg" alt="Describe usage" />
+      </div>
+
+      <div class="flex flex-row flex-1 justify-between items-center">
+        <div class="flex flex-col">
+          <p class="text-white-1 font-bold">Describe usage</p>
+          <p class="text-white-1">Enter characteristics of your customers' usage of your service...</p>
+          <p class="text-grey-2">Read more...</p>
+        </div>
+        <a href="/quiz/analyze/usage-patterns"><button class="h-min bg-white-1 mr-2 px-8 py-4 rounded-full">Start</button></a>
+      </div>
+    </div>
+
+    <button class="w-min bg-grey-15 mx-auto px-8 py-4 rounded-full"><a href="/quiz/analyze">Analyze</a></button>
+  </div>
+</div>
+
+{% endblock %}

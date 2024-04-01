@@ -1,0 +1,23 @@
+{% extends "analyze-template.html" %} {% block trail %} {% include "../components/trail.html" with back='/quiz/analyze/onboarding' index=2 %}{% endblock %} {% block analyze_content %}
+
+<div class="flex flex-col flex-1 space-y-2">
+  <div class="flex flex-row mx-32 space-x-4">
+    <div class="relative w-32 h-32 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl">
+      <img class="w-24 h-24" src="/static/icons/api-icon.svg" alt="API" />
+    </div>
+
+    <div class="flex flex-row flex-1 justify-between items-center">
+      <div class="flex flex-col">
+        <p class="text-white-1 font-bold">Add APIs</p>
+        <p class="text-white-1">Now add what will actually happen technically, while the user is using the product.</p>
+        <p>How to find reliable sources</p>
+      </div>
+    </div>
+  </div>
+  <div class="mx-auto">
+    <button class="bg-grey-2 text-white-1 px-8 py-4 rounded-full">I don't know</button>
+    <a href="/quiz/analyze/usage-patterns"><button class="bg-white-1 text-black-1 px-8 py-4 rounded-full">Continue</button></a>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,41 +1,36 @@
 <!DOCTYPE html>
-<html lang="en" class="min-h-full min-w-full">
+<html lang="en" class="min-h-screen min-w-full">
+  <head>
+    {% load static tailwind_tags %}
+    <meta charset="UTF-8" />
+    <title>e-footprint</title>
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico" />
 
-<head>
-  {% load static tailwind_tags %}
-  <meta charset="UTF-8">
-  <title>e-footprint</title>
-  <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico" />
+    {% tailwind_css %}
+  </head>
 
-  {% tailwind_css %}
-</head>
+  <body class="min-h-screen min-w-full flex flex-row" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <div class="bg-slate-700 p-4 text-grey-1 bg-black-1 basis-1/6">
+      <h1 class="text-white-1 text-lg font-bold mb-4"><a href="/">E-footprint</a></h1>
 
-<body class="min-h-full min-w-full flex flex-row" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-  <div class="bg-slate-700 min-h-full p-4 text-grey-1 bg-black-1 basis-1/6">
-    <h1 class="text-white-1 font-bold"><a href="/">E-footprint</a></h1>
+      <hr class="border-solid my-4" />
 
-    <hr class="border-solid" />
+      <div class="space-y-4">
+        <a href="/quiz/understand" class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/home.svg" alt="Understand" /><span>Understand</span></a>
+        <a href="/quiz/analyze/onboarding" class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/analyze.svg" alt="Analyze" /><span>Analyze</span></a>
+        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/leaf.svg" alt="Plan" /><span>Plan for Eco-design</span></div>
+      </div>
 
-    <div class="flex flex-row gap-x-1.5"><span>Home</span><span>Understand</span></div>
-    <div class="flex flex-row gap-x-1.5"><span>Forms</span><span>Analyze</span></div>
-    <div class="flex flex-row gap-x-1.5"><span>Leaf</span><span>Plan for Eco-design</span></div>
+      <hr class="border-solid my-4" />
 
-    <hr class="border-solid"  />
-
-    <div id="text-grey-4">
-      <div class="flex flex-row gap-x-1.5"><span>Question</span><span>Help</span></div>
-      <div class="flex flex-row gap-x-1.5"><span>Gear</span><span>Settings</span></div>
-      <div class="flex flex-row gap-x-1.5"><span>User</span><span>Account</span></div>
+      <div class="text-grey-4 space-y-4">
+        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/help.svg" alt="Help" /><span>Help</span></div>
+        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/settings.svg" alt="Settings" /><span>Settings</span></div>
+        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/account.svg" alt="Account" /><span>Account</span></div>
+      </div>
     </div>
-  </div>
 
-  <main class="bg-slate-500 h-full w-full">
-    {% block content %}
-
-    {% endblock %}
-  </main>
-
-</body>
-<script src="https://unpkg.com/htmx.org@1.9.11"></script>
-
+    <main class="flex-1 bg-slate-500">{% block content %} {% endblock %}</main>
+  </body>
+  <script src="https://unpkg.com/htmx.org@1.9.11"></script>
 </html>

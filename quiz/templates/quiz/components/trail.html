@@ -1,0 +1,25 @@
+<div class="flex flex-col h-full text-white-1">
+  <div class="flex flex-row space-x-2">
+    <a href="{{back}}"
+      ><button><img class="text-black-1" src="/static/icons/arrow_back.svg" alt="Back arrow" /></button
+    ></a>
+    <div class="text-lg">Analyze</div>
+  </div>
+
+  <div class="flex flex-col space-y-6 mt-20">
+    <a href="/quiz/analyze/user-journeys">
+      <div class="flex flex-row space-x-2">
+        {% if index > 1%}<img src="/static/icons/check.svg" alt="Check" />{% else %} <img src="/static/icons/ellipse.svg" alt="To do" /> {% endif %}
+        <span class="text-grey-1">Set User journey(s)</span>
+      </div>
+    </a>
+
+    <a href="/quiz/analyze/apis">
+      <div class="flex flex-row space-x-2">{% if index > 2%}<img src="/static/icons/check.svg" alt="Check" />{% else %} <img src="/static/icons/ellipse.svg" alt="To do" /> {% endif %}<span class="text-grey-1">Add APIs</span></div></a
+    >
+
+    <a href="/quiz/analyze/usage-patterns">
+      <div class="flex flex-row space-x-2"><img src="/static/icons/ellipse.svg" alt="To do" /><span class="text-grey-1">Describe usage</span></div></a
+    >
+  </div>
+</div>
