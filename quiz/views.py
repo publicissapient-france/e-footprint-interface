@@ -1,6 +1,9 @@
 import json
 from django.shortcuts import render
 from efootprint.api_utils.json_to_system import json_to_system
+from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity
+from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
+from efootprint.utils.tools import convert_to_list
 
 
 def home(request):
@@ -60,7 +63,7 @@ def response(request):
     request.session["system_data"] = jsondata
     # compute calculated attributes with e-footprint
     context = get_context_from_json(jsondata)
-    return render(request, "quiz/response.html", context=context)
+    return render(request, "quiz/response.html", context={"context": context, "systemFootprint": context["System"][0]["object"].plot_footprints_by_category_and_object()._repr_html_()})
 
 
 def update_value(request):
@@ -73,17 +76,28 @@ def update_value(request):
 
 def get_context_from_json(jsondata):
     response_objs, flat_obj_dict = json_to_system(jsondata)
+    obj_template_dict = {}
+    for key, obj in response_objs.items():
+        mod_obj_list = []
+        for mod_obj_id, mod_obj in obj.items():
+            mod_obj_list.append(
+                {"object": mod_obj,
+                 "numerical_attributes" : retrieve_attributes_by_type(mod_obj, ExplainableQuantity),
+                 "modeling_obj_attributes" : retrieve_attributes_by_type(mod_obj, ModelingObject),
+                 "list_attributes" : retrieve_attributes_by_type(mod_obj, list)
+                 }
+            )
+        obj_template_dict[key] = mod_obj_list
 
-    usage_patterns = [response_objs["UsagePattern"][key] for key in list(response_objs["UsagePattern"].keys())]
-    user_journeys = [pattern.user_journey for pattern in usage_patterns]
-    services = [response_objs["Service"][key] for key in list(response_objs["Service"].keys())]
+    return obj_template_dict
 
-    for key, obj in response_objs["System"].items():
-        system = obj
-    system_footprint = system.plot_footprints_by_category_and_object("System footprints.html")
-    return {
-        "systemFootprint": system_footprint._repr_html_(),
-        "usagePatterns": usage_patterns,
-        "userJourneys": user_journeys,
-        "services": services,
-    }
+
+def retrieve_attributes_by_type(modeling_obj, attribute_type):
+    output_list = []
+    for attr_name, attr_value in vars(modeling_obj).items():
+        values = convert_to_list(attr_value)
+        for value in values:
+            if isinstance(value, attribute_type):
+                output_list.append(value)
+
+    return output_list
