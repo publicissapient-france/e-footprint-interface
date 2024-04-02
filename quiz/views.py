@@ -82,7 +82,7 @@ def get_context_from_json(jsondata):
         for mod_obj_id, mod_obj in obj.items():
             mod_obj_list.append(
                 {"object": mod_obj,
-                 "numerical_attributes" : retrieve_attributes_by_type(mod_obj, ExplainableQuantity),
+                 "numerical_attributes" : [attr for attr in retrieve_attributes_by_type(mod_obj, ExplainableQuantity) if attr.attr_name_in_mod_obj_container not in mod_obj.calculated_attributes],
                  "modeling_obj_attributes" : retrieve_attributes_by_type(mod_obj, ModelingObject),
                  "list_attributes" : retrieve_attributes_by_type(mod_obj, list)
                  }
