@@ -1,8 +1,8 @@
 {% extends "base.html" %} {% block content %}
 <div class="flex flex-row h-full w-full">
-  <div class="bg-grey-11 basis-1/4 p-4">{% include "../trail.html" with back='/' %}</div>
+  <div class="bg-grey-11 basis-1/4 p-4">{% include "./components/trail.html" with back='/' %}</div>
 
-  <div class="flex flex-col bg-grey-12 basis-3/4 text-grey-1 space-y-6 p-4">
+  <form class="flex flex-col bg-grey-12 basis-3/4 text-grey-1 space-y-6 p-4">
     <h1 class="text-center text-white-1 font-bold">Service quiz</h1>
 
     <div class="flex flew-row">
@@ -14,22 +14,22 @@
           <a>How to find this information ?</a>
         </div>
 
-        <div>
-          <p>Your customers typically first <input /></p>
-          <p>Then they <input /></p>
-          <p>And then they <input /></p>
-        </div>
+        <div class="flex flex-col gap-3" id="step-container">
+          <label>Your customers typically first <input name="1" class="text-black" /></label>
+          <label>Then they <input name="2" class="text-black" /></label>
+         {% include "./components/uj-input.html" with number='3' %}
 
-        <div><button class="bg-black-1 rounded border-solid border-2 border-white-1">+ Add a step</button></div>
+          <button class="bg-black-1 rounded border-solid border-2 border-white-1" type="button" id="add-step"
+                     hx-post="add-step" hx-target="this" hx-swap="beforebegin"
+                  hx-vals="js:{latestIndex: document.getElementById('add-step').previousElementSibling.querySelector('input').getAttribute('name')}">+ Add a step
+          </button>
+        </div>
       </div>
     </div>
 
     <div class="mx-auto space-x-1">
-      <button class="border-2 border-white-1 border-solid rounded hover:bg-white-1 hover:text-black-1">I don't know</button>
-      <a href="/quiz/form-service">
-        <button class="border-2 border-white-1 border-solid rounded bg-white-1 text-black-1 hover:bg-black-1 hover:text-white-1">Continue</button>
-      </a>
+      <button class="border-2 border-white-1 border-solid rounded bg-white-1 text-black-1 hover:bg-black-1 hover:text-white-1" type="submit">Continue</button>
     </div>
-  </div>
+  </form>
 </div>
 {% endblock %}

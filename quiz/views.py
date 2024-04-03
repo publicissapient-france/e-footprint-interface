@@ -101,3 +101,10 @@ def retrieve_attributes_by_type(modeling_obj, attribute_type):
                 output_list.append(value)
 
     return output_list
+
+
+def add_step(request):
+    latest_index = int(request.POST['latestIndex'])
+
+    return render(request, "quiz/components/uj-input.html", context={"number": latest_index + 1})
+
