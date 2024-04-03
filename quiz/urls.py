@@ -13,5 +13,5 @@ urlpatterns = [
     path("form", views.form, name="form"),
     path("form-service", views.form_service, name="form_service"),
     path("form-usage-pattern", views.form_usage_pattern, name="form_usage_pattern"),
-    path("add-step", views.add_step, name="add_step")
+    path("add-step", views.add_step, name="add_step"),
 ]

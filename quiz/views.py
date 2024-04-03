@@ -32,7 +32,15 @@ def form(request):
     return render(request, "form.html")
 
 def form_service(request):
-    return render(request, "form-services.html")
+    uj_steps = []
+    for value in request.POST.values():
+        if value != '':
+            uj_steps.append({"name": value})
+
+    request.session['quiz_data'] = {'user_journey_steps': uj_steps}
+
+    print(request.session['quiz_data']['user_journey_steps'])
+    return render(request, "quiz/form-services.html")
 
 def form_usage_pattern(request):
     return render(request, "form-usage-pattern.html")
