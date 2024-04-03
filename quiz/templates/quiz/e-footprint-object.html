@@ -1,9 +1,7 @@
 <div class="flex flex-col p-1 rounded bg-grey-9">
   <div class="flex flex-row">
     <div>icon</div>
-    <div>
-      <div class="text-white-1 font-bold">{{object.object.name}}</div>
-    </div>
+    <div class="text-white-1 font-bold">{{object.object.name}}</div>
   </div>
-  <div class="flex flex-col gap-y-4">{% for numerical_attribute in object.numerical_attributes %} {% include './display-value.html' with key='object.class_name' object=numerical_attribute %} {% endfor %}</div>
+  <div class="flex flex-col gap-y-4">{% for numerical_attribute in object.numerical_attributes %} {% include './display-value.html' with key=object.modeling_obj_container.id object=numerical_attribute object_type=object_type %} {% endfor %}</div>
 </div>

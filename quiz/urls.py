@@ -12,8 +12,8 @@ urlpatterns = [
     path("quiz/analyze/usage-patterns", views.analyze_usage_patterns, name="usage-patterns"),
     path("quiz/analyze/", views.analyze, name="analyze"),
     path("quiz/analyze/response", views.response, name="response"),
+    path("quiz/analyze/update-value", views.update_value, name="update_value"),
     path("quiz/form", views.form, name="form"),
     path("quiz/form-service", views.form_service, name="form_service"),
     path("quiz/form-usage-pattern", views.form_usage_pattern, name="form_usage_pattern"),
-    path("quiz/update-value", views.update_value, name="update_value"),
 ]
