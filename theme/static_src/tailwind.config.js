@@ -59,8 +59,10 @@ module.exports = {
       "grey-14": "#4f4d4d",
       "grey-15": "#f1f1f180",
       "grey-16": "#f4f4f4",
-      "white": "#ffffff",
-      "black": "#000000",
+      "white-1": "#f8f8f8",
+      "black-1": "#181818",
+      white: "#ffffff",
+      black: "#000000",
     },
   },
   plugins: [

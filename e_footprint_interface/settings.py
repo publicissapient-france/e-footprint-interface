@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "quiz",
+    "analyze",
     "tailwind",
     "theme",
     "django_browser_reload",

@@ -1,4 +1,4 @@
-{% extends "analyze-template.html" %} {% block trail %} {% include "../components/trail.html" with back='/quiz/analyze/onboarding' index=1 %}{% endblock %} {% block analyze_content %}
+{% extends "analyze-template.html" %} {% block trail %} {% include "../components/trail.html" with back='/quiz/onboarding' index=1 %}{% endblock %} {% block analyze_content %}
 
 <div class="flex flex-col flex-1">
   <div class="flex flex-row mx-32 space-x-4">
@@ -16,7 +16,7 @@
   </div>
 
   <div class="flex flex-col mx-32 mt-32 space-x-4">
-    <form hx-post="/quiz/analyze/user-journeys/add-step" hx-select="#user-journey-steps" hx-target="#user-journey-steps">
+    <form hx-post="/quiz/user-journeys/add-step" hx-select="#user-journey-steps" hx-target="#user-journey-steps">
       <div id="user-journey-steps" class="flex flex-col space-y-16">
         {% for step in user_journeys_steps %}
         <div class="flex flex-row space-x-6">
@@ -34,6 +34,6 @@
       </div>
     </form>
   </div>
-  <button class="w-min bg-grey-15 mx-auto px-8 py-4 rounded-full"><a href="/quiz/analyze/apis">Continue</a></button>
+  <button class="w-min bg-grey-15 mx-auto px-8 py-4 rounded-full"><a href="/quiz/apis">Continue</a></button>
 </div>
 {% endblock %}
