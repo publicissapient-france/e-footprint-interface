@@ -10,7 +10,7 @@
   </head>
 
   <body class="min-h-screen min-w-full flex flex-row" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <div class="bg-slate-700 p-4 text-grey-1 bg-black-1 basis-1/6">
+    <div class="p-4 text-grey-1 bg-black-1 basis-1/6">
       <h1 class="text-white-1 text-lg font-bold mb-4"><a href="/">E-footprint</a></h1>
 
       <hr class="border-solid my-4" />
@@ -30,7 +30,7 @@
       </div>
     </div>
 
-    <main class="flex-1 bg-slate-500">{% block content %} {% endblock %}</main>
+    <main class="flex-1">{% block content %} {% endblock %}</main>
   </body>
   <script src="https://unpkg.com/htmx.org@1.9.11"></script>
 </html>
