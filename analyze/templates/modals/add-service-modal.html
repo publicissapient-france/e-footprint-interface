@@ -1,0 +1,29 @@
+<div id="add-service-modal" class="modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content bg-grey-14">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Service</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body space-y-3">
+        <input class="w-full" type="text" value="New service" />
+
+        <div class="flex flex-row"><span>RAM consumption</span><img class="w-6 h-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="RAM" src="/static/icons/info-tooltip.svg" alt="tooltip" /></div>
+        <div class="flex flex-row"><input type="number" step="0.01" /><span>GB</span></div>
+
+        <div class="flex flex-row"><span>CPU consumption</span><img class="w-6 h-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="CPU" src="/static/icons/info-tooltip.svg" alt="tooltip" /></div>
+        <div class="flex flex-row"><input type="number" /><span>core(s)</span></div>
+
+        <div class="flex flex-row"><span>Configuration</span><img class="w-6 h-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Configuration" src="/static/icons/info-tooltip.svg" alt="tooltip" /></div>
+        <select>
+          <option value="1">Autoscalling</option>
+          <option value="2">?</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Add service</button>
+      </div>
+    </div>
+  </div>
+</div>

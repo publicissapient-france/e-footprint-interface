@@ -2,38 +2,46 @@
 <div class="flex flex-col flex-1">
   <div class="flex flex-row flex-1">
     <div class="flex flex-col basis-1/6 p-1 bg-grey-5 gap-y-2">
-      <div class="flex flex-col p-2 bg-grey-6">
-        <div class="flex flex-row">
-          <div>Icon</div>
-          <div>Usage Pattern</div>
-          <div>Tooltip</div>
+      <div class="flex flex-col space-y-2 p-2 bg-grey-6">
+        <div class="flex flex-row space-x-1 items-center">
+          <div class="relative w-12 h-12 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl">
+            <img class="w-8 h-8" src="/static/icons/usage-icon.svg" alt="usage-pattern" />
+          </div>
+          <div class="text-white-1">Usage Pattern</div>
+          <img class="w-6 h-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Comment trouver cette information ?" src="/static/icons/info-tooltip.svg" alt="tooltip" />
         </div>
-        <div>
-          <button>+ Add Usage Pattern</button>
-        </div>
+        <button data-bs-toggle="modal" data-bs-target="#add-usage-pattern-modal" class="btn btn-secondary h-min">+ Add Usage Pattern</button>
+        {% include "./modals/add-usage-pattern-modal.html" %}
       </div>
 
-      <div class="rounded p-2 bg-grey-6">
-        <div>
-          <div>Icon</div>
-          <div>Customer Journeys</div>
-          <div>Tooltip</div>
+      <div class="rounded space-y-2 p-2 bg-grey-6">
+        <div class="flex flex-row space-x-1 items-center">
+          <div class="relative w-12 h-12 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl">
+            <img class="w-8 h-8" src="/static/icons/user-journey-icon.svg" alt="user-journey" />
+          </div>
+          <div class="text-white-1">Customer Journeys</div>
+          <img class="w-6 h-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Comment trouver cette information ?" src="/static/icons/info-tooltip.svg" alt="tooltip" />
         </div>
         <div>
           <button>+ Add Step</button>
-          <button>+ Add Customer Journey</button>
+          <button data-bs-toggle="modal" data-bs-target="#add-user-jouney-modal" class="btn btn-secondary h-min">+ Add Customer Journey</button>
+          {% include "./modals/add-user-journey-modal.html" %}
         </div>
       </div>
 
-      <div class="rounded p-2 bg-grey-6">
-        <div>
-          <div>Icon</div>
-          <div>Services</div>
-          <div>Tooltip</div>
+      <div class="rounded space-y-2 p-2 bg-grey-6">
+        <div class="flex flex-row space-x-1 items-center">
+          <div class="relative w-12 h-12 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl">
+            <img class="w-8 h-8" src="/static/icons/api-icon.svg" alt="API" />
+          </div>
+          <div class="text-white-1">Services</div>
+          <img class="w-6 h-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Comment trouver cette information ?" src="/static/icons/info-tooltip.svg" alt="tooltip" />
         </div>
-        <div class="block-form"><button>+ Add Service</button></div>
+        <button data-bs-toggle="modal" data-bs-target="#add-service-modal" class="btn btn-secondary h-min">+ Add Service</button>
+        {% include "./modals/add-service-modal.html" %}
       </div>
     </div>
+
     <div class="flex flex-col basis-5/6 p-1 rounded text-black-1 bg-grey-7 gap-y-1">
       {% for object_type, object_list in context.items%}{{object_type}}
       <section class="flex flex-row rounded bg-grey-8 p-4 gap-x-4">{% for object in object_list %} {% include "./e-footprint-object.html" with object=object object_type=object_type %} {% endfor %}</section>
@@ -41,5 +49,10 @@
     </div>
   </div>
 </div>
+
+<script>
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+  const tooltipList = [...tooltipTriggerList].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl));
+</script>
 
 {% endblock %}
