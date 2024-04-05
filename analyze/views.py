@@ -30,6 +30,9 @@ def update_value(request):
     context = get_context_from_json(request.session["system_data"])
     return render(request, "graph-container.html", context={"context": context, "systemFootprint": context["System"][0]["object"].plot_footprints_by_category_and_object()._repr_html_()})
 
+def add_service(request):
+    print(request.session["system_data"]['Service'])
+    return render(request, "response.html", context={"context": context, "systemFootprint": context["System"][0]["object"].plot_footprints_by_category_and_object()._repr_html_()})
 
 def get_context_from_json(jsondata):
     response_objs, flat_obj_dict = json_to_system(jsondata)

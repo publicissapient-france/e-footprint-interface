@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <div class="flex flex-col basis-5/6 p-1 rounded text-black-1 bg-grey-7 gap-y-1">
+    <div id="objects-list" class="flex flex-col basis-5/6 p-1 rounded text-black-1 bg-grey-7 gap-y-1">
       {% for object_type, object_list in context.items%}{{object_type}}
       <section class="flex flex-row rounded bg-grey-8 p-4 gap-x-4">{% for object in object_list %} {% include "./e-footprint-object.html" with object=object object_type=object_type %} {% endfor %}</section>
       {% endfor %}
