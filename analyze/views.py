@@ -6,7 +6,6 @@ from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
 from efootprint.utils.tools import convert_to_list
 
 
-
 def analyze(request):
     return render(request, "analyze.html")
 
@@ -20,19 +19,29 @@ def response(request):
     request.session["system_data"] = jsondata
     # compute calculated attributes with e-footprint
     context = get_context_from_json(jsondata)
-    return render(request, "response.html", context={"context": context, "systemFootprint": context["System"][0]["object"].plot_footprints_by_category_and_object()._repr_html_()})
+    system_footprint_html = context["System"][0]["object"].plot_footprints_by_category_and_object()._repr_html_()
+
+    return render(
+      request, "response.html", context={"context": context, "systemFootprint": system_footprint_html})
 
 
 def update_value(request):
-    request.session["system_data"][request.POST["key"]][request.POST["e-footprint-obj"]][request.POST["attr_name"]][
-        "value"
-    ] = float(request.POST[request.POST["e-footprint-obj"]])
+    object_type = request.POST["key"]
+    object_name = request.POST["e-footprint-obj"]
+    attr_name = request.POST["attr_name"]
+    request.session["system_data"][object_type][object_name][attr_name]["value"] = float(request.POST["value"])
     context = get_context_from_json(request.session["system_data"])
-    return render(request, "graph-container.html", context={"context": context, "systemFootprint": context["System"][0]["object"].plot_footprints_by_category_and_object()._repr_html_()})
+
+    system_footprint_html = context["System"][0]["object"].plot_footprints_by_category_and_object()._repr_html_()
+
+    return render(
+      request, "graph-container.html", context={"context": context, "systemFootprint": system_footprint_html})
+
 
 def add_service(request):
     print(request.session["system_data"]['Service'])
     return render(request, "response.html", context={"context": context, "systemFootprint": context["System"][0]["object"].plot_footprints_by_category_and_object()._repr_html_()})
+
 
 def get_context_from_json(jsondata):
     response_objs, flat_obj_dict = json_to_system(jsondata)
