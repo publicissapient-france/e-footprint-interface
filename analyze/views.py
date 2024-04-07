@@ -1,17 +1,15 @@
-import json
-from django.shortcuts import render
 from efootprint.api_utils.json_to_system import json_to_system
 from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity
 from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
 from efootprint.utils.tools import convert_to_list
+from utils import htmx_render
+
+import json
+from django.shortcuts import render
 
 
 def analyze(request):
-    return render(request, "analyze.html")
-
-
-def form_usage_pattern(request):
-    return render(request, "form-usage-pattern.html")
+    return htmx_render(request, "analyze.html")
 
 
 def response(request):
@@ -21,7 +19,7 @@ def response(request):
     context = get_context_from_json(jsondata)
     system_footprint_html = context["System"][0]["object"].plot_footprints_by_category_and_object()._repr_html_()
 
-    return render(
+    return htmx_render(
       request, "response.html", context={"context": context, "systemFootprint": system_footprint_html})
 
 

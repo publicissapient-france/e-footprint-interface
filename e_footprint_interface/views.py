@@ -1,9 +1,9 @@
-from django.shortcuts import render
+from utils import htmx_render
 
 
 def home(request):
-    return render(request, "home.html")
+    return htmx_render(request, "home.html")
 
 
 def understand(request):
-    return render(request, "understand.html")
+    return htmx_render(request, "understand.html")

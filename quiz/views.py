@@ -1,22 +1,16 @@
+from utils import htmx_render
+
 from django.shortcuts import render
 
 
-def home(request):
-    return render(request, "quiz/home.html")
-
-
-def understand(request):
-    return render(request, "quiz/understand.html")
-
-
 def onboarding(request):
-    return render(request, "quiz/onboarding.html")
+    return htmx_render(request, "quiz/onboarding.html")
 
 
 def user_journeys(request):
     user_journeys_steps = [""]
 
-    return render(request, "quiz/user-journeys.html", context={"user_journeys_steps": user_journeys_steps})
+    return htmx_render(request, "quiz/user-journeys.html", context={"user_journeys_steps": user_journeys_steps})
 
 
 def add_user_journey_step(request):
@@ -25,15 +19,15 @@ def add_user_journey_step(request):
         user_journeys_steps.append(obj)
     user_journeys_steps.append("")
 
-    return render(request, "quiz/user-journeys.html", context={"user_journeys_steps": user_journeys_steps})
+    return htmx_render(request, "quiz/user-journeys.html", context={"user_journeys_steps": user_journeys_steps})
 
 
 def apis(request):
-    return render(request, "quiz/apis.html")
+    return htmx_render(request, "quiz/apis.html")
 
 
 def usage_patterns(request):
-    return render(request, "quiz/usage-patterns.html")
+    return htmx_render(request, "quiz/usage-patterns.html")
 
 
 def form(request):
@@ -53,7 +47,7 @@ def form_service(request):
 
 
 def form_usage_pattern(request):
-    return render(request, "quiz/form-usage-pattern.html")
+    return htmx_render(request, "quiz/form-usage-pattern.html")
 
 
 def add_step(request):

@@ -1,5 +1,10 @@
-{% extends "quiz/quiz-template.html" %} {% block trail %} {% include "./components/trail.html" with back='/quiz/onboarding' index=2 %}{% endblock %} {% block analyze_content %}
+{% extends "quiz/quiz-template.html" %}
 
+{% block trail %}
+  {% include "./components/trail.html" with back='/quiz/onboarding' index=2 %}
+{% endblock %}
+
+{% block analyze_content %}
 <div class="flex flex-col flex-1 space-y-2">
   <div class="flex flex-row mx-32 space-x-4">
     <div class="relative w-32 h-32 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl">
@@ -19,5 +24,4 @@
     <a href="/quiz/usage-patterns"><button class="bg-white-1 text-black-1 px-8 py-4 rounded-full">Continue</button></a>
   </div>
 </div>
-
 {% endblock %}

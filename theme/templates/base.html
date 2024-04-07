@@ -17,9 +17,19 @@
       <hr class="border-solid my-4" />
 
       <div class="space-y-4">
-        <a href="/understand" class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/home.svg" alt="Understand" /><span>Understand</span></a>
-        <a href="/quiz/onboarding" class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/analyze.svg" alt="Analyze" /><span>Analyze</span></a>
-        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/leaf.svg" alt="Plan" /><span>Plan for Eco-design</span></div>
+        <button hx-get="/understand" hx-target="#main-content-block" hx-swap="innerHTML"
+             hx-push-url="/understand"
+             class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/home.svg" alt="Understand" />
+            <span>Understand</span>
+        </button>
+        <button hx-get="/quiz/onboarding" hx-target="#main-content-block" hx-swap="innerHTML"
+             hx-push-url="/quiz/onboarding"
+             class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/analyze.svg" alt="Analyze" />
+            <span>Analyze</span>
+        </button>
+        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/leaf.svg" alt="Plan" />
+            <span>Plan for Eco-design</span>
+        </div>
       </div>
 
       <hr class="border-solid my-4" />
@@ -31,7 +41,27 @@
       </div>
     </div>
 
-    <main class="flex-1">{% block content %} {% endblock %}</main>
+    <main id="main-content-block" class="flex-1">
+      {% if home %}
+        {% include "home.html" %}
+      {% elif understand %}
+        {% include "understand.html" %}
+      {% elif analyze %}
+        {% include "analyze.html" %}
+      {% elif onboarding %}
+        {% include "quiz/onboarding.html" %}
+      {% elif userJourneys %}
+        {% include "quiz/user-journeys.html" %}
+      {% elif usagePatterns %}
+        {% include "quiz/usage-patterns.html" %}
+      {% elif apis %}
+        {% include "quiz/apis.html" %}
+      {% elif response %}
+        {% include "response.html" %}
+      {% elif analyze %}
+        {% include "analyze.html" %}
+      {% endif %}
+    </main>
   </body>
   <script src="https://unpkg.com/htmx.org@1.9.11"></script>
   <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
