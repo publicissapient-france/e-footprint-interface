@@ -1,11 +1,11 @@
-"""Urls"""
-
 from django.contrib import admin
 from django.urls import include, path
-from django.views.generic import RedirectView
+from . import views
+
 
 urlpatterns = [
-    path("", RedirectView.as_view(url='/quiz')),
+    path("", views.home, name="home"),
+    path("understand", views.understand, name="understand"),
     path("quiz/", include("quiz.urls")),
     path("analyze/", include("analyze.urls")),
     path("admin/", admin.site.urls),
