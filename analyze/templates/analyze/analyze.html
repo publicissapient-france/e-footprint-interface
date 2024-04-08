@@ -1,4 +1,5 @@
-<div class="flex flex-col h-full w-full px-96 py-16 space-y-12 text-center">
+<div class="flex flex-col h-full w-full px-96 py-16 space-y-12 text-center"
+    hx-get="load-graph-script" hx-trigger="load, htmx:afterSettle once" hx-target="#graph-placeholder" hx-swap="outerHTML">
   <div class="mx-auto space-y-2">
     <h1 class="font-bold">Your results</h1>
     <p class="justify-center">
@@ -513,23 +514,5 @@
   <script src="https://unpkg.com/d3-sankey@0"></script>
     {% load static %}
     <script src="{% static '/scripts/graph.js' %}"></script>
-
-  <script>
-      if (document.getElementById("graph").childNodes.length === 0) {
-          let graphData = {
-              nodes: [{ name: "Server" }, { name: "Storage" }, { name: "Network" }, { name: "Devices" }, { name: "Server electricity consumption" }, { name: "Server fabrication" }, { name: "Storage electricity consumption" }, { name: "Storage fabrication" }, { name: "Network electricity consumption" }, { name: "Devices electricity consumption" }, { name: "Devices fabrication" }],
-              links: [
-                  { source: 0, target: 4, names: ["Server", "Server electricity consumption"], value: 47 },
-                  { source: 0, target: 5, names: ["Server", "Server fabrication"], value: 40 },
-                  { source: 1, target: 6, names: ["Storage", "Storage electricity consumption"], value: 20 },
-                  { source: 1, target: 7, names: ["Storage", "Storage fabrication"], value: 21 },
-                  { source: 2, target: 8, names: ["Network", "Network electricity consumption"], value: 103 },
-                  { source: 3, target: 9, names: ["Devices", "Devices electricity consumption"], value: 234 },
-                  { source: 3, target: 10, names: ["Devices", "Devices fabrication"], value: 470 },
-              ],
-          };
-          const svg = createParallelChart(graphData);
-          document.getElementById("graph").appendChild(svg);
-      }
-  </script>
+  <div id="graph-placeholder"></div>
 </div>
