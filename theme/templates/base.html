@@ -24,8 +24,18 @@
         </button>
         <button hx-get="/quiz/onboarding" hx-target="#main-content-block" hx-swap="innerHTML"
              hx-push-url="/quiz/onboarding"
+             class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/analyze.svg" alt="New modeling" />
+            <span>Create new modeling</span>
+        </button>
+        <button hx-get="/model_builder" hx-target="#main-content-block" hx-swap="innerHTML"
+             hx-push-url="/model_builder"
+             class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/analyze.svg" alt="Model builder" />
+            <span>Work on existing modeling</span>
+        </button>
+        <button hx-get="/analyze/" hx-target="#main-content-block" hx-swap="innerHTML"
+             hx-push-url="/analyze/"
              class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/analyze.svg" alt="Analyze" />
-            <span>Analyze</span>
+            <span>Analyze my modelings</span>
         </button>
         <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/leaf.svg" alt="Plan" />
             <span>Plan for Eco-design</span>
@@ -56,8 +66,8 @@
         {% include "quiz/usage-patterns.html" %}
       {% elif apis %}
         {% include "quiz/apis.html" %}
-      {% elif response %}
-        {% include "response.html" %}
+      {% elif modelBuilderMain %}
+        {% include "model_builder/model-builder-main.html" %}
       {% elif analyze %}
         {% include "analyze.html" %}
       {% endif %}

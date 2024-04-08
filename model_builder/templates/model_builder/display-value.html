@@ -3,7 +3,7 @@
 
   <input
     name="value" value="{{object.value.magnitude}}" class="text-black-1"
-    hx-trigger="keyup changed delay:1s" hx-post="./update-value" hx-target="#graph-container" hx-swap="innerHTML"
+    hx-trigger="keyup changed delay:1s" hx-post="update-value" hx-target="#graph-container" hx-swap="innerHTML"
     hx-vals='{"key": "{{object_type}}","e-footprint-obj": "{{ object.modeling_obj_container.id }}", "attr_name": "{{ object.attr_name_in_mod_obj_container }}" }'
   />
   <div>{{object.value.units}}</div>

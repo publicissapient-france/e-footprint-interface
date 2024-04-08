@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "quiz",
     "analyze",
+    "model_builder",
     "tailwind",
     "theme",
     "django_browser_reload",
