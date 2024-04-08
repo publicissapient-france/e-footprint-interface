@@ -1,0 +1,7 @@
+<button onclick="goToObject('{{linked_object.name}}')"  class="bg-grey-3 text-white-1">{{linked_object.name}}</button>
+
+<script>
+    function goToObject(id) {
+        document.getElementById(id).scrollIntoView();
+    }
+</script>

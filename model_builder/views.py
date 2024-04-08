@@ -56,7 +56,7 @@ def get_context_from_json(jsondata):
                 {"object": mod_obj,
                  "numerical_attributes" : [attr for attr in retrieve_attributes_by_type(mod_obj, ExplainableQuantity) if attr.attr_name_in_mod_obj_container not in mod_obj.calculated_attributes],
                  "modeling_obj_attributes" : retrieve_attributes_by_type(mod_obj, ModelingObject),
-                 "list_attributes" : retrieve_attributes_by_type(mod_obj, list)
+                 "list_attributes" : convert_to_list(retrieve_attributes_by_type(mod_obj, list))
                  }
             )
         obj_template_dict[key] = mod_obj_list
@@ -64,12 +64,10 @@ def get_context_from_json(jsondata):
     return obj_template_dict
 
 
-def retrieve_attributes_by_type(modeling_obj, attribute_type):
+def retrieve_attributes_by_type(modeling_obj, attribute_type, attrs_to_ignore=['modeling_obj_containers']):
     output_list = []
     for attr_name, attr_value in vars(modeling_obj).items():
-        values = convert_to_list(attr_value)
-        for value in values:
-            if isinstance(value, attribute_type):
-                output_list.append(value)
+        if isinstance(attr_value, attribute_type) and attr_name not in attrs_to_ignore:
+            output_list.append(attr_value)
 
     return output_list

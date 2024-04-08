@@ -45,3 +45,5 @@ node_modules
 System footprints.html
 
 system 1 footprints.html
+
+.vscode/launch.json
