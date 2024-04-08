@@ -29,6 +29,14 @@ Prerequisite
 
 > poetry run python manage.py runserver
 
+## Run tailwind when developing
+
+  > cd theme/static_src
+  > npm run dev
+
+To build css before commiting:
+  > npm run build
+
 ## Run tests
 
 > poetry run python manage.py test

@@ -776,10 +776,6 @@ select {
   margin-bottom: 1rem;
 }
 
-.me-2 {
-  margin-inline-end: 0.5rem;
-}
-
 .mr-2 {
   margin-right: 0.5rem;
 }
@@ -794,10 +790,6 @@ select {
 
 .mt-20 {
   margin-top: 5rem;
-}
-
-.mt-3 {
-  margin-top: 0.75rem;
 }
 
 .mt-32 {
@@ -1192,10 +1184,6 @@ select {
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
-}
-
-.pe-3 {
-  padding-inline-end: 0.75rem;
 }
 
 .text-center {
