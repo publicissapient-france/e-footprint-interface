@@ -12,49 +12,50 @@ Prerequisite
 
 [Python 3.10](https://www.python.org/downloads/release/python-3100/)
 
-- PyEnv
+#### PyEnv
 
-  > Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
+    Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
 
-- Poetry
+#### Poetry
 
-  > py -m pip install --user pipx
-  > pipx install poetry
+    py -m pip install --user pipx
+    pipx install poetry
 
-- Dependencies installation
+#### Dependencies installation
 
-  > poetry install
+    poetry install
 
 ## Run application
 
-> poetry run python manage.py runserver
+    poetry run python manage.py runserver
 
 ## Run tailwind when developing
 
-  > cd theme/static_src
-  > npm run dev
+    cd theme/static_src
+    npm run dev
 
 To build css before commiting:
-  > npm run build
+        
+    npm run build
 
 ## Run tests
 
-> poetry run python manage.py test
+    poetry run python manage.py test
 
 ## Run E2E tests
 
-- Dependencies installation (to do once or when a dependencies is added/updated)
+#### Dependencies installation (to do once or when a dependencies is added/updated)
 
-  > npm install
+    npm install
 
-- Start application
+#### Start application
 
-  > npm start
+    npm start
 
-- Run tests
+#### Run tests
 
-  > npm test
+    npm test
 
 You can also start the app and run the tests with Cypress dashboard with the command :
 
-> cypress open
+    cypress open
