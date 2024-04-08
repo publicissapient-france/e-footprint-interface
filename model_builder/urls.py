@@ -4,6 +4,8 @@ from . import views
 
 urlpatterns = [
     path("", views.model_builder_main, name="model-builder"),
-    path("add-service", views.add_service, name="add-service"),
+    path("open-add-new-object-panel", views.open_add_new_object_panel, name="open-add-new-object-panel"),
+    path("add-new-object", views.add_new_object, name="add-new-object"),
+    path("close-form", views.close_form, name="close-form"),
     path("update-value", views.update_value, name="update_value"),
 ]
