@@ -27,8 +27,9 @@
              class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/analyze.svg" alt="New modeling" />
             <span>Create new modeling</span>
         </button>
+          <!-- Important to keep the trailing / after model_builder in the pushed url below, otherwise relative url calls with htmx won’t work -->
         <button hx-get="/model_builder" hx-target="#main-content-block" hx-swap="innerHTML"
-             hx-push-url="/model_builder"
+             hx-push-url="/model_builder/"
              class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/analyze.svg" alt="Model builder" />
             <span>Work on existing modeling</span>
         </button>
