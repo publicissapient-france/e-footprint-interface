@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-grey-12 flex flex-col">
+<div class="min-h-screen bg-grey-12 flex flex-col" id="quiz-container">
   <h1 class="text-2xl font-bold text-center text-white-1 mt-8">Start mapping your service</h1>
 
   <div class="flex flex-col flex-1 justify-center space-y-2">
@@ -13,7 +13,9 @@
           <p class="text-white-1">Define the characteristics of your service and estimate the characteristics of services called along your customers' journey...</p>
           <p class="text-grey-2">Read more...</p>
         </div>
-        <a href="/quiz/user-journeys"><button class="h-min bg-white-1 mr-2 px-8 py-4 rounded-full">Start</button></a>
+            <button class="h-min bg-white-1 mr-2 px-8 py-4 rounded-full"
+                hx-post="user-journeys" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="user-journeys">Start
+            </button>
       </div>
     </div>
 
@@ -24,11 +26,13 @@
 
       <div class="flex flex-row flex-1 justify-between items-center">
         <div class="flex flex-col">
-          <p class="text-white-1 font-bold">Add APIs</p>
+          <p class="text-white-1 font-bold">Add Services</p>
           <p class="text-white-1">Lorem</p>
           <p class="text-grey-2">Read more...</p>
         </div>
-        <a href="/quiz/apis"><button class="h-min bg-white-1 mr-2 px-8 py-4 rounded-full">Start</button></a>
+          <button class="h-min bg-white-1 mr-2 px-8 py-4 rounded-full"
+                hx-post="form-services" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="form-services">Start
+          </button>
       </div>
     </div>
 
@@ -43,10 +47,12 @@
           <p class="text-white-1">Enter characteristics of your customers' usage of your service...</p>
           <p class="text-grey-2">Read more...</p>
         </div>
-        <a href="/quiz/usage-patterns"><button class="h-min bg-white-1 mr-2 px-8 py-4 rounded-full">Start</button></a>
+          <button class="h-min bg-white-1 mr-2 px-8 py-4 rounded-full"
+                hx-post="form-usage-pattern" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="form-usage-pattern">Start
+          </button>
       </div>
     </div>
 
-    <button class="w-min bg-grey-15 mx-auto px-8 py-4 rounded-full"><a href="/analyze">Analyze</a></button>
+    <a class="w-min bg-grey-15 mx-auto px-8 py-4 rounded-full" href="/analyze">Analyze</a>
   </div>
 </div>

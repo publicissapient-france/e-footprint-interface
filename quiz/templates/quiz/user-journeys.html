@@ -1,14 +1,14 @@
 {% extends "quiz/quiz-template.html" %}
 
 {% block trail %}
-  {% include "./components/trail.html" with back='/quiz/onboarding' index=1 %}
+{% include "./components/trail.html" with back='/quiz/onboarding' index=1 %}
 {% endblock %}
 
 {% block analyze_content %}
-<form class="flex flex-col flex-1">
+<form class="flex flex-col flex-1" id="quiz-step-container">
   <div class="flex flex-row mx-32 space-x-4">
     <div class="relative w-32 h-32 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl">
-      <img class="w-24 h-24" src="/static/icons/user-journey-icon.svg" alt="User journey" />
+      <img class="w-24 h-24" src="/static/icons/user-journey-icon.svg" alt="" />
     </div>
 
     <div class="flex flex-row flex-1 justify-between items-center">
@@ -19,19 +19,21 @@
       </div>
     </div>
   </div>
+  <div class="flex flex-col space-x-4 p-24" >
+          <div class="flex flex-col align-center gap-3 items-center" id="step-container">
+              <label>Your customers typically first <input name="1" class="text-black" /></label>
+              <label>Then they <input name="2" class="text-black" /></label>
+              {% include "./components/uj-input.html" with number='3' %}
 
-  <div class="flex flex-col mx-32 mt-32 space-x-4" id="quiz-step-container">
-          <div class="flex flex-col gap-3" id="step-container">
-          <label>Your customers typically first <input name="1" class="text-black" /></label>
-          <label>Then they <input name="2" class="text-black" /></label>
-          {% include "./components/uj-input.html" with number='3' %}
-
-          <button class="bg-black-1 rounded border-solid border-2 border-white-1" type="button" id="add-step"
-                  hx-post="user-journeys/add-step" hx-target="this" hx-swap="beforebegin"
-                  hx-vals="js:{latestIndex: document.getElementById('add-step').previousElementSibling.querySelector('input').getAttribute('name')}">+ Add a step</button>
+              <button class="w-fit p-1 self-center bg-black-1 rounded border-solid border-2 border-white-1 hover:bg-white hover:text-black" type="button" id="add-step"
+                      hx-post="user-journeys/add-step" hx-target="this" hx-swap="beforebegin"
+                      hx-vals="js:{latestIndex: document.getElementById('add-step').previousElementSibling.querySelector('input').getAttribute('name')}">
+                  + Add a step
+              </button>
         </div>
   </div>
-   <button class="border-2 border-white-1 border-solid rounded bg-white-1 text-black-1 hover:bg-black-1 hover:text-white-1"
-           hx-post="services" hx-target="#quiz-step-container" hx-swap="innerHTML">Continue</button>
+  <button class="p-2 self-center border-2 border-white-1 border-solid rounded bg-white-1 text-black-1 hover:bg-black-1 hover:text-white-1"
+          hx-post="form-services" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="form-services">Continue
+  </button>
 </form>
 {% endblock %}

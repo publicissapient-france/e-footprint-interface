@@ -1,19 +1,21 @@
-<div class="flex flex-row h-full w-full">
-  <div class="bg-grey-11 basis-1/4 p-4">{% include "./components/trail.html" with back='/quiz/form' %}</div>
+{% extends "quiz/quiz-template.html" %}
 
+{% block trail %}
+{% include "./components/trail.html" with back='/quiz/onboarding' index=2 %}
+{% endblock %}
+
+{% block analyze_content %}
+<form class="flex flex-row h-full w-full">
   <div class="flex flex-col bg-grey-12 basis-3/4 text-grey-1 space-y-6 p-4">
     <h1 class="text-center text-white-1 font-bold">Service quiz</h1>
-
     <div class="flex flew-row">
       <div class="basis-1/12">ICONE</div>
-
       <div class="flex flex-col basis-11/12 space-y-6">
         <div>
           <h3>Service(s)</h3>
           <a>How to find this information ?</a>
         </div>
-
-        <div>
+        <div class="flex flex-col items-end gap-3">
           <p>When they <input class="text-black-1" /></p>
           <p>a request is made to the following service <input class="text-black-1" /></p>
           <p>which requests <input class="text-black-1" type="number" /> of RAM</p>
@@ -21,14 +23,15 @@
           <p>with an // configuration for <input class="text-black-1" type="number" /></p>
           <p>and saves <input class="text-black-1" /> to storage</p>
         </div>
-
-        <div><button class="bg-black-1 rounded border-solid border-2 border-white-1">+ Add a service</button></div>
+        <button class="p-2 w-fit self-center bg-black-1 rounded border-solid border-2 border-white-1">+ Add a service</button>
       </div>
     </div>
-
     <div class="mx-auto space-x-1">
       <button class="border-2 border-white-1 border-solid rounded hover:bg-white-1 hover:text-black-1">I don't know</button>
-      <a href="/quiz/form-usage-pattern"><button class="border-2 border-white-1 border-solid rounded bg-white-1 text-black-1 hover:bg-black-1 hover:text-white-1">Continue</button></a>
+      <button class="p-2 self-center border-2 border-white-1 border-solid rounded bg-white-1 text-black-1 hover:bg-black-1 hover:text-white-1"
+              hx-post="/quiz/form-usage-pattern" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="form-usage-pattern">Continue
+      </button>
     </div>
   </div>
-</div>
+</form>
+{% endblock %}
