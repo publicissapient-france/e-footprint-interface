@@ -121,10 +121,17 @@ def add_new_object(request):
     new_efootprint_obj.__init__(**obj_creation_kwargs)
 
     response_objs[new_obj["obj_type"]][new_efootprint_obj.id] = new_efootprint_obj
+    if new_obj["obj_type"] == "UsagePattern":
+        for elt in response_objs["System"].values():
+            system = elt
+        system.usage_patterns += [new_efootprint_obj]
+        request.session["system_data"]["System"][system.id]["usage_patterns"] = [up.id for up in system.usage_patterns]
+
     context = get_context_from_response_objs(response_objs)
 
     request.session["system_data"][new_obj["obj_type"]][new_efootprint_obj.id] = new_efootprint_obj.to_json()
     request.session.modified = True
+
     context["display_obj_form"] = "False"
     system_footprint_html = context["System"][0]["object"].plot_footprints_by_category_and_object()._repr_html_()
 
