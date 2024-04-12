@@ -36,6 +36,9 @@ def create_efootprint_obj_from_post_data(request, flat_obj_dict):
             float(request.POST[attr_dict["attr_name"]]) * u(attr_dict["unit"]))
     for mod_obj in obj_inputs["modeling_obj_attributes"]:
         obj_creation_kwargs[mod_obj["attr_name"]] = flat_obj_dict[request.POST[mod_obj["attr_name"]]]
+    for mod_obj in obj_inputs["list_attributes"]:
+        obj_creation_kwargs[mod_obj["attr_name"]] = [
+            flat_obj_dict[obj_id] for obj_id in request.POST.getlist(mod_obj["attr_name"])]
     if request.POST["obj_type"] == "UsagePattern":
         obj_creation_kwargs["time_intervals"] = SourceObject([[7, 12], [18, 23]])
 
