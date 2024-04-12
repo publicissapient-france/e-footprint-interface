@@ -1,5 +1,5 @@
 <div id="{{ object.object.name }}"
-     class="flex flex-col p-1 w-80 rounded bg-grey-9">
+     class="flex flex-col p-1 w-80 rounded bg-grey-9 {{ object_type }}">
     <div class="text-white-1 font-bold">{{ object.object.name }}</div>
     <section class="flex flex-col gap-y-4">
         {% for numerical_attribute in object.numerical_attributes %}

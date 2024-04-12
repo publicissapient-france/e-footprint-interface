@@ -1,5 +1,5 @@
 <div id="object-creation-form"
-     class="text-black-1 bg-white-1 h-full top-16 right-0 fixed w-64 {% if display_obj_form %} visible {% else %} hidden {% endif %}">
+     class="text-black-1 bg-white-1 h-full right-0 sticky w-64 {% if display_obj_form == False %}hidden{% endif %}">
     <button hx-get="close-form"
             hx-swap="outerHTML"
             hx-target="#object-creation-form"
