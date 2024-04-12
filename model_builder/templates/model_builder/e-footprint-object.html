@@ -3,7 +3,12 @@
     <div class="text-white-1 font-bold">{{ object.object.name }}</div>
     <section class="flex flex-col gap-y-4">
         {% for numerical_attribute in object.numerical_attributes %}
-            {% include "./display-value.html" with key=object.modeling_obj_container.id object=numerical_attribute object_type=object_type %}
+            <div class="flex flex-col space-y-2">
+                <div>{{ numerical_attribute.attr_name_in_mod_obj_container }}</div>
+                <div>{{ numerical_attribute.value.magnitude }}</div>
+                <span>{{ numerical_attribute.value.units }}</span>
+            </div>
+            <hr />
         {% endfor %}
     </section>
     {% if object.modeling_obj_attributes %}

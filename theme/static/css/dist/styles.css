@@ -743,6 +743,10 @@ select {
   position: static;
 }
 
+.fixed {
+  position: fixed;
+}
+
 .absolute {
   position: absolute;
 }
@@ -757,6 +761,18 @@ select {
 
 .right-0 {
   right: 0px;
+}
+
+.top-5 {
+  top: 1.25rem;
+}
+
+.top-40 {
+  top: 10rem;
+}
+
+.top-0 {
+  top: 0px;
 }
 
 .mx-24 {
@@ -808,6 +824,10 @@ select {
   margin-top: 2rem;
 }
 
+.ml-auto {
+  margin-left: auto;
+}
+
 .block {
   display: block;
 }
@@ -851,6 +871,10 @@ select {
 
 .min-h-screen {
   min-height: 100vh;
+}
+
+.min-h-full {
+  min-height: 100%;
 }
 
 .w-24 {
@@ -1032,6 +1056,10 @@ select {
 
 .self-center {
   align-self: center;
+}
+
+.overflow-y-scroll {
+  overflow-y: scroll;
 }
 
 .rounded {
