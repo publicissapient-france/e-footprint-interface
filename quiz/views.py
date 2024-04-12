@@ -32,9 +32,10 @@ def services(request):
     request.session['quiz_data'] = {'user_journey_steps': uj_steps}
 
     print(request.session['quiz_data']['user_journey_steps'])
-    return render(request, "quiz/form-services.html")
+
+    return htmx_render(request, "quiz/services.html")
 
 
 def form_usage_pattern(request):
-    return htmx_render(request, "quiz/form-usage-pattern.html")
+    return htmx_render(request, "quiz/usage-patterns.html")
 

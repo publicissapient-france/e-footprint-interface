@@ -13,10 +13,10 @@
         <span class="text-grey-1">Set User journey(s)</span>
       </div>
     </button>
-    <button hx-post="form-services" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="form-services">
+    <button hx-post="services" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="services">
       <div class="flex flex-row space-x-2">{% if index > 2%}<img src="/static/icons/check.svg" alt="Check" />{% else %} <img src="/static/icons/ellipse.svg" alt="To do" /> {% endif %}<span class="text-grey-1">Add Services</span></div>
     </button>
-    <button hx-post="form-usage-pattern" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="form-usage-pattern">
+    <button hx-post="usage-patterns" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="usage-patterns">
       <div class="flex flex-row space-x-2"><img src="/static/icons/ellipse.svg" alt="To do" /><span class="text-grey-1">Describe usage</span></div></button>
   </div>
 </div>
