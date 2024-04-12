@@ -46,10 +46,21 @@
     "UserJourneyStep": {
         "numerical_attributes": [
             {
-                "attr_name": "ram_needed",
-                "unit": "megabyte / user_journey",
-                "default_value": 100.0
-            },
+                "attr_name": "user_time_spent",
+                "unit": "minute / user_journey",
+                "default_value": 20.0
+            }
+        ],
+        "modeling_obj_attributes": [],
+        "list_attributes": [
+            {
+                "attr_name": "jobs",
+                "object_type": "Job"
+            }
+        ]
+    },
+    "Job": {
+        "numerical_attributes": [
             {
                 "attr_name": "data_upload",
                 "unit": "kilobyte / user_journey",
@@ -61,14 +72,14 @@
                 "default_value": 0.83
             },
             {
-                "attr_name": "user_time_spent",
-                "unit": "minute / user_journey",
-                "default_value": 20.0
-            },
-            {
                 "attr_name": "request_duration",
                 "unit": "minute",
                 "default_value": 4
+            },
+            {
+                "attr_name": "ram_needed",
+                "unit": "megabyte / user_journey",
+                "default_value": 100.0
             },
             {
                 "attr_name": "cpu_needed",
@@ -127,11 +138,6 @@
                 "default_value": 6
             },
             {
-                "attr_name": "fraction_of_usage_time",
-                "unit": "dimensionless",
-                "default_value": 1
-            },
-            {
                 "attr_name": "average_carbon_intensity",
                 "unit": "gram / kilowatt_hour",
                 "default_value": 100.0
@@ -181,11 +187,6 @@
                 "attr_name": "lifespan",
                 "unit": "year",
                 "default_value": 6
-            },
-            {
-                "attr_name": "fraction_of_usage_time",
-                "unit": "dimensionless",
-                "default_value": 1
             },
             {
                 "attr_name": "average_carbon_intensity",
