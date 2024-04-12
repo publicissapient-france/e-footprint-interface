@@ -5,12 +5,12 @@ import { Interception } from 'cypress/types/net-stubbing';
 describe('Analyze tests', () => {
     beforeEach(() => cy.visit('/model_builder'));
 
-    xit('Should create new system', () => createNewObject('System'));
-    it.only('Should create new usage pattern', () => createNewObject('UsagePattern'));
-    xit('Should create new user journey', () => createNewObject('UserJourney'));
+    it('Should create new system', () => createNewObject('System'));
+    it('Should create new usage pattern', () => createNewObject('UsagePattern'));
+    it('Should create new user journey', () => createNewObject('UserJourney'));
     it('Should create new service', () => createNewObject('Service'));
-    xit('Should create new autoscaling', () => createNewObject('Autoscaling'));
-    xit('Should create new storage', () => createNewObject('Storage'));
+    it('Should create new autoscaling', () => createNewObject('Autoscaling'));
+    it('Should create new storage', () => createNewObject('Storage'));
     it('Should create new hardware', () => createNewObject('Hardware'));
     it('Should create new network', () => createNewObject('Network'));
 
