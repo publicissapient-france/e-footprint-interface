@@ -50,8 +50,8 @@ def open_add_new_object_panel(request):
     context = get_context_from_json(request.session["system_data"])
 
     object_type = request.GET["obj"]
-    object_inputs_file = open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json'))
-    object_inputs_and_default_values = json.load(object_inputs_file)
+    with open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json')) as object_inputs_file:
+        object_inputs_and_default_values = json.load(object_inputs_file)
     numerical_attributes = object_inputs_and_default_values[object_type]["numerical_attributes"]
     modeling_obj_attributes = object_inputs_and_default_values[object_type]["modeling_obj_attributes"]
     list_attributes = object_inputs_and_default_values[object_type]["list_attributes"]
