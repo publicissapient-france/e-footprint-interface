@@ -1,6 +1,6 @@
 from efootprint.api_utils.json_to_system import json_to_system
 from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity
-from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
+from efootprint.abstract_modeling_classes.modeling_object import ModelingObject, PREVIOUS_LIST_VALUE_SET_SUFFIX
 from model_builder.object_creation_utils import create_efootprint_obj_from_post_data
 from utils import htmx_render
 
@@ -117,6 +117,9 @@ def get_context_from_response_objs(response_objs):
     for key, obj in response_objs.items():
         mod_obj_list = []
         for mod_obj_id, mod_obj in obj.items():
+            list_attributes = retrieve_attributes_by_type(mod_obj, list)
+            if len(list_attributes) > 0:
+                list_attributes = list_attributes[0][1]
             mod_obj_list.append(
                 {"object": mod_obj,
                  "numerical_attributes": [
@@ -126,9 +129,7 @@ def get_context_from_response_objs(response_objs):
                  "modeling_obj_attributes": [
                      attr_name_value_pair[1]
                      for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ModelingObject)],
-                 "list_attributes": [
-                     attr_name_value_pair[1]
-                     for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, list)]
+                 "list_attributes": list_attributes
                  }
             )
         obj_template_dict[key] = mod_obj_list
@@ -139,7 +140,7 @@ def get_context_from_response_objs(response_objs):
 def retrieve_attributes_by_type(modeling_obj, attribute_type, attrs_to_ignore=['modeling_obj_containers']):
     output_list = []
     for attr_name, attr_value in vars(modeling_obj).items():
-        if isinstance(attr_value, attribute_type) and attr_name not in attrs_to_ignore:
+        if isinstance(attr_value, attribute_type) and attr_name not in attrs_to_ignore and PREVIOUS_LIST_VALUE_SET_SUFFIX not in attr_name:
             output_list.append((attr_name, attr_value))
 
     return output_list
