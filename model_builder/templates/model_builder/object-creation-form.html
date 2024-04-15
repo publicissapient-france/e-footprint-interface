@@ -1,5 +1,5 @@
 <div id="object-creation-form"
-     class="text-black-1 bg-white-1 min-h-full w-64 {% if display_obj_form == False %}hidden{% endif %}">
+     class="text-black-1 bg-white-1 min-h-full w-80 {% if display_obj_form == False %}hidden{% endif %}">
     <div class="sticky top-0">
         <button hx-get="close-form"
                 hx-swap="outerHTML"
@@ -20,14 +20,14 @@
                 <input id="new-object-name" type="text" name="name" required />
             </label>
             {% for numerical_attribute in numerical_attributes %}
-                <label>
-                    {{ numerical_attribute.attr_name }}
+                <div class="flex flex-row space-x-2 place-items-center">
+                    <span>{{ numerical_attribute.attr_name }}</span>
                     <input id="{{ numerical_attribute.attr_name }}"
                            type="number"
                            name="{{ numerical_attribute.attr_name }}"
                            value="{{ numerical_attribute.default_value }}" />
-                    {{ numerical_attribute.unit }}
-                </label>
+                    <span>{{ numerical_attribute.unit }}</span>
+                </div>
             {% endfor %}
             {% for modeling_obj_attribute in modeling_obj_attributes %}
                 <label>
