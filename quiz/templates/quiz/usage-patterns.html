@@ -1,25 +1,34 @@
 {% extends "quiz/quiz-template.html" %}
 
 {% block trail %}
-  {% include "./components/trail.html" with back='/quiz/onboarding' index=3 %}
+{% include "./components/trail.html" with back='/quiz/onboarding' index=3 %}
 {% endblock %}
 
 {% block analyze_content %}
-<div class="flex flex-col flex-1 space-y-2">
-  <div class="flex flex-row mx-32 space-x-4">
-    <div class="relative w-32 h-32 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl">
-      <img class="w-24 h-24" src="/static/icons/usage-icon.svg" alt="Usage pattern" />
-    </div>
 
-    <div class="flex flex-row flex-1 justify-between items-center">
-      <div class="flex flex-col">
-        <p class="text-white-1 font-bold">Describe Usage</p>
+<form class="flex flex-row h-full w-full">
+  <div class="flex flex-col bg-grey-12 basis-3/4 text-grey-1 space-y-6 p-4">
+    <h1 class="text-center text-white-1 font-bold">Usage Pattern</h1>
+    <div class="flex flew-row">
+      <div class="relative w-32 h-32 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl">
+        <img class="w-24 h-24" src="/static/icons/usage-icon.svg" alt="" />
+      </div>
+      <div class="flex flex-col basis-11/12 space-y-6">
+        <div>
+          <h3>Usage pattern</h3>
+          <a>How to find this information ?</a>
+        </div>
+        <div>
+          <p>On average, you have <input type="number" class="text-black-1" /> daily unique visitors</p>
+          <p>Users connect to your service between</p>
+          <p><input /> and <input /></p>
+        </div>
       </div>
     </div>
+    <div class="mx-auto space-x-1">
+      <button class="border-2 border-white-1 border-solid rounded hover:bg-white-1 hover:text-black-1">I don't know</button>
+      <a href="/analyze"><button type="button" class="border-2 border-white-1 border-solid rounded bg-white-1 text-black-1 hover:bg-black-1 hover:text-white-1">Analyze</button></a>
+    </div>
   </div>
-  <div class="mx-auto">
-    <button class="bg-grey-2 text-white-1 px-8 py-4 rounded-full">I don't know</button>
-    <a href="/analyze"><button class="bg-white-1 text-black-1 px-8 py-4 rounded-full">Continue</button></a>
-  </div>
-</div>
+</form>
 {% endblock %}

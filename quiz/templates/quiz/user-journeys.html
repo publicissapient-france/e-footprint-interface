@@ -1,14 +1,14 @@
 {% extends "quiz/quiz-template.html" %}
 
 {% block trail %}
-  {% include "./components/trail.html" with back='/quiz/onboarding' index=1 %}
+{% include "./components/trail.html" with back='/quiz/onboarding' index=1 %}
 {% endblock %}
 
 {% block analyze_content %}
-<div class="flex flex-col flex-1">
+<form class="flex flex-col flex-1" id="quiz-step-container">
   <div class="flex flex-row mx-32 space-x-4">
     <div class="relative w-32 h-32 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl">
-      <img class="w-24 h-24" src="/static/icons/user-journey-icon.svg" alt="User journey" />
+      <img class="w-24 h-24" src="/static/icons/user-journey-icon.svg" alt="" />
     </div>
 
     <div class="flex flex-row flex-1 justify-between items-center">
@@ -19,26 +19,21 @@
       </div>
     </div>
   </div>
+  <div class="flex flex-col space-x-4 p-24" >
+          <div class="flex flex-col align-center gap-3 items-center" id="step-container">
+              <label>Your customers typically first <input name="1" class="text-black" /></label>
+              <label>Then they <input name="2" class="text-black" /></label>
+              {% include "./components/uj-input.html" with number='3' %}
 
-  <div class="flex flex-col mx-32 mt-32 space-x-4">
-    <form hx-post="/quiz/user-journeys/add-step" hx-select="#user-journey-steps" hx-target="#user-journey-steps">
-      <div id="user-journey-steps" class="flex flex-col space-y-16">
-        {% for step in user_journeys_steps %}
-        <div class="flex flex-row space-x-6">
-          <img src="/static/icons/ellipse.svg" alt="step" />
-          <div>Step {{forloop.counter}}</div>
-          <div>Then they</div>
-          <div><input class="text-black-1" type="text" name="step-{{forloop.counter}}-name" value="{{step}}" /></div>
+              <button class="w-fit p-1 self-center bg-black-1 rounded border-solid border-2 border-white-1 hover:bg-white hover:text-black" type="button" id="add-step"
+                      hx-post="user-journeys/add-step" hx-target="this" hx-swap="beforebegin"
+                      hx-vals="js:{latestIndex: document.getElementById('add-step').previousElementSibling.querySelector('input').getAttribute('name')}">
+                  + Add a step
+              </button>
         </div>
-        {% endfor %}
-
-        <button type="submit" class="flex flex-row space-x-6">
-          <img src="/static/icons/plus.svg" alt="add" />
-          <div>Add step</div>
-        </button>
-      </div>
-    </form>
   </div>
-  <button class="w-min bg-grey-15 mx-auto px-8 py-4 rounded-full"><a href="/quiz/apis">Continue</a></button>
-</div>
+  <button class="p-2 self-center border-2 border-white-1 border-solid rounded bg-white-1 text-black-1 hover:bg-black-1 hover:text-white-1"
+          hx-post="services" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="services">Continue
+  </button>
+</form>
 {% endblock %}

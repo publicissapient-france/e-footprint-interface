@@ -1,37 +1,38 @@
-<div id="{{object.object.name}}" class="flex flex-col p-1 w-80 rounded bg-grey-9">
-    <div class="flex flex-row">
-        <div>icon</div>
-        <div class="text-white-1 font-bold">{{object.object.name}}</div>
-    </div>
+<div id="{{ object.object.name }}"
+     class="flex flex-col p-1 w-80 rounded bg-grey-9 {{ object_type }}">
+    <div class="text-white-1 font-bold">{{ object.object.name }}</div>
     <section class="flex flex-col gap-y-4">
         {% for numerical_attribute in object.numerical_attributes %}
-            {% include './display-value.html' with key=object.modeling_obj_container.id object=numerical_attribute object_type=object_type %}
+            <div class="flex flex-col space-y-2">
+                <div>{{ numerical_attribute.attr_name_in_mod_obj_container }}</div>
+                <div>{{ numerical_attribute.value.magnitude }}</div>
+                <span>{{ numerical_attribute.short_unit }}</span>
+            </div>
+            <hr />
         {% endfor %}
     </section>
-
     {% if object.modeling_obj_attributes %}
-    <br />
-    <section>
-        <span>Direct object links</span>
         <br />
-        {% for modeling_obj_attribute in object.modeling_obj_attributes %}
-            {% include './object-link.html' with linked_object=modeling_obj_attribute %}
-        {% endfor %}
-    </section>
-
+        <section>
+            <span>Direct object links</span>
+            <br />
+            <div class="space-y-2">
+                {% for modeling_obj_attribute in object.modeling_obj_attributes %}
+                    {% include "./object-link.html" with linked_object=modeling_obj_attribute %}
+                {% endfor %}
+            </div>
+        </section>
     {% endif %}
-
     {% if object.list_attributes %}
-    <br />
-    <section>
-        <span>List object links</span>
         <br />
-        <ul>
-        {% for list_attribute in object.list_attributes %}
-            <li>{% include './object-link.html' with linked_object=list_attribute %}</li>
-        {% endfor %}
-    </ul>
-    </section>
+        <section>
+            <span>List object links</span>
+            <br />
+            <ul class="space-y-2">
+                {% for list_attribute in object.list_attributes %}
+                    <li>{% include "./object-link.html" with linked_object=list_attribute %}</li>
+                {% endfor %}
+            </ul>
+        </section>
     {% endif %}
-
 </div>

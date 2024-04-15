@@ -3,58 +3,63 @@ name: Django CI
 on: ["push", "workflow_dispatch"]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
+        steps:
+            - uses: actions/checkout@v3
 
-      - name: Set up Python 3
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.10.12
+            - name: Set up Python 3
+              uses: actions/setup-python@v3
+              with:
+                  python-version: 3.10.12
 
-      - name: Install Dependencies
-        run: |
-          python -m pip install --user pipx
-          pipx install poetry
-          poetry install
+            - name: Install Dependencies
+              run: |
+                  python -m pip install --user pipx
+                  pipx install poetry
+                  poetry install
 
-      - name: Analysing the code with pylint
-        run: poetry run pylint e_footprint_interface
+            - name: Run migrations
+              run: |
+                  poetry run python manage.py makemigrations
+                  poetry run python manage.py migrate
 
-      - name: Run Tests
-        run: poetry run python manage.py test
+            - name: Analysing the code with pylint
+              run: poetry run pylint e_footprint_interface
 
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.8.1
-          cache: "npm"
+            - name: Run Tests
+              run: poetry run python manage.py test
 
-      - name: Install dependencies
-        run: npm ci
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20.8.1
+                  cache: "npm"
 
-      - name: E2E Tests
-        uses: cypress-io/github-action@v6
-        id: e2e-tests
-        with:
-          browser: firefox
-          config-file: cypress-test.config.ts
-          start: npm start
+            - name: Install dependencies
+              run: npm ci
 
-      - name: Generate test report
-        id: generate-e2e-report
-        if: always() && steps.e2e-tests.outcome == 'failure'
-        run: |
-          mkdir cypress/screenshots || true
-          npx mochawesome-merge ./cypress/results/mochawesome-report/*.json > tests-report.json
-          npx marge tests-report.json -o cypress/reports/html
-          cp -r cypress/screenshots cypress/reports/html/screenshots
+            - name: E2E Tests
+              uses: cypress-io/github-action@v6
+              id: e2e-tests
+              with:
+                  browser: firefox
+                  config-file: cypress-test.config.ts
+                  start: npm start
 
-      - name: Upload Cypress report
-        uses: actions/upload-artifact@v4
-        if: always() && steps.generate-e2e-report.outcome == 'success'
-        with:
-          name: Cypress report
-          path: cypress/reports/html
+            - name: Generate test report
+              id: generate-e2e-report
+              if: always() && steps.e2e-tests.outcome == 'failure'
+              run: |
+                  mkdir cypress/screenshots || true
+                  npx mochawesome-merge ./cypress/results/mochawesome-report/*.json > tests-report.json
+                  npx marge tests-report.json -o cypress/reports/html
+                  cp -r cypress/screenshots cypress/reports/html/screenshots
+
+            - name: Upload Cypress report
+              uses: actions/upload-artifact@v4
+              if: always() && steps.generate-e2e-report.outcome == 'success'
+              with:
+                  name: Cypress report
+                  path: cypress/reports/html

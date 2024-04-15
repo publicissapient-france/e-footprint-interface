@@ -1,56 +1,25 @@
-{% include "./graph-container.html" with systemFootprint=systemFootprint %}
-<div class="flex flex-col flex-1">
-  <div class="flex flex-row flex-1">
-    <div class="flex flex-col basis-1/6 p-1 bg-grey-5 gap-y-2">
-      <div class="flex flex-col space-y-2 p-2 bg-grey-6">
-        <div class="flex flex-row space-x-1 items-center">
-          <div class="relative w-12 h-12 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl">
-            <img class="w-8 h-8" src="/static/icons/usage-icon.svg" alt="usage-pattern" />
-          </div>
-          <div class="text-white-1">Usage Pattern</div>
-          <img class="w-6 h-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Comment trouver cette information ?" src="/static/icons/info-tooltip.svg" alt="tooltip" />
+<div id="model-builder-page">
+    {% include "./graph-container.html" with systemFootprint=systemFootprint %}
+    <div class="flex flex-row">
+        <div id="objects-list"
+             class="flex flex-col flex-1 p-1 rounded text-black-1 bg-grey-7 gap-y-1">
+            {% for object_type, object_list in context.items %}
+                {{ object_type }}
+                <section id="{{ object_type }}-section"
+                         class="flex flex-row rounded bg-grey-8 p-4 gap-x-4">
+                    <button class="bg-grey-3 text-white-1 rounded p-8 h-20 w-30"
+                            id="add-new-{{ object_type }}-button"
+                            hx-get="open-add-new-object-panel"
+                            hx-swap="outerHTML"
+                            hx-vals='{"obj": "{{ object_type }}" }'
+                            hx-target="#object-creation-form">+ Add {{ object_type }}</button>
+                    {% for object in object_list %}
+                        {% include "./e-footprint-object.html" with object=object object_type=object_type %}
+                    {% endfor %}
+                </section>
+            {% endfor %}
         </div>
-        <button data-bs-toggle="modal" data-bs-target="#add-usage-pattern-modal" class="btn btn-secondary h-min">+ Add Usage Pattern</button>
-        {% include "./modals/add-usage-pattern-modal.html" %}
-      </div>
-
-      <div class="rounded space-y-2 p-2 bg-grey-6">
-        <div class="flex flex-row space-x-1 items-center">
-          <div class="relative w-12 h-12 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl">
-            <img class="w-8 h-8" src="/static/icons/user-journey-icon.svg" alt="user-journey" />
-          </div>
-          <div class="text-white-1">Customer Journeys</div>
-          <img class="w-6 h-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Comment trouver cette information ?" src="/static/icons/info-tooltip.svg" alt="tooltip" />
-        </div>
-        <div>
-          <button>+ Add Step</button>
-          <button data-bs-toggle="modal" data-bs-target="#add-user-jouney-modal" class="btn btn-secondary h-min">+ Add Customer Journey</button>
-          {% include "./modals/add-user-journey-modal.html" %}
-        </div>
-      </div>
-
-      <div class="rounded space-y-2 p-2 bg-grey-6">
-        <div class="flex flex-row space-x-1 items-center">
-          <div class="relative w-12 h-12 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl">
-            <img class="w-8 h-8" src="/static/icons/api-icon.svg" alt="API" />
-          </div>
-          <div class="text-white-1">Services</div>
-          <img class="w-6 h-6" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Comment trouver cette information ?" src="/static/icons/info-tooltip.svg" alt="tooltip" />
-        </div>
-        <button data-bs-toggle="modal" data-bs-target="#add-service-modal" class="btn btn-secondary h-min">+ Add Service</button>
-        {% include "./modals/add-service-modal.html" %}
-      </div>
+        <div id="object-creation-form"
+             class="flex-0 {% if display_obj_form == False %}hidden{% endif %}"></div>
     </div>
-
-    <div id="objects-list" class="flex flex-col basis-5/6 p-1 rounded text-black-1 bg-grey-7 gap-y-1">
-      {% for object_type, object_list in context.items%}{{object_type}}
-      <section class="flex flex-row rounded bg-grey-8 p-4 gap-x-4">{% for object in object_list %} {% include "./e-footprint-object.html" with object=object object_type=object_type %} {% endfor %}</section>
-      {% endfor %}
-    </div>
-  </div>
 </div>
-
-<script>
-  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-  const tooltipList = [...tooltipTriggerList].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl));
-</script>
