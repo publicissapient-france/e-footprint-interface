@@ -19,7 +19,7 @@ describe('Analyze tests', () => {
         cy.get(`.${objectType}`).should('have.length', 1);
         cy.get(`#add-new-${objectType}-button`).click();
         cy.get('#object-creation-form').should('be.visible');
-        cy.get('#object-creation-form > h3').should('have.text', `New ${objectType}`);
+        cy.get('#object-creation-form h3').should('have.text', `New ${objectType}`);
         cy.get('#new-object-name').clear().type(`New ${objectType}`);
         cy.intercept('*/add-new-object').as('addNewObject');
         cy.get('#create-new-object-button').scrollIntoView().click();

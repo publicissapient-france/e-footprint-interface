@@ -1,23 +1,25 @@
 <div id="model-builder-page">
     {% include "./graph-container.html" with systemFootprint=systemFootprint %}
-    <div id="objects-list"
-         class="flex flex-col p-1 rounded text-black-1 bg-grey-7 gap-y-1">
-        {% for object_type, object_list in context.items %}
-            {{ object_type }}
-            <section id="{{ object_type }}-section"
-                     class="flex flex-row rounded bg-grey-8 p-4 gap-x-4">
-                <button class="bg-grey-3 text-white-1 rounded p-8 h-20 w-30"
-                        id="add-new-{{ object_type }}-button"
-                        hx-get="open-add-new-object-panel"
-                        hx-swap="outerHTML"
-                        hx-vals='{"obj": "{{ object_type }}" }'
-                        hx-target="#object-creation-form">+ Add {{ object_type }}</button>
-                {% for object in object_list %}
-                    {% include "./e-footprint-object.html" with object=object object_type=object_type %}
-                {% endfor %}
-            </section>
-        {% endfor %}
+    <div class="flex flex-row">
+        <div id="objects-list"
+             class="flex flex-col flex-1 p-1 rounded text-black-1 bg-grey-7 gap-y-1">
+            {% for object_type, object_list in context.items %}
+                {{ object_type }}
+                <section id="{{ object_type }}-section"
+                         class="flex flex-row rounded bg-grey-8 p-4 gap-x-4">
+                    <button class="bg-grey-3 text-white-1 rounded p-8 h-20 w-30"
+                            id="add-new-{{ object_type }}-button"
+                            hx-get="open-add-new-object-panel"
+                            hx-swap="outerHTML"
+                            hx-vals='{"obj": "{{ object_type }}" }'
+                            hx-target="#object-creation-form">+ Add {{ object_type }}</button>
+                    {% for object in object_list %}
+                        {% include "./e-footprint-object.html" with object=object object_type=object_type %}
+                    {% endfor %}
+                </section>
+            {% endfor %}
+        </div>
+        <div id="object-creation-form"
+             class="flex-0 {% if display_obj_form == False %}hidden{% endif %}"></div>
     </div>
-    <div id="object-creation-form"
-         class="{% if display_obj_form == False %}hidden{% endif %}"></div>
 </div>
