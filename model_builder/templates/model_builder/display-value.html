@@ -9,6 +9,6 @@
                hx-target="#graph-container"
                hx-swap="innerHTML"
                hx-vals='{"key": "{{ object_type }}","e-footprint-obj": "{{ object.modeling_obj_container.id }}", "attr_name": "{{ object.attr_name_in_mod_obj_container }}" }' />
-        <span>{{ object.value.units }}</span>
+        <span>{{ object.value.short_unit }}</span>
     </div>
 </div>
