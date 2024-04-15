@@ -95,11 +95,9 @@ def add_new_object(request):
     response_objs[request.POST["obj_type"]][new_efootprint_obj.id] = new_efootprint_obj
     context, system_footprint_html = get_context_from_response_objs(response_objs)
 
-    context["display_obj_form"] = "False"
-
     return render(
         request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html})
+        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False"})
 
 
 def close_form(request):
