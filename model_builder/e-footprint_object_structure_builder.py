@@ -20,7 +20,8 @@ for efootprint_object_type in response_objs.keys():
     init_param_names = [param.name for param in inspect.signature(efootprint_class_init).parameters.values()]
     efootprint_obj_structure[efootprint_object_type] = {
         "numerical_attributes": [
-            {"attr_name": attr_name_value_pair[0], "unit": str(attr_name_value_pair[1].value.units),
+            {"attr_name": attr_name_value_pair[0], "unit": f"{attr_name_value_pair[1].value.units:~P}",
+             "long_unit": str(attr_name_value_pair[1].value.units),
              "default_value": round(attr_name_value_pair[1].value.magnitude, 2)}
             for attr_name_value_pair in retrieve_attributes_by_type(first_efootprint_obj, ExplainableQuantity)
             if attr_name_value_pair[0] in init_param_names],

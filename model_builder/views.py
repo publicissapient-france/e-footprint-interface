@@ -121,19 +121,21 @@ def get_context_from_response_objs(response_objs):
                 list_attributes = retrieve_attributes_by_type(mod_obj, list)
                 if len(list_attributes) > 0:
                     list_attributes = list_attributes[0][1]
-                mod_obj_list.append(
-                    {"object": mod_obj,
-                     "numerical_attributes": [
+                mod_obj_dict = {
+                    "object": mod_obj,
+                    "numerical_attributes": [
                          attr_name_value_pair[1]
                          for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ExplainableQuantity)
                          if attr_name_value_pair[1].attr_name_in_mod_obj_container not in mod_obj.calculated_attributes
                      ],
-                     "modeling_obj_attributes": [
+                    "modeling_obj_attributes": [
                          attr_name_value_pair[1]
                          for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ModelingObject)],
-                     "list_attributes": list_attributes
-                     }
-                )
+                    "list_attributes": list_attributes
+                }
+                for num_attr in mod_obj_dict["numerical_attributes"]:
+                    num_attr.short_unit = f"{num_attr.value.units:~P}"
+                mod_obj_list.append(mod_obj_dict)
             obj_template_dict[key] = mod_obj_list
 
     system = list(response_objs["System"].values())[0]
