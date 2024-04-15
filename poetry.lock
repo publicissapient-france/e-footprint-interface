@@ -388,13 +388,13 @@ reload = ["django-browser-reload (>=1.12.1,<2.0.0)"]
 
 [[package]]
 name = "efootprint"
-version = "2.0.2"
+version = "2.0.3"
 description = "Digital service environmental footprint model"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "efootprint-2.0.2-py3-none-any.whl", hash = "sha256:443c6635b9080dcf68a10ba45d137bafcbf8e65dd3328566dcfe20d792b3db3a"},
-    {file = "efootprint-2.0.2.tar.gz", hash = "sha256:6a214f00efb5cf1668569d870bc6ca8d66778173d80a9f20e05a09de3cc83693"},
+    {file = "efootprint-2.0.3-py3-none-any.whl", hash = "sha256:ad698e039eebca8aab1191b1a172fc0fc554cf124e96f0c1813bcf31b92996fe"},
+    {file = "efootprint-2.0.3.tar.gz", hash = "sha256:5d36ee3071a87fb456418f66179c48c4a33f4d296d29b4363d5c03aa3dd84905"},
 ]
 
 [package.dependencies]
@@ -847,13 +847,13 @@ setuptools_scm = ">=7"
 
 [[package]]
 name = "matplotlib-inline"
-version = "0.1.6"
+version = "0.1.7"
 description = "Inline Matplotlib backend for Jupyter"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.8"
 files = [
-    {file = "matplotlib-inline-0.1.6.tar.gz", hash = "sha256:f887e5f10ba98e8d2b150ddcf4702c1e5f8b3a20005eb0f74bfdbd360ee6f304"},
-    {file = "matplotlib_inline-0.1.6-py3-none-any.whl", hash = "sha256:f1f41aab5328aa5aaea9b16d083b128102f8712542f819fe7e6a420ff581b311"},
+    {file = "matplotlib_inline-0.1.7-py3-none-any.whl", hash = "sha256:df192d39a4ff8f21b1895d72e6a13f5fcc5099f00fa84384e0ea28c2cc0653ca"},
+    {file = "matplotlib_inline-0.1.7.tar.gz", hash = "sha256:8423b23ec666be3d16e16b60bdd8ac4e86e840ebd1dd11a30b9f117f2fa0ab90"},
 ]
 
 [package.dependencies]
@@ -1555,4 +1555,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "24f92b66d55b1306d9b0e95d51bf64b7f1c7078d4db9ce0f5ee6f7616c3ec00d"
+content-hash = "d9955279f16711afd0e1698f0c939150498247a585cce292acf930778f89029d"
