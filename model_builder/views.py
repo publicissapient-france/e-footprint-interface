@@ -70,6 +70,35 @@ def open_add_new_object_panel(request):
 
     return render(request, "model_builder/object-creation-form.html", context=context_data)
 
+def open_edit_object_panel(request):
+    context = get_context_from_json(request.session["system_data"])
+    object_type = request.GET["obj_type"]
+    object = request.session["system_data"][object_type][request.GET["obj_id"]]
+    with open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json')) as object_inputs_file:
+        object_inputs_and_default_values = json.load(object_inputs_file)
+
+    numerical_attributes = object_inputs_and_default_values[object_type]["numerical_attributes"]
+    modeling_obj_attributes = object_inputs_and_default_values[object_type]["modeling_obj_attributes"]
+    list_attributes = object_inputs_and_default_values[object_type]["list_attributes"]
+
+    context_data = {
+        "object_to_edit": object, "display_obj_edition_form": True,
+        "numerical_attributes": numerical_attributes,
+        "modeling_obj_attributes": modeling_obj_attributes,
+        "list_attributes": list_attributes,
+        "object_types": {}
+    }
+    for object_type in modeling_obj_attributes:
+        context_data["object_types"][object_type["object_type"]] = [
+            data["object"] for data in context[object_type["object_type"]]]
+
+    if list_attributes:
+        for object_type in list_attributes:
+            context_data["object_types"][object_type["object_type"]] = [
+                data["object"] for data in context[object_type["object_type"]]]
+
+    return render(request, "model_builder/object-edition-form.html", context=context_data)
+
 
 def add_new_object(request):
     response_objs, flat_obj_dict = json_to_system(request.session["system_data"])

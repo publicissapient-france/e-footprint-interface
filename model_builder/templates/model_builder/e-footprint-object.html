@@ -1,12 +1,19 @@
 <div id="{{ object.object.name }}"
      class="flex flex-col p-1 w-80 rounded bg-grey-9 {{ object_type }}">
-    <div class="text-white-1 font-bold">{{ object.object.name }}</div>
+    <div class="flex flex-row justify-between">
+        <div class="text-white-1 font-bold">{{ object.object.name }}</div>
+        <div hx-get="open-edit-object-panel"
+             hx-swap="outerHTML"
+             hx-vals='{"obj_id": "{{ object.object.id }}", "obj_type": "{{ object_type }}" }'
+             hx-target="#object-edition-form"
+             class="edit-object-button">Edit</div>
+    </div>
     <section class="flex flex-col gap-y-4">
         {% for numerical_attribute in object.numerical_attributes %}
             <div class="flex flex-col space-y-2">
                 <div>{{ numerical_attribute.attr_name_in_mod_obj_container }}</div>
                 <div>{{ numerical_attribute.value.magnitude }}</div>
-                <span>{{ numerical_attribute.short_unit }}</span>
+                <span>{{ numerical_attribute.value.units }}</span>
             </div>
             <hr />
         {% endfor %}

@@ -27,6 +27,10 @@ describe('Analyze tests', () => {
     it('Should create new hardware', () => createNewObject('Hardware'));
     it('Should create new network', () => createNewObject('Network'));
 
+    it.only('Should edit an object', () => {
+        cy.get('#UsagePattern-section .edit-object-button').eq(0).click();
+    });
+
     function createNewObject(objectType: string) {
         cy.get('#object-creation-form').should('not.be.visible');
         cy.get(`.${objectType}`).should('have.length', 1);
