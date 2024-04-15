@@ -84,6 +84,8 @@ def add_new_object(request):
         system = list(response_objs["System"].values())[0]
         system.usage_patterns += [new_efootprint_obj]
         request.session["system_data"]["System"][system.id]["usage_patterns"] = [up.id for up in system.usage_patterns]
+    else:
+        new_efootprint_obj.launch_attributes_computation_chain()
 
     # Update session data
     request.session["system_data"][request.POST["obj_type"]][new_efootprint_obj.id] = new_efootprint_obj.to_json()
