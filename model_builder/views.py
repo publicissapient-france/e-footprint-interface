@@ -1,6 +1,8 @@
 from efootprint.api_utils.json_to_system import json_to_system
 from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity
 from efootprint.abstract_modeling_classes.modeling_object import ModelingObject, PREVIOUS_LIST_VALUE_SET_SUFFIX
+from efootprint.core.system import System
+
 from model_builder.object_creation_utils import create_efootprint_obj_from_post_data
 from utils import htmx_render
 
@@ -23,8 +25,7 @@ def model_builder_main(request):
             jsondata = request.session["system_data"]
 
     # compute calculated attributes with e-footprint
-    context = get_context_from_json(jsondata)
-    system_footprint_html = context["System"][0]["object"].plot_footprints_by_category_and_object()._repr_html_()
+    context, system_footprint_html = get_context_from_json(jsondata)
 
     return htmx_render(
         request, "model_builder/model-builder-main.html",
@@ -37,9 +38,7 @@ def update_value(request):
     attr_name = request.POST["attr_name"]
     request.session["system_data"][object_type][object_name][attr_name]["value"] = float(request.POST["value"])
     request.session.modified = True
-    context = get_context_from_json(request.session["system_data"])
-
-    system_footprint_html = context["System"][0]["object"].plot_footprints_by_category_and_object()._repr_html_()
+    context, system_footprint_html = get_context_from_json(request.session["system_data"])
 
     return render(
         request, "model_builder/graph-container.html",
@@ -47,7 +46,7 @@ def update_value(request):
 
 
 def open_add_new_object_panel(request):
-    context = get_context_from_json(request.session["system_data"])
+    context, system_footprint_html = get_context_from_json(request.session["system_data"])
 
     object_type = request.GET["obj"]
     with open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json')) as object_inputs_file:
@@ -94,10 +93,9 @@ def add_new_object(request):
 
     # Add new object to object dict to recompute context
     response_objs[request.POST["obj_type"]][new_efootprint_obj.id] = new_efootprint_obj
-    context = get_context_from_response_objs(response_objs)
+    context, system_footprint_html = get_context_from_response_objs(response_objs)
 
     context["display_obj_form"] = "False"
-    system_footprint_html = context["System"][0]["object"].plot_footprints_by_category_and_object()._repr_html_()
 
     return render(
         request, "model_builder/model-builder-main.html",
@@ -117,26 +115,31 @@ def get_context_from_json(jsondata):
 def get_context_from_response_objs(response_objs):
     obj_template_dict = {}
     for key, obj in response_objs.items():
-        mod_obj_list = []
-        for mod_obj_id, mod_obj in obj.items():
-            list_attributes = retrieve_attributes_by_type(mod_obj, list)
-            if len(list_attributes) > 0:
-                list_attributes = list_attributes[0][1]
-            mod_obj_list.append(
-                {"object": mod_obj,
-                 "numerical_attributes": [
-                     attr_name_value_pair[1]
-                     for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ExplainableQuantity)
-                     if attr_name_value_pair[1].attr_name_in_mod_obj_container not in mod_obj.calculated_attributes],
-                 "modeling_obj_attributes": [
-                     attr_name_value_pair[1]
-                     for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ModelingObject)],
-                 "list_attributes": list_attributes
-                 }
-            )
-        obj_template_dict[key] = mod_obj_list
+        if key != "System":
+            mod_obj_list = []
+            for mod_obj in obj.values():
+                list_attributes = retrieve_attributes_by_type(mod_obj, list)
+                if len(list_attributes) > 0:
+                    list_attributes = list_attributes[0][1]
+                mod_obj_list.append(
+                    {"object": mod_obj,
+                     "numerical_attributes": [
+                         attr_name_value_pair[1]
+                         for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ExplainableQuantity)
+                         if attr_name_value_pair[1].attr_name_in_mod_obj_container not in mod_obj.calculated_attributes
+                     ],
+                     "modeling_obj_attributes": [
+                         attr_name_value_pair[1]
+                         for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ModelingObject)],
+                     "list_attributes": list_attributes
+                     }
+                )
+            obj_template_dict[key] = mod_obj_list
 
-    return obj_template_dict
+    system = list(response_objs["System"].values())[0]
+    system_footprint_html = system.plot_footprints_by_category_and_object()._repr_html_()
+
+    return obj_template_dict, system_footprint_html
 
 
 def retrieve_attributes_by_type(modeling_obj, attribute_type, attrs_to_ignore=['modeling_obj_containers']):
