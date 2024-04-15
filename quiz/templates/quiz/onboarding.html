@@ -30,8 +30,8 @@
           <p class="text-white-1">Lorem</p>
           <p class="text-grey-2">Read more...</p>
         </div>
-          <button class="h-min bg-white-1 mr-2 px-8 py-4 rounded-full"
-                hx-post="services" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="services">Start
+          <button class="h-min bg-grey-3 mr-2 px-8 py-4 rounded-full"
+                hx-post="services" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="services" disabled>Start
           </button>
       </div>
     </div>
@@ -41,18 +41,16 @@
         <img class="w-24 h-24" src="/static/icons/usage-icon.svg" alt="Describe usage" />
       </div>
 
-      <div class="flex flex-row flex-1 justify-between items-center">
+      <div class="flex flex-row flex-1 justify-between items-center cursor-not-allowed">
         <div class="flex flex-col">
           <p class="text-white-1 font-bold">Describe usage</p>
           <p class="text-white-1">Enter characteristics of your customers' usage of your service...</p>
           <p class="text-grey-2">Read more...</p>
         </div>
-          <button class="h-min bg-white-1 mr-2 px-8 py-4 rounded-full"
-                hx-post="usage-patterns" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="usage-patterns">Start
+          <button class="h-min mr-2 px-8 py-4 rounded-full bg-grey-3 cursor-not-allowed"
+                hx-post="usage-patterns" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="usage-patterns" disabled>Start
           </button>
       </div>
     </div>
-
-    <a class="w-min bg-grey-15 mx-auto px-8 py-4 rounded-full" href="/analyze">Analyze</a>
   </div>
 </div>

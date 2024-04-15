@@ -1,0 +1,12 @@
+{% for step in uj_steps %}
+<div class="flex flex-col items-end gap-3" id="{{step.name}}">
+          <p>When they <input class="text-black-1" value="{{step.name}}" name="{{forloop.counter}}" /></p>
+          <p>a request is made to a service of the following type <select class="text-black" name="{{forloop.counter}}" required>
+              <option value disabled selected></option>
+              <option value="web-app">Web Application</option>
+              <option value="streaming">Streaming</option>
+              <option value="gen-ai">Gen AI</option>
+          </select></p>
+</div>
+{% endfor %}
+

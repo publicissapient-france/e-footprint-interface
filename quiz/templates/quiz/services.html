@@ -15,15 +15,7 @@
           <h3>Service(s)</h3>
           <a>How to find this information ?</a>
         </div>
-        <div class="flex flex-col items-end gap-3">
-          <p>When they <input class="text-black-1" /></p>
-          <p>a request is made to the following service <input class="text-black-1" /></p>
-          <p>which requests <input class="text-black-1" type="number" /> of RAM</p>
-          <p>to a <input class="text-black-1" type="number" /> CPU consumption, server <input /></p>
-          <p>with an // configuration for <input class="text-black-1" type="number" /></p>
-          <p>and saves <input class="text-black-1" /> to storage</p>
-        </div>
-        <button class="p-2 w-fit self-center bg-black-1 rounded border-solid border-2 border-white-1">+ Add a service</button>
+        {% include "./components/service-block.html" %}
       </div>
     </div>
     <div class="mx-auto space-x-1">

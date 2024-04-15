@@ -22,7 +22,9 @@
   <div class="flex flex-col space-x-4 p-24" >
           <div class="flex flex-col align-center gap-3 items-center" id="step-container">
               <label>Your customers typically first <input name="1" class="text-black" /></label>
+              <label>for <input name="1" class="text-black" type="number" />  mins </label>
               <label>Then they <input name="2" class="text-black" /></label>
+              <label>for <input name="2" class="text-black" type="number" /> mins </label>
               {% include "./components/uj-input.html" with number='3' %}
 
               <button class="w-fit p-1 self-center bg-black-1 rounded border-solid border-2 border-white-1 hover:bg-white hover:text-black" type="button" id="add-step"

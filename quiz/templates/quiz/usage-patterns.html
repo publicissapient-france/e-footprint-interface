@@ -19,15 +19,26 @@
           <a>How to find this information ?</a>
         </div>
         <div>
-          <p>On average, you have <input type="number" class="text-black-1" /> daily unique visitors</p>
-          <p>Users connect to your service between</p>
-          <p><input /> and <input /></p>
+          <p>On average, you have <input type="number" class="text-black-1" name="visitors" /> daily unique visitors.</p>
+            <p>They use their <select name="device" class="text-black" required>
+                <option value disabled selected></option>
+                <option value="smartphone">Smartphone</option>
+                <option value="laptop">Laptop</option>
+            </select></p>
+            <p>In</p>
+            <select class="text-black" name="country">
+                <option value disabled selected></option>
+                {% for country in countries %}
+                <option value='{{country.name}}'>{{country.name}}</option>
+                {% endfor %}
+            </select>
         </div>
       </div>
     </div>
     <div class="mx-auto space-x-1">
       <button class="border-2 border-white-1 border-solid rounded hover:bg-white-1 hover:text-black-1">I don't know</button>
-      <a href="/analyze"><button type="button" class="border-2 border-white-1 border-solid rounded bg-white-1 text-black-1 hover:bg-black-1 hover:text-white-1">Analyze</button></a>
+      <button type="button" class="border-2 border-white-1 border-solid rounded bg-white-1 text-black-1 hover:bg-black-1 hover:text-white-1"
+              hx-post="analyze" hx-target="#main-content-block" hx-swap="innerHTML" hx-push-url="/model_builder">Analyze</button>
     </div>
   </div>
 </form>
