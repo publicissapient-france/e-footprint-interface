@@ -10,13 +10,17 @@
     <button hx-post="user-journeys" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="user-journeys">
       <div class="flex flex-row space-x-2">
         {% if index > 1%}<img src="/static/icons/check.svg" alt="Check" />{% else %} <img src="/static/icons/ellipse.svg" alt="To do" /> {% endif %}
-        <span class="text-grey-1">Set User journey(s)</span>
+        <span class="{% if index == 1 %} font-bold {% endif %} text-white">Set User journey(s)</span>
       </div>
     </button>
+      <hr class="rotate-90 w-8 -translate-x-2 {% if index >= 2 %} bg-white {% endif %}" style="opacity:1" />
     <button hx-post="services" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="services">
-      <div class="flex flex-row space-x-2">{% if index > 2%}<img src="/static/icons/check.svg" alt="Check" />{% else %} <img src="/static/icons/ellipse.svg" alt="To do" /> {% endif %}<span class="text-grey-1">Add Services</span></div>
+      <div class="flex flex-row space-x-2">{% if index > 2%}<img src="/static/icons/check.svg" alt="Check" />{% else %} <img src="/static/icons/ellipse.svg" alt="To do" /> {% endif %}
+          <span class="{% if index == 2 %} font-bold {% endif %} {% if index >= 2 %} text-white {% else %} text-pink-light {% endif %}">Add Services</span>
+      </div>
     </button>
+      <hr class="rotate-90 w-8 bg-white opacity-1 -translate-x-2 {% if index >= 3 %} bg-white {% endif %}" style="opacity:1" />
     <button hx-post="usage-patterns" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="usage-patterns">
-      <div class="flex flex-row space-x-2"><img src="/static/icons/ellipse.svg" alt="To do" /><span class="text-grey-1">Describe usage</span></div></button>
+      <div class="flex flex-row space-x-2"><img src="/static/icons/ellipse.svg" alt="To do" /><span class="{% if index == 3 %} font-bold {% endif %} {% if index >= 3 %} text-white {% else %} text-pink-light {% endif %}">Describe usage</span></div></button>
   </div>
 </div>
