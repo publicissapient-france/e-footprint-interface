@@ -1,23 +1,23 @@
 from efootprint.api_utils.json_to_system import json_to_system
 from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity
 from efootprint.abstract_modeling_classes.modeling_object import ModelingObject, PREVIOUS_LIST_VALUE_SET_SUFFIX
+from efootprint.api_utils.system_to_json import system_to_json
 from efootprint.constants.units import u
+from efootprint.core.usage.usage_pattern import UsagePattern
 
-from model_builder.object_creation_utils import create_efootprint_obj_from_post_data, add_new_object_to_system, \
-    edit_object_in_system
+from model_builder.object_creation_utils import add_new_object_to_system, edit_object_in_system
 from utils import htmx_render
 
 from django.conf import settings
 import json
 from django.shortcuts import render
-from django.utils.datastructures import MultiValueDictKeyError
 import os
 
 
 def model_builder_main(request):
     try:
         jsondata = request.session["system_data"]
-    except MultiValueDictKeyError:
+    except KeyError:
         with open(os.path.join("model_builder", "default_system_data.json"), "r") as file:
             jsondata = json.load(file)
             request.session["system_data"] = jsondata
@@ -117,6 +117,30 @@ def add_new_object(request):
         context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False"})
 
 
+def delete_object(request):
+    response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
+
+    obj_id = request.POST["object-id"]
+    obj_type = request.POST["object-type"]
+
+    if obj_type == "UsagePattern":
+        system = list(response_objs["System"].values())[0]
+        system.usage_patterns = [up for up in system.usage_patterns if up.id != obj_id]
+
+    flat_obj_dict[obj_id].self_delete()
+    response_objs[obj_type].pop(obj_id, None)
+    flat_obj_dict.pop(obj_id, None)
+
+    request.session["system_data"] = system_to_json(
+        list(response_objs["System"].values())[0], save_calculated_attributes=False)
+
+    context, system_footprint_html = get_context_from_response_objs(response_objs)
+
+    return render(
+        request, "model_builder/model-builder-main.html",
+        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False"})
+
+
 def close_form(request):
     return render(request, "model_builder/object-creation-form.html", context={"display_obj_form": False})
 
@@ -136,6 +160,12 @@ def get_context_from_response_objs(response_objs):
                 list_attributes = retrieve_attributes_by_type(mod_obj, list)
                 if len(list_attributes) > 0:
                     list_attributes = list_attributes[0][1]
+                is_deletable = False
+                if not mod_obj.modeling_obj_containers:
+                    is_deletable = True
+                system = list(response_objs["System"].values())[0]
+                if isinstance(mod_obj, UsagePattern) and len(system.usage_patterns) > 1:
+                    is_deletable = True
                 mod_obj_dict = {
                     "object": mod_obj,
                     "numerical_attributes": [
@@ -146,7 +176,8 @@ def get_context_from_response_objs(response_objs):
                     "modeling_obj_attributes": [
                          attr_name_value_pair[1]
                          for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ModelingObject)],
-                    "list_attributes": list_attributes
+                    "list_attributes": list_attributes,
+                    "is_deletable": is_deletable
                 }
                 for num_attr in mod_obj_dict["numerical_attributes"]:
                     num_attr.short_unit = f"{num_attr.value.units:~P}"

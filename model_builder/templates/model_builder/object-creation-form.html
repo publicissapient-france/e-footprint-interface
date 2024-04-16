@@ -13,7 +13,6 @@
         <form class="flex flex-col space-y-8 mt-8"
               hx-post="add-new-object"
               hx-vals='{"obj_type": "{{ obj_type }}", "is_an_object_edition": "{{ is_an_object_edition }}", "obj_id": "{{ object_id }}" }'
-              hx-select="#model-builder-page"
               hx-target="#model-builder-page">
             <label>
                 Name :
