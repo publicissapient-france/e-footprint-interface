@@ -1,12 +1,13 @@
 {% for step in uj_steps %}
 <div class="flex items-start mx-14 flex-wrap" id="{{step.name}}">
-          <p><span class="font-bold mr-4">Step {{ forloop.counter }}</span>When they <input class="rounded-md border-grey-4 border-[1px] border-solid mr-2" value="{{step.name}}" name="{{forloop.counter}}" /></p>
-          <p>a request is made to a service of the following type <select class="rounded-md border-grey-4 border-[1px] border-solid" name="{{forloop.counter}}" required>
-              <option value disabled selected>Select an option</option>
-              <option value="web-app">Web Application</option>
-              <option value="streaming">Streaming</option>
-              <option value="gen-ai">Gen AI</option>
-          </select></p>
+    <input type="text" class="hidden" value="{{step.name}}" name="{{forloop.counter}}"/>
+      <p><span class="font-bold mr-4">Step {{ forloop.counter }}</span>When they <span class="pl-2 w-auto text-xl font-bold">{{step.name}}</span></p>
+      <p>a request is made to a service of the following type <select class="rounded-md border-grey-4 border-[1px] border-solid" name="{{forloop.counter}}" required>
+          <option value disabled selected>Select an option</option>
+          <option value="web-app">Web Application</option>
+          <option value="streaming">Streaming</option>
+          <option value="gen-ai">Gen AI</option>
+      </select></p>
 </div>
 {% endfor %}
 
