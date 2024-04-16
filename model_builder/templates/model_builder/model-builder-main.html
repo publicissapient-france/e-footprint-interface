@@ -9,7 +9,7 @@
                          class="flex flex-row rounded bg-grey-8 p-4 gap-x-4">
                     <button class="bg-grey-3 text-white-1 rounded p-8 h-20 w-30"
                             id="add-new-{{ object_type }}-button"
-                            hx-get="open-add-new-object-panel"
+                            hx-post="open-object-panel"
                             hx-swap="outerHTML"
                             hx-vals='{"object-type": "{{ object_type }}" }'
                             hx-target="#object-creation-form">+ Add {{ object_type }}</button>

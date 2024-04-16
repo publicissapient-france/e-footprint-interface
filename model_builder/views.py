@@ -1,9 +1,10 @@
 from efootprint.api_utils.json_to_system import json_to_system
 from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity
 from efootprint.abstract_modeling_classes.modeling_object import ModelingObject, PREVIOUS_LIST_VALUE_SET_SUFFIX
-from efootprint.core.system import System
+from efootprint.constants.units import u
 
-from model_builder.object_creation_utils import create_efootprint_obj_from_post_data
+from model_builder.object_creation_utils import create_efootprint_obj_from_post_data, add_new_object_to_system, \
+    edit_object_in_system
 from utils import htmx_render
 
 from django.conf import settings
@@ -42,12 +43,11 @@ def update_value(request):
         context={"context": context, "systemFootprint": system_footprint_html})
 
 
-def open_add_new_object_panel(request):
-    object_type = request.GET["object-type"]
+def open_object_panel(request):
+    object_type = request.POST["object-type"]
     with open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json')) as object_inputs_file:
         object_inputs_and_default_values = json.load(object_inputs_file)
 
-    numerical_attributes = object_inputs_and_default_values[object_type]["numerical_attributes"]
     modeling_obj_attributes = object_inputs_and_default_values[object_type]["modeling_obj_attributes"]
     list_attributes = object_inputs_and_default_values[object_type]["list_attributes"]
 
@@ -61,65 +61,55 @@ def open_add_new_object_panel(request):
         list_attributes_desc["existing_objects"] = list(
             request.session["system_data"][list_attributes_desc["object_type"]].values())
 
+    is_an_object_edition = False
+    header = f"New {object_type}"
+    default_name = ""
+    object_id = ""
+    if "object-id" not in request.POST.keys():
+        numerical_attributes = object_inputs_and_default_values[object_type]["numerical_attributes"]
+    else:
+        is_an_object_edition = True
+        object_dict = request.session["system_data"][object_type][request.POST["object-id"]]
+        header = f"Editing {object_dict['name']}"
+        default_name = object_dict["name"]
+        object_id = object_dict["id"]
+        numerical_attributes = []
+        for attr_key, attr_value in object_dict.items():
+            if type(attr_value) == dict and "unit" in attr_value.keys():
+                quantity = attr_value["value"] * u(attr_value["unit"])
+                numerical_attributes.append(
+                    {"attr_name": attr_key, "unit": f"{quantity.units:~P}",
+                     "long_unit": attr_value["unit"],
+                     "default_value": attr_value["value"]}
+                )
+
+        for mod_obj_attribute_desc in modeling_obj_attributes:
+            mod_obj_attribute_desc["selected"] = object_dict[mod_obj_attribute_desc["attr_name"]]
+
+        for list_attributes_desc in list_attributes:
+            list_attributes_desc["selected"] = object_dict[list_attributes_desc["attr_name"]]
+
     context_data = {
+        "is_an_object_edition": is_an_object_edition,
         "obj_type": object_type, "display_obj_form": True,
+        "header": header, "default_name": default_name,
         "numerical_attributes": numerical_attributes,
         "modeling_obj_attributes": modeling_obj_attributes,
         "list_attributes": list_attributes,
+        "object_id": object_id
     }
 
     return render(request, "model_builder/object-creation-form.html", context=context_data)
 
 
-def open_edit_object_panel(request):
-    context = get_context_from_json(request.session["system_data"])
-    object_type = request.GET["obj_type"]
-    object = request.session["system_data"][object_type][request.GET["obj_id"]]
-    with open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json')) as object_inputs_file:
-        object_inputs_and_default_values = json.load(object_inputs_file)
-
-    numerical_attributes = object_inputs_and_default_values[object_type]["numerical_attributes"]
-    modeling_obj_attributes = object_inputs_and_default_values[object_type]["modeling_obj_attributes"]
-    list_attributes = object_inputs_and_default_values[object_type]["list_attributes"]
-
-    context_data = {
-        "object_to_edit": object, "display_obj_edition_form": True,
-        "numerical_attributes": numerical_attributes,
-        "modeling_obj_attributes": modeling_obj_attributes,
-        "list_attributes": list_attributes,
-        "object_types": {}
-    }
-    for object_type in modeling_obj_attributes:
-        context_data["object_types"][object_type["object_type"]] = [
-            data["object"] for data in context[object_type["object_type"]]]
-
-    if list_attributes:
-        for object_type in list_attributes:
-            context_data["object_types"][object_type["object_type"]] = [
-                data["object"] for data in context[object_type["object_type"]]]
-
-    return render(request, "model_builder/object-edition-form.html", context=context_data)
-
-
 def add_new_object(request):
     response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
-    new_efootprint_obj = create_efootprint_obj_from_post_data(request, flat_obj_dict)
 
-    # If object is a usage pattern it has to be added to the System to trigger recomputation
-    if request.POST["obj_type"] == "UsagePattern":
-        system = list(response_objs["System"].values())[0]
-        system.usage_patterns += [new_efootprint_obj]
-        request.session["system_data"]["System"][system.id]["usage_patterns"] = [up.id for up in system.usage_patterns]
+    if request.POST["is_an_object_edition"] == "False":
+        response_objs = add_new_object_to_system(request, response_objs, flat_obj_dict)
     else:
-        new_efootprint_obj.launch_attributes_computation_chain()
+        response_objs = edit_object_in_system(request, response_objs, flat_obj_dict)
 
-    # Update session data
-    request.session["system_data"][request.POST["obj_type"]][new_efootprint_obj.id] = new_efootprint_obj.to_json()
-    # Here we updated a sub dict of request.session so we have to explicitly tell Django that it has been updated
-    request.session.modified = True
-
-    # Add new object to object dict to recompute context
-    response_objs[request.POST["obj_type"]][new_efootprint_obj.id] = new_efootprint_obj
     context, system_footprint_html = get_context_from_response_objs(response_objs)
 
     return render(

@@ -11,7 +11,7 @@
         </button>
         <h3>{{ object_to_edit.name }}</h3>
         <form class="flex flex-col space-y-8 mt-8"
-              hx-post="edit-object"
+              hx-post="open-object-panel"
               hx-vals='{"obj_id": "{{ object.object.id }}", "obj_type": "{{ object.object.object_type }}" }'
               hx-select="#model-builder-page"
               hx-target="#model-builder-page">

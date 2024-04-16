@@ -9,15 +9,15 @@
                  src="/static/icons/arrow_back_black.svg"
                  alt="Back arrow" />
         </button>
-        <h3>New {{ obj_type }}</h3>
+        <h3>{{ header }}</h3>
         <form class="flex flex-col space-y-8 mt-8"
               hx-post="add-new-object"
-              hx-vals='{"obj_type": "{{ obj_type }}" }'
+              hx-vals='{"obj_type": "{{ obj_type }}", "is_an_object_edition": "{{ is_an_object_edition }}", "obj_id": "{{ object_id }}" }'
               hx-select="#model-builder-page"
               hx-target="#model-builder-page">
             <label>
                 Name :
-                <input id="new-object-name" type="text" name="name" required />
+                <input id="new-object-name" type="text" name="name" value="{{default_name}}" required />
             </label>
             {% for numerical_attribute in numerical_attributes %}
                 <div class="flex flex-row space-x-2 place-items-center">
@@ -36,7 +36,9 @@
                             name="{{ modeling_obj_attribute.attr_name }}"
                             class="text-black-1">
                         {% for existing_object in modeling_obj_attribute.existing_objects %}
-                            <option value="{{ existing_object.id }}">{{ existing_object.name }}</option>
+                            <option value="{{ existing_object.id }}"
+                            {% if existing_object.id == modeling_obj_attribute.selected %} selected {% endif %}
+                            >{{ existing_object.name }}</option>
                         {% endfor %}
                     </select>
                 </label>
@@ -49,7 +51,8 @@
                        {% for existing_object in list_attribute.existing_objects %}
                           <input value="{{ existing_object.id }}"
                                  name="{{ list_attribute.attr_name }}"
-                                 type="checkbox">
+                                 type="checkbox"
+                                 {% if existing_object.id in list_attribute.selected %} checked {% endif %}>
                              {{ existing_object.name }}
                           </input>
                         {% endfor %}
@@ -58,7 +61,8 @@
             {% endfor %}
         <div class="flex content-center flex-row space-x-4">
             <button>Cancel</button>
-            <button id="create-new-object-button" type="submit">Save</button>
+            <button id="create-new-object-button" type="submit">
+                {% if is_an_object_edition %} Edit {% else %} Save {% endif %}</button>
         </div>
     </form>
 </div>

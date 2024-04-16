@@ -2,11 +2,11 @@
      class="flex flex-col p-1 w-80 rounded bg-grey-9 {{ object_type }}">
     <div class="flex flex-row justify-between">
         <div class="text-white-1 font-bold">{{ object.object.name }}</div>
-        <div hx-get="open-edit-object-panel"
+        <button hx-post="open-object-panel"
              hx-swap="outerHTML"
-             hx-vals='{"obj_id": "{{ object.object.id }}", "obj_type": "{{ object_type }}" }'
-             hx-target="#object-edition-form"
-             class="edit-object-button">Edit</div>
+             hx-vals='{"object-id": "{{ object.object.id }}", "object-type": "{{ object_type }}" }'
+             hx-target="#object-creation-form"
+             class="edit-object-button">Edit</button>
     </div>
     <section class="flex flex-col gap-y-4">
         {% for numerical_attribute in object.numerical_attributes %}
