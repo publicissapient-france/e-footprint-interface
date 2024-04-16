@@ -1,5 +1,9 @@
-<button onclick="goToObject('{{linked_object.name}}')"  class="bg-grey-3 text-white-1">{{linked_object.name}}</button>
-
+<button onclick="goToObject('{{ linked_object.name }}')"
+        class="bg-primary flex gap-x-2 p-2 w-full text-white-1">
+    <img src="/static/icons/link-icon.svg" alt="Object link" />
+    {{ linked_object.class_as_simple_str }} :
+    {{ linked_object.name }}
+</button>
 <script>
     function goToObject(id) {
         document.getElementById(id).scrollIntoView();
