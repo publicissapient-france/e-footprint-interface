@@ -21,9 +21,9 @@
     <section class="flex flex-col gap-y-4">
         {% for numerical_attribute in object.numerical_attributes %}
             <div class="flex flex-col space-y-2">
-                <div>{{ numerical_attribute.attr_name_in_mod_obj_container }}</div>
+                <div>{{ numerical_attribute.readable_attr_name }}</div>
                 <div>{{ numerical_attribute.value.magnitude }}</div>
-                <span>{{ numerical_attribute.value.units }}</span>
+                <span>{{ numerical_attribute.short_unit }}</span>
             </div>
             <hr />
         {% endfor %}

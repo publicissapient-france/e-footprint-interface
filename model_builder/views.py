@@ -181,6 +181,7 @@ def get_context_from_response_objs(response_objs):
                 }
                 for num_attr in mod_obj_dict["numerical_attributes"]:
                     num_attr.short_unit = f"{num_attr.value.units:~P}"
+                    num_attr.readable_attr_name = num_attr.attr_name_in_mod_obj_container.replace("_", " ")
                 mod_obj_list.append(mod_obj_dict)
             obj_template_dict[key] = mod_obj_list
 
