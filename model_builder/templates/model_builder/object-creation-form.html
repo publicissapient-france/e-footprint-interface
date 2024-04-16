@@ -1,6 +1,7 @@
 <div id="object-creation-form"
-     class="text-black-1 bg-white-1 min-h-full w-80 {% if display_obj_form == False %}hidden{% endif %}">
-    <div class="sticky top-0">
+     class="fixed right-0 bottom-0 z-40 min-w-[30%] h-[100vh] shadow-md p-4 transition-transform duration-500 -translate-x-full bg-white dark:bg-gray-800 {% if display_obj_form == False %}hidden{% endif %}{% if display_obj_form == True %}translate-x-0{% endif %}">
+    <div class="relative h-full">
+        <div class="flex gap-8 items-center">
         <button hx-get="close-form"
                 hx-swap="outerHTML"
                 hx-target="#object-creation-form"
@@ -9,31 +10,36 @@
                  src="/static/icons/arrow_back_black.svg"
                  alt="Back arrow" />
         </button>
-        <h3>{{ header }}</h3>
+        <h3 class="font-bold text-2xl">{{ header }}</h3>
+        </div>
         <form class="flex flex-col space-y-8 mt-8"
               hx-post="add-new-object"
               hx-vals='{"obj_type": "{{ obj_type }}", "is_an_object_edition": "{{ is_an_object_edition }}", "obj_id": "{{ object_id }}" }'
               hx-target="#model-builder-page">
-            <label>
-                Name :
-                <input id="new-object-name" type="text" name="name" value="{{default_name}}" required />
+            <label class="flex flex-col gap-4 font-bold">
+                Name
+                <input id="new-object-name" type="text" name="name" class="rounded-md border-grey-4 border-[1px] border-solid mr-2" value="{{default_name}}" required />
             </label>
             {% for numerical_attribute in numerical_attributes %}
-                <div class="flex flex-row space-x-2 place-items-center">
-                    <span>{{ numerical_attribute.attr_name }}</span>
+                <div class="flex flex-col gap-4 items-start">
+                    <span class="font-bold">{{ numerical_attribute.attr_name }}</span>
+                    <div>
                     <input id="{{ numerical_attribute.attr_name }}"
                            type="number"
                            name="{{ numerical_attribute.attr_name }}"
-                           value="{{ numerical_attribute.default_value }}" />
+                           value="{{ numerical_attribute.default_value }}"
+                            class="rounded-md border-grey-4 border-[1px] border-solid mr-2"
+                    />
                     <span>{{ numerical_attribute.unit }}</span>
+                    </div>
                 </div>
             {% endfor %}
             {% for modeling_obj_attribute in modeling_obj_attributes %}
-                <label>
+                <label class="flex flex-col gap-4 font-bold">
                     {{ modeling_obj_attribute.object_type }}
                     <select id="{{ modeling_obj_attribute.attr_name }}"
                             name="{{ modeling_obj_attribute.attr_name }}"
-                            class="text-black-1">
+                            class="rounded-md border-grey-4 border-[1px] border-solid font-normal">
                         {% for existing_object in modeling_obj_attribute.existing_objects %}
                             <option value="{{ existing_object.id }}"
                             {% if existing_object.id == modeling_obj_attribute.selected %} selected {% endif %}
@@ -43,26 +49,28 @@
                 </label>
             {% endfor %}
             {% for list_attribute in list_attributes %}
-                <label>
+                <label class="font-bold">
                     {{ list_attribute.object_type }}
                     <div id="{{ list_attribute.attr_name }}"
                          class="text-black-1 flex flex-col">
                        {% for existing_object in list_attribute.existing_objects %}
-                          <input value="{{ existing_object.id }}"
+                        <label class="flex gap-2 items-center font-normal">
+                        <input value="{{ existing_object.id }}"
                                  name="{{ list_attribute.attr_name }}"
                                  type="checkbox"
+                               class="rounded-md border-grey-4 border-[1px] border-solid mr-2"
                                  {% if existing_object.id in list_attribute.selected %} checked {% endif %}>
                              {{ existing_object.name }}
                           </input>
+                        </label>
                         {% endfor %}
                     </div>
             </label>
             {% endfor %}
-        <div class="flex content-center flex-row space-x-4">
-            <button>Cancel</button>
-            <button id="create-new-object-button" type="submit">
+        <div class="flex w-full flex-end absolute bottom-0 justify-end gap-8">
+            <button id="create-new-object-button" type="submit" class="px-10 py-3 self-center rounded-3xl bg-primary text-white hover:bg-black hover:text-white">
                 {% if is_an_object_edition %} Edit {% else %} Save {% endif %}</button>
         </div>
     </form>
-</div>
+    </div>
 </div>

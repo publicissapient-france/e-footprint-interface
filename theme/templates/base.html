@@ -14,51 +14,37 @@
           <img src="/static/icons/sidenav/logo.svg" alt="E-Footprint" />
       </a>
 
-      <div class="flex flex-col gap-6 p-6 border-y-[1px] border-solid border-grey-6 {% if home %} items-start {% else %} items-center {% endif %}">
+      <div class="flex flex-col gap-6 p-6 border-y-[1px] border-solid border-grey-6">
         <button hx-get="/understand" hx-target="#main-content-block" hx-swap="innerHTML"
              hx-push-url="/understand"
              class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/home.svg" alt="Understand" />
-            {% if home %}
             <span>Understand</span>
-            {% endif %}
         </button>
         <button hx-get="/quiz/onboarding" hx-target="#main-content-block" hx-swap="innerHTML"
              hx-push-url="/quiz/onboarding"
              class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/analyze.svg" alt="New modeling" />
-            {% if home %}
             <span class="whitespace-nowrap">Create new modeling</span>
-            {% endif %}
         </button>
           <!-- Important to keep the trailing / after model_builder in the pushed url below, otherwise relative url calls with htmx won’t work -->
         <button hx-get="/model_builder" hx-target="#main-content-block" hx-swap="innerHTML"
              hx-push-url="/model_builder/"
              class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/analyze.svg" alt="Model builder" />
-            {% if home %}
             <span class="whitespace-nowrap">Dashboard view</span>
-            {% endif %}
         </button>
         <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/leaf.svg" alt="Plan" />
-            {% if home %}
             <span class="whitespace-nowrap">Plan for Eco-design</span>
-            {% endif %}
         </div>
       </div>
 
       <div class="text-grey-4 space-y-4 absolute top-2/3 p-6">
-        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/help.svg" alt="Help" />
-            {% if home %}
+        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/help.svg" alt="Help" />
             <span>Help</span>
-            {% endif %}
         </div>
-        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/settings.svg" alt="Settings" />
-            {% if home %}
+        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/settings.svg" alt="Settings" />
             <span>Settings</span>
-            {% endif %}
         </div>
-        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/account.svg" alt="Account" />
-            {% if home %}
+        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/account.svg" alt="Account" />
             <span>Account</span>
-            {% endif %}
         </div>
       </div>
     </nav>
