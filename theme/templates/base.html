@@ -9,46 +9,59 @@
   </head>
 
   <body class="min-h-screen min-w-full flex flex-row" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <div class="p-4 text-grey-1 bg-black-1 basis-1/6">
-      <h1 class="text-white-1 text-lg font-bold mb-4"><a href="/">E-footprint</a></h1>
+    <nav class="text-grey-1 bg-black relative">
+      <a href="/" class="flex justify-center py-6">
+          <img src="/static/icons/sidenav/logo.svg" alt="E-Footprint" />
+      </a>
 
-      <hr class="border-solid my-4" />
-
-      <div class="space-y-4">
+      <div class="flex flex-col gap-6 p-6 border-y-[1px] border-solid border-grey-6 {% if home %} items-start {% else %} items-center {% endif %}">
         <button hx-get="/understand" hx-target="#main-content-block" hx-swap="innerHTML"
              hx-push-url="/understand"
-             class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/home.svg" alt="Understand" />
+             class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/home.svg" alt="Understand" />
+            {% if home %}
             <span>Understand</span>
+            {% endif %}
         </button>
         <button hx-get="/quiz/onboarding" hx-target="#main-content-block" hx-swap="innerHTML"
              hx-push-url="/quiz/onboarding"
-             class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/analyze.svg" alt="New modeling" />
-            <span>Create new modeling</span>
+             class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/analyze.svg" alt="New modeling" />
+            {% if home %}
+            <span class="whitespace-nowrap">Create new modeling</span>
+            {% endif %}
         </button>
           <!-- Important to keep the trailing / after model_builder in the pushed url below, otherwise relative url calls with htmx won’t work -->
         <button hx-get="/model_builder" hx-target="#main-content-block" hx-swap="innerHTML"
              hx-push-url="/model_builder/"
-             class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/analyze.svg" alt="Model builder" />
-            <span>Work on existing modeling</span>
+             class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/analyze.svg" alt="Model builder" />
+            {% if home %}
+            <span class="whitespace-nowrap">Dashboard view</span>
+            {% endif %}
         </button>
-        <button hx-get="/analyze/" hx-target="#main-content-block" hx-swap="innerHTML"
-             hx-push-url="/analyze/"
-             class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/analyze.svg" alt="Analyze" />
-            <span>Analyze my modelings</span>
-        </button>
-        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/leaf.svg" alt="Plan" />
-            <span>Plan for Eco-design</span>
+        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/leaf.svg" alt="Plan" />
+            {% if home %}
+            <span class="whitespace-nowrap">Plan for Eco-design</span>
+            {% endif %}
         </div>
       </div>
 
-      <hr class="border-solid my-4" />
-
-      <div class="text-grey-4 space-y-4">
-        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/help.svg" alt="Help" /><span>Help</span></div>
-        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/settings.svg" alt="Settings" /><span>Settings</span></div>
-        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/account.svg" alt="Account" /><span>Account</span></div>
+      <div class="text-grey-4 space-y-4 absolute top-2/3 p-6">
+        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/help.svg" alt="Help" />
+            {% if home %}
+            <span>Help</span>
+            {% endif %}
+        </div>
+        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/settings.svg" alt="Settings" />
+            {% if home %}
+            <span>Settings</span>
+            {% endif %}
+        </div>
+        <div class="flex flex-row gap-x-1.5"><img src="/static/icons/sidenav/account.svg" alt="Account" />
+            {% if home %}
+            <span>Account</span>
+            {% endif %}
+        </div>
       </div>
-    </div>
+    </nav>
 
     <main id="main-content-block" class="flex-1">
       {% if home %}

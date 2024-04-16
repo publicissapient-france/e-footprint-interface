@@ -73,6 +73,7 @@ module.exports = {
       "background-1": "#1F1A32",
       "background-2": "#322D46",
        "background-3": "#433E58",
+       "background-4": "#F9F7FF",
        "menubar": "#0A051B",
        "pink-light": "#CFC1FE",
     },

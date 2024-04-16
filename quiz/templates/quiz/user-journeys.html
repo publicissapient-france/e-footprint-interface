@@ -6,35 +6,39 @@
 
 {% block analyze_content %}
 <form class="flex flex-col flex-1" id="quiz-step-container">
-  <div class="flex flex-row mx-32 space-x-4">
-    <div class="relative w-32 h-32 bg-grey-14 rounded-full flex justify-center items-center text-center shadow-xl bg-primary-dark">
+  <div class="flex gap-8 px-14">
+    <div class="relative w-32 h-32 rounded-full flex justify-center items-center text-center bg-primary shadow-xl">
       <img class="w-24 h-24" src="/static/icons/user-journey-icon.svg" alt="" />
     </div>
 
-    <div class="flex flex-row flex-1 justify-between items-center">
+    <div class="flex flex-row flex-1 justify-between items-center py-2">
       <div class="flex flex-col gap-3">
-        <h2 class="text-white-1 font-bold text-xl">Set User Journeys</h2>
-        <p class="text-white-1">List the actions your users will take when interacting with your product, so we can make your estimation as complete as possible.</p>
-        <p class="text-bold">--> Tell me more about this</p>
+        <h2 class="font-bold text-2xl">Set User Journey(s)</h2>
+        <p>List the actions your users will take when interacting with your product, so we can make your estimation as complete as possible.</p>
+        <p class="font-bold">--> Tell me more about this</p>
       </div>
     </div>
   </div>
   <div class="flex flex-col space-x-4 p-24" >
-          <div class="flex flex-col align-center gap-3 items-center" id="step-container">
-              <label>Your customers typically first <input name="1" class="text-black" /></label>
-              <label>for <input name="1" class="text-black" type="number" />  mins </label>
-              <label>Then they <input name="2" class="text-black" /></label>
-              <label>for <input name="2" class="text-black" type="number" /> mins </label>
+          <div class="flex flex-col gap-3 items-start" id="step-container">
+              <div>
+                  <label><span class="font-bold mr-4">Step 1</span>Your customers typically first <input name="1" class="rounded-md border-grey-4 border-[1px] border-solid" /></label>
+                <label>for <input name="1" class="rounded-md border-grey-4 border-[1px] border-solid w-24" type="number" />  mins </label>
+              </div>
+              <div>
+                <label><span class="font-bold mr-4">Step 2</span>Then they <input name="2" class="rounded-md border-grey-4 border-[1px] border-solid" /></label>
+                <label>for <input name="2" class="rounded-md border-grey-4 border-[1px] border-solid w-24" type="number" /> mins </label>
+              </div>
               {% include "./components/uj-input.html" with number='3' %}
 
-              <button class="w-fit p-1 self-center bg-black-1 rounded border-solid border-2 border-white-1 hover:bg-white hover:text-black" type="button" id="add-step"
+              <button class="border-black border-2 border-solid rounded-3xl px-6 py-2 mt-6" type="button" id="add-step"
                       hx-post="user-journeys/add-step" hx-target="this" hx-swap="beforebegin"
                       hx-vals="js:{latestIndex: document.getElementById('add-step').previousElementSibling.querySelector('input').getAttribute('name')}">
                   + Add a step
               </button>
         </div>
   </div>
-  <button class="px-4 py-2 self-center rounded-3xl bg-primary-dark text-white hover:bg-black hover:text-white"
+  <button class="px-10 py-3 self-center rounded-3xl bg-primary text-white hover:bg-black hover:text-white"
           hx-post="services" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="services">Continue
   </button>
 </form>

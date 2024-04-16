@@ -5,25 +5,27 @@
 {% endblock %}
 
 {% block analyze_content %}
-<form class="flex flex-row h-full w-full">
-  <div class="flex flex-col bg-grey-12 basis-3/4 text-grey-1 space-y-6 p-4">
-    <h1 class="text-center text-white-1 font-bold">Service quiz</h1>
-    <div class="flex flew-row">
-      <div class="basis-1/12">ICONE</div>
-      <div class="flex flex-col basis-11/12 space-y-6">
-        <div>
-          <h3>Service(s)</h3>
-          <a>How to find this information ?</a>
-        </div>
-        {% include "./components/service-block.html" %}
+<form class="flex flex-col gap-8 h-full w-full">
+    <div class="flex gap-8 px-14">
+
+    <div class="relative w-32 h-32 rounded-full flex justify-center items-center text-center bg-primary shadow-xl">
+      <img class="w-16 h-16" src="/static/icons/api-icon.svg" alt="" />
+    </div>
+
+    <div class="flex flex-row flex-1 justify-between items-center py-2">
+      <div class="flex flex-col gap-3">
+        <h2 class="font-bold text-2xl">Add Service(s)</h2>
+        <p>Now add what will actually happen technically, while the user is using the product.</p>
+        <p class="font-bold">--> How to find reliable sources</p>
       </div>
     </div>
+    </div>
+
+        {% include "./components/service-block.html" %}
     <div class="mx-auto space-x-1">
-      <button class="border-2 border-white-1 border-solid rounded hover:bg-white-1 hover:text-black-1">I don't know</button>
-      <button class="p-2 self-center border-2 border-white-1 border-solid rounded bg-white-1 text-black-1 hover:bg-black-1 hover:text-white-1"
+      <button class="px-10 py-3 self-center rounded-3xl bg-primary text-white hover:bg-black hover:text-white"
               hx-post="/quiz/usage-patterns" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="usage-patterns">Continue
       </button>
     </div>
-  </div>
 </form>
 {% endblock %}

@@ -1,26 +1,35 @@
-<div class="flex flex-col h-full text-white-1">
-  <div class="flex flex-row space-x-2">
-    <a href="{{back}}"
-      ><button><img class="text-black-1" src="/static/icons/arrow_back.svg" alt="Back arrow" /></button
-    ></a>
+<div class="flex flex-col h-full px-4">
+  <div class="flex gap-4 items-center text-black font-bold">
+    <a href="{{back}}">
+        <img class="text-black" src="/static/icons/arrow_back_black.svg" alt="Back arrow" />
+    </a>
     <div class="text-lg">Analyze</div>
   </div>
 
-  <div class="flex flex-col space-y-6 mt-20">
+  <div class="flex flex-col space-y-6 mt-20 text-black">
     <button hx-post="user-journeys" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="user-journeys">
-      <div class="flex flex-row space-x-2">
-        {% if index > 1%}<img src="/static/icons/check.svg" alt="Check" />{% else %} <img src="/static/icons/ellipse.svg" alt="To do" /> {% endif %}
-        <span class="{% if index == 1 %} font-bold {% endif %} text-white">Set User journey(s)</span>
+      <div class="flex gap-4">
+          <div class="w-6 h-6 rounded-full grid place-content-center bg-black">
+              {% if index > 1%}<img src="/static/icons/check.svg" alt="Check" class="fill-white" /> {% endif %}
+          </div>
+        <span class="{% if index == 1 %} font-bold {% endif %} text-lg">Set User journey(s)</span>
       </div>
     </button>
-      <hr class="rotate-90 w-8 -translate-x-2 {% if index >= 2 %} bg-white {% endif %}" style="opacity:1" />
+      <hr class="rotate-90 w-8 border-[1px] border-solid border-black -translate-x-[1px]" style="opacity:1" />
     <button hx-post="services" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="services">
-      <div class="flex flex-row space-x-2">{% if index > 2%}<img src="/static/icons/check.svg" alt="Check" />{% else %} <img src="/static/icons/ellipse.svg" alt="To do" /> {% endif %}
-          <span class="{% if index == 2 %} font-bold {% endif %} {% if index >= 2 %} text-white {% else %} text-pink-light {% endif %}">Add Services</span>
+      <div class="flex gap-4">
+        <div class="w-6 h-6 rounded-full grid place-content-center bg-black">
+              {% if index > 2%}<img src="/static/icons/check.svg" alt="Check" class="fill-white" /> {% endif %}
+          </div>
+        <span class="{% if index == 2 %} font-bold {% endif %} text-lg">Add Services</span>
       </div>
     </button>
-      <hr class="rotate-90 w-8 bg-white opacity-1 -translate-x-2 {% if index >= 3 %} bg-white {% endif %}" style="opacity:1" />
+      <hr class="rotate-90 w-8 border-[1px] border-solid border-black -translate-x-[1px]" style="opacity:1" />
     <button hx-post="usage-patterns" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="usage-patterns">
-      <div class="flex flex-row space-x-2"><img src="/static/icons/ellipse.svg" alt="To do" /><span class="{% if index == 3 %} font-bold {% endif %} {% if index >= 3 %} text-white {% else %} text-pink-light {% endif %}">Describe usage</span></div></button>
+        <div class="flex gap-4">
+        <div class="w-6 h-6 rounded-full grid place-content-center bg-black"></div>
+        <span class="{% if index == 3 %} font-bold {% endif %} text-lg">Describe usage</span>
+        </div>
+    </button>
   </div>
 </div>
