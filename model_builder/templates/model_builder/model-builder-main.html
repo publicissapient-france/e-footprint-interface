@@ -11,7 +11,7 @@
                             id="add-new-{{ object_type }}-button"
                             hx-get="open-add-new-object-panel"
                             hx-swap="outerHTML"
-                            hx-vals='{"obj": "{{ object_type }}" }'
+                            hx-vals='{"object-type": "{{ object_type }}" }'
                             hx-target="#object-creation-form">+ Add {{ object_type }}</button>
                     {% for object in object_list %}
                         {% include "./e-footprint-object.html" with object=object object_type=object_type %}

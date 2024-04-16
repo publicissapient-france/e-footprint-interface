@@ -43,32 +43,33 @@ def update_value(request):
 
 
 def open_add_new_object_panel(request):
-    context, system_footprint_html = get_context_from_json(request.session["system_data"])
-
-    object_type = request.GET["obj"]
+    object_type = request.GET["object-type"]
     with open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json')) as object_inputs_file:
         object_inputs_and_default_values = json.load(object_inputs_file)
+
     numerical_attributes = object_inputs_and_default_values[object_type]["numerical_attributes"]
     modeling_obj_attributes = object_inputs_and_default_values[object_type]["modeling_obj_attributes"]
     list_attributes = object_inputs_and_default_values[object_type]["list_attributes"]
 
+    for mod_obj_attribute_desc in modeling_obj_attributes:
+        # Retrieve existing objects of this type
+        mod_obj_attribute_desc["existing_objects"] = list(
+            request.session["system_data"][mod_obj_attribute_desc["object_type"]].values())
+
+    for list_attributes_desc in list_attributes:
+        # Retrieve existing objects of this type
+        list_attributes_desc["existing_objects"] = list(
+            request.session["system_data"][list_attributes_desc["object_type"]].values())
+
     context_data = {
-        "obj_name": request.GET["obj"], "display_obj_form": True,
+        "obj_type": object_type, "display_obj_form": True,
         "numerical_attributes": numerical_attributes,
         "modeling_obj_attributes": modeling_obj_attributes,
         "list_attributes": list_attributes,
-        "object_types": {}
     }
-    for object_type in modeling_obj_attributes:
-        context_data["object_types"][object_type["object_type"]] = [
-            data["object"] for data in context[object_type["object_type"]]]
-
-    if list_attributes:
-        for object_type in list_attributes:
-            context_data["object_types"][object_type["object_type"]] = [
-                data["object"] for data in context[object_type["object_type"]]]
 
     return render(request, "model_builder/object-creation-form.html", context=context_data)
+
 
 def open_edit_object_panel(request):
     context = get_context_from_json(request.session["system_data"])
