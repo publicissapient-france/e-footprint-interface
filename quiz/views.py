@@ -1,3 +1,20 @@
+from efootprint.abstract_modeling_classes.source_objects import SourceValue, SourceObject
+from efootprint.api_utils.system_to_json import system_to_json
+from efootprint.builders.hardware.devices_defaults import default_laptop, default_smartphone
+from efootprint.builders.hardware.servers_defaults import default_autoscaling
+from efootprint.builders.hardware.storage_defaults import default_ssd
+from efootprint.constants.sources import Sources
+from efootprint.core.hardware.device_population import DevicePopulation
+from efootprint.core.hardware.servers.autoscaling import Autoscaling
+from efootprint.core.service import Service
+from efootprint.constants.units import u
+from efootprint.core.system import System
+from efootprint.core.usage.job import Job
+from efootprint.core.usage.usage_pattern import UsagePattern
+from efootprint.core.usage.user_journey import UserJourney
+from efootprint.core.usage.user_journey_step import UserJourneyStep
+from efootprint.builders.hardware.network_defaults import default_mobile_network, default_wifi_network
+
 from utils import htmx_render
 
 from django.shortcuts import render
@@ -52,15 +69,113 @@ def form_usage_pattern(request):
     for attr_value in vars(Countries).values():
         if callable(attr_value):
             countries_list.append(attr_value())
+
     return htmx_render(request, "quiz/usage-patterns.html", context={"countries": countries_list})
 
 
 def analyze(request):
-    request.session['quiz_data']['usage_pattern'] = {
-        "device_type": request.POST['device'],
-        "population_size": request.POST['visitors'],
-        "country": request.POST['country']
-    }
-    request.session.modified = True
-    print(request.session['quiz_data'])
+    efootprint_services = {}
+    uj_steps = []
+
+    for service_desc in request.session["quiz_data"]["services"]:
+        if service_desc["type"] in ["web-app", "streaming"]:
+            server = default_autoscaling(f"Default {service_desc['type']} autoscaling server")
+            storage = default_ssd(f"Default {service_desc['type']} SSD storage")
+            service = Service(
+                f"{service_desc['type']} service",
+                server=server,
+                storage=storage,
+                base_ram_consumption=SourceValue(300 * u.MB, Sources.HYPOTHESIS),
+                base_cpu_consumption=SourceValue(2 * u.core, Sources.HYPOTHESIS))
+        elif service_desc["type"] == "gen-ai":
+            llm_server = Autoscaling(
+                "Default AI GPU server",
+                carbon_footprint_fabrication=SourceValue(4900 * u.kg, Sources.HYPOTHESIS),
+                power=SourceValue(6400 * u.W, Sources.HYPOTHESIS),
+                lifespan=SourceValue(5 * u.year, Sources.HYPOTHESIS),
+                idle_power=SourceValue(500 * u.W, Sources.HYPOTHESIS),
+                ram=SourceValue(128 * u.GB, Sources.HYPOTHESIS),
+                cpu_cores=SourceValue(16 * u.core, Sources.HYPOTHESIS),
+                # Used to represent GPUs because e-footprint doesn’t natively model GPU resources yet.
+                power_usage_effectiveness=SourceValue(1.2 * u.dimensionless, Sources.HYPOTHESIS),
+                average_carbon_intensity=SourceValue(300 * u.g / u.kWh, Sources.HYPOTHESIS),
+                server_utilization_rate=SourceValue(1 * u.dimensionless, Sources.HYPOTHESIS))
+            storage = default_ssd("Default SSD storage for AI server")
+            service = Service(
+                f"{service_desc['type']} service", llm_server, storage,
+                base_ram_consumption=SourceValue(0 * u.MB, Sources.HYPOTHESIS),
+                base_cpu_consumption=SourceValue(0 * u.core, Sources.HYPOTHESIS))
+        efootprint_services[service_desc["type"]] = service
+
+    for service_desc in request.session["quiz_data"]["services"]:
+        for uj_step_desc in request.session["quiz_data"]["user_journey_steps"]:
+            if uj_step_desc["name"] in service_desc["called_by"]:
+                uj_duration_in_min = float(uj_step_desc["duration_in_min"])
+                if service_desc["type"] == "web-app":
+                    job = Job(f"request {service_desc['type']} service",
+                              service=efootprint_services[service_desc["type"]],
+                              data_upload=SourceValue(0.05 * u.MB / u.uj, Sources.USER_DATA),
+                              data_download=SourceValue(2 * u.MB / u.uj, Sources.USER_DATA),
+                              request_duration=SourceValue(1 * u.s, Sources.HYPOTHESIS),
+                              cpu_needed=SourceValue(0.2 * u.core / u.uj, Sources.HYPOTHESIS),
+                              ram_needed=SourceValue(50 * u.MB / u.uj, Sources.HYPOTHESIS))
+                elif service_desc["type"] == "streaming":
+                    job = Job(f"request {service_desc['type']} service",
+                              service=efootprint_services[service_desc["type"]],
+                              data_upload=SourceValue(0.05 * u.MB / u.uj, Sources.USER_DATA),
+                              data_download=SourceValue(4 * uj_duration_in_min * u.MB / u.uj, Sources.USER_DATA),
+                              request_duration=SourceValue((uj_duration_in_min / 10) * u.min, Sources.HYPOTHESIS),
+                              cpu_needed=SourceValue(0.2 * u.core / u.uj, Sources.HYPOTHESIS),
+                              ram_needed=SourceValue(50 * u.MB / u.uj, Sources.HYPOTHESIS))
+                elif service_desc["type"] == "gen-ai":
+                    job = Job(f"request {service_desc['type']} service",
+                              service=efootprint_services[service_desc["type"]],
+                              data_upload=SourceValue(0.05 * u.MB / u.uj, Sources.USER_DATA),
+                              data_download=SourceValue(0.5 * u.MB / u.uj, Sources.USER_DATA),
+                              request_duration=SourceValue((uj_duration_in_min / 20) * u.min, Sources.HYPOTHESIS),
+                              cpu_needed=SourceValue(16 * u.core / u.uj, Sources.HYPOTHESIS),
+                              ram_needed=SourceValue(128 * u.GB / u.uj, Sources.HYPOTHESIS))
+
+                uj_step = UserJourneyStep(
+                    uj_step_desc["name"],
+                    user_time_spent=SourceValue(float(uj_step_desc["duration_in_min"]) * u.min / u.uj, Sources.USER_DATA),
+                    jobs=[job])
+
+                uj_steps.append(uj_step)
+
+    user_journey = UserJourney("My User Journey", uj_steps=uj_steps)
+
+    if request.POST['device'] == "smartphone":
+        network = default_mobile_network()
+        device = default_smartphone()
+    elif request.POST['device'] == "laptop":
+        network = default_wifi_network()
+        device = default_laptop()
+
+    for attr_value in vars(Countries).values():
+        if callable(attr_value):
+            country = attr_value()
+            if country.name == request.POST['country']:
+                break
+
+    device_population = DevicePopulation(
+        "device population",
+        nb_devices=SourceValue(int(request.POST['visitors']) * u.user, Sources.USER_DATA),
+        country=country,
+        devices=[device])
+
+    usage_pattern = UsagePattern(
+        "Daily video streaming consumption",
+        user_journey=user_journey,
+        device_population=device_population,
+        network=network,
+        user_journey_freq_per_user=SourceValue(1 * u.user_journey / (u.user * u.day), Sources.USER_DATA),
+        time_intervals=SourceObject([[7, 12], [17, 23]]))
+
+    system = System("System", usage_patterns=[usage_pattern])
+
+    del request.session["quiz_data"]
+
+    request.session["system_data"] = system_to_json(system, save_calculated_attributes=False)
+
     return model_builder_main(request)

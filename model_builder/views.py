@@ -15,14 +15,11 @@ import os
 
 def model_builder_main(request):
     try:
-        jsondata = json.loads(request.POST["json"])
+        jsondata = request.session["system_data"]
     except MultiValueDictKeyError:
-        if "system_data" not in request.session.keys():
-            with open(os.path.join("model_builder", "default_system_data.json"), "r") as file:
-                jsondata = json.load(file)
-                request.session["system_data"] = jsondata
-        else:
-            jsondata = request.session["system_data"]
+        with open(os.path.join("model_builder", "default_system_data.json"), "r") as file:
+            jsondata = json.load(file)
+            request.session["system_data"] = jsondata
 
     # compute calculated attributes with e-footprint
     context, system_footprint_html = get_context_from_json(jsondata)
