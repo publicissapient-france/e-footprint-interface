@@ -1,56 +1,52 @@
 <div id="{{ object.object.name }}"
      class="flex flex-col w-80 rounded text-black-1 bg-pink-light {{ object_type }}">
     <div class="flex flex-row pt-2 pl-2 justify-between">
-        <div class="text-xl font-bold">{{ object.object.name }}</div>
+        <div class="text-xl font-bold object-name">{{ object.object.name }}</div>
         <div>
-        <button class="edit-object-button bg-primary p-2 rounded-xl h-10 hover:bg-black text-white mr-2"
-                hx-post="open-object-panel"
-                hx-swap="outerHTML"
-                hx-vals='{"object-id": "{{ object.object.id }}", "object-type": "{{ object_type }}" }'
-                hx-target="#object-creation-form">
-            Edit
-        </button>
-        {% if object.is_deletable %}
-            <button class="delete-object-button bg-secondary p-2 rounded-xl h-10 hover:bg-black text-white mr-2"
-                    hx-post="delete-object"
+            <button class="edit-object-button bg-primary p-2 rounded-xl h-10 hover:bg-black text-white mr-2"
+                    hx-post="open-object-panel"
                     hx-swap="outerHTML"
-                    hx-target="#model-builder-page"
-                    hx-vals='{"object-id": "{{ object.object.id }}", "object-type": "{{ object_type }}"}'
-                    hx-confirm="Are you sure you want to delete {{ object.object.name }} ?">
-                Delete
-            </button>
-        {% endif %}
+                    hx-vals='{"object-id": "{{ object.object.id }}", "object-type": "{{ object_type }}" }'
+                    hx-target="#object-creation-form">Edit</button>
+            {% if object.is_deletable %}
+                <button class="delete-object-button bg-secondary p-2 rounded-xl h-10 hover:bg-black text-white mr-2"
+                        hx-post="delete-object"
+                        hx-swap="outerHTML"
+                        hx-target="#model-builder-page"
+                        hx-vals='{"object-id": "{{ object.object.id }}", "object-type": "{{ object_type }}"}'
+                        hx-confirm="Are you sure you want to delete {{ object.object.name }} ?">Delete</button>
+            {% endif %}
         </div>
-</div>
-<section class="my-2 flex flex-col gap-y-1.5 px-4">
-    {% for numerical_attribute in object.numerical_attributes %}
-        <div class="flex flex-row gap-x-1 px-2 bg-white-1 rounded">
-            <div>{{ numerical_attribute.readable_attr_name }}</div>
-            <div>{{ numerical_attribute.value.magnitude }}</div>
-            <span>{{ numerical_attribute.short_unit }}</span>
-        </div>
-    {% endfor %}
-</section>
-{% if object.modeling_obj_attributes %}
-    <br />
-    <section class="space-y-2">
-        <div class="px-2">Direct object links</div>
-        <div class="space-y-2">
-            {% for modeling_obj_attribute in object.modeling_obj_attributes %}
-                {% include "./object-link.html" with linked_object=modeling_obj_attribute %}
-            {% endfor %}
-        </div>
+    </div>
+    <section class="my-2 flex flex-col gap-y-1.5 px-4">
+        {% for numerical_attribute in object.numerical_attributes %}
+            <div class="flex flex-row gap-x-1 px-2 bg-white-1 rounded">
+                <div>{{ numerical_attribute.readable_attr_name }}</div>
+                <div>{{ numerical_attribute.value.magnitude }}</div>
+                <span>{{ numerical_attribute.short_unit }}</span>
+            </div>
+        {% endfor %}
     </section>
-{% endif %}
-{% if object.list_attributes %}
-    <br />
-    <section>
-        <span class="my-4 px-2">List object links</span>
-        <ul class="space-y-2">
-            {% for list_attribute in object.list_attributes %}
-                <li>{% include "./object-link.html" with linked_object=list_attribute %}</li>
-            {% endfor %}
-        </ul>
-    </section>
-{% endif %}
+    {% if object.modeling_obj_attributes %}
+        <br />
+        <section class="space-y-2">
+            <div class="px-2">Direct object links</div>
+            <div class="space-y-2">
+                {% for modeling_obj_attribute in object.modeling_obj_attributes %}
+                    {% include "./object-link.html" with linked_object=modeling_obj_attribute %}
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+    {% if object.list_attributes %}
+        <br />
+        <section>
+            <span class="my-4 px-2">List object links</span>
+            <ul class="space-y-2">
+                {% for list_attribute in object.list_attributes %}
+                    <li>{% include "./object-link.html" with linked_object=list_attribute %}</li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% endif %}
 </div>
