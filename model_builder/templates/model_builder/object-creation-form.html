@@ -1,5 +1,5 @@
 <div id="object-creation-form"
-     class="fixed right-0 bottom-0 z-40 min-w-[30%] h-[100vh] shadow-md p-4 transition-transform duration-500 -translate-x-full bg-white dark:bg-gray-800 {% if display_obj_form == False %}hidden{% endif %}{% if display_obj_form == True %}translate-x-0{% endif %}">
+     class="fixed right-0 bottom-0 z-40 overflow-scroll min-w-[30%] h-[100vh] shadow-md p-4 transition-transform duration-500 -translate-x-full bg-white dark:bg-gray-800 {% if display_obj_form == False %}hidden{% endif %}{% if display_obj_form == True %}translate-x-0{% endif %}">
     <div class="relative h-full">
         <div class="flex gap-8 items-center">
         <button hx-get="close-form"
@@ -26,6 +26,7 @@
                     <div>
                     <input id="{{ numerical_attribute.attr_name }}"
                            type="number"
+                           step="0.01"
                            name="{{ numerical_attribute.attr_name }}"
                            value="{{ numerical_attribute.default_value }}"
                             class="rounded-md border-grey-4 border-[1px] border-solid mr-2"
@@ -67,9 +68,10 @@
                     </div>
             </label>
             {% endfor %}
-        <div class="flex w-full flex-end absolute bottom-0 justify-end gap-8">
+        <div class="flex w-full flex-end bottom-0 justify-end gap-8 pb-8">
             <button id="create-new-object-button" type="submit" class="px-10 py-3 self-center rounded-3xl bg-primary text-white hover:bg-black hover:text-white">
-                {% if is_an_object_edition %} Edit {% else %} Save {% endif %}</button>
+                {% if is_an_object_edition %} Edit {% else %} Save {% endif %}
+            </button>
         </div>
     </form>
     </div>
