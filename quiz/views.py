@@ -159,13 +159,13 @@ def analyze(request):
                 break
 
     device_population = DevicePopulation(
-        "device population",
+        "Device population",
         nb_devices=SourceValue(int(request.POST['visitors']) * u.user, Sources.USER_DATA),
         country=country,
         devices=[device])
 
     usage_pattern = UsagePattern(
-        "Daily video streaming consumption",
+        "Description of usage",
         user_journey=user_journey,
         device_population=device_population,
         network=network,
