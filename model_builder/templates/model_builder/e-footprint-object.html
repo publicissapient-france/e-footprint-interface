@@ -2,22 +2,25 @@
      class="flex flex-col w-80 rounded text-black-1 bg-pink-light {{ object_type }}">
     <div class="flex flex-row pt-2 pl-2 justify-between">
         <div class="text-xl font-bold">{{ object.object.name }}</div>
-        <button class="edit-object-button mr-2"
+        <div>
+        <button class="edit-object-button bg-primary p-2 rounded-xl h-10 hover:bg-black text-white mr-2"
                 hx-post="open-object-panel"
                 hx-swap="outerHTML"
                 hx-vals='{"object-id": "{{ object.object.id }}", "object-type": "{{ object_type }}" }'
                 hx-target="#object-creation-form">
-            <img src="/static/icons/edit-icon.svg" alt="Edit icon" />
+            Edit
         </button>
         {% if object.is_deletable %}
-            <button class="delete-object-button"
+            <button class="delete-object-button bg-secondary p-2 rounded-xl h-10 hover:bg-black text-white mr-2"
                     hx-post="delete-object"
                     hx-swap="outerHTML"
                     hx-target="#model-builder-page"
                     hx-vals='{"object-id": "{{ object.object.id }}", "object-type": "{{ object_type }}"}'
-                    hx-confirm="Are you sure you want to delete {{ object.object.name }} ?">Delete</button>
+                    hx-confirm="Are you sure you want to delete {{ object.object.name }} ?">
+                Delete
+            </button>
         {% endif %}
-    </button>
+        </div>
 </div>
 <section class="my-2 flex flex-col gap-y-1.5 px-4">
     {% for numerical_attribute in object.numerical_attributes %}
