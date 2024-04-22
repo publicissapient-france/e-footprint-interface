@@ -12,6 +12,7 @@ from django.conf import settings
 import json
 from django.shortcuts import render
 import os
+from django.http import JsonResponse
 
 
 def model_builder_main(request):
@@ -198,3 +199,19 @@ def retrieve_attributes_by_type(modeling_obj, attribute_type, attrs_to_ignore=['
             output_list.append((attr_name, attr_value))
 
     return output_list
+
+
+def download_json(request):
+    response = JsonResponse(request.session['system_data'])
+    response['Content-Type'] = 'application/force-download'
+    response['Content-Disposition'] = f'attachment; filename="model-system-data.json"'
+    return response
+
+
+def import_json(request):
+    if "import-json-input" in request.POST:
+        file = request.FILES['import-json-input']
+        print(file)
+        data = file.read()
+        print(data)
+    return 'return'
