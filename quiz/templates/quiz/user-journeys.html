@@ -22,12 +22,12 @@
   <div class="flex flex-col space-x-4 p-24" >
           <div class="flex flex-col gap-3 items-start" id="step-container">
               <div>
-                  <label><span class="font-bold mr-4">Step 1</span>Your customers typically first <input name="1" class="rounded-md border-grey-4 border-[1px] border-solid" /></label>
-                <label>for <input name="1" class="rounded-md border-grey-4 border-[1px] border-solid w-24" type="number" />  mins </label>
+                  <label><span class="font-bold mr-4">Step 1</span>Your customers typically first <input name="1" type="text" class="rounded-md border-grey-4 border-[1px] border-solid" /></label>
+                <label>for <input name="1" class="rounded-md border-grey-4 border-[1px] border-solid w-24" type="number" min="0" />  mins </label>
               </div>
               <div>
-                <label><span class="font-bold mr-4">Step 2</span>Then they <input name="2" class="rounded-md border-grey-4 border-[1px] border-solid" /></label>
-                <label>for <input name="2" class="rounded-md border-grey-4 border-[1px] border-solid w-24" type="number" /> mins </label>
+                <label><span class="font-bold mr-4">Step 2</span>Then they <input name="2" type="text" class="rounded-md border-grey-4 border-[1px] border-solid" /></label>
+                <label>for <input name="2" class="rounded-md border-grey-4 border-[1px] border-solid w-24" type="number" min="0" /> mins </label>
               </div>
               {% include "./components/uj-input.html" with number='3' %}
 
