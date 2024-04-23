@@ -1,12 +1,26 @@
 <div class="min-h-screen bg-background-4 flex flex-col" id="quiz-container">
   <h1 class="text-2xl font-bold text-center mt-8">Start mapping your service</h1>
 
-  <div class="flex flex-col flex-1 justify-center space-y-2">
-    <div class="flex flex-row bg-primary-lighter mx-32 p-4 space-x-4 rounded-xl">
+  <div class="flex flex-col flex-1 justify-center gap-4">
+    <h2 class="text-xl font-bold text-center">From an imported model</h2>
+    <div class="flex bg-primary-lighter mx-32 p-4 space-x-4 rounded-xl justify-center">
+     <form action="import-json" method="post" enctype="multipart/form-data" class="flex gap-2 items-center">
+        {% csrf_token %}
+        <label for="import-json-input" class="hidden">import json file</label>
+        <input id="import-json-input" name="import-json-input" type="file">
+        <button class="h-min bg-primary text-white mr-2 px-8 py-4 rounded-full" type="submit">Use your model</button>
+     </form>
+        {% if context.errorUpload %}
+            <h2>{{errorUpload}}</h2>
+        {% endif %}
+    </div>
+
+    <h2 class="text-xl font-bold text-center">Or from scratch</h2>
+
+    <div class="flex bg-primary-lighter mx-32 p-4 space-x-4 rounded-xl">
       <div class="relative w-32 h-32 bg-primary rounded-full flex justify-center items-center text-center shadow-xl">
         <img class="w-24 h-24" src="/static/icons/user-journey-icon.svg" alt="User journey" />
       </div>
-
       <div class="flex flex-1 gap-4 justify-between items-center">
         <div class="flex flex-col gap-2">
           <p class="font-bold">Set User Journeys</p>
@@ -16,10 +30,10 @@
             <button id="go-to-user-journeys-button" class="h-min bg-primary text-white mr-2 px-8 py-4 rounded-full"
                 hx-post="user-journeys" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="user-journeys">Start
             </button>
-      </div>
+        </div>
     </div>
 
-    <div class="flex flex-row bg-primary-lighter mx-32 p-4 space-x-4 rounded-xl">
+    <div class="flex bg-primary-lighter mx-32 p-4 space-x-4 rounded-xl">
       <div class="relative w-32 h-32 bg-primary rounded-full flex justify-center items-center text-center shadow-xl">
         <img class="w-12 h-12" src="/static/icons/api-icon.svg" alt="API" />
       </div>
@@ -35,7 +49,7 @@
       </div>
     </div>
 
-    <div class="flex flex-row bg-primary-lighter mx-32 p-4 space-x-4 rounded-xl">
+    <div class="flex bg-primary-lighter mx-32 p-4 space-x-4 rounded-xl">
       <div class="relative w-32 h-32 bg-primary rounded-full flex justify-center items-center text-center shadow-xl">
         <img class="w-24 h-24" src="/static/icons/usage-icon.svg" alt="Describe usage" />
       </div>

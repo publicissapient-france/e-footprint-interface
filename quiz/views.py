@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from efootprint.abstract_modeling_classes.source_objects import SourceValue, SourceObject
 from efootprint.api_utils.system_to_json import system_to_json
 from efootprint.builders.hardware.devices_defaults import default_laptop, default_smartphone
@@ -16,6 +17,8 @@ from efootprint.core.usage.user_journey_step import UserJourneyStep
 from efootprint.builders.hardware.network_defaults import default_mobile_network, default_wifi_network
 
 from utils import htmx_render
+
+import json
 
 from django.shortcuts import render
 from efootprint.constants.countries import Countries
@@ -179,3 +182,16 @@ def analyze(request):
     request.session["system_data"] = system_to_json(system, save_calculated_attributes=False)
 
     return model_builder_main(request)
+
+
+def import_json(request):
+    if "import-json-input" in request.FILES:
+        try:
+            file = request.FILES['import-json-input']
+            data = json.load(file)
+            request.session["system_data"] = data
+            return model_builder_main(request)
+        except ValueError as e:
+            return htmx_render(request, "quiz/onboarding.html", context={"uploadError": "Error: Invalid JSON data"})
+    return htmx_render(request, "quiz/onboarding.html", context={"uploadError": "Error: No file uploaded"})
+

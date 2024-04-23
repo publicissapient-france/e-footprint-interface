@@ -2,11 +2,6 @@
     <div class="flex gap-4">
         {% include "./graph-container.html" with systemFootprint=systemFootprint %}
         <a class="mt-8 edit-object-button bg-primary p-2 rounded-xl h-min hover:bg-black text-white" href="download-json">Export your model</a>
-        <form action="import-json" method="POST">
-            {% csrf_token %}
-            <label>Import your model<input name="import-json-input" type="file" /></label>
-            <button class="edit-object-button bg-primary p-2 rounded-xl h-min hover:bg-black text-white" type="submit">import</button>
-        </form>
     </div>
     <div class="flex flex-row">
         <div id="objects-list"
