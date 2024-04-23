@@ -8,5 +8,6 @@ urlpatterns = [
     path("user-journeys/add-step", views.add_user_journey_step, name="add_user_journey_step"),
     path("services", views.services, name="services"),
     path("usage-patterns", views.form_usage_pattern, name="form_usage_pattern"),
-    path("analyze", views.analyze, name="analyze")
+    path("analyze", views.analyze, name="analyze"),
+    path("import-json", views.import_json, name="import-json")
 ]

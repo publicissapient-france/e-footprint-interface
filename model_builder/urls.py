@@ -9,6 +9,5 @@ urlpatterns = [
     path("close-form", views.close_form, name="close-form"),
     path("update-value", views.update_value, name="update_value"),
     path("delete-object", views.delete_object, name="delete-object"),
-    path("download-json", views.download_json, name="download-json"),
-    path("import-json", views.import_json, name="import-json")
+    path("download-json", views.download_json, name="download-json")
 ]
