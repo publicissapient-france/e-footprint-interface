@@ -1,10 +1,10 @@
 <div id="{{ object.object.id }}"
-     class="flex flex-col w-80 rounded text-black-1 bg-primary-lighter {{ object_type }}"
+     class="flex flex-col w-80 rounded text-black-1 bg-pink-light {{ object_type }}"
      {% if hx_swap_oob %}
         hx-swap-oob="true"
      {% endif %}>
     <div class="flex flex-row pt-2 pl-2 justify-between">
-        <div class="text-lg font-bold object-name">{{ object.object.name }}</div>
+        <div class="text-xl font-bold object-name">{{ object.object.name }}</div>
         <div>
             <button class="edit-object-button relative bg-primary p-2 rounded-xl h-10 hover:bg-primary-dark active:bg-primary-darker text-white mr-2"
                     hx-post="open-edit-object-panel/{{ object_type }}/"
@@ -41,26 +41,4 @@
             </div>
         {% endfor %}
     </section>
-    {% if object.modeling_obj_attributes %}
-        <br />
-        <section class="space-y-2">
-            <div class="px-2">Direct object links</div>
-            <div class="space-y-2">
-                {% for modeling_obj_attribute in object.modeling_obj_attributes %}
-                    {% include "./object-link.html" with linked_object=modeling_obj_attribute %}
-                {% endfor %}
-            </div>
-        </section>
-    {% endif %}
-    {% if object.list_attributes %}
-        <br />
-        <section>
-            <span class="my-4 px-2">List object links</span>
-            <ul class="space-y-2">
-                {% for list_attribute in object.list_attributes %}
-                    <li>{% include "./object-link.html" with linked_object=list_attribute %}</li>
-                {% endfor %}
-            </ul>
-        </section>
-    {% endif %}
 </div>

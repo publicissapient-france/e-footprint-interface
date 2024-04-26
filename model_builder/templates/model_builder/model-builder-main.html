@@ -1,43 +1,41 @@
-<div id="model-builder-page">
-    <div class="grid grid-cols-2 gap-4 items-center">
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/drawflow.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/drawflow.css' %}" />
+
+<div id="model-builder-page" class="w-screen">
+    <div class="grid grid-cols-2 gap-4 items-center w-full">
         {% include "./graph-container.html" with systemFootprint=systemFootprint %}
         {% include "./compare-container.html" with img_base64=img_base64 %}
     </div>
-    <div class="flex justify-between px-8 items-center">
+    <div class="flex justify-between px-8 items-center w-full">
         {% include "./model-comparison-buttons.html" with is_different_from_ref_model=is_different_from_ref_model %}
         <a class="edit-object-button bg-primary py-2 px-6 rounded-xl h-min hover:bg-primary-dark active:bg-primary-darker text-white" href="download-json">Export your model</a>
     </div>
     <div class="flex flex-row">
-        <div id="objects-list"
-             class="flex flex-col flex-1 p-8 rounded text-black-1 gap-y-1">
-            {% for object_type, object_list in obj_template_dict.items %}
-                <div class="bg-grey-16 p-4 rounded">
-                    <div class="flex items-center gap-x-2 mb-2 font-bold p-4 h-fit">
-                        <div class="border-primary border-2 bg-white-1 rounded-full p-4 h-fit">
-                            <img class="w-10 h-10" src="/static/icons/object-icons/{{ object_type|lower }}.svg" alt="{{ object_type|lower }}-icon"/>
-                        </div>
-                        <h3 class="mb-2 font-bold">{{ object_type }}</h3>
-                    </div>
-                    <section id="{{ object_type }}-section" class="flex flex-row rounded gap-x-4">
-                        <div class="flex border-dotted border-primary-light border-2 p-4 w-48 h-48 rounded">
-                            <button class="text-black flex flex-col my-auto mx-auto items-center"
-                                    id="add-new-{{ object_type }}-button"
-                                    script="on click if #object-creation-or-edition-form is not null then remove #object-creation-or-edition-form"
-                                    hx-post="open-create-object-panel/{{ object_type }}/"
-                                    hx-swap="beforeend"
-                                    hx-target="#model-builder-page"
+        <div class="flex flex-col bg-background-5 p-4 rounded">
+            <div class="flex flex-row">
+                {% for object_type, object_list in obj_template_dict.items %}
+                    <div class="flex bg-pink-light p-4 w-32 h-32 rounded">
+                        <button class="text-black flex flex-col my-auto mx-auto items-center"
+                                id="add-new-{{ object_type }}-button"
+                                script="on click if #object-creation-or-edition-form is not null then remove #object-creation-or-edition-form"
+                                hx-post="open-create-object-panel/{{ object_type }}/"
+                                hx-swap="beforeend"
+                                hx-target="#model-builder-page"
                                     hx-disabled-elt="button">
-                                <span class="flex place-content-center h-16 w-16 text-white bg-primary-lighter rounded-full"><span class="my-auto">
-                                    <img src="/static/icons/plus-white.svg" alt="Add new object" />
-                                    </span></span><span>Add {{ object_type }}</span>
-                        </button>
-                    </div>
-                    {% for object in object_list %}
-                    {% include "./e-footprint-object.html" with object=object object_type=object_type %}
-                    {% endfor %}
-                </section>
+                            <span class="flex place-content-center h-16 w-16 text-white bg-primary rounded-full"><span class="my-auto">
+                                <img src="{% static '/icons/plus-white.svg' %}" alt="Add new object" />
+                                </span></span><span>Add {{ object_type }}</span>
+                            </button>
+                        </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
+            <div id="drawflow" />
+    </div>
     </div>
 </div>
+<div>{{ drawflow_json|json_script:"json-data" }}</div>
+<script src="{% static 'scripts/drawflow.min.js' %}"></script>
+<script src="{% static 'scripts/drawflow.js' %}"></script>
+<script>init("{{ request.scheme }}://{{ request.get_host }}", "{{csrf_token}}");</script>
+

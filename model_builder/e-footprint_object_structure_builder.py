@@ -35,5 +35,5 @@ for efootprint_object_type in response_objs.keys():
     }
 
 
-with open(os.path.join("..", "object_inputs_and_default_values.json"), "w") as file:
+with open(os.path.join("..", 'theme', 'static', "object_inputs_and_default_values.json"), "w") as file:
     json.dump(efootprint_obj_structure, file, indent=4)

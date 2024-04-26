@@ -76,6 +76,7 @@ module.exports = {
       "background-2": "#322D46",
        "background-3": "#433E58",
        "background-4": "#F9F7FF",
+       "background-5": "#FBAFAFA",
        "menubar": "#0A051B",
        "pink-light": "#CFC1FE",
        "red-1": "#F00"

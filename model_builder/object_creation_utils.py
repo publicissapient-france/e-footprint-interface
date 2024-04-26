@@ -23,7 +23,7 @@ import os
 
 
 def create_efootprint_obj_from_post_data(request, flat_obj_dict):
-    with open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json'), "r") as file:
+    with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'object_inputs_and_default_values.json'), "r") as file:
         obj_inputs_and_default_values = json.load(file)
 
     new_efootprint_obj_class = globals()[request.POST["obj_type"]]
@@ -87,7 +87,7 @@ def add_new_object_to_system(request, response_objs, flat_obj_dict):
 def edit_object_in_system(request, response_objs, flat_obj_dict):
     obj_to_edit = flat_obj_dict[request.POST["obj_id"]]
 
-    with open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json'), "r") as file:
+    with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'object_inputs_and_default_values.json'), "r") as file:
         obj_inputs_and_default_values = json.load(file)
 
     obj_inputs = obj_inputs_and_default_values[request.POST["obj_type"]]

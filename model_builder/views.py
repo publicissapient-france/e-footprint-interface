@@ -2,7 +2,9 @@ from efootprint.api_utils.json_to_system import json_to_system
 from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity
 from efootprint.abstract_modeling_classes.modeling_object import ModelingObject, PREVIOUS_LIST_VALUE_SET_SUFFIX
 from efootprint.api_utils.system_to_json import system_to_json
+from efootprint.constants.countries import Country
 from efootprint.constants.units import u
+from efootprint.core.system import System
 from efootprint.core.usage.usage_pattern import UsagePattern
 from efootprint.utils.plot_emission_diffs import EmissionPlotter
 
@@ -10,6 +12,7 @@ from model_builder.object_creation_utils import add_new_object_to_system, edit_o
 from utils import htmx_render, EFOOTPRINT_COUNTRIES
 
 from django.conf import settings
+from django.template.loader import render_to_string
 import json
 from django.shortcuts import render
 import os
@@ -32,7 +35,6 @@ def model_builder_main(request):
         with open(os.path.join("model_builder", "default_system_data.json"), "r") as file:
             jsondata = json.load(file)
             request.session["system_data"] = jsondata
-
     # compute calculated attributes with e-footprint
     response_objs, flat_obj_dict = json_to_system(jsondata)
     system = list(response_objs["System"].values())[0]
@@ -53,14 +55,49 @@ def model_builder_main(request):
 
     is_different_from_ref_model = request.session["system_data"] != request.session["reference_system_data"]
 
+    efootprint_ids_to_int_ids_map = {}
+
+    int_id = 1
+    for efootprint_class in context.keys():
+        for obj_data in context[efootprint_class]:
+            efootprint_ids_to_int_ids_map[obj_data["object"].id] = int_id
+            int_id += 1
+
+    def modeling_obj_containers_excluding_class(efootprint_obj, class_to_exclude):
+        return [elt for elt in efootprint_obj.modeling_obj_containers if not isinstance(elt, class_to_exclude)]
+
+    drawflow_data = {}
+    for efootprint_class in context.keys():
+        for obj_data in context[efootprint_class]:
+            index = efootprint_ids_to_int_ids_map[obj_data["object"].id]
+            input_connections = {}
+            if modeling_obj_containers_excluding_class(obj_data["object"], System):
+                input_connections["input_1"] = {"connections": [
+                    {"node": efootprint_ids_to_int_ids_map[obj.id], "input": "output_1"}
+                    for obj in modeling_obj_containers_excluding_class(obj_data["object"], System)]}
+            output_connections = {}
+            if obj_data["modeling_obj_attributes"] or obj_data["list_attributes"]:
+                output_connections["output_1"] = {"connections": [
+                    {"node": efootprint_ids_to_int_ids_map[obj.id], "output": "input_1"}
+                    for obj in obj_data["modeling_obj_attributes"] + obj_data["list_attributes"]
+                    if not isinstance(obj, Country)]}
+
+            drawflow_data[index] = {
+                "id": index, "name": efootprint_class, "class": efootprint_class,
+                "data": obj_data["object"].to_json(),
+                "html": render_to_string("model_builder/object-card.html", {"object": obj_data}),
+                "typenode": False,
+                "inputs": input_connections, "outputs": output_connections}
+
     return htmx_render(
         request, "model_builder/model-builder-main.html",
-        context={"obj_template_dict": obj_template_dict, "systemFootprint": system_footprint_html,
-                 "img_base64": request.session.get("img_base64", None), "is_different_from_ref_model": is_different_from_ref_model})
+        context={"obj_template_dict": obj_template_dict, "drawflow_json": {"drawflow": {"Home": {"data": drawflow_data}}},
+                 "systemFootprint": system_footprint_html, "img_base64": request.session.get("img_base64", None),
+                 "is_different_from_ref_model": is_different_from_ref_model})
 
 
 def open_create_object_panel(request, object_type):
-    with open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json')) as object_inputs_file:
+    with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'object_inputs_and_default_values.json'), "r") as object_inputs_file:
         object_inputs_and_default_values = json.load(object_inputs_file)
 
     modeling_obj_attributes, list_attributes = retrieve_existing_mod_obj_and_list_attributes(
@@ -83,7 +120,7 @@ def open_create_object_panel(request, object_type):
 
 
 def open_edit_object_panel(request, object_type):
-    with open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json')) as object_inputs_file:
+    with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'object_inputs_and_default_values.json'), "r") as object_inputs_file:
         object_inputs_and_default_values = json.load(object_inputs_file)
 
     modeling_obj_attributes, list_attributes = retrieve_existing_mod_obj_and_list_attributes(
@@ -320,3 +357,57 @@ def compare_with_reference(request):
     request.session['img_base64'] = img_base64
 
     return render(request, "model_builder/compare-container.html", {"img_base64": img_base64})
+
+def add_object_connection(request):
+    parent_object_type = request.POST["parentObjectType"]
+    parent_object_id = request.POST["parentObjectId"]
+    child_object_type = request.POST["childObjectType"]
+    child_object_id = request.POST["childObjectId"]
+
+    response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
+    obj_to_edit = flat_obj_dict[parent_object_id]
+
+    with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'object_inputs_and_default_values.json'), "r") as file:
+        obj_inputs_and_default_values = json.load(file)
+
+    obj_inputs = obj_inputs_and_default_values[parent_object_type]
+
+    for mod_obj in obj_inputs["modeling_obj_attributes"]:
+        if (child_object_type == mod_obj["object_type"]):
+            obj_to_add = flat_obj_dict[child_object_id]
+            obj_to_edit.__setattr__(mod_obj["attr_name"], obj_to_add)
+    request.session["system_data"][parent_object_type][obj_to_edit.id] = obj_to_edit.to_json()
+    # Here we updated a sub dict of request.session so we have to explicitly tell Django that it has been updated
+
+    request.session.modified = True
+
+    response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
+    context, system_footprint_html = get_context_from_response_objs(response_objs)
+
+    return render(
+        request, "model_builder/model-builder-main.html",
+        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False",
+                 "is_ref_model_edited": is_ref_model_edited})
+
+def remove_connection(request):
+    object_id = request.POST["object_id"]
+    objet_linked_to_remove = request.POST["objet_linked_to_remove"]
+    response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
+    obj_to_edit = flat_obj_dict[object_id]
+
+    for mod_obj in obj_to_edit.__dict__:
+        attribute = obj_to_edit.__dict__[mod_obj]
+        if (isinstance(attribute, ModelingObject) and attribute.id == objet_linked_to_remove):
+            obj_to_edit.__dict__[mod_obj] = None
+        # Supprimer simplement l'élément si ListAttributes
+
+    # FIXME Bug ici causant une erreur 500
+    request.session["system_data"][type(obj_to_edit).__name__][obj_to_edit.id] = obj_to_edit.to_json()
+    # Here we updated a sub dict of request.session so we have to explicitly tell Django that it has been updated
+
+    request.session.modified = True
+
+    response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
+    context, system_footprint_html = get_context_from_response_objs(response_objs)
+
+    return JsonResponse({"deletion_successful": True})
