@@ -205,5 +205,6 @@ def download_json(request):
     data = request.session.get('system_data', {})
     json_data = json.dumps(data, indent=4)
     response = HttpResponse(json_data, content_type='application/json')
-    response['Content-Disposition'] = f'attachment; filename="model-system-data.json"'
+    response['Content-Disposition'] = f'attachment; filename="efootprint-model-system-data.json"'
+
     return response
