@@ -31,19 +31,6 @@ def model_builder_main(request):
         context={"context": context, "systemFootprint": system_footprint_html})
 
 
-def update_value(request):
-    object_type = request.POST["key"]
-    object_name = request.POST["e-footprint-obj"]
-    attr_name = request.POST["attr_name"]
-    request.session["system_data"][object_type][object_name][attr_name]["value"] = float(request.POST["value"])
-    request.session.modified = True
-    context, system_footprint_html = get_context_from_json(request.session["system_data"])
-
-    return render(
-        request, "model_builder/graph-container.html",
-        context={"context": context, "systemFootprint": system_footprint_html})
-
-
 def open_create_object_panel(request, object_type):
     with open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json')) as object_inputs_file:
         object_inputs_and_default_values = json.load(object_inputs_file)
