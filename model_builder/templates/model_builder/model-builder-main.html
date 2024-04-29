@@ -13,6 +13,7 @@
                         <div class="flex  bg-pink-light p-4 w-48 h-48 rounded">
                             <button class="text-black flex flex-col my-auto mx-auto items-center"
                                     id="add-new-{{ object_type }}-button"
+                                    script="on click if #object-creation-or-edition-form is not null then remove #object-creation-or-edition-form"
                                     hx-post="open-create-object-panel/{{ object_type }}/"
                                     hx-swap="beforeend"
                                     hx-target="#model-builder-page">

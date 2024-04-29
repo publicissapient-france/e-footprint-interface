@@ -17,7 +17,7 @@ from efootprint.core.usage.user_journey_step import UserJourneyStep
 from efootprint.builders.hardware.network_defaults import default_mobile_network, default_wifi_network
 from efootprint.constants.countries import Countries
 
-from utils import htmx_render
+from utils import htmx_render, EFOOTPRINT_COUNTRIES
 from model_builder.views import model_builder_main
 
 import json
@@ -67,12 +67,8 @@ def form_usage_pattern(request):
         services_list.append({"type": key, "called_by": services_dict[key]})
     request.session['quiz_data']['services'] = services_list
     request.session.modified = True
-    countries_list = []
-    for attr_value in vars(Countries).values():
-        if callable(attr_value):
-            countries_list.append(attr_value())
 
-    return htmx_render(request, "quiz/usage-patterns.html", context={"countries": countries_list})
+    return htmx_render(request, "quiz/usage-patterns.html", context={"countries": EFOOTPRINT_COUNTRIES})
 
 
 def analyze(request):
