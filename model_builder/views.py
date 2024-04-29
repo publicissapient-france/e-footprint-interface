@@ -6,7 +6,7 @@ from efootprint.constants.units import u
 from efootprint.core.usage.usage_pattern import UsagePattern
 
 from model_builder.object_creation_utils import add_new_object_to_system, edit_object_in_system
-from utils import htmx_render
+from utils import htmx_render, EFOOTPRINT_COUNTRIES
 
 from django.conf import settings
 import json
@@ -35,18 +35,8 @@ def open_create_object_panel(request, object_type):
     with open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json')) as object_inputs_file:
         object_inputs_and_default_values = json.load(object_inputs_file)
 
-    modeling_obj_attributes = object_inputs_and_default_values[object_type]["modeling_obj_attributes"]
-    list_attributes = object_inputs_and_default_values[object_type]["list_attributes"]
-
-    for mod_obj_attribute_desc in modeling_obj_attributes:
-        # Retrieve existing objects of this type
-        mod_obj_attribute_desc["existing_objects"] = list(
-            request.session["system_data"][mod_obj_attribute_desc["object_type"]].values())
-
-    for list_attributes_desc in list_attributes:
-        # Retrieve existing objects of this type
-        list_attributes_desc["existing_objects"] = list(
-            request.session["system_data"][list_attributes_desc["object_type"]].values())
+    modeling_obj_attributes, list_attributes = retrieve_existing_mod_obj_and_list_attributes(
+        object_inputs_and_default_values, object_type, request)
 
     context_data = {
         "form_target_url": "add-new-object",
@@ -66,23 +56,16 @@ def open_edit_object_panel(request, object_type):
     with open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json')) as object_inputs_file:
         object_inputs_and_default_values = json.load(object_inputs_file)
 
-    modeling_obj_attributes = object_inputs_and_default_values[object_type]["modeling_obj_attributes"]
-    list_attributes = object_inputs_and_default_values[object_type]["list_attributes"]
-
-    for mod_obj_attribute_desc in modeling_obj_attributes:
-        # Retrieve existing objects of this type
-        mod_obj_attribute_desc["existing_objects"] = list(
-            request.session["system_data"][mod_obj_attribute_desc["object_type"]].values())
-
-    for list_attributes_desc in list_attributes:
-        # Retrieve existing objects of this type
-        list_attributes_desc["existing_objects"] = list(
-            request.session["system_data"][list_attributes_desc["object_type"]].values())
+    modeling_obj_attributes, list_attributes = retrieve_existing_mod_obj_and_list_attributes(
+        object_inputs_and_default_values, object_type, request)
 
     object_dict = request.session["system_data"][object_type][request.POST["object-id"]]
-    header = f"Editing {object_dict['name']}"
-    default_name = object_dict["name"]
-    object_id = object_dict["id"]
+    for mod_obj_attribute_desc in modeling_obj_attributes:
+        mod_obj_attribute_desc["selected"] = object_dict[mod_obj_attribute_desc["attr_name"]]
+
+    for list_attributes_desc in list_attributes:
+        list_attributes_desc["selected"] = object_dict[list_attributes_desc["attr_name"]]
+
     numerical_attributes = []
     for attr_key, attr_value in object_dict.items():
         if type(attr_value) == dict and "unit" in attr_value.keys():
@@ -93,24 +76,39 @@ def open_edit_object_panel(request, object_type):
                  "default_value": attr_value["value"]}
             )
 
-    for mod_obj_attribute_desc in modeling_obj_attributes:
-        mod_obj_attribute_desc["selected"] = object_dict[mod_obj_attribute_desc["attr_name"]]
-
-    for list_attributes_desc in list_attributes:
-        list_attributes_desc["selected"] = object_dict[list_attributes_desc["attr_name"]]
-
     context_data = {
         "form_target_url": "edit-object",
         "obj_type": object_type, "display_obj_form": True,
-        "header": header, "default_name": default_name,
+        "header": f"Editing {object_dict['name']}", "default_name": object_dict["name"],
         "numerical_attributes": numerical_attributes,
         "modeling_obj_attributes": modeling_obj_attributes,
         "list_attributes": list_attributes,
-        "object_id": object_id,
+        "object_id": object_dict["id"],
         "output_button_label": "Edit",
     }
 
     return render(request, "model_builder/object-creation-or-edition-form.html", context=context_data)
+
+
+def retrieve_existing_mod_obj_and_list_attributes(object_inputs_and_default_values, object_type, request):
+    modeling_obj_attributes = object_inputs_and_default_values[object_type]["modeling_obj_attributes"]
+    list_attributes = object_inputs_and_default_values[object_type]["list_attributes"]
+
+    for mod_obj_attribute_desc in modeling_obj_attributes:
+        # Retrieve existing objects of this type
+        if mod_obj_attribute_desc["object_type"] == "Country":
+            mod_obj_attribute_desc["existing_objects"] = [
+                country.to_json() for country in EFOOTPRINT_COUNTRIES]
+        else:
+            mod_obj_attribute_desc["existing_objects"] = list(
+                request.session["system_data"][mod_obj_attribute_desc["object_type"]].values())
+
+    for list_attributes_desc in list_attributes:
+        # Retrieve existing objects of this type
+        list_attributes_desc["existing_objects"] = list(
+            request.session["system_data"][list_attributes_desc["object_type"]].values())
+
+    return modeling_obj_attributes, list_attributes
 
 
 def add_new_object(request):
@@ -170,7 +168,7 @@ def get_context_from_json(jsondata):
 def get_context_from_response_objs(response_objs):
     obj_template_dict = {}
     for key, obj in response_objs.items():
-        if key != "System":
+        if key not in ["System", "Country"]:
             mod_obj_list = []
             for mod_obj in obj.values():
                 list_attributes = retrieve_attributes_by_type(mod_obj, list)
