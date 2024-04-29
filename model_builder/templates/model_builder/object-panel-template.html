@@ -1,0 +1,18 @@
+<div id="object-creation-form"
+     class="fixed right-0 bottom-0 z-40 overflow-scroll min-w-[30%] h-[100vh] shadow-md p-4 transition-transform duration-500 -translate-x-full bg-white dark:bg-gray-800 {% if display_obj_form == False %}hidden{% endif %}{% if display_obj_form == True %}translate-x-0{% endif %}">
+    <div class="relative h-full">
+        <div class="flex gap-8 items-center">
+        <button hx-get="close-form"
+                hx-swap="outerHTML"
+                hx-target="#object-creation-form"
+                class="h-min">
+            <img class="text-black-1"
+                 src="/static/icons/arrow_back_black.svg"
+                 alt="Back arrow" />
+        </button>
+        <h3 class="font-bold text-2xl">{{ header }}</h3>
+        </div>
+        {% block object_panel_content %} {% endblock %}
+    </div>
+</div>
+
