@@ -4,10 +4,10 @@
         <div class="text-xl font-bold object-name">{{ object.object.name }}</div>
         <div>
             <button class="edit-object-button bg-primary p-2 rounded-xl h-10 hover:bg-black text-white mr-2"
-                    hx-post="open-object-panel"
-                    hx-swap="outerHTML"
-                    hx-vals='{"object-id": "{{ object.object.id }}", "object-type": "{{ object_type }}" }'
-                    hx-target="#object-creation-form">Edit</button>
+                    hx-post="open-edit-object-panel/{{ object_type }}/"
+                    hx-vals='{"object-id": "{{ object.object.id }}" }'
+                    hx-swap="beforeend"
+                    hx-target="#model-builder-page">Edit</button>
             {% if object.is_deletable %}
                 <button class="delete-object-button bg-secondary p-2 rounded-xl h-10 hover:bg-black text-white mr-2"
                         hx-post="delete-object"
