@@ -2,8 +2,8 @@
 
 {% block object_panel_content %}
 <form class="flex flex-col space-y-8 mt-8"
-      hx-post="add-new-object"
-      hx-vals='{"obj_type": "{{ obj_type }}", "is_an_object_edition": "{{ is_an_object_edition }}", "obj_id": "{{ object_id }}" }'
+      hx-post="{{ form_target_url }}"
+      hx-vals='{"obj_type": "{{ obj_type }}", "obj_id": "{{ object_id }}" }'
       hx-target="#model-builder-page">
     <label class="flex flex-col gap-4 font-bold">
         Name
@@ -59,7 +59,7 @@
     {% endfor %}
     <div class="flex w-full flex-end bottom-0 justify-end gap-8 pb-8">
         <button id="create-new-object-button" type="submit" class="px-10 py-3 self-center rounded-3xl bg-primary text-white hover:bg-black hover:text-white">
-            {% if is_an_object_edition %} Edit {% else %} Save {% endif %}
+            {{ output_button_label }}
         </button>
     </div>
 </form>

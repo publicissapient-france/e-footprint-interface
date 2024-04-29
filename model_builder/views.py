@@ -44,8 +44,7 @@ def update_value(request):
         context={"context": context, "systemFootprint": system_footprint_html})
 
 
-def open_object_panel(request):
-    object_type = request.POST["object-type"]
+def open_create_object_panel(request, object_type):
     with open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json')) as object_inputs_file:
         object_inputs_and_default_values = json.load(object_inputs_file)
 
@@ -62,54 +61,87 @@ def open_object_panel(request):
         list_attributes_desc["existing_objects"] = list(
             request.session["system_data"][list_attributes_desc["object_type"]].values())
 
-    is_an_object_edition = False
-    header = f"New {object_type}"
-    default_name = ""
-    object_id = ""
-    if "object-id" not in request.POST.keys():
-        numerical_attributes = object_inputs_and_default_values[object_type]["numerical_attributes"]
-    else:
-        is_an_object_edition = True
-        object_dict = request.session["system_data"][object_type][request.POST["object-id"]]
-        header = f"Editing {object_dict['name']}"
-        default_name = object_dict["name"]
-        object_id = object_dict["id"]
-        numerical_attributes = []
-        for attr_key, attr_value in object_dict.items():
-            if type(attr_value) == dict and "unit" in attr_value.keys():
-                quantity = attr_value["value"] * u(attr_value["unit"])
-                numerical_attributes.append(
-                    {"attr_name": attr_key, "unit": f"{quantity.units:~P}",
-                     "long_unit": attr_value["unit"],
-                     "default_value": attr_value["value"]}
-                )
+    context_data = {
+        "form_target_url": "add-new-object",
+        "obj_type": object_type, "display_obj_form": True,
+        "header": f"New {object_type}", "default_name": "",
+        "numerical_attributes": object_inputs_and_default_values[object_type]["numerical_attributes"],
+        "modeling_obj_attributes": modeling_obj_attributes,
+        "list_attributes": list_attributes,
+        "object_id": "",
+        "output_button_label": "Save"
+    }
 
-        for mod_obj_attribute_desc in modeling_obj_attributes:
-            mod_obj_attribute_desc["selected"] = object_dict[mod_obj_attribute_desc["attr_name"]]
+    return render(request, "model_builder/object-creation-or-edition-form.html", context=context_data)
 
-        for list_attributes_desc in list_attributes:
-            list_attributes_desc["selected"] = object_dict[list_attributes_desc["attr_name"]]
+
+def open_edit_object_panel(request, object_type):
+    with open(os.path.join(settings.BASE_DIR, 'object_inputs_and_default_values.json')) as object_inputs_file:
+        object_inputs_and_default_values = json.load(object_inputs_file)
+
+    modeling_obj_attributes = object_inputs_and_default_values[object_type]["modeling_obj_attributes"]
+    list_attributes = object_inputs_and_default_values[object_type]["list_attributes"]
+
+    for mod_obj_attribute_desc in modeling_obj_attributes:
+        # Retrieve existing objects of this type
+        mod_obj_attribute_desc["existing_objects"] = list(
+            request.session["system_data"][mod_obj_attribute_desc["object_type"]].values())
+
+    for list_attributes_desc in list_attributes:
+        # Retrieve existing objects of this type
+        list_attributes_desc["existing_objects"] = list(
+            request.session["system_data"][list_attributes_desc["object_type"]].values())
+
+    object_dict = request.session["system_data"][object_type][request.POST["object-id"]]
+    header = f"Editing {object_dict['name']}"
+    default_name = object_dict["name"]
+    object_id = object_dict["id"]
+    numerical_attributes = []
+    for attr_key, attr_value in object_dict.items():
+        if type(attr_value) == dict and "unit" in attr_value.keys():
+            quantity = attr_value["value"] * u(attr_value["unit"])
+            numerical_attributes.append(
+                {"attr_name": attr_key, "unit": f"{quantity.units:~P}",
+                 "long_unit": attr_value["unit"],
+                 "default_value": attr_value["value"]}
+            )
+
+    for mod_obj_attribute_desc in modeling_obj_attributes:
+        mod_obj_attribute_desc["selected"] = object_dict[mod_obj_attribute_desc["attr_name"]]
+
+    for list_attributes_desc in list_attributes:
+        list_attributes_desc["selected"] = object_dict[list_attributes_desc["attr_name"]]
 
     context_data = {
-        "is_an_object_edition": is_an_object_edition,
+        "form_target_url": "edit-object",
         "obj_type": object_type, "display_obj_form": True,
         "header": header, "default_name": default_name,
         "numerical_attributes": numerical_attributes,
         "modeling_obj_attributes": modeling_obj_attributes,
         "list_attributes": list_attributes,
-        "object_id": object_id
+        "object_id": object_id,
+        "output_button_label": "Edit",
     }
 
-    return render(request, "model_builder/object-creation-form.html", context=context_data)
+    return render(request, "model_builder/object-creation-or-edition-form.html", context=context_data)
 
 
 def add_new_object(request):
     response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
 
-    if request.POST["is_an_object_edition"] == "False":
-        response_objs = add_new_object_to_system(request, response_objs, flat_obj_dict)
-    else:
-        response_objs = edit_object_in_system(request, response_objs, flat_obj_dict)
+    response_objs = add_new_object_to_system(request, response_objs, flat_obj_dict)
+
+    context, system_footprint_html = get_context_from_response_objs(response_objs)
+
+    return render(
+        request, "model_builder/model-builder-main.html",
+        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False"})
+
+
+def edit_object(request):
+    response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
+
+    response_objs = edit_object_in_system(request, response_objs, flat_obj_dict)
 
     context, system_footprint_html = get_context_from_response_objs(response_objs)
 
@@ -140,10 +172,6 @@ def delete_object(request):
     return render(
         request, "model_builder/model-builder-main.html",
         context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False"})
-
-
-def close_form(request):
-    return render(request, "model_builder/object-creation-form.html", context={"display_obj_form": False})
 
 
 def get_context_from_json(jsondata):

@@ -13,25 +13,20 @@
                         <div class="flex  bg-pink-light p-4 w-48 h-48 rounded">
                             <button class="text-black flex flex-col my-auto mx-auto items-center"
                                     id="add-new-{{ object_type }}-button"
-                                    hx-post="open-object-panel"
-                                    hx-swap="outerHTML"
-                                    hx-vals='{"object-type": "{{ object_type }}" }'
-                                    hx-target="#object-creation-form">
+                                    hx-post="open-create-object-panel/{{ object_type }}/"
+                                    hx-swap="beforeend"
+                                    hx-target="#model-builder-page">
                                 <span class="flex place-content-center h-16 w-16 text-white bg-primary rounded-full"><span class="my-auto">
                                     <img src="/static/icons/plus-white.svg" alt="Add new object" />
                                     </span></span><span>Add {{ object_type }}</span>
-                                </button>
-                            </div>
-                            {% for object in object_list %}
-                                {% include "./e-footprint-object.html" with object=object object_type=object_type %}
-                            {% endfor %}
-                        </section>
-                    </div>
-                {% endfor %}
-            </div>
-            <div id="object-creation-form"
-                 class="flex-0 {% if display_obj_form == False %}hidden{% endif %}"></div>
-            <div id="object-edition-form"
-                 class="flex-0 {% if display_obj_edition_form == False %}hidden{% endif %}"></div>
+                            </button>
+                        </div>
+                        {% for object in object_list %}
+                            {% include "./e-footprint-object.html" with object=object object_type=object_type %}
+                        {% endfor %}
+                    </section>
+                </div>
+            {% endfor %}
         </div>
     </div>
+</div>

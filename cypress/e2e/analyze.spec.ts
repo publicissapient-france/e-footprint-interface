@@ -6,7 +6,7 @@ describe('Analyze tests', () => {
     beforeEach(() => cy.visit('/model_builder'));
 
     it('Should create new usage pattern', () => {
-        cy.get('#object-creation-form').should('not.be.visible');
+        cy.get('#object-creation-form').should('not.exist');
         cy.get(`.UsagePattern`).should('have.length', 1);
         cy.get(`#add-new-UsagePattern-button`).click();
         cy.get('#object-creation-form').should('be.visible');
@@ -19,7 +19,7 @@ describe('Analyze tests', () => {
         });
     });
     it('Should create new user journey', () => {
-        cy.get('#object-creation-form').should('not.be.visible');
+        cy.get('#object-creation-form').should('not.exist');
         cy.get(`.UserJourney`).should('have.length', 1);
         cy.get(`#add-new-UserJourney-button`).click();
         cy.get('#object-creation-form').should('be.visible');
@@ -33,7 +33,7 @@ describe('Analyze tests', () => {
         });
     });
     it('Should create new service', () => {
-        cy.get('#object-creation-form').should('not.be.visible');
+        cy.get('#object-creation-form').should('not.exist');
         cy.get(`.Service`).should('have.length', 1);
         cy.get(`#add-new-Service-button`).click();
         cy.get('#object-creation-form').should('be.visible');
@@ -46,7 +46,7 @@ describe('Analyze tests', () => {
         });
     });
     it('Should create new autoscaling', () => {
-        cy.get('#object-creation-form').should('not.be.visible');
+        cy.get('#object-creation-form').should('not.exist');
         cy.get(`.Autoscaling`).should('have.length', 1);
         cy.get(`#add-new-Autoscaling-button`).click();
         cy.get('#object-creation-form').should('be.visible');
@@ -59,7 +59,7 @@ describe('Analyze tests', () => {
         });
     });
     it('Should create new storage', () => {
-        cy.get('#object-creation-form').should('not.be.visible');
+        cy.get('#object-creation-form').should('not.exist');
         cy.get(`.Storage`).should('have.length', 1);
         cy.get(`#add-new-Storage-button`).click();
         cy.get('#object-creation-form').should('be.visible');
@@ -72,7 +72,7 @@ describe('Analyze tests', () => {
         });
     });
     it('Should create new hardware', () => {
-        cy.get('#object-creation-form').should('not.be.visible');
+        cy.get('#object-creation-form').should('not.exist');
         cy.get(`.Hardware`).should('have.length', 1);
         cy.get(`#add-new-Hardware-button`).click();
         cy.get('#object-creation-form').should('be.visible');
@@ -85,7 +85,7 @@ describe('Analyze tests', () => {
         });
     });
     it('Should create new network', () => {
-        cy.get('#object-creation-form').should('not.be.visible');
+        cy.get('#object-creation-form').should('not.exist');
         cy.get(`.Network`).should('have.length', 1);
         cy.get(`#add-new-Network-button`).click();
         cy.get('#object-creation-form').should('be.visible');
@@ -114,7 +114,7 @@ describe('Analyze tests', () => {
                 .should('have.text', 'UserJourney : Daily Youtube usage');
             cy.get('#UsagePattern-section .edit-object-button').eq(0).click();
             cy.get('#object-creation-form #user_journey').select('New UserJourney');
-            cy.intercept('*/add-new-object').as('editObject');
+            cy.intercept('*/edit-object').as('editObject');
             cy.get('#create-new-object-button').click();
             cy.wait('@editObject').then((response: Interception) => {
                 cy.get(`.UsagePattern`)
