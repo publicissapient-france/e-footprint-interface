@@ -1,10 +1,23 @@
 <div id="model-builder-page">
-    <div class="flex gap-4">
+    <div class="grid grid-cols-2 gap-4 items-center">
         {% include "./graph-container.html" with systemFootprint=systemFootprint %}
-        <p>Make diff graph image appear here with htmx</p>
-        <a class="mt-8 edit-object-button bg-primary p-2 rounded-xl h-min hover:bg-black text-white" href="download-json">Export your model</a>
+        {% include "./compare-container.html" %}
     </div>
-    <p>"set as model reference button, if model reference exists add compare with reference button"<p/>
+    <div class="flex justify-between px-8 items-center">
+        <div class="flex gap-8">
+            <button class="py-2 px-6 text-primary border-primary border-2 border-solid rounded-xl hover:text-black hover:border-black"
+                    hx-post="set-reference-model" hx-target="this" hx-swap="none">
+                Set as model reference
+            </button>
+            {% if is_ref_model_edited %}
+            <button class="py-2 px-6 bg-primary text-white rounded-xl hover:text-primary hover:bg-white hover:border-primary hover:border-2 hover:border-solid"
+            hx-post="compare_with_reference" hx-target="#compare-container" hx-swap="innerHTML">
+                Compare the two models
+            </button>
+            {% endif %}
+        </div>
+        <a class="edit-object-button bg-primary py-2 px-6 rounded-xl h-min hover:bg-black text-white" href="download-json">Export your model</a>
+    </div>
     <div class="flex flex-row">
         <div id="objects-list"
              class="flex flex-col flex-1 p-8 rounded text-black-1 gap-y-1">

@@ -5,6 +5,10 @@ from efootprint.api_utils.system_to_json import system_to_json
 from efootprint.constants.units import u
 from efootprint.core.usage.usage_pattern import UsagePattern
 from efootprint.utils.plot_emission_diffs import EmissionPlotter
+import matplotlib
+matplotlib.use('Agg')
+
+import matplotlib.pyplot as plt
 
 from model_builder.object_creation_utils import add_new_object_to_system, edit_object_in_system
 from utils import htmx_render, EFOOTPRINT_COUNTRIES
@@ -119,9 +123,12 @@ def add_new_object(request):
 
     context, system_footprint_html = get_context_from_response_objs(response_objs)
 
+    is_ref_model_edited = request.session["system_data"] != request.session["reference_system_data"]
+
     return render(
         request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False"})
+        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False",
+                 "is_ref_model_edited": is_ref_model_edited})
 
 
 def edit_object(request):
@@ -131,9 +138,12 @@ def edit_object(request):
 
     context, system_footprint_html = get_context_from_response_objs(response_objs)
 
+    is_ref_model_edited = request.session["system_data"] != request.session["reference_system_data"]
+
     return render(
         request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False"})
+        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False",
+                 "is_ref_model_edited": is_ref_model_edited})
 
 
 def delete_object(request):
@@ -153,11 +163,14 @@ def delete_object(request):
     request.session["system_data"] = system_to_json(
         list(response_objs["System"].values())[0], save_calculated_attributes=False)
 
+    is_ref_model_edited = request.session["system_data"] != request.session["reference_system_data"]
+
     context, system_footprint_html = get_context_from_response_objs(response_objs)
 
     return render(
         request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False"})
+        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False",
+                 "is_ref_model_edited": is_ref_model_edited})
 
 
 def get_context_from_json(jsondata):
@@ -224,16 +237,19 @@ def download_json(request):
     return response
 
 
-def set_as_model_reference(request):
+def set_as_reference_model(request):
     request.session["reference_system_data"] = request.session["system_data"]
+    print(request.session["reference_system_data"])
+    return render(request, "model_builder/model-builder-main.html")
 
 
 def compare_with_reference(request):
     ref_response_objs, ref_flat_obj_dict = json_to_system(request.session["reference_system_data"])
-    # idem system_data
+    response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
 
     # for each system
     ref_system = list(ref_response_objs["System"].values())[0]
+    system = list(response_objs["System"].values())[0]
 
     emissions_dict__old = [ref_system.initial_total_energy_footprints, ref_system.initial_total_fabrication_footprints]
 
@@ -242,7 +258,7 @@ def compare_with_reference(request):
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 5))
 
     EmissionPlotter(
-        ax, emissions_dict__old, emissions_dict__new, title=self.name, rounding_value=1,
+        ax, emissions_dict__old, emissions_dict__new, rounding_value=1,
         timespan=ExplainableQuantity(1 * u.year, "one year")).plot_emission_diffs()
 
     from matplotlib.backends.backend_agg import FigureCanvasAgg
@@ -261,4 +277,4 @@ def compare_with_reference(request):
     # Close plot to free memory
     plt.close(fig)
 
-    return render(request, 'image_template.html', {'img_base64': img_base64})
+    return render(request, 'model_builder/compare-container.html', {'img_base64': img_base64})
