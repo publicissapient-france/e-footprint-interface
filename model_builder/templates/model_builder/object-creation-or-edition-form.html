@@ -20,7 +20,8 @@
                    value="{{ numerical_attribute.default_value }}"
                     class="rounded-md border-grey-4 border-[1px] border-solid mr-2"
             />
-            <span>{{ numerical_attribute.unit }}</span>
+            <input name="{{ numerical_attribute.attr_name }}" value="{{ numerical_attribute.unit }}" readonly
+            class="appearance-none bg-transparent border-none"/>
             </div>
         </div>
     {% endfor %}

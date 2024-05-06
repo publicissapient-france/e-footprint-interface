@@ -763,20 +763,20 @@ select {
   bottom: 0px;
 }
 
-.right-0 {
-  right: 0px;
-}
-
-.top-2\/3 {
-  top: 66.666667%;
-}
-
 .left-0 {
   left: 0px;
 }
 
+.right-0 {
+  right: 0px;
+}
+
 .top-0 {
   top: 0px;
+}
+
+.top-2\/3 {
+  top: 66.666667%;
 }
 
 .z-40 {
@@ -924,14 +924,6 @@ select {
   height: min-content;
 }
 
-.h-1\/3 {
-  height: 33.333333%;
-}
-
-.max-h-\[1\/3\] {
-  max-height: 1/3;
-}
-
 .min-h-screen {
   min-height: 100vh;
 }
@@ -1044,6 +1036,12 @@ select {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.appearance-none {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 .grid-cols-4 {
@@ -1236,6 +1234,10 @@ select {
 
 .border-solid {
   border-style: solid;
+}
+
+.border-none {
+  border-style: none;
 }
 
 .border-black {

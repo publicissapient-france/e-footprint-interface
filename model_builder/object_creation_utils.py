@@ -87,8 +87,9 @@ def edit_object_in_system(request, response_objs, flat_obj_dict):
     obj_to_edit.name = request.POST["name"]
 
     for attr_dict in obj_inputs["numerical_attributes"]:
-        new_value = SourceValue(
-            float(request.POST[attr_dict["attr_name"]]) * u(attr_dict["unit"]), Sources.USER_DATA)
+        request_value = request.POST.getlist(attr_dict["attr_name"])[0]
+        request_unit = request.POST.getlist(attr_dict["attr_name"])[1]
+        new_value = SourceValue(float(request_value) * u(request_unit), Sources.USER_DATA)
         current_value = getattr(obj_to_edit, attr_dict["attr_name"])
         if new_value != current_value:
             logger.info(f"{attr_dict['attr_name']} has changed")

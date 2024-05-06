@@ -121,7 +121,7 @@ def analyze(request):
                     job = Job(f"request {service_desc['type']} service",
                               service=efootprint_services[service_desc["type"]],
                               data_upload=SourceValue(0.05 * u.MB / u.uj, Sources.USER_DATA),
-                              data_download=SourceValue(4 * uj_duration_in_min * u.MB / u.uj, Sources.USER_DATA),
+                              data_download=SourceValue(40 * uj_duration_in_min * u.MB / u.uj, Sources.USER_DATA),
                               request_duration=SourceValue((uj_duration_in_min / 10) * u.min, Sources.HYPOTHESIS),
                               cpu_needed=SourceValue(0.2 * u.core / u.uj, Sources.HYPOTHESIS),
                               ram_needed=SourceValue(50 * u.MB / u.uj, Sources.HYPOTHESIS))
