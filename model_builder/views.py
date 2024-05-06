@@ -4,6 +4,7 @@ from efootprint.abstract_modeling_classes.modeling_object import ModelingObject,
 from efootprint.api_utils.system_to_json import system_to_json
 from efootprint.constants.units import u
 from efootprint.core.usage.usage_pattern import UsagePattern
+from efootprint.utils.plot_emission_diffs import EmissionPlotter
 
 from model_builder.object_creation_utils import add_new_object_to_system, edit_object_in_system
 from utils import htmx_render, EFOOTPRINT_COUNTRIES
@@ -13,9 +14,26 @@ import json
 from django.shortcuts import render
 import os
 from django.http import HttpResponse
+import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+import io
+import base64
+
+matplotlib.use('Agg')
 
 
 def model_builder_main(request):
+    is_reference_model_set = False
+    try:
+        img_base64 = request.session["img_base64"]
+        request.session['graph-width'] = request.session['graph-width']
+        if request.session['is-reference-model-set']:
+            is_reference_model_set = True
+    except:
+        img_base64 = None
+        request.session['graph-width'] = 700
+
     try:
         jsondata = request.session["system_data"]
     except KeyError:
@@ -24,11 +42,12 @@ def model_builder_main(request):
             request.session["system_data"] = jsondata
 
     # compute calculated attributes with e-footprint
-    context, system_footprint_html = get_context_from_json(jsondata)
+    context, system_footprint_html = get_context_from_json(jsondata, request)
 
     return htmx_render(
         request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html})
+        context={"context": context, "systemFootprint": system_footprint_html, "img_base64": img_base64,
+                 "is_reference_model_set": is_reference_model_set})
 
 
 def open_create_object_panel(request, object_type):
@@ -73,7 +92,7 @@ def open_edit_object_panel(request, object_type):
             numerical_attributes.append(
                 {"attr_name": attr_key, "unit": f"{quantity.units:~P}",
                  "long_unit": attr_value["unit"],
-                 "default_value": attr_value["value"]}
+                 "default_value": round(attr_value["value"], 2)}
             )
 
     context_data = {
@@ -116,11 +135,14 @@ def add_new_object(request):
 
     response_objs = add_new_object_to_system(request, response_objs, flat_obj_dict)
 
-    context, system_footprint_html = get_context_from_response_objs(response_objs)
+    context, system_footprint_html = get_context_from_response_objs(response_objs, request)
+
+    is_ref_model_edited = request.session["system_data"] != request.session["reference_system_data"]
 
     return render(
         request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False"})
+        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False",
+                 "is_ref_model_edited": is_ref_model_edited})
 
 
 def edit_object(request):
@@ -128,11 +150,14 @@ def edit_object(request):
 
     response_objs = edit_object_in_system(request, response_objs, flat_obj_dict)
 
-    context, system_footprint_html = get_context_from_response_objs(response_objs)
+    context, system_footprint_html = get_context_from_response_objs(response_objs, request)
+
+    is_ref_model_edited = request.session["system_data"] != request.session["reference_system_data"]
 
     return render(
         request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False"})
+        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False",
+                 "is_ref_model_edited": is_ref_model_edited})
 
 
 def delete_object(request):
@@ -152,20 +177,23 @@ def delete_object(request):
     request.session["system_data"] = system_to_json(
         list(response_objs["System"].values())[0], save_calculated_attributes=False)
 
-    context, system_footprint_html = get_context_from_response_objs(response_objs)
+    is_ref_model_edited = request.session["system_data"] != request.session["reference_system_data"]
+
+    context, system_footprint_html = get_context_from_response_objs(response_objs, request)
 
     return render(
         request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False"})
+        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False",
+                 "is_ref_model_edited": is_ref_model_edited})
 
 
-def get_context_from_json(jsondata):
+def get_context_from_json(jsondata, request):
     response_objs, flat_obj_dict = json_to_system(jsondata)
 
-    return get_context_from_response_objs(response_objs)
+    return get_context_from_response_objs(response_objs, request)
 
 
-def get_context_from_response_objs(response_objs):
+def get_context_from_response_objs(response_objs, request):
     obj_template_dict = {}
     for key, obj in response_objs.items():
         if key not in ["System", "Country"]:
@@ -183,13 +211,13 @@ def get_context_from_response_objs(response_objs):
                 mod_obj_dict = {
                     "object": mod_obj,
                     "numerical_attributes": [
-                         attr_name_value_pair[1]
-                         for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ExplainableQuantity)
-                         if attr_name_value_pair[1].attr_name_in_mod_obj_container not in mod_obj.calculated_attributes
-                     ],
+                        attr_name_value_pair[1]
+                        for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ExplainableQuantity)
+                        if attr_name_value_pair[1].attr_name_in_mod_obj_container not in mod_obj.calculated_attributes
+                    ],
                     "modeling_obj_attributes": [
-                         attr_name_value_pair[1]
-                         for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ModelingObject)],
+                        attr_name_value_pair[1]
+                        for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ModelingObject)],
                     "list_attributes": list_attributes,
                     "is_deletable": is_deletable
                 }
@@ -200,7 +228,11 @@ def get_context_from_response_objs(response_objs):
             obj_template_dict[key] = mod_obj_list
 
     system = list(response_objs["System"].values())[0]
-    system_footprint_html = system.plot_footprints_by_category_and_object()._repr_html_()
+
+    graph_width = request.session['graph-width']
+
+    system_footprint_html = system.plot_footprints_by_category_and_object(height=400, width=graph_width,
+                                                                          return_only_html=True)
 
     return obj_template_dict, system_footprint_html
 
@@ -208,7 +240,8 @@ def get_context_from_response_objs(response_objs):
 def retrieve_attributes_by_type(modeling_obj, attribute_type, attrs_to_ignore=['modeling_obj_containers']):
     output_list = []
     for attr_name, attr_value in vars(modeling_obj).items():
-        if isinstance(attr_value, attribute_type) and attr_name not in attrs_to_ignore and PREVIOUS_LIST_VALUE_SET_SUFFIX not in attr_name:
+        if (isinstance(attr_value, attribute_type) and attr_name not in attrs_to_ignore
+                and PREVIOUS_LIST_VALUE_SET_SUFFIX not in attr_name):
             output_list.append((attr_name, attr_value))
 
     return output_list
@@ -221,3 +254,52 @@ def download_json(request):
     response['Content-Disposition'] = f'attachment; filename="efootprint-model-system-data.json"'
 
     return response
+
+
+def set_as_reference_model(request):
+    request.session["reference_system_data"] = request.session["system_data"]
+    request.session["img_base64"] = None
+    request.session['graph-width'] = 700
+    request.session['is-reference-model-set'] = True
+    return model_builder_main(request)
+
+
+def reset_model_reference(request):
+    request.session["system_data"] = request.session["reference_system_data"]
+    request.session["img_base64"] = None
+    request.session['graph-width'] = 700
+    return model_builder_main(request)
+
+
+def compare_with_reference(request):
+    ref_response_objs, ref_flat_obj_dict = json_to_system(request.session["reference_system_data"])
+    response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
+
+    ref_system = list(ref_response_objs["System"].values())[0]
+    system = list(response_objs["System"].values())[0]
+
+    emissions_dict__old = [ref_system.initial_total_energy_footprints, ref_system.initial_total_fabrication_footprints]
+    emissions_dict__new = [system.total_energy_footprints, system.total_fabrication_footprints]
+
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 6))
+    EmissionPlotter(
+        ax, emissions_dict__old, emissions_dict__new, rounding_value=1,
+        timespan=ExplainableQuantity(1 * u.year, "one year")).plot_emission_diffs()
+
+    # Convert plot to binary buffer
+    buf = io.BytesIO()
+    canvas = FigureCanvasAgg(fig)
+    canvas.print_png(buf)
+
+    # Encode binary buffer as base64
+    buf.seek(0)
+    img_base64 = base64.b64encode(buf.read()).decode()
+
+    # Close plot to free memory
+    plt.close(fig)
+
+    request.session['graph-width'] = 500
+    request.session['img_base64'] = img_base64
+    request.session['is-reference-model-set'] = False
+
+    return model_builder_main(request)
