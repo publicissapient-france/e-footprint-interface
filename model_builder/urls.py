@@ -11,5 +11,6 @@ urlpatterns = [
     path("delete-object", views.delete_object, name="delete-object"),
     path("download-json", views.download_json, name="download-json"),
     path("set-reference-model", views.set_as_reference_model, name="set-reference-model"),
-    path("compare_with_reference", views.compare_with_reference, name="compare_with_reference")
+    path("compare_with_reference", views.compare_with_reference, name="compare_with_reference"),
+    path("reset_model_reference", views.reset_model_reference, name="reset_model_reference")
 ]

@@ -14,6 +14,10 @@
             hx-post="compare_with_reference" hx-target="#compare-container" hx-swap="innerHTML">
                 Compare the two models
             </button>
+            <button class="py-2 px-6 bg-primary text-white rounded-xl hover:text-primary hover:bg-white hover:border-primary hover:border-2 hover:border-solid"
+            hx-post="reset_model_reference" hx-target="this" hx-swap="none">
+                Reset to the model reference
+            </button>
             {% endif %}
         </div>
         <a class="edit-object-button bg-primary py-2 px-6 rounded-xl h-min hover:bg-black text-white" href="download-json">Export your model</a>

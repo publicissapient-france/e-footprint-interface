@@ -239,7 +239,10 @@ def download_json(request):
 
 def set_as_reference_model(request):
     request.session["reference_system_data"] = request.session["system_data"]
-    print(request.session["reference_system_data"])
+    return render(request, "model_builder/model-builder-main.html")
+
+def reset_model_reference(request):
+    request.session["system_data"] = request.session["reference_system_data"]
     return render(request, "model_builder/model-builder-main.html")
 
 
