@@ -4,6 +4,7 @@ from efootprint.abstract_modeling_classes.modeling_object import ModelingObject,
 from efootprint.api_utils.system_to_json import system_to_json
 from efootprint.constants.units import u
 from efootprint.core.usage.usage_pattern import UsagePattern
+from efootprint.utils.plot_emission_diffs import EmissionPlotter
 
 from model_builder.object_creation_utils import add_new_object_to_system, edit_object_in_system
 from utils import htmx_render, EFOOTPRINT_COUNTRIES
@@ -221,3 +222,43 @@ def download_json(request):
     response['Content-Disposition'] = f'attachment; filename="efootprint-model-system-data.json"'
 
     return response
+
+
+def set_as_model_reference(request):
+    request.session["reference_system_data"] = request.session["system_data"]
+
+
+def compare_with_reference(request):
+    ref_response_objs, ref_flat_obj_dict = json_to_system(request.session["reference_system_data"])
+    # idem system_data
+
+    # for each system
+    ref_system = list(ref_response_objs["System"].values())[0]
+
+    emissions_dict__old = [ref_system.initial_total_energy_footprints, ref_system.initial_total_fabrication_footprints]
+
+    emissions_dict__new = [system.total_energy_footprints, system.total_fabrication_footprints]
+
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 5))
+
+    EmissionPlotter(
+        ax, emissions_dict__old, emissions_dict__new, title=self.name, rounding_value=1,
+        timespan=ExplainableQuantity(1 * u.year, "one year")).plot_emission_diffs()
+
+    from matplotlib.backends.backend_agg import FigureCanvasAgg
+    import io
+    import base64
+
+    # Convert plot to binary buffer
+    buf = io.BytesIO()
+    canvas = FigureCanvasAgg(fig)
+    canvas.print_png(buf)
+
+    # Encode binary buffer as base64
+    buf.seek(0)
+    img_base64 = base64.b64encode(buf.read()).decode()
+
+    # Close plot to free memory
+    plt.close(fig)
+
+    return render(request, 'image_template.html', {'img_base64': img_base64})

@@ -1,8 +1,10 @@
 <div id="model-builder-page">
     <div class="flex gap-4">
         {% include "./graph-container.html" with systemFootprint=systemFootprint %}
+        <p>Make diff graph image appear here with htmx</p>
         <a class="mt-8 edit-object-button bg-primary p-2 rounded-xl h-min hover:bg-black text-white" href="download-json">Export your model</a>
     </div>
+    <p>"set as model reference button, if model reference exists add compare with reference button"<p/>
     <div class="flex flex-row">
         <div id="objects-list"
              class="flex flex-col flex-1 p-8 rounded text-black-1 gap-y-1">
