@@ -388,13 +388,13 @@ reload = ["django-browser-reload (>=1.12.1,<2.0.0)"]
 
 [[package]]
 name = "efootprint"
-version = "2.1.2"
+version = "2.1.3"
 description = "Digital service environmental footprint model"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "efootprint-2.1.2-py3-none-any.whl", hash = "sha256:38f5c1a7cff385d2defc74a931e43adb5fc2c85a4516dc5c2cff27d092864aae"},
-    {file = "efootprint-2.1.2.tar.gz", hash = "sha256:899a51989d08b3373798ef257599d2fa2775ac78627c3306482cf8be540c57ba"},
+    {file = "efootprint-2.1.3-py3-none-any.whl", hash = "sha256:0d74bbd205893ed995f5567962db7be8247e7a156c9af039b5684abae8b12f46"},
+    {file = "efootprint-2.1.3.tar.gz", hash = "sha256:5f16d11278fdb04a1bb6bfefe4690bc69428043b05f5282ea090ddf103a515e5"},
 ]
 
 [package.dependencies]
@@ -1555,4 +1555,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "6368353781593086910875098bf3de17aeb2176341901d147cc4cfb83c96c660"
+content-hash = "979b823f6b3cf83558c8081b4c7aa3d222ccc2587c277298b4e694e23a2baa54"
