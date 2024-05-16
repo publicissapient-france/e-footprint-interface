@@ -214,7 +214,7 @@ def get_context_from_response_objs(response_objs):
             obj_template_dict[key] = mod_obj_list
 
     system = list(response_objs["System"].values())[0]
-    system_footprint_html = system.plot_footprints_by_category_and_object()._repr_html_()
+    system_footprint_html = system.plot_footprints_by_category_and_object(height=400, width=700, return_only_html=True)
 
     return obj_template_dict, system_footprint_html
 
@@ -240,6 +240,7 @@ def download_json(request):
 def set_as_reference_model(request):
     request.session["reference_system_data"] = request.session["system_data"]
     return render(request, "model_builder/model-builder-main.html")
+
 
 def reset_model_reference(request):
     request.session["system_data"] = request.session["reference_system_data"]
