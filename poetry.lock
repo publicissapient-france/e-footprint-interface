@@ -19,13 +19,13 @@ tests = ["mypy (>=0.800)", "pytest", "pytest-asyncio"]
 
 [[package]]
 name = "astroid"
-version = "3.2.0"
+version = "3.2.1"
 description = "An abstract syntax tree for Python with inference support."
 optional = false
 python-versions = ">=3.8.0"
 files = [
-    {file = "astroid-3.2.0-py3-none-any.whl", hash = "sha256:16ee8ca5c75ac828783028cc1f967777f0e507c6886a295ad143e0f405b975a2"},
-    {file = "astroid-3.2.0.tar.gz", hash = "sha256:f7f829f8506ade59f1b3c6c93d8fac5b1ebc721685fa9af23e9794daf1d450a3"},
+    {file = "astroid-3.2.1-py3-none-any.whl", hash = "sha256:b452064132234819f023b94f4bd045b250ea0009f372b4377cfcd87f10806ca5"},
+    {file = "astroid-3.2.1.tar.gz", hash = "sha256:902564b36796ba1eab3ad2c7a694861fbd926f574d5dbb5fa1d86778a2ba2d91"},
 ]
 
 [package.dependencies]
@@ -388,13 +388,13 @@ reload = ["django-browser-reload (>=1.12.1,<2.0.0)"]
 
 [[package]]
 name = "efootprint"
-version = "2.1.1"
+version = "2.1.2"
 description = "Digital service environmental footprint model"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "efootprint-2.1.1-py3-none-any.whl", hash = "sha256:3863abf591776951adc3ca6187b0b04fd60bd7cf384704f97c6cc76375440173"},
-    {file = "efootprint-2.1.1.tar.gz", hash = "sha256:1d8f1124521a1c6b6ada081885842501f0ae97b7dd466e1dffb376a628546c62"},
+    {file = "efootprint-2.1.2-py3-none-any.whl", hash = "sha256:38f5c1a7cff385d2defc74a931e43adb5fc2c85a4516dc5c2cff27d092864aae"},
+    {file = "efootprint-2.1.2.tar.gz", hash = "sha256:899a51989d08b3373798ef257599d2fa2775ac78627c3306482cf8be540c57ba"},
 ]
 
 [package.dependencies]
@@ -1555,4 +1555,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "bb24b4d499dde13ae52340f2e25ffe65c74b073fc59fed5f9a1f4010a5a3c435"
+content-hash = "6368353781593086910875098bf3de17aeb2176341901d147cc4cfb83c96c660"

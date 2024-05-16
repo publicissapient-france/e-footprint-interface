@@ -262,7 +262,7 @@ def compare_with_reference(request):
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 5))
 
     EmissionPlotter(
-        ax, emissions_dict__old, emissions_dict__new, rounding_value=1,
+        ax, emissions_dict__old, emissions_dict__new, rounding_value=0,
         timespan=ExplainableQuantity(1 * u.year, "one year")).plot_emission_diffs()
 
     from matplotlib.backends.backend_agg import FigureCanvasAgg
