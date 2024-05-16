@@ -6,7 +6,7 @@ from efootprint.builders.hardware.servers_defaults import default_autoscaling
 from efootprint.builders.hardware.storage_defaults import default_ssd
 from efootprint.constants.sources import Sources
 from efootprint.core.hardware.device_population import DevicePopulation
-from efootprint.core.hardware.servers.autoscaling import Autoscaling
+from efootprint.core.hardware.servers.serverless import Serverless
 from efootprint.core.service import Service
 from efootprint.constants.units import u
 from efootprint.core.system import System
@@ -86,7 +86,7 @@ def analyze(request):
                 base_ram_consumption=SourceValue(300 * u.MB, Sources.HYPOTHESIS),
                 base_cpu_consumption=SourceValue(2 * u.core, Sources.HYPOTHESIS))
         elif service_desc["type"] == "gen-ai":
-            llm_server = Autoscaling(
+            llm_server = Serverless(
                 "Default AI GPU server",
                 carbon_footprint_fabrication=SourceValue(4900 * u.kg, Sources.HYPOTHESIS),
                 power=SourceValue(6400 * u.W, Sources.HYPOTHESIS),
