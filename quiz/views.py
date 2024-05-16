@@ -192,8 +192,8 @@ def import_json(request):
             return htmx_render(request, "quiz/onboarding.html", context={"uploadError": "Invalid JSON data"})
         try:
             json_to_system(data)
-            response = model_builder_main(request)
             request.session["system_data"] = data
+            response = model_builder_main(request)
             response.headers = {"HX-Push-Url": "/model_builder/"}
             return response
         except Exception:
