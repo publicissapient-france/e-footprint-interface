@@ -6,6 +6,7 @@ from efootprint.constants.units import u
 from efootprint.core.usage.usage_pattern import UsagePattern
 from efootprint.utils.plot_emission_diffs import EmissionPlotter
 import matplotlib
+
 matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
@@ -197,13 +198,13 @@ def get_context_from_response_objs(response_objs):
                 mod_obj_dict = {
                     "object": mod_obj,
                     "numerical_attributes": [
-                         attr_name_value_pair[1]
-                         for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ExplainableQuantity)
-                         if attr_name_value_pair[1].attr_name_in_mod_obj_container not in mod_obj.calculated_attributes
-                     ],
+                        attr_name_value_pair[1]
+                        for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ExplainableQuantity)
+                        if attr_name_value_pair[1].attr_name_in_mod_obj_container not in mod_obj.calculated_attributes
+                    ],
                     "modeling_obj_attributes": [
-                         attr_name_value_pair[1]
-                         for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ModelingObject)],
+                        attr_name_value_pair[1]
+                        for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ModelingObject)],
                     "list_attributes": list_attributes,
                     "is_deletable": is_deletable
                 }
@@ -222,7 +223,8 @@ def get_context_from_response_objs(response_objs):
 def retrieve_attributes_by_type(modeling_obj, attribute_type, attrs_to_ignore=['modeling_obj_containers']):
     output_list = []
     for attr_name, attr_value in vars(modeling_obj).items():
-        if isinstance(attr_value, attribute_type) and attr_name not in attrs_to_ignore and PREVIOUS_LIST_VALUE_SET_SUFFIX not in attr_name:
+        if isinstance(attr_value,
+                      attribute_type) and attr_name not in attrs_to_ignore and PREVIOUS_LIST_VALUE_SET_SUFFIX not in attr_name:
             output_list.append((attr_name, attr_value))
 
     return output_list
@@ -244,7 +246,7 @@ def set_as_reference_model(request):
 
 def reset_model_reference(request):
     request.session["system_data"] = request.session["reference_system_data"]
-    return render(request, "model_builder/model-builder-main.html")
+    return model_builder_main(request)
 
 
 def compare_with_reference(request):

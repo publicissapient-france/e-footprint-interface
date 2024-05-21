@@ -11,11 +11,11 @@
             </button>
             {% if is_ref_model_edited %}
             <button class="py-2 px-6 bg-primary text-white rounded-xl hover:text-primary hover:bg-white hover:border-primary hover:border-2 hover:border-solid"
-            hx-post="compare_with_reference" hx-target="#compare-container" hx-swap="innerHTML">
+                    hx-post="compare_with_reference" hx-target="#compare-container" hx-swap="innerHTML">
                 Compare the two models
             </button>
             <button class="py-2 px-6 bg-primary text-white rounded-xl hover:text-primary hover:bg-white hover:border-primary hover:border-2 hover:border-solid"
-            hx-post="reset_model_reference" hx-target="this" hx-swap="none">
+                    hx-post="reset_model_reference" hx-target="#model-builder-page" hx-swap="innerHTML">
                 Reset to the model reference
             </button>
             {% endif %}
@@ -26,26 +26,26 @@
         <div id="objects-list"
              class="flex flex-col flex-1 p-8 rounded text-black-1 gap-y-1">
             {% for object_type, object_list in context.items %}
-                <div class="bg-primary-lighter p-4 rounded">
-                    <h3 class="mb-2">{{ object_type }}</h3>
-                    <section id="{{ object_type }}-section" class="flex flex-row rounded gap-x-4">
-                        <div class="flex  bg-pink-light p-4 w-48 h-48 rounded">
-                            <button class="text-black flex flex-col my-auto mx-auto items-center"
-                                    id="add-new-{{ object_type }}-button"
-                                    script="on click if #object-creation-or-edition-form is not null then remove #object-creation-or-edition-form"
-                                    hx-post="open-create-object-panel/{{ object_type }}/"
-                                    hx-swap="beforeend"
-                                    hx-target="#model-builder-page">
+            <div class="bg-primary-lighter p-4 rounded">
+                <h3 class="mb-2">{{ object_type }}</h3>
+                <section id="{{ object_type }}-section" class="flex flex-row rounded gap-x-4">
+                    <div class="flex  bg-pink-light p-4 w-48 h-48 rounded">
+                        <button class="text-black flex flex-col my-auto mx-auto items-center"
+                                id="add-new-{{ object_type }}-button"
+                                script="on click if #object-creation-or-edition-form is not null then remove #object-creation-or-edition-form"
+                                hx-post="open-create-object-panel/{{ object_type }}/"
+                                hx-swap="beforeend"
+                                hx-target="#model-builder-page">
                                 <span class="flex place-content-center h-16 w-16 text-white bg-primary rounded-full"><span class="my-auto">
-                                    <img src="/static/icons/plus-white.svg" alt="Add new object" />
+                                    <img src="/static/icons/plus-white.svg" alt="Add new object"/>
                                     </span></span><span>Add {{ object_type }}</span>
-                            </button>
-                        </div>
-                        {% for object in object_list %}
-                            {% include "./e-footprint-object.html" with object=object object_type=object_type %}
-                        {% endfor %}
-                    </section>
-                </div>
+                        </button>
+                    </div>
+                    {% for object in object_list %}
+                    {% include "./e-footprint-object.html" with object=object object_type=object_type %}
+                    {% endfor %}
+                </section>
+            </div>
             {% endfor %}
         </div>
     </div>
