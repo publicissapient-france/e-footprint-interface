@@ -1,43 +1,39 @@
 {% extends "quiz/quiz-template.html" %}
 
-{% block trail %}
-{% include "./components/trail.html" with back='/quiz/onboarding' index=3 %}
-{% endblock %}
-
 {% block analyze_content %}
 
 <form class="flex flex-col gap-8 h-full w-full">
     <div class="flex gap-8 px-14">
+        <div class="relative w-32 h-32 rounded-full flex justify-center items-center text-center bg-primary shadow-xl">
+            <img class="w-20 h-20" src="/static/icons/usage-icon.svg" alt=""/>
+        </div>
 
-    <div class="relative w-32 h-32 rounded-full flex justify-center items-center text-center bg-primary shadow-xl">
-      <img class="w-20 h-20" src="/static/icons/usage-icon.svg" alt="" />
+        <div class="flex flex-row flex-1 justify-between items-center py-2">
+            <div class="flex flex-col">
+                <h2 class="font-bold text-2xl">Describe Usage</h2>
+            </div>
+        </div>
     </div>
-
-    <div class="flex flex-row flex-1 justify-between items-center py-2">
-      <div class="flex flex-col">
-        <h2 class="font-bold text-2xl">Describe Usage</h2>
-      </div>
-    </div>
-    </div>
-        <div class="px-14 flex flex-col gap-5">
-          <p class="leading-10">On average, you have <input type="number" class="rounded-md border-grey-4 border-[1px] border-solid mr-2" name="visitors" min="0" /> daily unique visitors. </p>
-          <p>They use their <select name="device" class="rounded-md border-grey-4 border-[1px] border-solid" required>
-                <option value disabled selected>Select a device</option>
-                <option value="smartphone">Smartphone</option>
-                <option value="laptop">Laptop</option>
-            </select>
+    <div class="px-14 flex flex-col gap-5">
+        <p class="leading-10">On average, you have <input type="number" class="rounded-md border-grey-4 border-[1px] border-solid mr-2" name="visitors" min="0"/> daily unique visitors. </p>
+        <p>They use their <select name="device" class="rounded-md border-grey-4 border-[1px] border-solid" required>
+            <option value disabled selected>Select a device</option>
+            <option value="smartphone">Smartphone</option>
+            <option value="laptop">Laptop</option>
+        </select>
             <span class="mx-2">in</span>
-            <select class="rounded-md border-grey-4 border-[1px] border-solid" name="country">
+            <select class="rounded-md border-grey-4 border-[1px] border-solid" name="country" required>
                 <option value disabled selected>Select a country</option>
                 {% for country in countries %}
                 <option value='{{country.name}}'>{{country.name}}</option>
                 {% endfor %}
             </select>
-          </p>
-        </div>
+        </p>
+    </div>
     <div class="mx-auto space-x-1">
-      <button id="validate-usage-patterns-form-button" type="button" class="px-10 py-3 self-center rounded-3xl bg-primary text-white hover:bg-black hover:text-white"
-              hx-post="analyze" hx-target="#main-content-block" hx-swap="innerHTML" hx-push-url="/model_builder/">Analyze</button>
+        <button id="validate-usage-patterns-form-button" type="button" class="px-10 py-3 self-center rounded-3xl bg-primary text-white hover:bg-black hover:text-white"
+                hx-post="analyze" hx-target="#main-content-block" hx-swap="innerHTML" hx-push-url="/model_builder/">Analyze
+        </button>
     </div>
 </form>
 {% endblock %}

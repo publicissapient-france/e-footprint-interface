@@ -1,7 +1,6 @@
-<div class="flex flex-row h-full w-full text-black" id="quiz-container">
-  <div class="bg-primary-lighter basis-1/4 p-4 min-h-screen">{% block trail %} {% endblock %}</div>
-  <div class="flex flex-col basis-3/4 space-y-14 p-4 bg-background-4">
-    <h1 class="text-2xl font-bold text-center mt-8">Start mapping your service</h1>
-      <div id="quiz-step-container">{% block analyze_content %} {% endblock %}</div>
-  </div>
+<div class="min-h-screen w-full bg-background-4" id="quiz-container">
+    <div class="flex flex-col items-center space-y-14 p-4 ">
+        <h1 class="text-2xl font-bold text-center mt-8">Start mapping your service</h1>
+        <div id="quiz-step-container">{% block analyze_content %} {% endblock %}</div>
+    </div>
 </div>

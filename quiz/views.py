@@ -47,6 +47,8 @@ def services(request):
         if uj_step[0] != '' and uj_step[1]:
             uj_steps.append({"name": uj_step[0], "duration_in_min": uj_step[1]})
 
+    if len(uj_steps) < 1:
+        return
     request.session['quiz_data'] = {'user_journey_steps': uj_steps}
     request.session.modified = True
 
@@ -59,7 +61,9 @@ def form_usage_pattern(request):
     services_dict = {}
     for key in request.POST.keys():
         service = request.POST.getlist(key)
-        if service[1] not in services_dict.keys():
+        if len(service[1]) == 0:
+            return
+        elif service[1] not in services_dict.keys():
             services_dict[service[1]] = [service[0]]
         else:
             services_dict[service[1]].append(service[0])
@@ -136,7 +140,8 @@ def analyze(request):
 
                 uj_step = UserJourneyStep(
                     uj_step_desc["name"],
-                    user_time_spent=SourceValue(float(uj_step_desc["duration_in_min"]) * u.min / u.uj, Sources.USER_DATA),
+                    user_time_spent=SourceValue(float(uj_step_desc["duration_in_min"]) * u.min / u.uj,
+                                                Sources.USER_DATA),
                     jobs=[job])
 
                 uj_steps.append(uj_step)
@@ -150,6 +155,9 @@ def analyze(request):
         network = default_wifi_network()
         device = default_laptop()
 
+    if len(request.POST['country']) == 0:
+        return
+    
     for attr_value in vars(Countries).values():
         if callable(attr_value):
             country = attr_value()
@@ -203,4 +211,3 @@ def import_json(request):
                                    f" or the interface"})
 
     return htmx_render(request, "quiz/onboarding.html", context={"uploadError": "No file uploaded"})
-
