@@ -1,79 +1,79 @@
 <!DOCTYPE html>
 <html lang="en" class="min-h-screen min-w-full">
-  <head>
+<head>
     {% load static tailwind_tags %}
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>e-footprint</title>
-    <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico"/>
     {% tailwind_css %}
-      <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  </head>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
 
-  <body class="min-h-screen min-w-full flex flex-row" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <nav class="text-grey-1 bg-black relative sticky top-0 left-0 h-[100vh]">
-      <a href="/" class="flex justify-center py-6">
-          <img src="/static/icons/sidenav/logo.svg" alt="E-Footprint" />
-      </a>
+<body class="min-h-screen min-w-full flex flex-row" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+<nav class="text-grey-1 bg-black relative sticky top-0 left-0 h-[100vh] z-50">
+    <a href="/" class="flex justify-center py-6">
+        <img src="/static/icons/sidenav/logo.svg" alt="E-Footprint"/>
+    </a>
 
-      <div class="flex flex-col gap-6 p-6 border-y-[1px] border-solid border-grey-6">
+    <div class="flex flex-col gap-6 p-6 border-y-[1px] border-solid border-grey-6">
         <button hx-get="/understand" hx-target="#main-content-block" hx-swap="innerHTML"
-             hx-push-url="/understand"
-             class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/home.svg" alt="Understand" />
+                hx-push-url="/understand"
+                class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/home.svg" alt="Understand"/>
             <span>Understand</span>
         </button>
         <button hx-get="/quiz/onboarding" hx-target="#main-content-block" hx-swap="innerHTML"
-             hx-push-url="/quiz/onboarding"
-             class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/analyze.svg" alt="New modeling" />
+                hx-push-url="/quiz/onboarding"
+                class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/analyze.svg" alt="New modeling"/>
             <span class="whitespace-nowrap">Create new modeling</span>
         </button>
-          <!-- Important to keep the trailing / after model_builder in the pushed url below, otherwise relative url calls with htmx won’t work -->
+        <!-- Important to keep the trailing / after model_builder in the pushed url below, otherwise relative url calls with htmx won’t work -->
         <button hx-get="/model_builder" hx-target="#main-content-block" hx-swap="innerHTML"
-             hx-push-url="/model_builder/"
-             class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/analyze.svg" alt="Model builder" />
+                hx-push-url="/model_builder/"
+                class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/analyze.svg" alt="Model builder"/>
             <span class="whitespace-nowrap">Dashboard view</span>
         </button>
-        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/leaf.svg" alt="Plan" />
+        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/leaf.svg" alt="Plan"/>
             <span class="whitespace-nowrap">Plan for Eco-design</span>
         </div>
-      </div>
+    </div>
 
-      <div class="text-grey-4 space-y-4 absolute top-2/3 p-6">
-        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/help.svg" alt="Help" />
+    <div class="text-grey-4 space-y-4 absolute top-2/3 p-6">
+        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/help.svg" alt="Help"/>
             <span>Help</span>
         </div>
-        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/settings.svg" alt="Settings" />
+        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/settings.svg" alt="Settings"/>
             <span>Settings</span>
         </div>
-        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/account.svg" alt="Account" />
+        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/account.svg" alt="Account"/>
             <span>Account</span>
         </div>
-      </div>
-    </nav>
+    </div>
+</nav>
 
-    <main id="main-content-block" class="flex-1">
-      {% if home %}
-        {% include "home.html" %}
-      {% elif understand %}
-        {% include "understand.html" %}
-      {% elif analyze %}
-        {% include "analyze/analyze.html" %}
-      {% elif onboarding %}
-        {% include "quiz/onboarding.html" %}
-      {% elif userJourneys %}
-        {% include "quiz/user-journeys.html" %}
-      {% elif services %}
-        {% include "quiz/services.html" %}
-      {% elif usagePatterns %}
-        {% include "quiz/usage-patterns.html" %}
-      {% elif apis %}
-        {% include "quiz/apis.html" %}
-      {% elif modelBuilderMain %}
-        {% include "model_builder/model-builder-main.html" %}
-      {% elif analyze %}
-        {% include "analyze.html" %}
-      {% endif %}
-    </main>
-  </body>
-  <script src="https://unpkg.com/htmx.org@1.9.11"></script>
-  <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+<main id="main-content-block" class="flex-1">
+    {% if home %}
+    {% include "home.html" %}
+    {% elif understand %}
+    {% include "understand.html" %}
+    {% elif analyze %}
+    {% include "analyze/analyze.html" %}
+    {% elif onboarding %}
+    {% include "quiz/onboarding.html" %}
+    {% elif userJourneys %}
+    {% include "quiz/user-journeys.html" %}
+    {% elif services %}
+    {% include "quiz/services.html" %}
+    {% elif usagePatterns %}
+    {% include "quiz/usage-patterns.html" %}
+    {% elif apis %}
+    {% include "quiz/apis.html" %}
+    {% elif modelBuilderMain %}
+    {% include "model_builder/model-builder-main.html" %}
+    {% elif analyze %}
+    {% include "analyze.html" %}
+    {% endif %}
+</main>
+</body>
+<script src="https://unpkg.com/htmx.org@1.9.11"></script>
+<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
 </html>

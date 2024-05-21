@@ -30,11 +30,20 @@ def model_builder_main(request):
             request.session["system_data"] = jsondata
 
     # compute calculated attributes with e-footprint
-    context, system_footprint_html = get_context_from_json(jsondata)
+    context, system_footprint_html = get_context_from_json(jsondata, request)
+
+    try:
+        img_base64 = request.session["img_base64"]
+        if request.session['graph-width']:
+            request.session['graph-width'] = request.session['graph-width']
+        else:
+            request.session['graph-width'] = 700
+    except:
+        img_base64 = None
 
     return htmx_render(
         request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html})
+        context={"context": context, "systemFootprint": system_footprint_html, "img_base64": img_base64})
 
 
 def open_create_object_panel(request, object_type):
@@ -79,7 +88,7 @@ def open_edit_object_panel(request, object_type):
             numerical_attributes.append(
                 {"attr_name": attr_key, "unit": f"{quantity.units:~P}",
                  "long_unit": attr_value["unit"],
-                 "default_value": attr_value["value"]}
+                 "default_value": round(attr_value["value"], 2)}
             )
 
     context_data = {
@@ -122,7 +131,7 @@ def add_new_object(request):
 
     response_objs = add_new_object_to_system(request, response_objs, flat_obj_dict)
 
-    context, system_footprint_html = get_context_from_response_objs(response_objs)
+    context, system_footprint_html = get_context_from_response_objs(response_objs, request)
 
     is_ref_model_edited = request.session["system_data"] != request.session["reference_system_data"]
 
@@ -137,7 +146,7 @@ def edit_object(request):
 
     response_objs = edit_object_in_system(request, response_objs, flat_obj_dict)
 
-    context, system_footprint_html = get_context_from_response_objs(response_objs)
+    context, system_footprint_html = get_context_from_response_objs(response_objs, request)
 
     is_ref_model_edited = request.session["system_data"] != request.session["reference_system_data"]
 
@@ -166,7 +175,7 @@ def delete_object(request):
 
     is_ref_model_edited = request.session["system_data"] != request.session["reference_system_data"]
 
-    context, system_footprint_html = get_context_from_response_objs(response_objs)
+    context, system_footprint_html = get_context_from_response_objs(response_objs, request)
 
     return render(
         request, "model_builder/model-builder-main.html",
@@ -174,13 +183,13 @@ def delete_object(request):
                  "is_ref_model_edited": is_ref_model_edited})
 
 
-def get_context_from_json(jsondata):
+def get_context_from_json(jsondata, request):
     response_objs, flat_obj_dict = json_to_system(jsondata)
 
-    return get_context_from_response_objs(response_objs)
+    return get_context_from_response_objs(response_objs, request)
 
 
-def get_context_from_response_objs(response_objs):
+def get_context_from_response_objs(response_objs, request):
     obj_template_dict = {}
     for key, obj in response_objs.items():
         if key not in ["System", "Country"]:
@@ -215,7 +224,11 @@ def get_context_from_response_objs(response_objs):
             obj_template_dict[key] = mod_obj_list
 
     system = list(response_objs["System"].values())[0]
-    system_footprint_html = system.plot_footprints_by_category_and_object(height=400, width=700, return_only_html=True)
+
+    graph_width = request.session['graph-width']
+
+    system_footprint_html = system.plot_footprints_by_category_and_object(height=400, width=graph_width,
+                                                                          return_only_html=True)
 
     return obj_template_dict, system_footprint_html
 
@@ -241,11 +254,15 @@ def download_json(request):
 
 def set_as_reference_model(request):
     request.session["reference_system_data"] = request.session["system_data"]
-    return render(request, "model_builder/model-builder-main.html")
+    request.session["img_base64"] = None
+    request.session['graph-width'] = 700
+    return model_builder_main(request)
 
 
 def reset_model_reference(request):
     request.session["system_data"] = request.session["reference_system_data"]
+    request.session["img_base64"] = None
+    request.session['graph-width'] = 700
     return model_builder_main(request)
 
 
@@ -261,7 +278,7 @@ def compare_with_reference(request):
 
     emissions_dict__new = [system.total_energy_footprints, system.total_fabrication_footprints]
 
-    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 5))
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 6))
 
     EmissionPlotter(
         ax, emissions_dict__old, emissions_dict__new, rounding_value=0,
@@ -283,4 +300,7 @@ def compare_with_reference(request):
     # Close plot to free memory
     plt.close(fig)
 
-    return render(request, 'model_builder/compare-container.html', {'img_base64': img_base64})
+    request.session['graph-width'] = 500
+    request.session['img_base64'] = img_base64
+
+    return model_builder_main(request)
