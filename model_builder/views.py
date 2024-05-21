@@ -22,6 +22,16 @@ from django.http import HttpResponse
 
 
 def model_builder_main(request):
+    is_reference_model_set = False
+    try:
+        img_base64 = request.session["img_base64"]
+        request.session['graph-width'] = request.session['graph-width']
+        if request.session['is-reference-model-set']:
+            is_reference_model_set = True
+    except:
+        img_base64 = None
+        request.session['graph-width'] = 700
+
     try:
         jsondata = request.session["system_data"]
     except KeyError:
@@ -32,18 +42,10 @@ def model_builder_main(request):
     # compute calculated attributes with e-footprint
     context, system_footprint_html = get_context_from_json(jsondata, request)
 
-    try:
-        img_base64 = request.session["img_base64"]
-        if request.session['graph-width']:
-            request.session['graph-width'] = request.session['graph-width']
-        else:
-            request.session['graph-width'] = 700
-    except:
-        img_base64 = None
-
     return htmx_render(
         request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html, "img_base64": img_base64})
+        context={"context": context, "systemFootprint": system_footprint_html, "img_base64": img_base64,
+                 "is_reference_model_set": is_reference_model_set})
 
 
 def open_create_object_panel(request, object_type):
@@ -256,6 +258,7 @@ def set_as_reference_model(request):
     request.session["reference_system_data"] = request.session["system_data"]
     request.session["img_base64"] = None
     request.session['graph-width'] = 700
+    request.session['is-reference-model-set'] = True
     return model_builder_main(request)
 
 
@@ -302,5 +305,6 @@ def compare_with_reference(request):
 
     request.session['graph-width'] = 500
     request.session['img_base64'] = img_base64
+    request.session['is-reference-model-set'] = False
 
     return model_builder_main(request)
