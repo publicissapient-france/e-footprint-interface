@@ -4,17 +4,16 @@
     {% load static tailwind_tags %}
     <meta charset="UTF-8"/>
     <title>e-footprint</title>
-    <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico"/>
+    <link rel="icon" type="image/x-icon" href="/static/icons/sidenav/logo.svg"/>
     {% tailwind_css %}
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 
 <body class="min-h-screen min-w-full flex flex-row" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-<nav class="text-grey-1 bg-black relative sticky top-0 left-0 h-[100vh] z-50">
+<nav class="text-grey-1 bg-black relative sticky top-0 left-0 h-[100vh]z-50">
     <a href="/" class="flex justify-center py-6">
         <img src="/static/icons/sidenav/logo.svg" alt="E-Footprint"/>
     </a>
-
     <div class="flex flex-col gap-6 p-6 border-y-[1px] border-solid border-grey-6">
         <button hx-get="/understand" hx-target="#main-content-block" hx-swap="innerHTML"
                 hx-push-url="/understand"
@@ -32,21 +31,6 @@
                 class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/analyze.svg" alt="Model builder"/>
             <span class="whitespace-nowrap">Dashboard view</span>
         </button>
-        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/leaf.svg" alt="Plan"/>
-            <span class="whitespace-nowrap">Plan for Eco-design</span>
-        </div>
-    </div>
-
-    <div class="text-grey-4 space-y-4 absolute top-2/3 p-6">
-        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/help.svg" alt="Help"/>
-            <span>Help</span>
-        </div>
-        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/settings.svg" alt="Settings"/>
-            <span>Settings</span>
-        </div>
-        <div class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/account.svg" alt="Account"/>
-            <span>Account</span>
-        </div>
     </div>
 </nav>
 
