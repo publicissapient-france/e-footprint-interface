@@ -49,3 +49,4 @@ system 1 footprints.html
 .vscode/launch.json
 
 cypress/screenshots
+cloud-sql-proxy
