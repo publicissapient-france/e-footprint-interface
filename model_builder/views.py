@@ -44,6 +44,9 @@ def model_builder_main(request):
     # compute calculated attributes with e-footprint
     context, system_footprint_html = get_context_from_json(jsondata, request)
 
+    if "reference_system_data" not in request.session.keys():
+        request.session["reference_system_data"] = jsondata
+
     return htmx_render(
         request, "model_builder/model-builder-main.html",
         context={"context": context, "systemFootprint": system_footprint_html, "img_base64": img_base64,
