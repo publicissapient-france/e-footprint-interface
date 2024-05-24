@@ -7,7 +7,10 @@
                     hx-post="open-edit-object-panel/{{ object_type }}/"
                     hx-vals='{"object-id": "{{ object.object.id }}" }'
                     hx-swap="beforeend"
-                    hx-target="#model-builder-page">Edit</button>
+                    hx-target="#model-builder-page"
+                    script="on click if #object-creation-or-edition-form then remove #object-creation-or-edition-form">
+                Edit
+            </button>
             {% if object.is_deletable %}
                 <button class="delete-object-button bg-secondary p-2 rounded-xl h-10 hover:bg-black text-white mr-2"
                         hx-post="delete-object"
