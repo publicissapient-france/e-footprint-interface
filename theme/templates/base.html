@@ -16,24 +16,28 @@
     </a>
     <div class="flex flex-col gap-6 p-6 border-y-[1px] border-solid border-grey-6">
         <button hx-get="/understand" hx-target="#main-content-block" hx-swap="innerHTML"
-                hx-push-url="/understand"
+                hx-push-url="/understand" hx-indicator="#global_loader" hx-disabled-elt="button"
+                script="on click remove the first <div/> in #main-content-block"
                 class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/home.svg" alt="Understand"/>
             <span>Understand</span>
         </button>
         <button hx-get="/quiz/onboarding" hx-target="#main-content-block" hx-swap="innerHTML"
-                hx-push-url="/quiz/onboarding"
+                hx-push-url="/quiz/onboarding" hx-indicator="#global_loader" hx-disabled-elt="button"
+                script="on click remove the first <div/> in #main-content-block"
                 class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/analyze.svg" alt="New modeling"/>
             <span class="whitespace-nowrap">Create new modeling</span>
         </button>
         <!-- Important to keep the trailing / after model_builder in the pushed url below, otherwise relative url calls with htmx won’t work -->
         <button hx-get="/model_builder" hx-target="#main-content-block" hx-swap="innerHTML"
-                hx-push-url="/model_builder/"
+                hx-push-url="/model_builder/" hx-indicator="#global_loader" hx-disabled-elt="button"
+                script="on click remove the first <div/> in #main-content-block"
                 class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/analyze.svg" alt="Model builder"/>
             <span class="whitespace-nowrap">Dashboard view</span>
         </button>
     </div>
 </nav>
 
+<img id="global_loader" src="/static/loaders/bars.svg" class="htmx-indicator absolute top-96 left-96 translate-x-96 w-32 h-32" />
 <main id="main-content-block" class="flex-1">
     {% if home %}
     {% include "home.html" %}

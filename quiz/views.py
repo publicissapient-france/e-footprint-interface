@@ -157,7 +157,7 @@ def analyze(request):
 
     if len(request.POST['country']) == 0:
         return
-    
+
     for attr_value in vars(Countries).values():
         if callable(attr_value):
             country = attr_value()
