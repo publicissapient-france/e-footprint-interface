@@ -24,16 +24,6 @@ matplotlib.use('Agg')
 
 
 def model_builder_main(request):
-    is_reference_model_set = False
-    try:
-        img_base64 = request.session["img_base64"]
-        request.session['graph-width'] = request.session['graph-width']
-        if request.session['is-reference-model-set']:
-            is_reference_model_set = True
-    except:
-        img_base64 = None
-        request.session['graph-width'] = 700
-
     try:
         jsondata = request.session["system_data"]
     except KeyError:
@@ -47,10 +37,12 @@ def model_builder_main(request):
     if "reference_system_data" not in request.session.keys():
         request.session["reference_system_data"] = jsondata
 
+    is_ref_model_edited = request.session["system_data"] != request.session["reference_system_data"]
+
     return htmx_render(
         request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html, "img_base64": img_base64,
-                 "is_reference_model_set": is_reference_model_set})
+        context={"context": context, "systemFootprint": system_footprint_html,
+                 "img_base64": request.session.get("img_base64", None), "is_ref_model_edited": is_ref_model_edited})
 
 
 def open_create_object_panel(request, object_type):
@@ -232,7 +224,7 @@ def get_context_from_response_objs(response_objs, request):
 
     system = list(response_objs["System"].values())[0]
 
-    graph_width = request.session['graph-width']
+    graph_width = request.session.get('graph-width', 700)
 
     system_footprint_html = system.plot_footprints_by_category_and_object(height=400, width=graph_width,
                                                                           return_only_html=True)

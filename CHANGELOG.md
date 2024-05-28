@@ -4,7 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.0.1] - 2024-03-24
+## [0.0.2] - 2024-05-28
+
+### Fixed
+- Model reference setting logic
+
+## [0.0.1] - 2024-05-24
 
 ### Added
 - Global loader for navigation from left tab
@@ -12,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Remove current object creation or edition panel when opening a new one
 
-## [0.0.0] - 2024-03-23
+## [0.0.0] - 2024-05-23
 
 ### Added
 - Put first version of the interface in production !
