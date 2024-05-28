@@ -28,10 +28,11 @@ def onboarding(request):
     return htmx_render(request, "quiz/onboarding.html")
 
 
-def user_journeys(request):
+def user_journeys(request, error=None):
     user_journeys_steps = [""]
 
-    return htmx_render(request, "quiz/user-journeys.html", context={"user_journeys_steps": user_journeys_steps})
+    return htmx_render(request, "quiz/user-journeys.html",
+                       context={"user_journeys_steps": user_journeys_steps, "error": error})
 
 
 def add_user_journey_step(request):
@@ -48,7 +49,8 @@ def services(request):
             uj_steps.append({"name": uj_step[0], "duration_in_min": uj_step[1]})
 
     if len(uj_steps) < 1:
-        return
+        return user_journeys(request, error="You must specify at least one user journey step")
+
     request.session['quiz_data'] = {'user_journey_steps': uj_steps}
     request.session.modified = True
 

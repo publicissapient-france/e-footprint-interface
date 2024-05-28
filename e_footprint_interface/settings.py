@@ -71,6 +71,9 @@ MIDDLEWARE = [
     "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
+if os.getenv('DJANGO_PROD') != 'True':
+    MIDDLEWARE.append('e_footprint_interface.latency_middleware.NetworkLatencyMiddleware')
+
 ROOT_URLCONF = "e_footprint_interface.urls"
 
 TEMPLATES = [
@@ -154,7 +157,7 @@ if os.getenv('DJANGO_PROD') == 'True':
 
     # SECURITY WARNING: don't run with debug turned on in production!
     # Change this to "False" when you are ready for production
-    DEBUG = False
+    DEBUG = True
 
     APPENGINE_URL = env("APPENGINE_URL", default=None)
     if APPENGINE_URL:

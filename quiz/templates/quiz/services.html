@@ -16,7 +16,10 @@
     {% include "./components/service-block.html" %}
     <div class="mx-auto space-x-1">
         <button id="validate-services-form-button" class="px-10 py-3 self-center rounded-3xl bg-primary text-white hover:bg-black hover:text-white"
-                hx-post="/quiz/usage-patterns" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="usage-patterns">Continue
+                hx-post="/quiz/usage-patterns" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="usage-patterns"
+                hx-indicator="#global_loader" hx-disabled-elt="button"
+                script="on click remove the first <div/> in #quiz-container">
+            Continue
         </button>
     </div>
 </form>
