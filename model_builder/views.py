@@ -85,7 +85,8 @@ def model_builder_main(request):
             drawflow_data[index] = {
                 "id": index, "name": efootprint_class, "class": efootprint_class,
                 "data": obj_data["object"].to_json(),
-                "html": render_to_string("model_builder/object-card.html", {"object": obj_data}),
+                "html": render_to_string("model_builder/object-card.html",
+                                         {"object": obj_data, "object_type": efootprint_class}),
                 "typenode": False,
                 "inputs": input_connections, "outputs": output_connections}
 

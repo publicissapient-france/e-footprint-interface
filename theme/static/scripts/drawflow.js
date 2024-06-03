@@ -71,6 +71,7 @@ async function init(baseUrlParam, csrfTokenParam) {
     editor.zoom_value = 0.05;
     editor.start();
     editor.import(jsonContextData);
+    htmx.process(id);
 
     rearrangeNodes();
     editor.zoom = 0.5;
