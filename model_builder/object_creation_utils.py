@@ -58,8 +58,8 @@ def add_new_object_to_system(request, response_objs, flat_obj_dict):
     new_efootprint_obj = create_efootprint_obj_from_post_data(request, flat_obj_dict)
 
     # If object is a usage pattern it has to be added to the System to trigger recomputation
+    system = list(response_objs["System"].values())[0]
     if request.POST["obj_type"] == "UsagePattern":
-        system = list(response_objs["System"].values())[0]
         system.usage_patterns += [new_efootprint_obj]
         request.session["system_data"]["System"][system.id]["usage_patterns"] = [up.id for up in system.usage_patterns]
     else:
@@ -73,7 +73,7 @@ def add_new_object_to_system(request, response_objs, flat_obj_dict):
     # Add new object to object dict to recompute context
     response_objs[request.POST["obj_type"]][new_efootprint_obj.id] = new_efootprint_obj
 
-    return response_objs
+    return new_efootprint_obj, system
 
 
 def edit_object_in_system(request, response_objs, flat_obj_dict):
@@ -118,4 +118,4 @@ def edit_object_in_system(request, response_objs, flat_obj_dict):
     # Here we updated a sub dict of request.session so we have to explicitly tell Django that it has been updated
     request.session.modified = True
 
-    return response_objs
+    return obj_to_edit, list(response_objs["System"].values())[0]

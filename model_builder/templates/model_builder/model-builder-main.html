@@ -4,22 +4,7 @@
         {% include "./compare-container.html" with img_base64=img_base64 %}
     </div>
     <div class="flex justify-between px-8 items-center">
-        <div class="flex gap-8">
-            <button class="flex items-center gap-1 py-2 px-6 text-primary border-primary border-2 border-solid rounded-xl hover:text-black hover:border-black"
-                    hx-post="set-reference-model" hx-target="#model-builder-page" hx-swap="innerHTML">
-                {% if not is_ref_model_edited %} Model set as a reference <img src="/static/icons/check-green.svg" alt="Check"/>{% else %} Set model as a reference {% endif %}
-            </button>
-            {% if is_ref_model_edited %}
-            <button class="py-2 px-6 bg-primary text-white rounded-xl hover:text-primary hover:bg-white hover:border-primary hover:border-2 hover:border-solid"
-                    hx-post="compare_with_reference" hx-target="#model-builder-page" hx-swap="innerHTML">
-                Compare the two models
-            </button>
-            <button class="py-2 px-6 bg-primary text-white rounded-xl hover:text-primary hover:bg-white hover:border-primary hover:border-2 hover:border-solid"
-                    hx-post="reset_model_reference" hx-target="#model-builder-page" hx-swap="innerHTML">
-                Reset to the model reference
-            </button>
-            {% endif %}
-        </div>
+        {% include "./model-comparison-buttons.html" with is_ref_model_edited=is_ref_model_edited %}
         <a class="edit-object-button bg-primary py-2 px-6 rounded-xl h-min hover:bg-black text-white" href="download-json">Export your model</a>
     </div>
     <div class="flex flex-row">

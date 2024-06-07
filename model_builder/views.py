@@ -14,6 +14,7 @@ import json
 from django.shortcuts import render
 import os
 from django.http import HttpResponse
+from django.template.loader import render_to_string
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg
@@ -54,13 +55,15 @@ def open_create_object_panel(request, object_type):
 
     context_data = {
         "form_target_url": "add-new-object",
-        "obj_type": object_type, "display_obj_form": True,
+        "obj_type": object_type,
         "header": f"New {object_type}", "default_name": "",
         "numerical_attributes": object_inputs_and_default_values[object_type]["numerical_attributes"],
         "modeling_obj_attributes": modeling_obj_attributes,
         "list_attributes": list_attributes,
         "object_id": "",
-        "output_button_label": "Save"
+        "output_button_label": "Save",
+        "hx_target": f"#{object_type}-section",
+        "hx_swap": "beforeend"
     }
 
     return render(request, "model_builder/object-creation-or-edition-form.html", context=context_data)
@@ -92,13 +95,15 @@ def open_edit_object_panel(request, object_type):
 
     context_data = {
         "form_target_url": "edit-object",
-        "obj_type": object_type, "display_obj_form": True,
+        "obj_type": object_type,
         "header": f"Editing {object_dict['name']}", "default_name": object_dict["name"],
         "numerical_attributes": numerical_attributes,
         "modeling_obj_attributes": modeling_obj_attributes,
         "list_attributes": list_attributes,
         "object_id": object_dict["id"],
         "output_button_label": "Edit",
+        "hx_target": f"#{object_dict['id']}",
+        "hx_swap": "innerHTML"
     }
 
     return render(request, "model_builder/object-creation-or-edition-form.html", context=context_data)
@@ -125,34 +130,36 @@ def retrieve_existing_mod_obj_and_list_attributes(object_inputs_and_default_valu
     return modeling_obj_attributes, list_attributes
 
 
-def add_new_object(request):
+def add_or_edit_object(request, add_or_edit_function):
     response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
 
-    response_objs = add_new_object_to_system(request, response_objs, flat_obj_dict)
+    added_or_edited_obj, system = add_or_edit_function(request, response_objs, flat_obj_dict)
 
-    context, system_footprint_html = get_context_from_response_objs(response_objs, request)
+    efootprint_object_card_html = render_to_string(
+        "model_builder/e-footprint-object.html",
+        {"object": mod_obj_dict_from_mod_obj(added_or_edited_obj, system),
+         "object_type": request.POST["obj_type"]})
 
-    is_ref_model_edited = request.session["system_data"] != request.session["reference_system_data"]
+    graph_width = request.session.get('graph-width', 700)
+    system_footprint_html = system.plot_footprints_by_category_and_object(
+        height=400, width=graph_width, return_only_html=True)
 
-    return render(
-        request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False",
-                 "is_ref_model_edited": is_ref_model_edited})
+    graph_container_html = render_to_string(
+        "model_builder/graph-container.html", context={"systemFootprint": system_footprint_html})
+
+    model_comparison_buttons_html = render_to_string(
+        "model_builder/model-comparison-buttons.html",
+        {"is_ref_model_edited": request.session["system_data"] != request.session["reference_system_data"]})
+
+    return HttpResponse(efootprint_object_card_html + graph_container_html + model_comparison_buttons_html)
+
+
+def add_new_object(request):
+    return add_or_edit_object(request, add_new_object_to_system)
 
 
 def edit_object(request):
-    response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
-
-    response_objs = edit_object_in_system(request, response_objs, flat_obj_dict)
-
-    context, system_footprint_html = get_context_from_response_objs(response_objs, request)
-
-    is_ref_model_edited = request.session["system_data"] != request.session["reference_system_data"]
-
-    return render(
-        request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False",
-                 "is_ref_model_edited": is_ref_model_edited})
+    return add_or_edit_object(request, edit_object_in_system)
 
 
 def delete_object(request):
@@ -178,7 +185,7 @@ def delete_object(request):
 
     return render(
         request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html, "display_obj_form": "False",
+        context={"context": context, "systemFootprint": system_footprint_html,
                  "is_ref_model_edited": is_ref_model_edited})
 
 
@@ -189,40 +196,15 @@ def get_context_from_json(jsondata, request):
 
 
 def get_context_from_response_objs(response_objs, request):
+    system = list(response_objs["System"].values())[0]
     obj_template_dict = {}
     for key, obj in response_objs.items():
         if key not in ["System", "Country"]:
             mod_obj_list = []
             for mod_obj in obj.values():
-                list_attributes = retrieve_attributes_by_type(mod_obj, list)
-                if len(list_attributes) > 0:
-                    list_attributes = list_attributes[0][1]
-                is_deletable = False
-                if not mod_obj.modeling_obj_containers:
-                    is_deletable = True
-                system = list(response_objs["System"].values())[0]
-                if isinstance(mod_obj, UsagePattern) and len(system.usage_patterns) > 1:
-                    is_deletable = True
-                mod_obj_dict = {
-                    "object": mod_obj,
-                    "numerical_attributes": [
-                        attr_name_value_pair[1]
-                        for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ExplainableQuantity)
-                        if attr_name_value_pair[1].attr_name_in_mod_obj_container not in mod_obj.calculated_attributes
-                    ],
-                    "modeling_obj_attributes": [
-                        attr_name_value_pair[1]
-                        for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ModelingObject)],
-                    "list_attributes": list_attributes,
-                    "is_deletable": is_deletable
-                }
-                for num_attr in mod_obj_dict["numerical_attributes"]:
-                    num_attr.short_unit = f"{num_attr.value.units:~P}"
-                    num_attr.readable_attr_name = num_attr.attr_name_in_mod_obj_container.replace("_", " ")
+                mod_obj_dict = mod_obj_dict_from_mod_obj(mod_obj, system)
                 mod_obj_list.append(mod_obj_dict)
             obj_template_dict[key] = mod_obj_list
-
-    system = list(response_objs["System"].values())[0]
 
     graph_width = request.session.get('graph-width', 700)
 
@@ -230,6 +212,34 @@ def get_context_from_response_objs(response_objs, request):
                                                                           return_only_html=True)
 
     return obj_template_dict, system_footprint_html
+
+def mod_obj_dict_from_mod_obj(mod_obj, system):
+    list_attributes = retrieve_attributes_by_type(mod_obj, list)
+    if len(list_attributes) > 0:
+        list_attributes = list_attributes[0][1]
+    is_deletable = False
+    if not mod_obj.modeling_obj_containers:
+        is_deletable = True
+    if isinstance(mod_obj, UsagePattern) and len(system.usage_patterns) > 1:
+        is_deletable = True
+    mod_obj_dict = {
+        "object": mod_obj,
+        "numerical_attributes": [
+            attr_name_value_pair[1]
+            for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ExplainableQuantity)
+            if attr_name_value_pair[1].attr_name_in_mod_obj_container not in mod_obj.calculated_attributes
+        ],
+        "modeling_obj_attributes": [
+            attr_name_value_pair[1]
+            for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ModelingObject)],
+        "list_attributes": list_attributes,
+        "is_deletable": is_deletable
+    }
+    for num_attr in mod_obj_dict["numerical_attributes"]:
+        num_attr.short_unit = f"{num_attr.value.units:~P}"
+        num_attr.readable_attr_name = num_attr.attr_name_in_mod_obj_container.replace("_", " ")
+
+    return mod_obj_dict
 
 
 def retrieve_attributes_by_type(modeling_obj, attribute_type, attrs_to_ignore=['modeling_obj_containers']):
