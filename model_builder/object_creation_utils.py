@@ -33,8 +33,9 @@ def create_efootprint_obj_from_post_data(request, flat_obj_dict):
     obj_inputs = obj_inputs_and_default_values[request.POST["obj_type"]]
     obj_creation_kwargs["name"] = request.POST["name"]
     for attr_dict in obj_inputs["numerical_attributes"]:
+        assert request.POST.getlist(attr_dict["attr_name"])[1] == attr_dict["unit"]
         obj_creation_kwargs[attr_dict["attr_name"]] = SourceValue(
-            float(request.POST[attr_dict["attr_name"]]) * u(attr_dict["unit"]))
+            float(request.POST.getlist(attr_dict["attr_name"])[0]) * u(attr_dict["unit"]))
     for mod_obj in obj_inputs["modeling_obj_attributes"]:
         new_mod_obj_id = request.POST[mod_obj["attr_name"]]
         if mod_obj["object_type"] == "Country" and new_mod_obj_id not in flat_obj_dict.keys():
