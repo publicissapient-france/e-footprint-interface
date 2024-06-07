@@ -130,7 +130,7 @@ def retrieve_existing_mod_obj_and_list_attributes(object_inputs_and_default_valu
     return modeling_obj_attributes, list_attributes
 
 
-def add_or_edit_object(request, add_or_edit_function):
+def add_or_edit_object(request, add_or_edit_function, add_other_usage_pattern_objects=False):
     response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
 
     added_or_edited_obj, system = add_or_edit_function(request, response_objs, flat_obj_dict)
@@ -151,11 +151,22 @@ def add_or_edit_object(request, add_or_edit_function):
         "model_builder/model-comparison-buttons.html",
         {"is_ref_model_edited": request.session["system_data"] != request.session["reference_system_data"]})
 
-    return HttpResponse(efootprint_object_card_html + graph_container_html + model_comparison_buttons_html)
+    return_html = efootprint_object_card_html + graph_container_html + model_comparison_buttons_html
+
+    if add_other_usage_pattern_objects:
+        # Special case where adding a UsagePattern makes all UsagePatterns deletable and thus need to be updated
+        for up in system.usage_patterns:
+            if up.id != added_or_edited_obj.id:
+                return_html += render_to_string(
+                    "model_builder/e-footprint-object.html",
+                    {"object": mod_obj_dict_from_mod_obj(up, system),
+                     "object_type": request.POST["obj_type"], "hx_swap_oob": "true"})
+
+    return HttpResponse(return_html)
 
 
 def add_new_object(request):
-    return add_or_edit_object(request, add_new_object_to_system)
+    return add_or_edit_object(request, add_new_object_to_system, request.POST["obj_type"] == "UsagePattern")
 
 
 def edit_object(request):
@@ -168,25 +179,39 @@ def delete_object(request):
     obj_id = request.POST["object-id"]
     obj_type = request.POST["object-type"]
 
+    system = list(response_objs["System"].values())[0]
     if obj_type == "UsagePattern":
-        system = list(response_objs["System"].values())[0]
         system.usage_patterns = [up for up in system.usage_patterns if up.id != obj_id]
 
     flat_obj_dict[obj_id].self_delete()
     response_objs[obj_type].pop(obj_id, None)
     flat_obj_dict.pop(obj_id, None)
 
-    request.session["system_data"] = system_to_json(
-        list(response_objs["System"].values())[0], save_calculated_attributes=False)
+    request.session["system_data"] = system_to_json(system, save_calculated_attributes=False)
 
-    is_ref_model_edited = request.session["system_data"] != request.session["reference_system_data"]
+    if obj_type != "UsagePattern":
+        return HttpResponse(status=204)
+    else:
+        graph_width = request.session.get('graph-width', 700)
+        system_footprint_html = system.plot_footprints_by_category_and_object(
+            height=400, width=graph_width, return_only_html=True)
 
-    context, system_footprint_html = get_context_from_response_objs(response_objs, request)
+        graph_container_html = render_to_string(
+            "model_builder/graph-container.html", context={"systemFootprint": system_footprint_html})
 
-    return render(
-        request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html,
-                 "is_ref_model_edited": is_ref_model_edited})
+        model_comparison_buttons_html = render_to_string(
+            "model_builder/model-comparison-buttons.html",
+            {"is_ref_model_edited": request.session["system_data"] != request.session["reference_system_data"]})
+
+        return_html = graph_container_html + model_comparison_buttons_html
+
+        for up in system.usage_patterns:
+            return_html += render_to_string(
+                "model_builder/e-footprint-object.html",
+                {"object": mod_obj_dict_from_mod_obj(up, system),
+                 "object_type": "UsagePattern", "hx_swap_oob": "true"})
+
+        return HttpResponse(return_html)
 
 
 def get_context_from_json(jsondata, request):
@@ -212,6 +237,7 @@ def get_context_from_response_objs(response_objs, request):
                                                                           return_only_html=True)
 
     return obj_template_dict, system_footprint_html
+
 
 def mod_obj_dict_from_mod_obj(mod_obj, system):
     list_attributes = retrieve_attributes_by_type(mod_obj, list)

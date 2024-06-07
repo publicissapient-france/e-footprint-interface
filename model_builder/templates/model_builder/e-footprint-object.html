@@ -1,5 +1,8 @@
 <div id="{{ object.object.id }}"
-     class="flex flex-col w-80 rounded text-black-1 bg-primary-lighter {{ object_type }}">
+     class="flex flex-col w-80 rounded text-black-1 bg-primary-lighter {{ object_type }}"
+     {% if hx_swap_oob %}
+        hx-swap-oob="true"
+     {% endif %}>
     <div class="flex flex-row pt-2 pl-2 justify-between">
         <div class="text-lg font-bold object-name">{{ object.object.name }}</div>
         <div>
@@ -14,10 +17,10 @@
             {% if object.is_deletable %}
                 <button class="delete-object-button bg-secondary p-2 rounded-xl h-10 hover:bg-black text-white mr-2"
                         hx-post="delete-object"
-                        hx-swap="outerHTML"
-                        hx-target="#model-builder-page"
+                        hx-swap="none"
                         hx-vals='{"object-id": "{{ object.object.id }}", "object-type": "{{ object_type }}"}'
-                        hx-confirm="Are you sure you want to delete {{ object.object.name }} ?">Delete</button>
+                        hx-confirm="Are you sure you want to delete {{ object.object.name }} ?"
+                        script="on htmx:beforeSend remove #{{ object.object.id }}">Delete</button>
             {% endif %}
         </div>
     </div>

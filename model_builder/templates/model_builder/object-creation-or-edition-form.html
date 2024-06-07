@@ -5,8 +5,7 @@
       hx-post="{{ form_target_url }}"
       hx-vals='{"obj_type": "{{ obj_type }}", "obj_id": "{{ object_id }}" }'
       hx-target="{{ hx_target }}"
-      hx-swap="{{ hx_swap }}"
-      hx-select-oob="#graph-container,#model-comparison-buttons">
+      hx-swap="{{ hx_swap }}">
     <label class="flex flex-col gap-4 font-bold">
         Name
         <input id="new-object-name" type="text" name="name" class="rounded-md border-grey-4 border-[1px] border-solid mr-2" value="{{default_name}}" required />
