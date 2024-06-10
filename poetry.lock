@@ -1268,8 +1268,8 @@ files = [
 [package.dependencies]
 numpy = [
     {version = ">=1.22.4,<2", markers = "python_version < \"3.11\""},
-    {version = ">=1.23.2,<2", markers = "python_version == \"3.11\""},
     {version = ">=1.26.0,<2", markers = "python_version >= \"3.12\""},
+    {version = ">=1.23.2,<2", markers = "python_version == \"3.11\""},
 ]
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
@@ -1680,13 +1680,13 @@ windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
 name = "pylint"
-version = "3.2.2"
+version = "3.2.3"
 description = "python code static checker"
 optional = false
 python-versions = ">=3.8.0"
 files = [
-    {file = "pylint-3.2.2-py3-none-any.whl", hash = "sha256:3f8788ab20bb8383e06dd2233e50f8e08949cfd9574804564803441a4946eab4"},
-    {file = "pylint-3.2.2.tar.gz", hash = "sha256:d068ca1dfd735fb92a07d33cb8f288adc0f6bc1287a139ca2425366f7cbe38f8"},
+    {file = "pylint-3.2.3-py3-none-any.whl", hash = "sha256:b3d7d2708a3e04b4679e02d99e72329a8b7ee8afb8d04110682278781f889fa8"},
+    {file = "pylint-3.2.3.tar.gz", hash = "sha256:02f6c562b215582386068d52a30f520d84fdbcf2a95fc7e855b816060d048b60"},
 ]
 
 [package.dependencies]
@@ -1694,8 +1694,8 @@ astroid = ">=3.2.2,<=3.3.0-dev0"
 colorama = {version = ">=0.4.5", markers = "sys_platform == \"win32\""}
 dill = [
     {version = ">=0.2", markers = "python_version < \"3.11\""},
-    {version = ">=0.3.6", markers = "python_version >= \"3.11\" and python_version < \"3.12\""},
     {version = ">=0.3.7", markers = "python_version >= \"3.12\""},
+    {version = ">=0.3.6", markers = "python_version >= \"3.11\" and python_version < \"3.12\""},
 ]
 isort = ">=4.2.5,<5.13.0 || >5.13.0,<6"
 mccabe = ">=0.6,<0.8"
@@ -1994,4 +1994,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "8ae5c6887e926f60541054b59b2ba90c6bcc946436fa06e734e44cdda3e05f94"
+content-hash = "e59f718c190c881f2d2025febd0e8381fa701830c25bb9d6cf07e6047678424e"
