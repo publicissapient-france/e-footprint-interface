@@ -33,17 +33,31 @@ def model_builder_main(request):
             request.session["system_data"] = jsondata
 
     # compute calculated attributes with e-footprint
-    context, system_footprint_html = get_context_from_json(jsondata, request)
+    response_objs, flat_obj_dict = json_to_system(jsondata)
+    system = list(response_objs["System"].values())[0]
+    obj_template_dict = {}
+    for key, obj in response_objs.items():
+        if key not in ["System", "Country"]:
+            mod_obj_list = []
+            for mod_obj in obj.values():
+                mod_obj_dict = mod_obj_dict_from_mod_obj(mod_obj, system)
+                mod_obj_list.append(mod_obj_dict)
+            obj_template_dict[key] = mod_obj_list
+
+    graph_width = request.session.get('graph-width', 700)
+
+    system_footprint_html = system.plot_footprints_by_category_and_object(
+        height=400, width=graph_width, return_only_html=True)
 
     if "reference_system_data" not in request.session.keys():
         request.session["reference_system_data"] = jsondata
 
-    is_ref_model_edited = request.session["system_data"] != request.session["reference_system_data"]
+    is_different_from_ref_model = request.session["system_data"] != request.session["reference_system_data"]
 
     return htmx_render(
         request, "model_builder/model-builder-main.html",
-        context={"context": context, "systemFootprint": system_footprint_html,
-                 "img_base64": request.session.get("img_base64", None), "is_ref_model_edited": is_ref_model_edited})
+        context={"obj_template_dict": obj_template_dict, "systemFootprint": system_footprint_html,
+                 "img_base64": request.session.get("img_base64", None), "is_different_from_ref_model": is_different_from_ref_model})
 
 
 def open_create_object_panel(request, object_type):
@@ -145,11 +159,13 @@ def add_or_edit_object(request, add_or_edit_function, add_other_usage_pattern_ob
         height=400, width=graph_width, return_only_html=True)
 
     graph_container_html = render_to_string(
-        "model_builder/graph-container.html", context={"systemFootprint": system_footprint_html})
+        "model_builder/graph-container.html",
+        context={"systemFootprint": system_footprint_html, "hx_swap_oob": True})
 
     model_comparison_buttons_html = render_to_string(
         "model_builder/model-comparison-buttons.html",
-        {"is_ref_model_edited": request.session["system_data"] != request.session["reference_system_data"]})
+        {"is_different_from_ref_model": request.session["system_data"] != request.session["reference_system_data"],
+         "hx_swap_oob": True})
 
     return_html = efootprint_object_card_html + graph_container_html + model_comparison_buttons_html
 
@@ -160,7 +176,7 @@ def add_or_edit_object(request, add_or_edit_function, add_other_usage_pattern_ob
                 return_html += render_to_string(
                     "model_builder/e-footprint-object.html",
                     {"object": mod_obj_dict_from_mod_obj(up, system),
-                     "object_type": request.POST["obj_type"], "hx_swap_oob": "true"})
+                     "object_type": request.POST["obj_type"], "hx_swap_oob": True})
 
     return HttpResponse(return_html)
 
@@ -197,11 +213,13 @@ def delete_object(request):
             height=400, width=graph_width, return_only_html=True)
 
         graph_container_html = render_to_string(
-            "model_builder/graph-container.html", context={"systemFootprint": system_footprint_html})
+            "model_builder/graph-container.html",
+            context={"systemFootprint": system_footprint_html, "hx_swap_oob": True})
 
         model_comparison_buttons_html = render_to_string(
             "model_builder/model-comparison-buttons.html",
-            {"is_ref_model_edited": request.session["system_data"] != request.session["reference_system_data"]})
+            {"is_different_from_ref_model": request.session["system_data"] != request.session["reference_system_data"],
+             "hx_swap_oob": True})
 
         return_html = graph_container_html + model_comparison_buttons_html
 
@@ -209,34 +227,9 @@ def delete_object(request):
             return_html += render_to_string(
                 "model_builder/e-footprint-object.html",
                 {"object": mod_obj_dict_from_mod_obj(up, system),
-                 "object_type": "UsagePattern", "hx_swap_oob": "true"})
+                 "object_type": "UsagePattern", "hx_swap_oob": True})
 
         return HttpResponse(return_html)
-
-
-def get_context_from_json(jsondata, request):
-    response_objs, flat_obj_dict = json_to_system(jsondata)
-
-    return get_context_from_response_objs(response_objs, request)
-
-
-def get_context_from_response_objs(response_objs, request):
-    system = list(response_objs["System"].values())[0]
-    obj_template_dict = {}
-    for key, obj in response_objs.items():
-        if key not in ["System", "Country"]:
-            mod_obj_list = []
-            for mod_obj in obj.values():
-                mod_obj_dict = mod_obj_dict_from_mod_obj(mod_obj, system)
-                mod_obj_list.append(mod_obj_dict)
-            obj_template_dict[key] = mod_obj_list
-
-    graph_width = request.session.get('graph-width', 700)
-
-    system_footprint_html = system.plot_footprints_by_category_and_object(height=400, width=graph_width,
-                                                                          return_only_html=True)
-
-    return obj_template_dict, system_footprint_html
 
 
 def mod_obj_dict_from_mod_obj(mod_obj, system):
@@ -289,16 +282,15 @@ def download_json(request):
 
 def set_as_reference_model(request):
     request.session["reference_system_data"] = request.session["system_data"]
-    request.session["img_base64"] = None
-    request.session['graph-width'] = 700
-    request.session['is-reference-model-set'] = True
-    return model_builder_main(request)
+
+    return render(request, "model_builder/model-comparison-buttons.html", {"is_different_from_ref_model": False})
 
 
 def reset_model_reference(request):
     request.session["system_data"] = request.session["reference_system_data"]
     request.session["img_base64"] = None
     request.session['graph-width'] = 700
+
     return model_builder_main(request)
 
 
@@ -331,6 +323,5 @@ def compare_with_reference(request):
 
     request.session['graph-width'] = 500
     request.session['img_base64'] = img_base64
-    request.session['is-reference-model-set'] = False
 
-    return model_builder_main(request)
+    return render(request, "model_builder/compare-container.html", {"img_base64": img_base64})

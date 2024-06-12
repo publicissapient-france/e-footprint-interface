@@ -1,4 +1,4 @@
-<div id="compare-container" hx-swap-oob="true">
+<div id="compare-container" {% if hx_swap_oob %} hx-swap-oob="true" {% endif %}>
     {% if img_base64 %}
     <img src="data:image/png;base64,{{ img_base64 }}" alt="Comparison Image">
     {% endif %}

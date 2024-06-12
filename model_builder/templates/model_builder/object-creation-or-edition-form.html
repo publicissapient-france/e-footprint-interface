@@ -5,7 +5,8 @@
       hx-post="{{ form_target_url }}"
       hx-vals='{"obj_type": "{{ obj_type }}", "obj_id": "{{ object_id }}" }'
       hx-target="{{ hx_target }}"
-      hx-swap="{{ hx_swap }}">
+      hx-swap="{{ hx_swap }}"
+      script="on htmx:afterRequest remove #object-creation-or-edition-form">
     <label class="flex flex-col gap-4 font-bold">
         Name
         <input id="new-object-name" type="text" name="name" class="rounded-md border-grey-4 border-[1px] border-solid mr-2" value="{{default_name}}" required />
