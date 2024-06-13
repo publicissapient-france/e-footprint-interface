@@ -12,7 +12,7 @@
                     <p>Define the characteristics of your service and estimate the characteristics of services called along your customers' journey...</p>
                     <p class="text-black">Read more...</p>
                 </div>
-                <button id="go-to-user-journeys-button" class="h-min bg-primary text-white mr-2 px-8 py-4 rounded-full"
+                <button id="go-to-user-journeys-button" class="h-min bg-primary text-white mr-2 px-8 py-4 rounded-full hover:bg-primary-dark active:bg-primary-darker"
                         hx-post="user-journeys" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="user-journeys"
                         hx-indicator="#global_loader" hx-disabled-elt="button"
                         script="on click get #quiz-container then set its innerHTML to ''">Start
@@ -27,7 +27,7 @@
                 {% csrf_token %}
                 <label for="import-json-input" class="hidden">import json file</label>
                 <input id="import-json-input" name="import-json-input" type="file">
-                <button class="h-min bg-primary text-white mr-2 px-8 py-4 rounded-full" type="submit">Use your model</button>
+                <button class="h-min bg-primary text-white mr-2 px-8 py-4 rounded-full hover:bg-primary-dark active:bg-primary-darker" type="submit">Use your model</button>
             </form>
         </div>
         {% if uploadError %}

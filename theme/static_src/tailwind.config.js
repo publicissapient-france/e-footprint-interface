@@ -70,6 +70,8 @@ module.exports = {
       "primary-darker": "#261365",
       secondary: "#F7AB27",
       "secondary-light": "#FFCD6C",
+        "secondary-dark": "#d19121",
+        "secondary-darker": "#ac771b",
       "background-1": "#1F1A32",
       "background-2": "#322D46",
        "background-3": "#433E58",

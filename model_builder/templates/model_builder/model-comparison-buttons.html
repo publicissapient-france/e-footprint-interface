@@ -1,17 +1,21 @@
 <div id="model-comparison-buttons" {% if hx_swap_oob %} hx-swap-oob="true" {% endif %} class="flex gap-8">
-    <button class="flex items-center gap-1 py-2 px-6 text-primary border-primary border-2 border-solid rounded-xl hover:text-black hover:border-black"
-            hx-post="set-reference-model" hx-target="#model-comparison-buttons" hx-swap="outerHTML" hx-disabled-elt="button"
-            {% if not is_different_from_ref_model %} disabled {% endif %}>
-        {% if not is_different_from_ref_model %} Model set as a reference <img src="/static/icons/check-green.svg" alt="Check"/>{% else %} Set model as a reference {% endif %}
-    </button>
     {% if is_different_from_ref_model %}
-    <button class="py-2 px-6 bg-primary text-white rounded-xl hover:text-primary hover:bg-white hover:border-primary hover:border-2 hover:border-solid"
+        <button class="flex items-center gap-1 py-2 px-6 text-primary border-primary border-2 border-solid rounded-xl hover:text-black hover:border-black"
+                hx-post="set-reference-model" hx-target="#model-comparison-buttons" hx-swap="outerHTML" hx-disabled-elt="button"
+        >
+            Set model as a reference
+        </button>
+        <button class="py-2 px-6 bg-primary text-white rounded-xl hover:text-primary hover:bg-white hover:border-primary hover:border-2 hover:border-solid"
             hx-post="compare_with_reference" hx-target="#compare-container" hx-swap="innerHTML" hx-disabled-elt="button">
-        Compare the two models
-    </button>
-    <button class="py-2 px-6 bg-primary text-white rounded-xl hover:text-primary hover:bg-white hover:border-primary hover:border-2 hover:border-solid"
-            hx-post="reset_model_reference" hx-target="#model-builder-page" hx-swap="innerHTML" hx-disabled-elt="button">
-        Reset to the model reference
-    </button>
+            Compare the two models
+        </button>
+        <button class="py-2 px-6 bg-primary text-white rounded-xl hover:text-primary hover:bg-white hover:border-primary hover:border-2 hover:border-solid"
+                hx-post="reset_model_reference" hx-target="#model-builder-page" hx-swap="innerHTML" hx-disabled-elt="button">
+            Reset to the model reference
+        </button>
+    {% else %}
+        <button class="flex items-center gap-1 py-2 px-6 text-primary border-primary border-2 border-solid rounded-xl" disabled>
+            Model set as a reference <img src="/static/icons/check-green.svg" alt="Check"/>
+        </button>
     {% endif %}
 </div>
