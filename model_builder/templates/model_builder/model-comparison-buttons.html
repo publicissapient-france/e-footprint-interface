@@ -1,16 +1,23 @@
 <div id="model-comparison-buttons" {% if hx_swap_oob %} hx-swap-oob="true" {% endif %} class="flex gap-8">
     {% if is_different_from_ref_model %}
-        <button class="flex items-center gap-1 py-2 px-6 text-primary border-primary border-2 border-solid rounded-xl hover:text-black hover:border-black"
+        <button class="relative flex items-center gap-1 py-2 px-6 text-primary border-primary border-2 border-solid rounded-xl hover:text-black hover:border-black"
                 hx-post="set-reference-model" hx-target="#model-comparison-buttons" hx-swap="outerHTML" hx-disabled-elt="button"
+                script="on click hide the first <span/> in me with *opacity"
         >
-            Set model as a reference
+            <img id="set-ref-model-loader" src="/static/loaders/bars.svg" class="htmx-indicator w-10 h-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="pointer-events: none"/>
+            <span>Set model as a reference</span>
         </button>
         <button class="py-2 px-6 bg-primary text-white rounded-xl hover:text-primary hover:bg-white hover:border-primary hover:border-2 hover:border-solid"
-            hx-post="compare_with_reference" hx-target="#compare-container" hx-swap="innerHTML" hx-disabled-elt="button">
+                hx-post="compare_with_reference" hx-target="#compare-container" hx-swap="innerHTML" hx-disabled-elt="button"
+                hx-indicator="#compare-loader"
+                script="on click if #graph-comparison-image is not null then remove #graph-comparison-image">
             Compare the two models
         </button>
         <button class="py-2 px-6 bg-primary text-white rounded-xl hover:text-primary hover:bg-white hover:border-primary hover:border-2 hover:border-solid"
-                hx-post="reset_model_reference" hx-target="#model-builder-page" hx-swap="innerHTML" hx-disabled-elt="button">
+                hx-post="reset_model_reference" hx-target="#main-content-block" hx-swap="beforeend" hx-disabled-elt="button"
+                hx-indicator="#global_loader"
+                script="on click remove the first <div/> in #main-content-block"
+                >
             Reset to the model reference
         </button>
     {% else %}

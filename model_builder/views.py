@@ -22,6 +22,7 @@ import io
 import base64
 
 matplotlib.use('Agg')
+DEFAULT_GRAPH_WIDTH = 700
 
 
 def model_builder_main(request):
@@ -44,10 +45,8 @@ def model_builder_main(request):
                 mod_obj_list.append(mod_obj_dict)
             obj_template_dict[key] = mod_obj_list
 
-    graph_width = request.session.get('graph-width', 700)
-
     system_footprint_html = system.plot_footprints_by_category_and_object(
-        height=400, width=graph_width, return_only_html=True)
+        height=400, width=DEFAULT_GRAPH_WIDTH, return_only_html=True)
 
     if "reference_system_data" not in request.session.keys():
         request.session["reference_system_data"] = jsondata
@@ -154,9 +153,8 @@ def add_or_edit_object(request, add_or_edit_function, add_other_usage_pattern_ob
         {"object": mod_obj_dict_from_mod_obj(added_or_edited_obj, system),
          "object_type": request.POST["obj_type"]})
 
-    graph_width = request.session.get('graph-width', 700)
     system_footprint_html = system.plot_footprints_by_category_and_object(
-        height=400, width=graph_width, return_only_html=True)
+        height=400, width=DEFAULT_GRAPH_WIDTH, return_only_html=True)
 
     graph_container_html = render_to_string(
         "model_builder/graph-container.html",
@@ -208,9 +206,8 @@ def delete_object(request):
     if obj_type != "UsagePattern":
         return HttpResponse(status=204)
     else:
-        graph_width = request.session.get('graph-width', 700)
         system_footprint_html = system.plot_footprints_by_category_and_object(
-            height=400, width=graph_width, return_only_html=True)
+            height=400, width=DEFAULT_GRAPH_WIDTH, return_only_html=True)
 
         graph_container_html = render_to_string(
             "model_builder/graph-container.html",
@@ -289,7 +286,6 @@ def set_as_reference_model(request):
 def reset_model_reference(request):
     request.session["system_data"] = request.session["reference_system_data"]
     request.session["img_base64"] = None
-    request.session['graph-width'] = 700
 
     return model_builder_main(request)
 
@@ -321,7 +317,6 @@ def compare_with_reference(request):
     # Close plot to free memory
     plt.close(fig)
 
-    request.session['graph-width'] = 500
     request.session['img_base64'] = img_base64
 
     return render(request, "model_builder/compare-container.html", {"img_base64": img_base64})

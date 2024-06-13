@@ -1,5 +1,6 @@
-<div id="compare-container" {% if hx_swap_oob %} hx-swap-oob="true" {% endif %}>
+<div id="compare-container" class="relative"{% if hx_swap_oob %} hx-swap-oob="true" {% endif %}>
+    <img id="compare-loader" src="/static/loaders/bars.svg" class="htmx-indicator w-24 h-24 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="pointer-events: none"/>
     {% if img_base64 %}
-    <img src="data:image/png;base64,{{ img_base64 }}" alt="Comparison Image">
+    <img id="graph-comparison-image" src="data:image/png;base64,{{ img_base64 }}" alt="Comparison Image">
     {% endif %}
 </div>

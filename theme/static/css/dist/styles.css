@@ -907,6 +907,22 @@ select {
   height: min-content;
 }
 
+.h-36 {
+  height: 9rem;
+}
+
+.h-\[400px\] {
+  height: 400px;
+}
+
+.h-4 {
+  height: 1rem;
+}
+
+.h-6 {
+  height: 1.5rem;
+}
+
 .min-h-screen {
   min-height: 100vh;
 }
@@ -959,6 +975,22 @@ select {
 .w-min {
   width: -moz-min-content;
   width: min-content;
+}
+
+.w-36 {
+  width: 9rem;
+}
+
+.w-\[700px\] {
+  width: 700px;
+}
+
+.w-4 {
+  width: 1rem;
+}
+
+.w-6 {
+  width: 1.5rem;
 }
 
 .min-w-\[30\%\] {

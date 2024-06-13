@@ -6,21 +6,28 @@
     <div class="flex flex-row pt-2 pl-2 justify-between">
         <div class="text-lg font-bold object-name">{{ object.object.name }}</div>
         <div>
-            <button class="edit-object-button bg-primary p-2 rounded-xl h-10 hover:bg-primary-dark active:bg-primary-darker text-white mr-2"
+            <button class="edit-object-button relative bg-primary p-2 rounded-xl h-10 hover:bg-primary-dark active:bg-primary-darker text-white mr-2"
                     hx-post="open-edit-object-panel/{{ object_type }}/"
                     hx-vals='{"object-id": "{{ object.object.id }}" }'
                     hx-swap="beforeend"
                     hx-target="#model-builder-page"
-                    script="on click if #object-creation-or-edition-form then remove #object-creation-or-edition-form">
-                Edit
+                    script="on click if #object-creation-or-edition-form then remove #object-creation-or-edition-form end
+                            on click hide the first <span/> in me with *opacity
+                            on htmx:afterRequest show the first <span/> in me with *opacity">
+                <img src="/static/loaders/bars-white.svg" class="htmx-indicator w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="pointer-events: none"/>
+                <span>Edit</span>
             </button>
             {% if object.is_deletable %}
-                <button class="delete-object-button bg-secondary p-2 rounded-xl h-10 hover:bg-secondary-dark active:bg-secondary-darker text-white mr-2"
+                <button class="relative delete-object-button bg-secondary p-2 rounded-xl h-10 hover:bg-secondary-dark active:bg-secondary-darker text-white mr-2"
                         hx-post="delete-object"
                         hx-swap="none"
                         hx-vals='{"object-id": "{{ object.object.id }}", "object-type": "{{ object_type }}"}'
                         hx-confirm="Are you sure you want to delete {{ object.object.name }} ?"
-                        script="on htmx:beforeSend remove #{{ object.object.id }}">Delete</button>
+                        script="on htmx:afterRequest remove #{{ object.object.id }}
+                                on click hide the first <span/> in me with *opacity">
+                    <img src="/static/loaders/bars.svg" class="htmx-indicator w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="pointer-events: none"/>
+                    <span>Delete</span>
+                </button>
             {% endif %}
         </div>
     </div>
