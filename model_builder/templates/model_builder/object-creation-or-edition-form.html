@@ -64,7 +64,7 @@
     {% endfor %}
     <div class="flex w-full flex-end bottom-0 justify-end gap-8 pb-8">
         <button id="create-new-object-button" type="submit" class="relative px-10 py-3 self-center rounded-3xl bg-primary text-white hover:bg-primary-dark active:bg-primary-darker"
-        script="on click hide the first <span/> in me with *opacity">
+        script="on click hide the first <span/> in me with *opacity then remove #graph-comparison-image">
             <img id="create-new-object-button-loader" src="/static/loaders/bars-white.svg" class="htmx-indicator w-10 h-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="pointer-events: none"/>
             <span>{{ output_button_label }}</span>
         </button>
