@@ -44,15 +44,15 @@
             "name": "Daily Youtube usage",
             "id": "Daily-Youtube-usage-and-uuid",
             "uj_steps": [
-                "20-min-streaming-on-Youtube-and-uuid",
-                "0\\2e4s-of-upload-and-uuid"
+                "esc-20-min-streaming-on-Youtube-and-uuid",
+                "esc-02e4s-of-upload-and-uuid"
             ]
         }
     },
     "UserJourneyStep": {
-        "20-min-streaming-on-Youtube-and-uuid": {
+        "esc-20-min-streaming-on-Youtube-and-uuid": {
             "name": "20 min streaming on Youtube",
-            "id": "20-min-streaming-on-Youtube-and-uuid",
+            "id": "esc-20-min-streaming-on-Youtube-and-uuid",
             "user_time_spent": {
                 "label": "Time spent on step 20 min streaming on Youtube from hypothesis",
                 "value": 20.0,
@@ -66,9 +66,9 @@
                 "streaming-and-uuid"
             ]
         },
-        "0\\2e4s-of-upload-and-uuid": {
+        "esc-02e4s-of-upload-and-uuid": {
             "name": "0.4s of upload",
-            "id": "0\\2e4s-of-upload-and-uuid",
+            "id": "esc-02e4s-of-upload-and-uuid",
             "user_time_spent": {
                 "label": "Time spent on step 0.4s of upload from hypothesis",
                 "value": 1.0,
