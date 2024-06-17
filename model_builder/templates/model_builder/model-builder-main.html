@@ -25,7 +25,8 @@
                                     script="on click if #object-creation-or-edition-form is not null then remove #object-creation-or-edition-form"
                                     hx-post="open-create-object-panel/{{ object_type }}/"
                                     hx-swap="beforeend"
-                                    hx-target="#model-builder-page">
+                                    hx-target="#model-builder-page"
+                                    hx-disabled-elt="button">
                                 <span class="flex place-content-center h-16 w-16 text-white bg-primary-lighter rounded-full"><span class="my-auto">
                                     <img src="/static/icons/plus-white.svg" alt="Add new object" />
                                     </span></span><span>Add {{ object_type }}</span>
