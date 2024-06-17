@@ -183,8 +183,8 @@ def analyze(request):
     system = System("System", usage_patterns=[usage_pattern])
 
     del request.session["quiz_data"]
-
     request.session["system_data"] = system_to_json(system, save_calculated_attributes=False)
+    request.session["img_base64"] = None
 
     return model_builder_main(request)
 
