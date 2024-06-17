@@ -415,13 +415,13 @@ reload = ["django-browser-reload (>=1.12.1,<2.0.0)"]
 
 [[package]]
 name = "efootprint"
-version = "2.1.4"
+version = "2.1.6"
 description = "Digital service environmental footprint model"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "efootprint-2.1.4-py3-none-any.whl", hash = "sha256:429d8b7151b39490d37c9b7cc54bf695e7fbed5b12b7fabb8e2f6c62ad2f3bce"},
-    {file = "efootprint-2.1.4.tar.gz", hash = "sha256:42f9ab31aec3bdf839c7b4de2df34241bdab3bfab6722f29c30d39454357cbdb"},
+    {file = "efootprint-2.1.6-py3-none-any.whl", hash = "sha256:8c595ae24750853f01186f2fe870ddee6abe3fa4761d539ad35bb045e00ff53c"},
+    {file = "efootprint-2.1.6.tar.gz", hash = "sha256:8dd2203e8dd8556f2b30355fbadc99005a88b4395e52ec03969e0bfd83334433"},
 ]
 
 [package.dependencies]
@@ -1268,8 +1268,8 @@ files = [
 [package.dependencies]
 numpy = [
     {version = ">=1.22.4,<2", markers = "python_version < \"3.11\""},
-    {version = ">=1.23.2,<2", markers = "python_version == \"3.11\""},
     {version = ">=1.26.0,<2", markers = "python_version >= \"3.12\""},
+    {version = ">=1.23.2,<2", markers = "python_version == \"3.11\""},
 ]
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
@@ -1694,8 +1694,8 @@ astroid = ">=3.2.2,<=3.3.0-dev0"
 colorama = {version = ">=0.4.5", markers = "sys_platform == \"win32\""}
 dill = [
     {version = ">=0.2", markers = "python_version < \"3.11\""},
-    {version = ">=0.3.6", markers = "python_version >= \"3.11\" and python_version < \"3.12\""},
     {version = ">=0.3.7", markers = "python_version >= \"3.12\""},
+    {version = ">=0.3.6", markers = "python_version >= \"3.11\" and python_version < \"3.12\""},
 ]
 isort = ">=4.2.5,<5.13.0 || >5.13.0,<6"
 mccabe = ">=0.6,<0.8"
@@ -1994,4 +1994,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "8ae5c6887e926f60541054b59b2ba90c6bcc946436fa06e734e44cdda3e05f94"
+content-hash = "14f64b6ff21814238247bff80f4d29830ee39118aea95ea7216f964a8738421e"
