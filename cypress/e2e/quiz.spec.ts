@@ -14,6 +14,7 @@ describe('Quiz tests', () => {
         cy.get("input[type=number]").eq(0).type(1);
         cy.get("input[type=text]").eq(1).type("Watch a video");
         cy.get("input[type=number]").eq(1).type(10);
+        cy.get('#add-step').click();
         cy.get("input[type=text]").eq(2).type("Write a comment");
         cy.get("input[type=number]").eq(2).type(2);
         cy.get('#validate-user-journeys-form-button').click();
