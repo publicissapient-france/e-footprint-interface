@@ -7,7 +7,9 @@
       hx-target="{{ hx_target }}"
       hx-swap="{{ hx_swap }}"
       hx-indicator="#graph-loader,#create-new-object-button-loader"
-      script="on htmx:afterRequest remove #object-creation-or-edition-form
+      script="on htmx:beforeSend hide the first <span/> in #create-new-object-button with *opacity
+              on htmx:afterRequest remove #object-creation-or-edition-form
+              on htmx:afterRequest if #graph-comparison-image is not null then remove #graph-comparison-image end
               on submit remove the first <div/> in #graph-container">
     <label class="flex flex-col gap-4 font-bold">
         Name
@@ -60,14 +62,27 @@
                 </label>
                 {% endfor %}
             </div>
-    </label>
+        </label>
+    <script>
+    document.getElementById('create-new-object-button').addEventListener('click', function(event) {
+        const checkboxes = document.querySelectorAll('input[name="{{ list_attribute.attr_name }}"]');
+        const checkedOne = Array.from(checkboxes).some(checkbox => checkbox.checked);
+
+        if (!checkedOne) {
+            event.preventDefault(); // Prevent form submission
+            document.getElementById('error-message').style.display = 'block';
+        }
+    });
+    </script>
     {% endfor %}
+    <div id="error-message" style="color: red; display: none;">Please select at least one option.</div>
     <div class="flex w-full flex-end bottom-0 justify-end gap-8 pb-8">
         <button id="create-new-object-button" type="submit" class="relative px-10 py-3 self-center rounded-3xl bg-primary text-white hover:bg-primary-dark active:bg-primary-darker"
-        script="on click hide the first <span/> in me with *opacity then remove #graph-comparison-image">
+        >
             <img id="create-new-object-button-loader" src="/static/loaders/bars-white.svg" class="htmx-indicator w-10 h-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="pointer-events: none"/>
             <span>{{ output_button_label }}</span>
         </button>
     </div>
 </form>
+
 {% endblock %}

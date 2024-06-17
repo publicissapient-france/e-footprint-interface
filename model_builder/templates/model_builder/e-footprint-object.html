@@ -11,8 +11,8 @@
                     hx-vals='{"object-id": "{{ object.object.id }}" }'
                     hx-swap="beforeend"
                     hx-target="#model-builder-page"
-                    script="on click if #object-creation-or-edition-form then remove #object-creation-or-edition-form end
-                            on click hide the first <span/> in me with *opacity
+                    script="on htmx:beforeSend if #object-creation-or-edition-form then remove #object-creation-or-edition-form end
+                            on htmx:beforeSend hide the first <span/> in me with *opacity
                             on htmx:afterRequest show the first <span/> in me with *opacity">
                 <img src="/static/loaders/bars-white.svg" class="htmx-indicator w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="pointer-events: none"/>
                 <span>Edit</span>
