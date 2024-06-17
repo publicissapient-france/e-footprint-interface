@@ -114,7 +114,7 @@ def open_edit_object_panel(request, object_type):
         "modeling_obj_attributes": modeling_obj_attributes,
         "list_attributes": list_attributes,
         "object_id": object_dict["id"],
-        "output_button_label": "Edit",
+        "output_button_label": "Save",
         "hx_target": f"#{object_dict['id']}",
         "hx_swap": "innerHTML"
     }
