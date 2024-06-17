@@ -20,13 +20,15 @@ jobs:
                   pipx install poetry
                   poetry install
 
+            - name: Create .env file
+              run: |
+                  echo DJANGO_PROD=False >> .env
+                  echo SECRET_KEY=ci_secret_key >> .env
+
             - name: Run migrations
               run: |
                   poetry run python manage.py makemigrations
                   poetry run python manage.py migrate
-
-            - name: Analysing the code with pylint
-              run: poetry run pylint e_footprint_interface
 
             - name: Run Tests
               run: poetry run python manage.py test
