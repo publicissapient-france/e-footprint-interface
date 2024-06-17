@@ -173,6 +173,8 @@ def add_or_edit_object(request, add_or_edit_function):
             {"object": mod_obj_dict_from_mod_obj(obj, system),
              "object_type": obj.class_as_simple_str, "hx_swap_oob": True})
 
+    request.session["img_base64"] = None
+
     return HttpResponse(return_html)
 
 
@@ -216,6 +218,7 @@ def delete_object(request):
              "hx_swap_oob": True})
 
         return_html = graph_container_html + model_comparison_buttons_html
+        request.session["img_base64"] = None
 
         for up in system.usage_patterns:
             return_html += render_to_string(
