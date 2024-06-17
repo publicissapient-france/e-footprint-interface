@@ -143,10 +143,10 @@ def retrieve_existing_mod_obj_and_list_attributes(object_inputs_and_default_valu
     return modeling_obj_attributes, list_attributes
 
 
-def add_or_edit_object(request, add_or_edit_function, add_other_usage_pattern_objects=False):
+def add_or_edit_object(request, add_or_edit_function):
     response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
 
-    added_or_edited_obj, system = add_or_edit_function(request, response_objs, flat_obj_dict)
+    added_or_edited_obj, system, other_objects_to_update = add_or_edit_function(request, response_objs, flat_obj_dict)
 
     efootprint_object_card_html = render_to_string(
         "model_builder/e-footprint-object.html",
@@ -167,20 +167,17 @@ def add_or_edit_object(request, add_or_edit_function, add_other_usage_pattern_ob
 
     return_html = efootprint_object_card_html + graph_container_html + model_comparison_buttons_html
 
-    if add_other_usage_pattern_objects:
-        # Special case where adding a UsagePattern makes all UsagePatterns deletable and thus need to be updated
-        for up in system.usage_patterns:
-            if up.id != added_or_edited_obj.id:
-                return_html += render_to_string(
-                    "model_builder/e-footprint-object.html",
-                    {"object": mod_obj_dict_from_mod_obj(up, system),
-                     "object_type": request.POST["obj_type"], "hx_swap_oob": True})
+    for obj in other_objects_to_update:
+        return_html += render_to_string(
+            "model_builder/e-footprint-object.html",
+            {"object": mod_obj_dict_from_mod_obj(obj, system),
+             "object_type": obj.class_as_simple_str, "hx_swap_oob": True})
 
     return HttpResponse(return_html)
 
 
 def add_new_object(request):
-    return add_or_edit_object(request, add_new_object_to_system, request.POST["obj_type"] == "UsagePattern")
+    return add_or_edit_object(request, add_new_object_to_system)
 
 
 def edit_object(request):
