@@ -57,6 +57,23 @@ function getObjectInputsAndDefaultValues() {
     return fetch("/static/object_inputs_and_default_values.json").then((data) => data.json());
 }
 
+document.body.addEventListener("InsertNewNode", function(evt){
+    let drawflowData = evt.detail["drawflowData"];
+    console.log(drawflowData);
+    editor.addNode(
+        drawflowData["name"], 1, 1, 100, 100, drawflowData["class"], drawflowData["data"], drawflowData["html"]);
+    htmx.process(document.getElementById(drawflowData["html_block_id"]));
+    if (Object.keys(drawflowData.outputs).length > 0) {
+        drawflowData.outputs.output_1.connections.forEach(connection => {
+            editor.addConnection(drawflowData["id"], connection.node, "output_1", "input_1");
+        });
+    }
+    if (Object.keys(drawflowData.inputs).length > 0) {
+        drawflowData.inputs.input_1.connections.forEach(connection => {
+            editor.addConnection(connection.node, drawflowData["id"], "output_1", "input_1");
+        });
+    }
+})
 
 async function init(baseUrlParam, csrfTokenParam) {
     baseUrl = baseUrlParam;

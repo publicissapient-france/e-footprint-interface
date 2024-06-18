@@ -74,14 +74,14 @@ def add_new_object_to_system(request, response_objs, flat_obj_dict):
     # Add new object to object dict to recompute context
     response_objs[request.POST["obj_type"]][new_efootprint_obj.id] = new_efootprint_obj
 
-    other_objects_to_update = []
+    objects_to_update = []
     if request.POST["obj_type"] == "UsagePattern":
         # Special case where adding a UsagePattern makes all UsagePatterns deletable and thus need to be updated
         for up in system.usage_patterns:
             if up.id != new_efootprint_obj.id:
-                other_objects_to_update.append(up)
+                objects_to_update.append(up)
 
-    return new_efootprint_obj, system, other_objects_to_update
+    return new_efootprint_obj, system, objects_to_update
 
 
 def edit_object_in_system(request, response_objs, flat_obj_dict):
@@ -93,7 +93,7 @@ def edit_object_in_system(request, response_objs, flat_obj_dict):
     obj_inputs = obj_inputs_and_default_values[request.POST["obj_type"]]
 
     obj_to_edit.name = request.POST["name"]
-    other_objects_to_update = []
+    objects_to_update = [obj_to_edit]
 
     for attr_dict in obj_inputs["numerical_attributes"]:
         request_value = request.POST.getlist(attr_dict["attr_name"])[0]
@@ -123,7 +123,7 @@ def edit_object_in_system(request, response_objs, flat_obj_dict):
         added_mod_obj_ids = [id for id in new_mod_obj_id_list if id not in current_mod_obj_id_list]
         for mod_obj_id in removed_mod_obj_ids + added_mod_obj_ids:
             # Changed list attributes are updated because their deletability might have changed
-            other_objects_to_update.append(flat_obj_dict[mod_obj_id])
+            objects_to_update.append(flat_obj_dict[mod_obj_id])
         if new_mod_obj_id_list != current_mod_obj_id_list:
             obj_to_edit.__setattr__(mod_obj["attr_name"], [flat_obj_dict[obj_id] for obj_id in new_mod_obj_id_list])
 
@@ -132,4 +132,4 @@ def edit_object_in_system(request, response_objs, flat_obj_dict):
     # Here we updated a sub dict of request.session so we have to explicitly tell Django that it has been updated
     request.session.modified = True
 
-    return obj_to_edit, list(response_objs["System"].values())[0], other_objects_to_update
+    return obj_to_edit, list(response_objs["System"].values())[0], objects_to_update
