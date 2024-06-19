@@ -196,7 +196,7 @@ def add_new_object(request):
     request.session["drawflow_data"][drawflow_node_data["id"]] = drawflow_node_data
     request.session.modified = True
 
-    http_response["HX-Trigger-After-Swap"] = json.dumps({"InsertNewNode": {"drawflowData": drawflow_node_data}})
+    http_response["HX-Trigger-After-Swap"] = json.dumps({"insertNewNode": {"drawflowData": drawflow_node_data}})
 
     return http_response
 
@@ -226,7 +226,7 @@ def delete_object(request):
     request.session["system_data"] = system_to_json(system, save_calculated_attributes=False)
 
     if obj_type != "UsagePattern":
-        return HttpResponse(status=204)
+        http_response = HttpResponse(status=204)
     else:
         system_footprint_html = system.plot_footprints_by_category_and_object(
             height=400, width=DEFAULT_GRAPH_WIDTH, return_only_html=True)
@@ -249,7 +249,12 @@ def delete_object(request):
                 {"object": mod_obj_dict_from_mod_obj(up, system),
                  "object_type": "UsagePattern", "hx_swap_oob": True})
 
-        return HttpResponse(return_html)
+        http_response = HttpResponse(return_html)
+
+    deleted_object_drawflow_id = request.session["efootprint_ids_to_int_ids_map"][obj_id]
+    http_response["HX-Trigger"] = json.dumps({"deleteNode": {"nodeId": deleted_object_drawflow_id}})
+
+    return http_response
 
 
 def mod_obj_dict_from_mod_obj(mod_obj, system):

@@ -57,12 +57,13 @@ function getObjectInputsAndDefaultValues() {
     return fetch("/static/object_inputs_and_default_values.json").then((data) => data.json());
 }
 
-document.body.addEventListener("InsertNewNode", function(evt){
+document.body.addEventListener("insertNewNode", function(evt){
     let drawflowData = evt.detail["drawflowData"];
-    console.log(drawflowData);
     editor.addNode(
         drawflowData["name"], 1, 1, 100, 100, drawflowData["class"], drawflowData["data"], drawflowData["html"]);
-    htmx.process(document.getElementById(drawflowData["html_block_id"]));
+    let addedHtmlElement = document.getElementById(drawflowData['html_block_id']);
+    htmx.process(addedHtmlElement);
+    _hyperscript.processNode(addedHtmlElement);
     if (Object.keys(drawflowData.outputs).length > 0) {
         drawflowData.outputs.output_1.connections.forEach(connection => {
             editor.addConnection(drawflowData["id"], connection.node, "output_1", "input_1");
@@ -73,6 +74,10 @@ document.body.addEventListener("InsertNewNode", function(evt){
             editor.addConnection(connection.node, drawflowData["id"], "output_1", "input_1");
         });
     }
+})
+
+document.body.addEventListener("deleteNode", function(evt){
+    removeNode(evt.detail["nodeId"]);
 })
 
 async function init(baseUrlParam, csrfTokenParam) {
@@ -89,6 +94,7 @@ async function init(baseUrlParam, csrfTokenParam) {
     editor.start();
     editor.import(jsonContextData);
     htmx.process(id);
+    _hyperscript.processNode(id);
 
     rearrangeNodes();
     editor.zoom = 0.5;
@@ -184,7 +190,7 @@ async function init(baseUrlParam, csrfTokenParam) {
                             });
                     }
                     rearrangeNodes();
-                    document.getElementById("refresh-graph-button").click();
+                    //document.getElementById("refresh-graph-button").click();
                 });
         } else {
             const connections = destinationNode.inputs[connection.input_class].connections;

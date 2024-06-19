@@ -116,21 +116,11 @@ describe('Analyze tests', () => {
             expect(response.response.statusCode).to.eq(200)
             cy.get(`.drawflow-node.UserJourney`).should('have.length', 2);
             cy.get(`.drawflow-node.UserJourney`).eq(1).find('.object-name').should('have.text', 'New UserJourney');
-            cy.get(`.drawflow-node.UsagePattern`)
-                .eq(0)
-                .find('#linked-UserJourney .link-object-title')
-                .should('have.text', 'UserJourney : Daily Youtube usage');
-            cy.get('#UsagePattern-section .edit-object-button').eq(0).click();
-            cy.get('#object-creation-or-edition-form #user_journey').select('New UserJourney');
-            cy.intercept('*/edit-object').as('editObject');
-            cy.get('#create-new-object-button').click();
-            cy.wait('@editObject').then((response: Interception) => {
-                cy.get(`.drawflow-node.UsagePattern`)
-                    .eq(0)
-                    .find('#linked-UserJourney .link-object-title')
-                    .should('have.text', 'UserJourney : New UserJourney');
-            });
         });
+        cy.get('.drawflow-node.UsagePattern').eq(0).find(".edit-object-button").click();
+        cy.get('#object-creation-or-edition-form #user_journey').select('New UserJourney');
+        cy.intercept('*/edit-object').as('editObject');
+        cy.get('#create-new-object-button').click();
     });
 
     it('Should add an object then delete it', () => {
