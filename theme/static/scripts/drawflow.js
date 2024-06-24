@@ -80,6 +80,15 @@ document.body.addEventListener("deleteNode", function(evt){
     removeNode(evt.detail["nodeId"]);
 })
 
+document.body.addEventListener("editConnections", function(evt){
+    evt.detail["connectionsToAdd"].forEach(function(connectionToAdd){
+        editor.addConnection(evt.detail["editedNode"], connectionToAdd, "output_1", "input_1");
+    });
+    evt.detail["connectionsToRemove"].forEach(function(connectionToRemove){
+        editor.removeSingleConnection(evt.detail["editedNode"], connectionToRemove, "output_1", "input_1");
+    });
+})
+
 async function init(baseUrlParam, csrfTokenParam) {
     baseUrl = baseUrlParam;
     csrfToken = csrfTokenParam;

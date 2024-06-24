@@ -203,10 +203,18 @@ def add_new_object(request):
 
 def edit_object(request):
     response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
-    edited_obj, system, objects_to_update = edit_object_in_system(request, response_objs, flat_obj_dict)
+    (edited_obj, system, objects_to_update, obj_ids_of_connections_to_add,
+     obj_ids_of_connections_to_remove) = edit_object_in_system(request, response_objs, flat_obj_dict)
     oob_html = create_object_addition_or_edition_oob_html_updated(request, system, objects_to_update)
 
-    return HttpResponse(oob_html)
+    id_map = request.session["efootprint_ids_to_int_ids_map"]
+    http_response = HttpResponse(oob_html)
+    http_response["HX-Trigger-After-Swap"] = json.dumps(
+        {"editConnections": {"editedNode": id_map[edited_obj.id],
+                             "connectionsToAdd": [id_map[obj_id] for obj_id in obj_ids_of_connections_to_add],
+                             "connectionsToRemove": [id_map[obj_id] for obj_id in obj_ids_of_connections_to_remove]}})
+
+    return http_response
 
 
 def delete_object(request):
