@@ -31,11 +31,12 @@
                 {% endfor %}
             </div>
             <div id="drawflow" />
-    </div>
+        </div>
     </div>
 </div>
 <div>{{ drawflow_json|json_script:"json-data" }}</div>
-<script src="{% static 'scripts/drawflow.min.js' %}"></script>
-<script src="{% static 'scripts/drawflow.js' %}"></script>
-<script>init("{{ request.scheme }}://{{ request.get_host }}", "{{csrf_token}}");</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        init("{{ request.scheme }}://{{ request.get_host }}", "{{csrf_token}}");
+    });</script>
 
