@@ -106,8 +106,9 @@ async function init(baseUrlParam, csrfTokenParam) {
     _hyperscript.processNode(id);
 
     rearrangeNodes();
-    editor.zoom = 0.5;
+    editor.zoom = 0.6;
     editor.zoom_refresh();
+    editor.precanvas.style.transform = "translate(0px, -150px) scale("+editor.zoom+")"
 
     Array.prototype.forEach.call(document.getElementsByClassName("output"), (output) => {
         output.addEventListener("mousedown", () => displayAvailableConnections(output));

@@ -100,7 +100,7 @@
             },
             "data_download": {
                 "label": "Data download of request streaming from hypothesis",
-                "value": 0.8333333333333334,
+                "value": 0.83,
                 "unit": "gigabyte / user_journey",
                 "source": {
                     "name": "hypothesis",
