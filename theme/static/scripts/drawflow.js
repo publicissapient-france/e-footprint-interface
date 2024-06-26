@@ -58,6 +58,7 @@ function getObjectInputsAndDefaultValues() {
 }
 
 document.body.addEventListener("insertNewNode", function(evt){
+    editor.last_event_origin = "server";
     let drawflowData = evt.detail["drawflowData"];
     editor.addNode(
         drawflowData["name"], 1, 1, 100, 100, drawflowData["class"], drawflowData["data"], drawflowData["html"]);
@@ -77,10 +78,12 @@ document.body.addEventListener("insertNewNode", function(evt){
 })
 
 document.body.addEventListener("deleteNode", function(evt){
+    editor.last_event_origin = "server";
     removeNode(evt.detail["nodeId"]);
 })
 
 document.body.addEventListener("editConnections", function(evt){
+    editor.last_event_origin = "server";
     evt.detail["connectionsToAdd"].forEach(function(connectionToAdd){
         editor.addConnection(evt.detail["editedNode"], connectionToAdd, "output_1", "input_1");
     });
@@ -88,6 +91,10 @@ document.body.addEventListener("editConnections", function(evt){
         editor.removeSingleConnection(evt.detail["editedNode"], connectionToRemove, "output_1", "input_1");
     });
 })
+
+document.body.addEventListener("mouseup", function (e) {
+        editor.last_event_origin = "drawflow";
+    });
 
 async function init(baseUrlParam, csrfTokenParam) {
     baseUrl = baseUrlParam;
@@ -109,4 +116,12 @@ async function init(baseUrlParam, csrfTokenParam) {
     editor.zoom = 0.6;
     editor.zoom_refresh();
     editor.precanvas.style.transform = "translate(0px, -150px) scale("+editor.zoom+")"
+    editor.last_event_origin = "drawflow";
+
+    editor.on("connectionCreated", function (e){
+       if (editor.last_event_origin == "drawflow"){
+           editor.removeSingleConnection(e["output_id"], e["input_id"], "output_1", "input_1");
+           alert("The connection you just drew is going to be deleted. Please use edit buttons to create connections.");
+       }
+    });
 }

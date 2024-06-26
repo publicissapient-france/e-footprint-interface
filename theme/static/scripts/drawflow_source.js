@@ -70,7 +70,7 @@ class Drawflow {
     /* Context Menu */
     this.container.addEventListener('contextmenu', this.contextmenu.bind(this));
     /* Delete */
-    this.container.addEventListener('keydown', this.key.bind(this));
+    //this.container.addEventListener('keydown', this.key.bind(this));
 
     /* Zoom Mouse */
     this.container.addEventListener('wheel', this.zoom_enter.bind(this));
@@ -524,27 +524,6 @@ class Drawflow {
     if(this.editor_mode === 'fixed' || this.editor_mode === 'view') {
       return false;
     }
-    if(this.precanvas.getElementsByClassName("drawflow-delete").length) {
-      this.precanvas.getElementsByClassName("drawflow-delete")[0].remove()
-    };
-    if(this.node_selected || this.connection_selected) {
-      var deletebox = document.createElement('div');
-      deletebox.classList.add("drawflow-delete");
-      deletebox.innerHTML = "x";
-      if(this.node_selected) {
-        this.node_selected.appendChild(deletebox);
-
-      }
-      if(this.connection_selected && (this.connection_selected.parentElement.classList.length > 1)) {
-        deletebox.style.top = e.clientY * ( this.precanvas.clientHeight / (this.precanvas.clientHeight * this.zoom)) - (this.precanvas.getBoundingClientRect().y *  ( this.precanvas.clientHeight / (this.precanvas.clientHeight * this.zoom)) ) + "px";
-        deletebox.style.left = e.clientX * ( this.precanvas.clientWidth / (this.precanvas.clientWidth * this.zoom)) - (this.precanvas.getBoundingClientRect().x *  ( this.precanvas.clientWidth / (this.precanvas.clientWidth * this.zoom)) ) + "px";
-
-        this.precanvas.appendChild(deletebox);
-
-      }
-
-    }
-
   }
   contextmenuDel() {
     if(this.precanvas.getElementsByClassName("drawflow-delete").length) {
