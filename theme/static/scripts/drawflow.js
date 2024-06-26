@@ -1,7 +1,7 @@
 let editor;
 let baseUrl;
 let csrfToken;
-let nbObjectsAtDepth = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+let nbObjectsAtDepth = {};
 let movedNodes = [];
 
 
@@ -29,6 +29,7 @@ function organizeChildren(nodeId, depth) {
 
 function rearrangeNodes() {
     movedNodes = [];
+    nbObjectsAtDepth = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
     editor.getNodesFromName("UsagePattern").forEach((nodeId, index) => {
         const x = 300 * (index + 1);
         const y = 5;
@@ -109,7 +110,7 @@ async function init(baseUrlParam, csrfTokenParam) {
     rearrangeNodes();
     editor.zoom = 0.6;
     editor.zoom_refresh();
-    editor.precanvas.style.transform = "translate(0px, -150px) scale("+editor.zoom+")"
+    //editor.precanvas.style.transform = "translate(0px, -150px) scale("+editor.zoom+")"
     editor.last_event_origin = "drawflow";
 
     editor.on("connectionCreated", function (e){

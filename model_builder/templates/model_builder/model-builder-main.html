@@ -9,7 +9,14 @@
     </div>
     <div class="flex justify-between px-8 items-center">
         {% include "./model-comparison-buttons.html" with is_different_from_ref_model=is_different_from_ref_model %}
-        <a class="bg-primary py-2 px-6 rounded-xl h-min hover:bg-primary-dark active:bg-primary-darker text-white" href="download-json">Export your model</a>
+        <div>
+            <button id="reset-nodes"
+                class="bg-primary py-2 px-6 rounded-xl h-min hover:bg-primary-dark active:bg-primary-darker text-white"
+                script="on click js rearrangeNodes() end">
+                Reset node positions
+            </button>
+        <a class="bg-primary py-2 px-6 rounded-xl h-full hover:bg-primary-dark active:bg-primary-darker text-white" href="download-json">Export your model</a>
+        </div>
     </div>
     <div class="flex flex-row justify-around mt-8">
         {% for object_type, object_list in obj_template_dict.items %}

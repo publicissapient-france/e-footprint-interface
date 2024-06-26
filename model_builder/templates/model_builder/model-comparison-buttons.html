@@ -16,7 +16,8 @@
         <button class="py-2 px-6 bg-primary text-white rounded-xl hover:text-primary hover:bg-white hover:border-primary hover:border-2 hover:border-solid"
                 hx-post="reset_model_reference" hx-target="#main-content-block" hx-swap="beforeend" hx-disabled-elt="button"
                 hx-indicator="#global_loader"
-                script="on click remove the first <div/> in #main-content-block"
+                script="on click remove the first <div/> in #main-content-block
+                        on htmx:afterRequest js init('{{ request.scheme }}://{{ request.get_host }}', '{{csrf_token}}') end"
                 >
             Reset to the model reference
         </button>
