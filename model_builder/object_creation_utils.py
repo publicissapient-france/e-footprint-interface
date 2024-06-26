@@ -9,6 +9,7 @@ from efootprint.core.hardware.hardware_base_classes import Hardware
 from efootprint.core.usage.usage_pattern import UsagePattern
 from efootprint.core.usage.user_journey import UserJourney
 from efootprint.core.usage.user_journey import UserJourneyStep
+from efootprint.core.usage.job import Job
 from efootprint.core.hardware.network import Network
 from efootprint.core.hardware.device_population import DevicePopulation
 from efootprint.constants.countries import Country

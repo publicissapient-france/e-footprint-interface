@@ -23,8 +23,7 @@
                         hx-swap="none"
                         hx-vals='{"object-id": "{{ object.object.id }}", "object-type": "{{ object_type }}"}'
                         hx-confirm="Are you sure you want to delete {{ object.object.name }} ?"
-                        script="on htmx:afterRequest remove #{{ object.object.id }}
-                                on htmx:afterRequest get #graph-comparison-image if it is not null then remove it end
+                        script="on htmx:afterRequest get #graph-comparison-image if it is not null then remove it end
                                 on htmx:beforeSend hide the first <span/> in me with *opacity">
                     <img src="/static/loaders/bars.svg" class="htmx-indicator w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="pointer-events: none"/>
                     <span>Delete</span>

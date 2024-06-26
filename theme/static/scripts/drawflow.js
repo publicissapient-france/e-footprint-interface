@@ -1,48 +1,43 @@
 let editor;
 let baseUrl;
 let csrfToken;
+let nbObjectsAtDepth = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+let movedNodes = [];
 
 
 function removeNode(nodeId) {
     editor.removeNodeId(`node-${nodeId}`);
 }
 
-/**
- * Fonction récursive qui prend en compte un nodeId, récupère le noeud associé ainsi que ses connexions (déscendants)
- * et les organise de façon plus visible sur le graphe en les espaçant.
- * La profondeur est augmentée et prise en compte à chaque appel de la fonction.
- * @FIXME Actuellement certaines cartes sont placées par dessus d'autres, il faudrait éviter les collisions.
- */
-function organizeChildren(nodeId, depth, xStart) {
+function organizeChildren(nodeId, depth) {
     if (editor.getNodeFromId(nodeId).outputs.output_1) {
         const connections = editor.getNodeFromId(nodeId).outputs.output_1.connections;
 
         connections.forEach((connection, index) => {
             const nodeId = connection["node"];
-            const x = xStart + 100 * (index * 5);
-            const y = 300 * depth;
-            moveNode(nodeId, x, y);
-            organizeChildren(nodeId, depth + 1, xStart);
+            if (!movedNodes.includes(nodeId)){
+                const x = 500 * (nbObjectsAtDepth[depth]);
+                const y = 300 * depth;
+                moveNode(nodeId, x, y);
+                movedNodes.push(nodeId);
+                nbObjectsAtDepth[depth] += 1;
+            }
+            organizeChildren(nodeId, depth + 1);
         });
     }
 }
 
-/**
- * Réorganisation des noeuds en partant des UsagePattern en haut du graphe,
- * puis en descendant de manière récursive dans l'arborescence.
- */
 function rearrangeNodes() {
+    movedNodes = [];
     editor.getNodesFromName("UsagePattern").forEach((nodeId, index) => {
         const x = 300 * (index + 1);
         const y = 5;
         moveNode(nodeId, x, y);
-        organizeChildren(nodeId, 1, x);
+        organizeChildren(nodeId, 1);
+        nbObjectsAtDepth[0] += 1;
     });
 }
 
-/**
- * Déplace un noeud à partir de nouvelles positions x et y et de son nodeId.
- */
 function moveNode(nodeId, x, y) {
     editor.drawflow.drawflow.Home.data[nodeId].pos_x = x;
     editor.drawflow.drawflow.Home.data[nodeId].pos_y = y;
@@ -51,7 +46,6 @@ function moveNode(nodeId, x, y) {
     document.getElementById(`node-${nodeId}`).style.top = `${y}px`;
     editor.updateConnectionNodes(`node-${nodeId}`);
 }
-
 
 function getObjectInputsAndDefaultValues() {
     return fetch("/static/object_inputs_and_default_values.json").then((data) => data.json());
