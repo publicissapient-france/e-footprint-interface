@@ -1,0 +1,15 @@
+.git
+.idea
+.gradle
+.settings
+.classpath
+.project
+bin
+out
+test-report
+
+cypress
+node_modules
+cypress.config.ts
+package.json
+package-lock.json

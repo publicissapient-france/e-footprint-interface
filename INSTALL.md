@@ -57,22 +57,13 @@ then
 python3 manage.py runserver 8080 --insecure
 ```
 
-# Deploying on App Engine
-Check out [official Gcloud documentation](https://cloud.google.com/python/django/appengine?hl=fr&_ga=2.133171918.-1308282934.1706020941#run-locally)
-
-IMPORTANT: We use poetry to manage python dependencies but app engine expects a requirements.txt file. Update the requirements.txt file with the following command:
-
-    poetry export -f requirements.txt --output requirements.txt
-
+# Deploying on Cloud Run
+Check out [official Gcloud documentation](https://cloud.google.com/python/django/run?hl=fr#run-locally)
 
 To first create a new version but not redirect all traffic to it to first make sure that it doesn’t break anything:
 
 ```
-gcloud app deploy --no-promote
-```
-then browse the url with
-```
-gcloud app browse
+gcloud cloud deploy --no-traffic
 ```
 
 If you find a bug and want to deploy a version with DEBUG=True, set DEBUG=True line 157 in [the settings module](e_footprint_interface/settings.py) AND THEN DON’T FORGET TO SET IT BACK TO FALSE WHEN DEPLOYING A NEW VERSION FOR PRODUCTION.
