@@ -158,24 +158,16 @@ if os.getenv('DJANGO_PROD') == 'True':
     # Change this to "False" when you are ready for production
     DEBUG = True
 
-    APPENGINE_URL = env("APPENGINE_URL", default=None)
-    if APPENGINE_URL:
+    CLOUD_RUN_URL = env("CLOUD_RUN_URL", default=None)
+    if CLOUD_RUN_URL:
         # Ensure a scheme is present in the URL before it's processed.
-        if not urlparse(APPENGINE_URL).scheme:
-            APPENGINE_URL = f"https://{APPENGINE_URL}"
+        if not urlparse(CLOUD_RUN_URL).scheme:
+            CLOUD_RUN_URL = f"https://{CLOUD_RUN_URL}"
 
-        main_url_netloc = urlparse(APPENGINE_URL).netloc
+        main_url_netloc = urlparse(CLOUD_RUN_URL).netloc
         ALLOWED_HOSTS = [main_url_netloc]
 
-        # Get app engine versions to allow their URLs
-        credentials = GoogleCredentials.get_application_default()
-        service = discovery.build('appengine', 'v1', credentials=credentials)
-        versions = service.apps().services().versions().list(
-            appsId='e-footprint-interface', servicesId="default").execute()['versions']
-        for version in versions:
-            ALLOWED_HOSTS.append(f"{version['id']}-dot-{main_url_netloc}")
-
-        CSRF_TRUSTED_ORIGINS = [APPENGINE_URL]
+        CSRF_TRUSTED_ORIGINS = [CLOUD_RUN_URL]
         SECURE_SSL_REDIRECT = True
     else:
         ALLOWED_HOSTS = ["*"]
