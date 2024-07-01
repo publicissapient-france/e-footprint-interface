@@ -34,7 +34,8 @@
         <button id="validate-usage-patterns-form-button" type="button" class="px-10 py-3 self-center rounded-3xl bg-primary text-white hover:bg-primary-dark active:bg-primary-darker"
                 hx-post="analyze" hx-target="#main-content-block" hx-swap="beforeend" hx-push-url="/model_builder/"
                 hx-indicator="#global_loader" hx-disabled-elt="button"
-                script="on click remove #quiz-container">
+                script="on click remove #quiz-container
+                        on htmx:afterRequest js init('{{ request.scheme }}://{{ request.get_host }}', '{{csrf_token}}') end">
             Analyze
         </button>
     </div>

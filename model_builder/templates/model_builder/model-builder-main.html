@@ -47,4 +47,5 @@
     document.addEventListener('DOMContentLoaded', function() {
         init("{{ request.scheme }}://{{ request.get_host }}", "{{csrf_token}}");
     });</script>
+<script src="{% static 'scripts/drawflow_listeners.js' %}" defer></script>
 
