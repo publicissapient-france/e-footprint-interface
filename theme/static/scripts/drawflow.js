@@ -9,32 +9,32 @@ function removeNode(nodeId) {
     editor.removeNodeId(`node-${nodeId}`);
 }
 
-function organizeChildren(nodeId, depth) {
+function organizeChildren(nodeId, depth, yOffset) {
     if (editor.getNodeFromId(nodeId).outputs.output_1) {
         const connections = editor.getNodeFromId(nodeId).outputs.output_1.connections;
 
         connections.forEach((connection, index) => {
             const nodeId = connection["node"];
             if (!movedNodes.includes(nodeId)){
-                const x = 500 * (nbObjectsAtDepth[depth]);
+                const x = 400 * (nbObjectsAtDepth[depth]);
                 const y = 300 * depth;
-                moveNode(nodeId, x, y);
+                moveNode(nodeId, x, y + yOffset);
                 movedNodes.push(nodeId);
                 nbObjectsAtDepth[depth] += 1;
             }
-            organizeChildren(nodeId, depth + 1);
+            organizeChildren(nodeId, depth + 1, yOffset);
         });
     }
 }
 
-function rearrangeNodes() {
+function rearrangeNodes(yOffset) {
     movedNodes = [];
     nbObjectsAtDepth = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
     editor.getNodesFromName("UsagePattern").forEach((nodeId, index) => {
         const x = 300 * (index + 1);
         const y = 5;
-        moveNode(nodeId, x, y);
-        organizeChildren(nodeId, 1);
+        moveNode(nodeId, x, y + yOffset);
+        organizeChildren(nodeId, 1, yOffset);
         nbObjectsAtDepth[0] += 1;
     });
 }
@@ -68,10 +68,9 @@ async function init(baseUrlParam, csrfTokenParam) {
     htmx.process(id);
     _hyperscript.processNode(id);
 
-    rearrangeNodes();
+    rearrangeNodes(-300);
     editor.zoom = 0.6;
     editor.zoom_refresh();
-    //editor.precanvas.style.transform = "translate(0px, -150px) scale("+editor.zoom+")"
     editor.lastEventOrigin = "drawflow";
 
     editor.on("connectionCreated", function (e){
