@@ -52,3 +52,5 @@ psycopg2-binary = "^2.9"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
+pylint = "3.2.5"
+flake8 = "^7.1.0"

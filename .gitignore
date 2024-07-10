@@ -46,7 +46,9 @@ System footprints.html
 
 system 1 footprints.html
 
-.vscode/launch.json
+.vscode
 
 cypress/screenshots
 cloud-sql-proxy
+.flake8
+pylintrc
