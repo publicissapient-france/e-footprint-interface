@@ -24,7 +24,7 @@ def create_drawflow_node_data(obj_data, efootprint_ids_to_int_ids_map):
     efootprint_class = obj_data["object"].class_as_simple_str
 
     return {
-        "id": index, "name": efootprint_class, "class": efootprint_class,
+        "id": index, "name": efootprint_class, "class": f"!bg-{efootprint_class}",
         "data": obj_data["object"].to_json(),
         "html": render_to_string("model_builder/object-card.html",
                                  {"object": obj_data, "object_type": efootprint_class}),
