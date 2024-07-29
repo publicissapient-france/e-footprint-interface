@@ -46,7 +46,7 @@ django-tailwind = "^3.8.0"
 django-browser-reload = "^1.12.1"
 django-environ = "^0"
 google-cloud-secret-manager = "^2.20"
-google-api-python-client = "2.130"
+google-api-python-client = "2.138.0"
 oauth2client = "^4.1"
 psycopg2-binary = "^2.9"
 
