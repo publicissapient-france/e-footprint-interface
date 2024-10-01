@@ -1,13 +1,14 @@
+from datetime import datetime
+
 from efootprint.api_utils.json_to_system import json_to_system
-from efootprint.abstract_modeling_classes.source_objects import SourceValue, SourceObject
+from efootprint.abstract_modeling_classes.source_objects import SourceValue
 from efootprint.api_utils.system_to_json import system_to_json
 from efootprint.builders.hardware.devices_defaults import default_laptop, default_smartphone
 from efootprint.builders.hardware.servers_defaults import default_autoscaling
 from efootprint.builders.hardware.storage_defaults import default_ssd
+from efootprint.builders.time_builders import linear_growth_hourly_values, daily_fluct_hourly_values
 from efootprint.constants.sources import Sources
-from efootprint.core.hardware.device_population import DevicePopulation
 from efootprint.core.hardware.servers.serverless import Serverless
-from efootprint.core.service import Service
 from efootprint.constants.units import u
 from efootprint.core.system import System
 from efootprint.core.usage.job import Job
@@ -78,21 +79,17 @@ def form_usage_pattern(request):
 
 
 def analyze(request):
-    efootprint_services = {}
+    services_servers = {}
+    services_storages = {}
+
     uj_steps = []
 
     for service_desc in request.session["quiz_data"]["services"]:
         if service_desc["type"] in ["web-app", "streaming"]:
             server = default_autoscaling(f"Default {service_desc['type']} autoscaling server")
             storage = default_ssd(f"Default {service_desc['type']} SSD storage")
-            service = Service(
-                f"{service_desc['type']} service",
-                server=server,
-                storage=storage,
-                base_ram_consumption=SourceValue(300 * u.MB, Sources.HYPOTHESIS),
-                base_cpu_consumption=SourceValue(2 * u.core, Sources.HYPOTHESIS))
         elif service_desc["type"] == "gen-ai":
-            llm_server = Serverless(
+            server = Serverless(
                 "Default AI GPU server",
                 carbon_footprint_fabrication=SourceValue(4900 * u.kg, Sources.HYPOTHESIS),
                 power=SourceValue(6400 * u.W, Sources.HYPOTHESIS),
@@ -103,13 +100,14 @@ def analyze(request):
                 # Used to represent GPUs because e-footprint doesn’t natively model GPU resources yet.
                 power_usage_effectiveness=SourceValue(1.2 * u.dimensionless, Sources.HYPOTHESIS),
                 average_carbon_intensity=SourceValue(300 * u.g / u.kWh, Sources.HYPOTHESIS),
-                server_utilization_rate=SourceValue(1 * u.dimensionless, Sources.HYPOTHESIS))
-            storage = default_ssd("Default SSD storage for AI server")
-            service = Service(
-                f"{service_desc['type']} service", llm_server, storage,
+                server_utilization_rate=SourceValue(1 * u.dimensionless, Sources.HYPOTHESIS),
                 base_ram_consumption=SourceValue(0 * u.MB, Sources.HYPOTHESIS),
-                base_cpu_consumption=SourceValue(0 * u.core, Sources.HYPOTHESIS))
-        efootprint_services[service_desc["type"]] = service
+                base_cpu_consumption=SourceValue(0 * u.core, Sources.HYPOTHESIS)
+            )
+            storage = default_ssd("Default SSD storage for AI server")
+
+        services_servers[service_desc["type"]] = server
+        services_storages[service_desc["type"]] = storage
 
     for service_desc in request.session["quiz_data"]["services"]:
         for uj_step_desc in request.session["quiz_data"]["user_journey_steps"]:
@@ -117,33 +115,38 @@ def analyze(request):
                 uj_duration_in_min = float(uj_step_desc["duration_in_min"])
                 if service_desc["type"] == "web-app":
                     job = Job(f"request {service_desc['type']} service",
-                              service=efootprint_services[service_desc["type"]],
-                              data_upload=SourceValue(0.05 * u.MB / u.uj, Sources.USER_DATA),
-                              data_download=SourceValue(2 * u.MB / u.uj, Sources.USER_DATA),
+                              server=services_servers[service_desc["type"]],
+                              storage=services_storages[service_desc["type"]],
+                              data_upload=SourceValue(0.05 * u.MB, Sources.USER_DATA),
+                              data_download=SourceValue(2 * u.MB, Sources.USER_DATA),
+                              data_stored=SourceValue(0.05 * u.MB, Sources.USER_DATA),
                               request_duration=SourceValue(1 * u.s, Sources.HYPOTHESIS),
-                              cpu_needed=SourceValue(0.2 * u.core / u.uj, Sources.HYPOTHESIS),
-                              ram_needed=SourceValue(50 * u.MB / u.uj, Sources.HYPOTHESIS))
+                              cpu_needed=SourceValue(0.2 * u.core, Sources.HYPOTHESIS),
+                              ram_needed=SourceValue(50 * u.MB, Sources.HYPOTHESIS))
                 elif service_desc["type"] == "streaming":
                     job = Job(f"request {service_desc['type']} service",
-                              service=efootprint_services[service_desc["type"]],
-                              data_upload=SourceValue(0.05 * u.MB / u.uj, Sources.USER_DATA),
-                              data_download=SourceValue(40 * uj_duration_in_min * u.MB / u.uj, Sources.USER_DATA),
+                              server=services_servers[service_desc["type"]],
+                              storage=services_storages[service_desc["type"]],
+                              data_upload=SourceValue(0.05 * u.MB, Sources.USER_DATA),
+                              data_download=SourceValue(40 * uj_duration_in_min * u.MB, Sources.USER_DATA),
+                              data_stored=SourceValue(0.05 * u.MB, Sources.USER_DATA),
                               request_duration=SourceValue((uj_duration_in_min / 10) * u.min, Sources.HYPOTHESIS),
-                              cpu_needed=SourceValue(0.2 * u.core / u.uj, Sources.HYPOTHESIS),
-                              ram_needed=SourceValue(50 * u.MB / u.uj, Sources.HYPOTHESIS))
+                              cpu_needed=SourceValue(0.2 * u.core, Sources.HYPOTHESIS),
+                              ram_needed=SourceValue(50 * u.MB, Sources.HYPOTHESIS))
                 elif service_desc["type"] == "gen-ai":
                     job = Job(f"request {service_desc['type']} service",
-                              service=efootprint_services[service_desc["type"]],
-                              data_upload=SourceValue(0.05 * u.MB / u.uj, Sources.USER_DATA),
-                              data_download=SourceValue(0.5 * u.MB / u.uj, Sources.USER_DATA),
+                              server=services_servers[service_desc["type"]],
+                              storage=services_storages[service_desc["type"]],
+                              data_upload=SourceValue(0.05 * u.MB, Sources.USER_DATA),
+                              data_download=SourceValue(0.5 * u.MB, Sources.USER_DATA),
+                              data_stored=SourceValue(0.05 * u.MB, Sources.USER_DATA),
                               request_duration=SourceValue((uj_duration_in_min / 20) * u.min, Sources.HYPOTHESIS),
-                              cpu_needed=SourceValue(16 * u.core / u.uj, Sources.HYPOTHESIS),
-                              ram_needed=SourceValue(128 * u.GB / u.uj, Sources.HYPOTHESIS))
+                              cpu_needed=SourceValue(16 * u.core, Sources.HYPOTHESIS),
+                              ram_needed=SourceValue(128 * u.GB, Sources.HYPOTHESIS))
 
                 uj_step = UserJourneyStep(
                     uj_step_desc["name"],
-                    user_time_spent=SourceValue(float(uj_step_desc["duration_in_min"]) * u.min / u.uj,
-                                                Sources.USER_DATA),
+                    user_time_spent=SourceValue(float(uj_step_desc["duration_in_min"]) * u.min, Sources.USER_DATA),
                     jobs=[job])
 
                 uj_steps.append(uj_step)
@@ -166,19 +169,26 @@ def analyze(request):
             if country.name == request.POST['country']:
                 break
 
-    device_population = DevicePopulation(
-        "Device population",
-        nb_devices=SourceValue(int(request.POST['visitors']) * u.user, Sources.USER_DATA),
-        country=country,
-        devices=[device])
+    start_date = datetime.strptime("2025-01-01", "%Y-%m-%d")
+    nb_of_hours = 3 * 365 * 24
+
+    hourly_visits = int(int(request.POST['visitors']) / 24)
+    linear_growth = linear_growth_hourly_values(
+        nb_of_hours, start_value=hourly_visits, end_value=hourly_visits, start_date=start_date)
+    linear_growth.set_label("Hourly user journeys linear growth component")
+    daily_fluct = daily_fluct_hourly_values(nb_of_hours, fluct_scale=0.8, hour_of_day_for_min_value=4,
+                                            start_date=start_date)
+    daily_fluct.set_label("Daily volume fluctuation")
+    hourly_user_journey_starts = linear_growth * daily_fluct
+    hourly_user_journey_starts.set_label("Hourly number of user journey started")
 
     usage_pattern = UsagePattern(
         "Description of usage",
         user_journey=user_journey,
-        device_population=device_population,
+        country=country,
+        devices=[device],
         network=network,
-        user_journey_freq_per_user=SourceValue(1 * u.user_journey / (u.user * u.day), Sources.USER_DATA),
-        time_intervals=SourceObject([[7, 12], [17, 23]]))
+        hourly_user_journey_starts=hourly_user_journey_starts)
 
     system = System("System", usage_patterns=[usage_pattern])
 

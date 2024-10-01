@@ -1,5 +1,4 @@
 # Important to keep these imports because they constitute the globals() dict
-from efootprint.core.service import Service
 from efootprint.core.system import System
 from efootprint.core.hardware.storage import Storage
 from efootprint.core.hardware.servers.autoscaling import Autoscaling
@@ -11,9 +10,8 @@ from efootprint.core.usage.user_journey import UserJourney
 from efootprint.core.usage.user_journey import UserJourneyStep
 from efootprint.core.usage.job import Job
 from efootprint.core.hardware.network import Network
-from efootprint.core.hardware.device_population import DevicePopulation
 from efootprint.constants.countries import Country
-from efootprint.abstract_modeling_classes.source_objects import SourceValue, SourceObject, Sources
+from efootprint.abstract_modeling_classes.source_objects import SourceValue, Sources, SourceHourlyValues
 from efootprint.constants.units import u
 from efootprint.logger import logger
 from utils import EFOOTPRINT_COUNTRIES
@@ -37,6 +35,10 @@ def create_efootprint_obj_from_post_data(request, flat_obj_dict):
         assert request.POST.getlist(attr_dict["attr_name"])[1] == attr_dict["unit"]
         obj_creation_kwargs[attr_dict["attr_name"]] = SourceValue(
             float(request.POST.getlist(attr_dict["attr_name"])[0]) * u(attr_dict["unit"]))
+    for attr_dict in obj_inputs["hourly_quantities_attributes"]:
+        assert request.POST.getlist(attr_dict["attr_name"])[1] == attr_dict["unit"]
+        obj_creation_kwargs[attr_dict["attr_name"]] = SourceHourlyValues(
+            float(request.POST.getlist(attr_dict["attr_name"])[0]) * u(attr_dict["unit"]))
     for mod_obj in obj_inputs["modeling_obj_attributes"]:
         new_mod_obj_id = request.POST[mod_obj["attr_name"]]
         if mod_obj["object_type"] == "Country" and new_mod_obj_id not in flat_obj_dict.keys():
@@ -48,8 +50,6 @@ def create_efootprint_obj_from_post_data(request, flat_obj_dict):
     for mod_obj in obj_inputs["list_attributes"]:
         obj_creation_kwargs[mod_obj["attr_name"]] = [
             flat_obj_dict[obj_id] for obj_id in request.POST.getlist(mod_obj["attr_name"])]
-    if request.POST["obj_type"] == "UsagePattern":
-        obj_creation_kwargs["time_intervals"] = SourceObject([[7, 12], [18, 23]])
 
     new_efootprint_obj.__init__(**obj_creation_kwargs)
 

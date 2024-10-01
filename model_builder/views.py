@@ -1,5 +1,5 @@
 from efootprint.api_utils.json_to_system import json_to_system
-from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity
+from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity, ExplainableHourlyQuantities
 from efootprint.abstract_modeling_classes.modeling_object import ModelingObject, PREVIOUS_LIST_VALUE_SET_SUFFIX
 from efootprint.api_utils.system_to_json import system_to_json
 from efootprint.constants.units import u
@@ -281,6 +281,11 @@ def mod_obj_dict_from_mod_obj(mod_obj, system):
             for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ExplainableQuantity)
             if attr_name_value_pair[1].attr_name_in_mod_obj_container not in mod_obj.calculated_attributes
         ],
+        "hourly_quantities_attributes": [
+            attr_name_value_pair[1]
+            for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ExplainableHourlyQuantities)
+            if attr_name_value_pair[1].attr_name_in_mod_obj_container not in mod_obj.calculated_attributes
+        ],
         "modeling_obj_attributes": [
             attr_name_value_pair[1]
             for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ModelingObject)],
@@ -290,11 +295,14 @@ def mod_obj_dict_from_mod_obj(mod_obj, system):
     for num_attr in mod_obj_dict["numerical_attributes"]:
         num_attr.short_unit = f"{num_attr.value.units:~P}"
         num_attr.readable_attr_name = num_attr.attr_name_in_mod_obj_container.replace("_", " ")
+    for hourly_attr in mod_obj_dict["hourly_quantities_attributes"]:
+        hourly_attr.readable_attr_name = hourly_attr.attr_name_in_mod_obj_container.replace("_", " ")
 
     return mod_obj_dict
 
 
-def retrieve_attributes_by_type(modeling_obj, attribute_type, attrs_to_ignore=['modeling_obj_containers']):
+def retrieve_attributes_by_type(
+    modeling_obj, attribute_type, attrs_to_ignore=['modeling_obj_containers', "all_changes"]):
     output_list = []
     for attr_name, attr_value in vars(modeling_obj).items():
         if (isinstance(attr_value, attribute_type) and attr_name not in attrs_to_ignore
@@ -333,13 +341,14 @@ def compare_with_reference(request):
     ref_system = list(ref_response_objs["System"].values())[0]
     system = list(response_objs["System"].values())[0]
 
-    emissions_dict__old = [ref_system.initial_total_energy_footprints, ref_system.initial_total_fabrication_footprints]
-    emissions_dict__new = [system.total_energy_footprints, system.total_fabrication_footprints]
+    emissions_dict__old = [ref_system.initial_total_energy_footprints_sum_over_period,
+                           ref_system.initial_total_fabrication_footprints_sum_over_period]
+    emissions_dict__new = [system.total_energy_footprint_sum_over_period,
+                           system.total_fabrication_footprint_sum_over_period]
 
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(9, 6))
     EmissionPlotter(
-        ax, emissions_dict__old, emissions_dict__new, rounding_value=1,
-        timespan=ExplainableQuantity(1 * u.year, "one year")).plot_emission_diffs()
+        ax, emissions_dict__old, emissions_dict__new, rounding_value=1).plot_emission_diffs()
 
     # Convert plot to binary buffer
     buf = io.BytesIO()

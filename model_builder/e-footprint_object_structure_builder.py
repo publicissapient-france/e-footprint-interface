@@ -1,4 +1,4 @@
-from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity
+from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity, ExplainableHourlyQuantities
 from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
 from efootprint.api_utils.json_to_system import json_to_system
 from model_builder.views import retrieve_attributes_by_type
@@ -25,6 +25,14 @@ for efootprint_object_type in response_objs.keys():
              "default_value": round(attr_name_value_pair[1].value.magnitude, 2)}
             for attr_name_value_pair in retrieve_attributes_by_type(first_efootprint_obj, ExplainableQuantity)
             if attr_name_value_pair[0] in init_param_names],
+        "hourly_quantities_attributes": [
+            {"attr_name": attr_name_value_pair[0], "unit": f"{attr_name_value_pair[1].unit:~P}",
+             "long_unit": str(attr_name_value_pair[1].unit),
+             "default_value": attr_name_value_pair[1].value_as_float_list,
+             "default_start_date": "2025-01-01 00:00:00"}
+            for attr_name_value_pair in retrieve_attributes_by_type(first_efootprint_obj, ExplainableHourlyQuantities)
+            if attr_name_value_pair[0] in init_param_names
+        ],
         "modeling_obj_attributes": [
             {"attr_name": attr_name_value_pair[0], "object_type": attr_name_value_pair[1].class_as_simple_str}
             for attr_name_value_pair in retrieve_attributes_by_type(first_efootprint_obj, ModelingObject)

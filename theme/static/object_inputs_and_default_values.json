@@ -1,6 +1,7 @@
 {
     "System": {
         "numerical_attributes": [],
+        "hourly_quantities_attributes": [],
         "modeling_obj_attributes": [],
         "list_attributes": [
             {
@@ -10,12 +11,24 @@
         ]
     },
     "UsagePattern": {
-        "numerical_attributes": [
+        "numerical_attributes": [],
+        "hourly_quantities_attributes": [
             {
-                "attr_name": "user_journey_freq_per_user",
-                "unit": "uj/user/yr",
-                "long_unit": "user_journey / user / year",
-                "default_value": 365.0
+                "attr_name": "hourly_user_journey_starts",
+                "unit": "",
+                "long_unit": "dimensionless",
+                "default_value": [
+                    1000.0,
+                    2000.0,
+                    4000.0,
+                    5000.0,
+                    8000.0,
+                    12000.0,
+                    2000.0,
+                    2000.0,
+                    3000.0
+                ],
+                "default_start_date": "2025-01-01 00:00:00"
             }
         ],
         "modeling_obj_attributes": [
@@ -24,18 +37,24 @@
                 "object_type": "UserJourney"
             },
             {
-                "attr_name": "device_population",
-                "object_type": "DevicePopulation"
-            },
-            {
                 "attr_name": "network",
                 "object_type": "Network"
+            },
+            {
+                "attr_name": "country",
+                "object_type": "Country"
             }
         ],
-        "list_attributes": []
+        "list_attributes": [
+            {
+                "attr_name": "devices",
+                "object_type": "Hardware"
+            }
+        ]
     },
     "UserJourney": {
         "numerical_attributes": [],
+        "hourly_quantities_attributes": [],
         "modeling_obj_attributes": [],
         "list_attributes": [
             {
@@ -48,11 +67,12 @@
         "numerical_attributes": [
             {
                 "attr_name": "user_time_spent",
-                "unit": "min/uj",
-                "long_unit": "minute / user_journey",
+                "unit": "min",
+                "long_unit": "minute",
                 "default_value": 20.0
             }
         ],
+        "hourly_quantities_attributes": [],
         "modeling_obj_attributes": [],
         "list_attributes": [
             {
@@ -65,58 +85,42 @@
         "numerical_attributes": [
             {
                 "attr_name": "data_upload",
-                "unit": "kB/uj",
-                "long_unit": "kilobyte / user_journey",
+                "unit": "kB",
+                "long_unit": "kilobyte",
                 "default_value": 50.0
             },
             {
                 "attr_name": "data_download",
-                "unit": "GB/uj",
-                "long_unit": "gigabyte / user_journey",
+                "unit": "GB",
+                "long_unit": "gigabyte",
                 "default_value": 0.83
             },
             {
+                "attr_name": "data_stored",
+                "unit": "kB",
+                "long_unit": "kilobyte",
+                "default_value": 50.0
+            },
+            {
                 "attr_name": "request_duration",
-                "unit": "min",
-                "long_unit": "minute",
-                "default_value": 4
+                "unit": "s",
+                "long_unit": "second",
+                "default_value": 240
             },
             {
                 "attr_name": "ram_needed",
-                "unit": "MB/uj",
-                "long_unit": "megabyte / user_journey",
+                "unit": "MB",
+                "long_unit": "megabyte",
                 "default_value": 100.0
             },
             {
                 "attr_name": "cpu_needed",
-                "unit": "core/uj",
-                "long_unit": "core / user_journey",
+                "unit": "core",
+                "long_unit": "core",
                 "default_value": 1.0
             }
         ],
-        "modeling_obj_attributes": [
-            {
-                "attr_name": "service",
-                "object_type": "Service"
-            }
-        ],
-        "list_attributes": []
-    },
-    "Service": {
-        "numerical_attributes": [
-            {
-                "attr_name": "base_ram_consumption",
-                "unit": "MB",
-                "long_unit": "megabyte",
-                "default_value": 300
-            },
-            {
-                "attr_name": "base_cpu_consumption",
-                "unit": "core",
-                "long_unit": "core",
-                "default_value": 2
-            }
-        ],
+        "hourly_quantities_attributes": [],
         "modeling_obj_attributes": [
             {
                 "attr_name": "server",
@@ -135,19 +139,19 @@
                 "attr_name": "carbon_footprint_fabrication",
                 "unit": "kg",
                 "long_unit": "kilogram",
-                "default_value": 600
+                "default_value": 600.0
             },
             {
                 "attr_name": "power",
                 "unit": "W",
                 "long_unit": "watt",
-                "default_value": 300
+                "default_value": 300.0
             },
             {
                 "attr_name": "lifespan",
                 "unit": "yr",
                 "long_unit": "year",
-                "default_value": 6
+                "default_value": 6.0
             },
             {
                 "attr_name": "average_carbon_intensity",
@@ -165,87 +169,40 @@
                 "attr_name": "idle_power",
                 "unit": "W",
                 "long_unit": "watt",
-                "default_value": 50
+                "default_value": 50.0
             },
             {
                 "attr_name": "ram",
                 "unit": "GB",
                 "long_unit": "gigabyte",
-                "default_value": 128
+                "default_value": 128.0
             },
             {
                 "attr_name": "cpu_cores",
                 "unit": "core",
                 "long_unit": "core",
-                "default_value": 24
+                "default_value": 24.0
             },
             {
                 "attr_name": "power_usage_effectiveness",
                 "unit": "",
                 "long_unit": "dimensionless",
                 "default_value": 1.2
-            }
-        ],
-        "modeling_obj_attributes": [],
-        "list_attributes": []
-    },
-    "Serverless": {
-        "numerical_attributes": [
-            {
-                "attr_name": "carbon_footprint_fabrication",
-                "unit": "kg",
-                "long_unit": "kilogram",
-                "default_value": 600
             },
             {
-                "attr_name": "power",
-                "unit": "W",
-                "long_unit": "watt",
-                "default_value": 300
+                "attr_name": "base_ram_consumption",
+                "unit": "MB",
+                "long_unit": "megabyte",
+                "default_value": 300.0
             },
             {
-                "attr_name": "lifespan",
-                "unit": "yr",
-                "long_unit": "year",
-                "default_value": 6
-            },
-            {
-                "attr_name": "average_carbon_intensity",
-                "unit": "g/kWh",
-                "long_unit": "gram / kilowatt_hour",
-                "default_value": 100.0
-            },
-            {
-                "attr_name": "server_utilization_rate",
-                "unit": "",
-                "long_unit": "dimensionless",
-                "default_value": 0.9
-            },
-            {
-                "attr_name": "idle_power",
-                "unit": "W",
-                "long_unit": "watt",
-                "default_value": 50
-            },
-            {
-                "attr_name": "ram",
-                "unit": "GB",
-                "long_unit": "gigabyte",
-                "default_value": 128
-            },
-            {
-                "attr_name": "cpu_cores",
+                "attr_name": "base_cpu_consumption",
                 "unit": "core",
                 "long_unit": "core",
-                "default_value": 24
-            },
-            {
-                "attr_name": "power_usage_effectiveness",
-                "unit": "",
-                "long_unit": "dimensionless",
-                "default_value": 1.2
+                "default_value": 2.0
             }
         ],
+        "hourly_quantities_attributes": [],
         "modeling_obj_attributes": [],
         "list_attributes": []
     },
@@ -255,7 +212,7 @@
                 "attr_name": "carbon_footprint_fabrication",
                 "unit": "kg",
                 "long_unit": "kilogram",
-                "default_value": 160
+                "default_value": 160.0
             },
             {
                 "attr_name": "power",
@@ -267,7 +224,7 @@
                 "attr_name": "lifespan",
                 "unit": "yr",
                 "long_unit": "year",
-                "default_value": 6
+                "default_value": 6.0
             },
             {
                 "attr_name": "average_carbon_intensity",
@@ -285,7 +242,7 @@
                 "attr_name": "storage_capacity",
                 "unit": "TB",
                 "long_unit": "terabyte",
-                "default_value": 1
+                "default_value": 1.0
             },
             {
                 "attr_name": "power_usage_effectiveness",
@@ -297,43 +254,22 @@
                 "attr_name": "data_replication_factor",
                 "unit": "",
                 "long_unit": "dimensionless",
-                "default_value": 3
+                "default_value": 3.0
+            },
+            {
+                "attr_name": "data_storage_duration",
+                "unit": "h",
+                "long_unit": "hour",
+                "default_value": 3.0
+            },
+            {
+                "attr_name": "base_storage_need",
+                "unit": "TB",
+                "long_unit": "terabyte",
+                "default_value": 50.0
             }
         ],
-        "modeling_obj_attributes": [],
-        "list_attributes": []
-    },
-    "DevicePopulation": {
-        "numerical_attributes": [
-            {
-                "attr_name": "nb_devices",
-                "unit": "user",
-                "long_unit": "user",
-                "default_value": 12000000.0
-            }
-        ],
-        "modeling_obj_attributes": [
-            {
-                "attr_name": "country",
-                "object_type": "Country"
-            }
-        ],
-        "list_attributes": [
-            {
-                "attr_name": "devices",
-                "object_type": "Hardware"
-            }
-        ]
-    },
-    "Country": {
-        "numerical_attributes": [
-            {
-                "attr_name": "average_carbon_intensity",
-                "unit": "g/kWh",
-                "long_unit": "gram / kilowatt_hour",
-                "default_value": 85.0
-            }
-        ],
+        "hourly_quantities_attributes": [],
         "modeling_obj_attributes": [],
         "list_attributes": []
     },
@@ -343,19 +279,19 @@
                 "attr_name": "carbon_footprint_fabrication",
                 "unit": "kg",
                 "long_unit": "kilogram",
-                "default_value": 156
+                "default_value": 156.0
             },
             {
                 "attr_name": "power",
                 "unit": "W",
                 "long_unit": "watt",
-                "default_value": 50
+                "default_value": 50.0
             },
             {
                 "attr_name": "lifespan",
                 "unit": "yr",
                 "long_unit": "year",
-                "default_value": 6
+                "default_value": 6.0
             },
             {
                 "attr_name": "fraction_of_usage_time",
@@ -364,6 +300,7 @@
                 "default_value": 7.0
             }
         ],
+        "hourly_quantities_attributes": [],
         "modeling_obj_attributes": [],
         "list_attributes": []
     },
@@ -376,6 +313,20 @@
                 "default_value": 0.05
             }
         ],
+        "hourly_quantities_attributes": [],
+        "modeling_obj_attributes": [],
+        "list_attributes": []
+    },
+    "Country": {
+        "numerical_attributes": [
+            {
+                "attr_name": "average_carbon_intensity",
+                "unit": "g/kWh",
+                "long_unit": "gram / kilowatt_hour",
+                "default_value": 85.0
+            }
+        ],
+        "hourly_quantities_attributes": [],
         "modeling_obj_attributes": [],
         "list_attributes": []
     }

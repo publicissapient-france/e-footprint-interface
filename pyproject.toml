@@ -39,7 +39,7 @@ exclude = '''
 
 [tool.poetry.dependencies]
 python = "^3.10"
-efootprint = "2.1.6"
+efootprint = "6.0.2"
 django = "^5.0"
 pylint = "^3.2.1"
 django-tailwind = "^3.8.0"
