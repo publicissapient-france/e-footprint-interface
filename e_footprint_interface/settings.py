@@ -2,6 +2,8 @@ import io
 import os
 from pathlib import Path
 from urllib.parse import urlparse
+
+from django.contrib import staticfiles
 from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
 
@@ -20,6 +22,9 @@ SECRET_KEY = "django-insecure--3#!ddceds#0n$a6(r$8=j*%-r05rm5x!en1wqhg@^2cjnvg4r
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+# Define the STATIC_ROOT setting
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 env = environ.Env(DEBUG=(bool, False))
 env_file = os.path.join(BASE_DIR, ".env")

@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.2.0]  - 2024-11-07
+
+### Updated
+- Upgrade e-footprint version from 6.0.2 to 8.0.0. Objects relation and structure have changed, so the interface has been updated to match the new e-footprint version.
+
+## [0.1.0] - 2024-10-01
+- Upgrade e-footprint version from 2.1.6 to 6.0.2.
 
 ## [0.0.4] - 2024-06-17
 
