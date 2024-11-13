@@ -86,9 +86,10 @@ def analyze(request):
 
     for service_desc in request.session["quiz_data"]["services"]:
         if service_desc["type"] in ["web-app", "streaming"]:
-            server = default_autoscaling(f"Default {service_desc['type']} autoscaling server")
             storage = default_ssd(f"Default {service_desc['type']} SSD storage")
+            server = default_autoscaling(f"Default {service_desc['type']} autoscaling server" ,storage =storage)
         elif service_desc["type"] == "gen-ai":
+            storage = default_ssd("Default SSD storage for AI server")
             server = Serverless(
                 "Default AI GPU server",
                 carbon_footprint_fabrication=SourceValue(4900 * u.kg, Sources.HYPOTHESIS),
@@ -102,7 +103,8 @@ def analyze(request):
                 average_carbon_intensity=SourceValue(300 * u.g / u.kWh, Sources.HYPOTHESIS),
                 server_utilization_rate=SourceValue(1 * u.dimensionless, Sources.HYPOTHESIS),
                 base_ram_consumption=SourceValue(0 * u.MB, Sources.HYPOTHESIS),
-                base_cpu_consumption=SourceValue(0 * u.core, Sources.HYPOTHESIS)
+                base_cpu_consumption=SourceValue(0 * u.core, Sources.HYPOTHESIS),
+                storage=storage
             )
             storage = default_ssd("Default SSD storage for AI server")
 
@@ -116,7 +118,6 @@ def analyze(request):
                 if service_desc["type"] == "web-app":
                     job = Job(f"request {service_desc['type']} service",
                               server=services_servers[service_desc["type"]],
-                              storage=services_storages[service_desc["type"]],
                               data_upload=SourceValue(0.05 * u.MB, Sources.USER_DATA),
                               data_download=SourceValue(2 * u.MB, Sources.USER_DATA),
                               data_stored=SourceValue(0.05 * u.MB, Sources.USER_DATA),
@@ -126,7 +127,6 @@ def analyze(request):
                 elif service_desc["type"] == "streaming":
                     job = Job(f"request {service_desc['type']} service",
                               server=services_servers[service_desc["type"]],
-                              storage=services_storages[service_desc["type"]],
                               data_upload=SourceValue(0.05 * u.MB, Sources.USER_DATA),
                               data_download=SourceValue(40 * uj_duration_in_min * u.MB, Sources.USER_DATA),
                               data_stored=SourceValue(0.05 * u.MB, Sources.USER_DATA),
@@ -136,7 +136,6 @@ def analyze(request):
                 elif service_desc["type"] == "gen-ai":
                     job = Job(f"request {service_desc['type']} service",
                               server=services_servers[service_desc["type"]],
-                              storage=services_storages[service_desc["type"]],
                               data_upload=SourceValue(0.05 * u.MB, Sources.USER_DATA),
                               data_download=SourceValue(0.5 * u.MB, Sources.USER_DATA),
                               data_stored=SourceValue(0.05 * u.MB, Sources.USER_DATA),
@@ -170,7 +169,7 @@ def analyze(request):
                 break
 
     start_date = datetime.strptime("2025-01-01", "%Y-%m-%d")
-    nb_of_hours = 3 * 365 * 24
+    nb_of_hours = 3 * u.year
 
     hourly_visits = int(int(request.POST['visitors']) / 24)
     linear_growth = linear_growth_hourly_values(
