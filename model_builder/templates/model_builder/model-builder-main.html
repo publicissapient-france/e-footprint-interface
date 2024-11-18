@@ -2,50 +2,59 @@
 <link rel="stylesheet" href="{% static 'css/drawflow.min.css' %}" />
 <link rel="stylesheet" href="{% static 'css/drawflow.css' %}" />
 
-<div id="model-builder-page" class="flex-col">
-    <div class="grid grid-cols-2 gap-4 items-center">
-        {% include "./graph-container.html" with systemFootprint=systemFootprint %}
-        {% include "./compare-container.html" with img_base64=img_base64 %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6">
+            {% include "./graph-container.html" with systemFootprint=systemFootprint %}
+        </div>
+        <div class="col-6">
+            {% include "./compare-container.html" with img_base64=img_base64 %}
+        </div>
+        <div class="col-12 mt-4">
+            {% include "./model-comparison-buttons.html" with is_different_from_ref_model=is_different_from_ref_model %}
+        </div>
+        <div class="col-12 mt-4">
+            <div class="row justify-content-around">
+                {% for object_type, object_list in obj_template_dict.items %}
+                <div class="col text-center mb-4 border-0">
+                    <!-- Carte pour chaque type d'objet -->
+                    <div class="card bg-primary text-center p-2" style="--bs-bg-opacity: .1;">
+                        <!-- Bouton Ajouter -->
+                        <button class="btn p-0 mx-auto"
+                                id="add-new-{{ object_type }}-button"
+                                script="on click if #object-creation-or-edition-form is not null then remove #object-creation-or-edition-form"
+                                hx-post="open-create-object-panel/{{ object_type }}/"
+                                hx-swap="beforeend"
+                                hx-target="#model-builder-page"
+                                hx-disabled-elt="button">
+                            <span class="d-flex justify-content-center align-items-center rounded-circle bg-light text-white" style="width: 64px; height: 64px;">
+                                <img src="{% static '/icons/plus-white.svg' %}" alt="Add new object" class="w-50" />
+                            </span>
+                        </button>
+                        <!-- Nom de l'objet -->
+                        <div class="mt-3">
+                        <p style="font-size: 0.8rem;">Add {{ object_type }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+         </div>
     </div>
-    <div class="flex justify-between px-8 items-center">
-        {% include "./model-comparison-buttons.html" with is_different_from_ref_model=is_different_from_ref_model %}
-        <div>
-            <button id="reset-nodes"
-                class="bg-primary py-2 px-6 rounded-xl h-min hover:bg-primary-dark active:bg-primary-darker text-white"
-                script="on click js rearrangeNodes(-300) end">
-                Reset node positions
-            </button>
-        <a class="bg-primary py-2 px-6 rounded-xl h-full hover:bg-primary-dark active:bg-primary-darker text-white" href="download-json">Export your model</a>
+    <div class="row mt-4">
+       <div class="col-12">
+            <div style="height: 1600px;width: 1200px; position: relative; overflow: hidden; z-index: 10;">
+                <div id="drawflow"></div>
+            </div>
         </div>
     </div>
-    <div class="flex flex-row justify-around mt-8">
-        {% for object_type, object_list in obj_template_dict.items %}
-            <div class="flex flex-col bg-pink-light w-32 h-32 rounded text-center">
-                <button class="text-black flex my-auto mx-auto items-center"
-                        id="add-new-{{ object_type }}-button"
-                        script="on click if #object-creation-or-edition-form is not null then remove #object-creation-or-edition-form"
-                        hx-post="open-create-object-panel/{{ object_type }}/"
-                        hx-swap="beforeend"
-                        hx-target="#model-builder-page"
-                            hx-disabled-elt="button">
-                    <span class="flex place-content-center h-16 w-16 text-white bg-primary-lighter rounded-full">
-                        <span class="my-auto">
-                            <img src="{% static '/icons/plus-white.svg' %}" alt="Add new object" />
-                        </span>
-                    </span>
-                </button>
-                <span>Add {{ object_type }}</span>
-            </div>
-        {% endfor %}
-    </div>
-    <div class="w-full flex h-[1600px]">
-        <div id="drawflow"/>
-    </div>
 </div>
+<script src="{% static 'scripts/drawflow_listeners.js' %}" defer></script>
 <div>{{ drawflow_json|json_script:"json-data" }}</div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         init("{{ request.scheme }}://{{ request.get_host }}", "{{csrf_token}}");
-    });</script>
-<script src="{% static 'scripts/drawflow_listeners.js' %}" defer></script>
+    });
+</script>
+
 

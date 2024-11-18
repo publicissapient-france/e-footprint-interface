@@ -1,26 +1,39 @@
-{% extends "quiz/quiz-template.html" %}
-{% block analyze_content %}
-<form class="flex flex-col gap-8 h-full w-full">
-    <div class="flex gap-8 px-14">
-        <div class="relative w-32 h-32 rounded-full flex justify-center items-center text-center bg-primary shadow-xl">
-            <img class="w-16 h-16" src="/static/icons/api-icon.svg" alt=""/>
+{% load static %}
+<div class="container-fluid px-5 py-5">
+    <div class="row py-5">
+         <div class="col-12 mb-5">
+            <p class="h3"><b>Start mapping your service</b></p>
         </div>
-        <div class="flex flex-row flex-1 justify-between items-center py-2">
-            <div class="flex flex-col gap-3">
-                <h2 class="font-bold text-2xl">Add Service(s)</h2>
-                <p>Now add what will actually happen technically, while the user is using the product.</p>
-                <p class="font-bold">--> How to find reliable sources</p>
+        <div class="col-12 px-6 py-4 mb-5" style="--bs-bg-opacity: .2;">
+            <div class="row align-items-center">
+                <div class="col">
+                    <div class="col">
+                        <div class="bg-primary p-2 rounded-circle shadow align-content-center" style="width: 125px; height: 125px;">
+                            <img src="/static/icons/api-icon.svg" class="mx-auto" alt="User journey"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-10">
+                    <p class="h3">
+                        <b>Set user journey(s)</b>
+                    </p>
+                    <p>List the actions your users will take when interacting with your product, so we can make your estimation as complete as possible.</p>
+                    <p><b>Tell me more about this</b></p>
+                </div>
+                <form class="col-10 px-6 py-4 mb-5" id="service-container">
+                    {% include "./components/service-block.html" %}
+                    <div class="row align-items-center justify-content-center mb-3">
+                        <div class="col-auto">
+                            <button id="validate-services-form-button" type="submit" class="btn btn-primary py-3 px-8 rounded-5 bg-primary"
+                                hx-post="/quiz/usage-patterns" hx-target="#main-content-block" hx-swap="innerHTML" hx-push-url="usage-patterns"
+                                hx-indicator="#global_loader" hx-disabled-elt="button"
+                                script="on click remove the first <div/> in #main-content-block">
+                                Continue
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    {% include "./components/service-block.html" %}
-    <div class="mx-auto space-x-1">
-        <button id="validate-services-form-button" class="px-10 py-3 self-center rounded-3xl bg-primary text-white hover:bg-primary-dark active:bg-primary-darker"
-                hx-post="/quiz/usage-patterns" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="usage-patterns"
-                hx-indicator="#global_loader" hx-disabled-elt="button"
-                script="on click remove the first <div/> in #quiz-container">
-            Continue
-        </button>
-    </div>
-</form>
-{% endblock %}
+</div>

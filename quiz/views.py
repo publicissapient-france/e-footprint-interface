@@ -39,15 +39,17 @@ def user_journeys(request, error=None):
 def add_user_journey_step(request):
     latest_index = int(request.POST['latestIndex'])
 
-    return render(request, "quiz/components/uj-input.html", context={"number": latest_index + 1})
+    return render(request, "quiz/components/uj-input.html", context={"number": latest_index})
 
 
 def services(request):
     uj_steps = []
-    for key in request.POST.keys():
-        uj_step = request.POST.getlist(key)
-        if uj_step[0] != '' and uj_step[1]:
-            uj_steps.append({"name": uj_step[0], "duration_in_min": uj_step[1]})
+    nb_steps = int(len(request.POST) / 2)
+    for step in range(1, nb_steps + 1):
+        uj_steps.append({
+            "name": request.POST[f"step-desc-{step}"],
+            "duration_in_min": request.POST[f"step-duration-{step}"],
+        })
 
     if len(uj_steps) < 1:
         return user_journeys(request, error="You must specify at least one user journey step")
@@ -62,16 +64,14 @@ def services(request):
 def form_usage_pattern(request):
     services_list = []
     services_dict = {}
-    for key in request.POST.keys():
-        service = request.POST.getlist(key)
-        if len(service[1]) == 0:
-            return
-        elif service[1] not in services_dict.keys():
-            services_dict[service[1]] = [service[0]]
-        else:
-            services_dict[service[1]].append(service[0])
-    for key in services_dict:
-        services_list.append({"type": key, "called_by": services_dict[key]})
+
+    nb_steps = int(len(request.POST) / 2)
+    for step in range(1, nb_steps + 1):
+        services_list.append({
+            "type": request.POST[f"service-step-{step}"],
+            "called_by": request.POST[f"step-{step}"]
+        })
+
     request.session['quiz_data']['services'] = services_list
     request.session.modified = True
 

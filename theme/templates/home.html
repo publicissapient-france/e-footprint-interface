@@ -1,41 +1,50 @@
-<div class="w-full flex flex-col items-center p-16 gap-12">
-    <div class="flex flex-col items-center gap-2">
-        <img src="/static/images/e-footprint-logo-w-text.svg" alt="e-footprint-logo" />
-        <h1 class="font-bold text-2xl">Do you know the carbon footprint of your digital service ?</h1>
+{% load static %}
+
+<div class="container-fluid px-0 pt-5 justify-content-center">
+    <div class="d-flex px-4 py-5 justify-content-center">
+        <img src="{% static 'images/e-footprint-logo-w-text.svg' %}" alt="e-footprint-logo" />
     </div>
-    <div class="flex gap-8">
-      <img class="w-60 h-60" src="/static/images/understand.svg" alt="understand" />
-      <img class="w-60 h-60" src="/static/images/analyze.svg" alt="analyze" />
-      <img class="w-60 h-60" src="/static/images/identify.svg" alt="identify" />
+    <div class="d-flex px-4 py-2 mb-5 justify-content-center">
+        <p class="h3"><b>Do you know the carbon footprint of your digital service ?</b></p>
     </div>
-    <div class="flex gap-8 text-center">
-        <div class="flex flex-col items-center justify-center">
-            <div class="absolute">
-                <h2 class="font-bold text-xl">Understand</h2>
-                <p>Our approach</p>
+    <div class="w-75 m-auto px-4 py-2 d-flex">
+        <div class="row">
+            <div class="col">
+                <img src="{% static 'images/understand.svg' %}" class="img-fluid" alt="understand" />
             </div>
-            <img class="w-60 h-60" src="/static/images/understand-bg.svg" alt="" />
+            <div class="col">
+                <img src="{% static 'images/analyze.svg' %}" class="img-fluid" alt="analyze" />
+            </div>
+            <div class="col">
+                <img src="{% static 'images/identify.svg' %}" class="img-fluid" alt="identify" />
+            </div>
         </div>
-        <div class="flex flex-col items-center justify-center">
-            <div class="flex flex-col gap-2 absolute">
-                <h2 class="font-bold text-xl">Analyze</h2>
-                <p>Model your service to calculate its impact</p>
-                <button id="quiz-link" class="w-fit px-4 self-center py-2 rounded-3xl bg-primary text-white hover:bg-primary-dark active:bg-primary-darker"
-                        hx-get="/quiz/onboarding"
-                        hx-target="#main-content-block" hx-swap="beforeend"
-                        hx-push-url="/quiz/onboarding"
-                        hx-indicator="#global_loader" hx-disabled-elt="button"
-                        script="on click remove the first <div/> in #main-content-block">Start modeling my service</button>
-            </div>
-            <img src="/static/images/analyze-bg.svg" alt="" />
+    </div>
+    <div class="w-100 m-auto px-4 py-2 row gx-5 align-items-center">
+        <!-- Bloc Understand -->
+        <div class="col-12 col-md-4 text-center home-btn-1 d-flex flex-column justify-content-center align-items-center">
+            <h2><b>Understand</b></h2>
+            <p>Our approach</p>
         </div>
-        <div class="flex flex-col items-center justify-center">
-            <div class="absolute">
-                <h2 class="font-bold text-xl">Identify</h2>
-                <p>Actions to implement</p>
-                <p>(coming soon)</p>
-            </div>
-            <img class="w-60 h-60" src="/static/images/identify-bg.svg" alt="" />
+
+        <!-- Bloc Analyze -->
+        <div class="col-12 col-md-4 text-center home-btn-2 d-flex flex-column justify-content-center align-items-center">
+            <h2><b>Analyze</b></h2>
+            <p>Model your service to calculate its impact</p>
+            <button id="quiz-link" class="btn btn-primary rounded-pill mt-3"
+                    hx-get="/quiz/onboarding"
+                    hx-target="#main-content-block" hx-swap="innerHTML"
+                    hx-push-url="/quiz/onboarding"
+                    hx-indicator="#global_loader" hx-disabled-elt="button">
+                Start modeling my service
+            </button>
+        </div>
+
+        <!-- Bloc Identify -->
+        <div class="col-12 col-md-4 text-center home-btn-3 d-flex flex-column justify-content-center align-items-center">
+            <h2><b>Identify</b></h2>
+            <p>Actions to implement</p>
+            <p>(coming soon)</p>
         </div>
     </div>
 </div>

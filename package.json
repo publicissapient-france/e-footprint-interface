@@ -18,5 +18,8 @@
         "mochawesome-merge": "4.3.0",
         "mochawesome-report-generator": "6.2.0",
         "typescript": "5.4.5"
+    },
+    "dependencies": {
+        "bootstrap": "^5.3.3"
     }
 }

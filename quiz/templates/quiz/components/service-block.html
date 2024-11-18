@@ -1,14 +1,28 @@
 {% for step in uj_steps %}
-<input type="text" class="hidden" value="{{step.name}}" name="{{forloop.counter}}"/>
-<div class="flex items-center px-14 gap-2 flex-wrap" id="{{step.name}}">
-    <p><span class="font-bold text-xl pr-2">Step {{ forloop.counter }}</span>When they <span class="px-1 w-auto text-xl font-bold">{{step.name}}</span></p>
-    <p>a request is made to a service of the following type </p>
-    <select class="rounded-md border-grey-4 border-[1px] border-solid" name="{{forloop.counter}}" required>
-          <option value disabled selected>Select an option</option>
-          <option value="web-app">Web Application</option>
-          <option value="streaming">Streaming</option>
-          <option value="gen-ai">Gen AI</option>
-      </select>
+    
+<div class="row align-items-center mb-4 row-form-line">
+    <input type="text" class="hidden" value="{{step.name}}" name="step-{{forloop.counter}}" id="step-{{forloop.counter}}"/>
+    <div class="col-auto">
+        <p class="h6 pt-2"><b>Step {{ forloop.counter }}</b></p>
+    </div>
+    <div class="col-auto">
+        When they
+    </div>
+    <div class="col-auto">
+        <p class="h6 pt-2">{{ step.name }}</p>
+    </div>
+    <div class="col-auto"> 
+        a request is made to a service of the following type
+    </div>
+    <div class="col-auto">
+        <select class="form-select rounded-2 border-1 border-secondary-subtle" id="service-step-{{ forloop.counter }}" name="service-step-{{ forloop.counter }}" required>
+             <option value disabled selected>Select an option</option>
+              <option value="web-app">Web Application</option>
+              <option value="streaming">Streaming</option>
+              <option value="gen-ai">Gen AI</option>
+        </select>
+    </div>
 </div>
 {% endfor %}
+
 

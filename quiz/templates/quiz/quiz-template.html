@@ -1,6 +1,12 @@
-<div class="min-h-screen w-full bg-background-4" id="quiz-container">
-    <div class="flex flex-col items-center space-y-14 p-4 ">
-        <h1 class="text-2xl font-bold text-center mt-8">Start mapping your service</h1>
-        <div id="quiz-step-container">{% block analyze_content %} {% endblock %}</div>
+{% load static %}
+
+<div class="container-fluid p-0 justify-content-center">
+    <div class="row">
+        <div class="col-12 mb-5">
+            <p class="h3">Start mapping your service</p>
+        </div>
+        <div class="col-12">
+            <div id="quiz-step-container">{% block analyze_content %} {% endblock %}</div>
+        </div>
     </div>
 </div>

@@ -1,0 +1,29 @@
+body{
+    background-color: #F9F7FC;
+}
+
+.home-btn-1,
+.home-btn-2,
+.home-btn-3 {
+    min-height: 300px;
+}
+
+.home-btn-1{
+    background-image: url('../images/understand-bg.svg');
+}
+
+.home-btn-2{
+    background-image: url('../images/analyze-bg.svg');
+}
+
+.home-btn-3{
+    background-image: url('../images/identify-bg.svg');
+}
+
+.home-btn-1,
+.home-btn-2,
+.home-btn-3 {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 95%;
+}

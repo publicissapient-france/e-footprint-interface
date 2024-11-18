@@ -1,11 +1,16 @@
+{% load static %}
+{% load django_bootstrap5 %}
 <!DOCTYPE html>
 <html lang="en" class="min-h-screen min-w-full">
+{% load django_bootstrap5 %}
 <head>
+    {% bootstrap_css %}
     {% load static tailwind_tags %}
     <meta charset="UTF-8"/>
     <title>e-footprint</title>
     <link rel="icon" type="image/x-icon" href="/static/icons/sidenav/logo.svg"/>
     {% tailwind_css %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
 <script src="{% static 'scripts/plotly_basic.min.js' %}"></script>
 <script src="{% static 'scripts/htmx.min.js' %}"></script>
 <script src="{% static 'scripts/_hyperscript.min.js' %}"></script>
@@ -13,59 +18,65 @@
 <script src="{% static 'scripts/drawflow.js' %}" defer></script>
 </head>
 
-<body class="min-h-screen min-w-full flex flex-row overflow-y-scroll" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-<nav class="text-grey-1 bg-black sticky top-0 left-0 h-[100vh] z-50 w-1/6">
-    <a href="/" class="flex justify-center py-6">
-        <img src="/static/icons/sidenav/logo.svg" alt="E-Footprint"/>
-    </a>
-    <div class="flex flex-col gap-6 p-6 border-y-[1px] border-solid border-grey-6">
-        <button hx-get="/understand" hx-target="#main-content-block" hx-swap="beforeend"
-                hx-push-url="/understand" hx-indicator="#global_loader" hx-disabled-elt="button"
-                script="on click remove the first <div/> in #main-content-block"
-                class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/home.svg" alt="Understand"/>
-            <span>Understand</span>
-        </button>
-        <button hx-get="/quiz/onboarding" hx-target="#main-content-block" hx-swap="beforeend"
-                hx-push-url="/quiz/onboarding" hx-indicator="#global_loader" hx-disabled-elt="button"
-                script="on click remove the first <div/> in #main-content-block"
-                class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/analyze.svg" alt="New modeling"/>
-            <span class="whitespace-nowrap">Create new modeling</span>
-        </button>
-        <!-- Important to keep the trailing / after model_builder in the pushed url below, otherwise relative url calls with htmx won’t work -->
-        <button hx-get="/model_builder" hx-target="#main-content-block" hx-swap="beforeend"
-                hx-push-url="/model_builder/" hx-indicator="#global_loader" hx-disabled-elt="button"
-                script="on click remove the first <div/> in #main-content-block
-                        on htmx:afterRequest js init('{{ request.scheme }}://{{ request.get_host }}', '{{csrf_token}}') end"
-                class="flex flex-row gap-x-4"><img src="/static/icons/sidenav/analyze.svg" alt="Model builder"/>
-            <span class="whitespace-nowrap">Dashboard view</span>
-        </button>
+<body class="min-vh-100 d-flex flex-row overflow-auto" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <div class="container-fluid p-0">
+        <div class="row g-0 p-0">
+            <div class="col-2">
+                <nav class="text-light bg-dark sticky-top vh-100 pt-4 pb-4">
+                    <a href="/" class="d-flex justify-content-center py-3">
+                        <img src="{% static 'icons/sidenav/logo.svg' %}" alt="E-Footprint"/>
+                    </a>
+                    <div class="d-flex flex-column gap-3 p-3 border-top border-bottom border-secondary">
+                        <button hx-get="/understand" hx-target="#main-content-block" hx-swap="beforeend"
+                                    hx-push-url="/understand" hx-indicator="#global_loader" hx-disabled-elt="button"
+                                script="on click remove the first <div/> in #main-content-block"
+                                class="d-flex flex-row gap-2"><img src="/static/icons/sidenav/home.svg" alt="Understand"/>
+                            <span>Understand</span>
+                        </button>
+                        <button hx-get="/quiz/onboarding" hx-target="#main-content-block" hx-swap="beforeend"
+                                hx-push-url="/quiz/onboarding" hx-indicator="#global_loader" hx-disabled-elt="button"
+                                script="on click remove the first <div/> in #main-content-block"
+                                class="d-flex flex-row gap-2"><img src="/static/icons/sidenav/analyze.svg" alt="New modeling"/>
+                            <span class="text-nowrap">Create new modeling</span>
+                        </button>
+                        <button hx-get="/model_builder" hx-target="#main-content-block" hx-swap="beforeend"
+                                hx-push-url="/model_builder/" hx-indicator="#global_loader" hx-disabled-elt="button"
+                                script="on click remove the first <div/> in #main-content-block
+                                        on htmx:afterRequest js init('{{ request.scheme }}://{{ request.get_host }}', '{{csrf_token}}') end"
+                                class="d-flex flex-row gap-2"><img src="/static/icons/sidenav/analyze.svg" alt="Model builder"/>
+                            <span class="text-nowrap">Dashboard view</span>
+                        </button>
+                    </div>
+                </nav>
+            </div>
+            <div class="col-10 d-flex justify-content-center py-2">
+                <img id="global_loader" src="/static/loaders/bars.svg" class="htmx-indicator absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="pointer-events: none"/>
+                <main id="main-content-block" class="text-center">
+                    {% if home %}
+                    {% include "home.html" %}
+                    {% elif understand %}
+                    {% include "understand.html" %}
+                    {% elif analyze %}
+                    {% include "analyze/analyze.html" %}
+                    {% elif onboarding %}
+                    {% include "quiz/onboarding.html" %}
+                    {% elif userJourneys %}
+                    {% include "quiz/user-journeys.html" %}
+                    {% elif services %}
+                    {% include "quiz/services.html" %}
+                    {% elif usagePatterns %}
+                    {% include "quiz/usage-patterns.html" %}
+                    {% elif apis %}
+                    {% include "quiz/apis.html" %}
+                    {% elif modelBuilderMain %}
+                    {% include "model_builder/model-builder-main.html" %}
+                    {% elif analyze %}
+                    {% include "analyze.html" %}
+                    {% endif %}
+                </main>
+            </div>
+        </div>
     </div>
-</nav>
-
-
-<main id="main-content-block" class="flex-1 relative w-5/6">
-    <img id="global_loader" src="/static/loaders/bars.svg" class="htmx-indicator absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="pointer-events: none"/>
-    {% if home %}
-    {% include "home.html" %}
-    {% elif understand %}
-    {% include "understand.html" %}
-    {% elif analyze %}
-    {% include "analyze/analyze.html" %}
-    {% elif onboarding %}
-    {% include "quiz/onboarding.html" %}
-    {% elif userJourneys %}
-    {% include "quiz/user-journeys.html" %}
-    {% elif services %}
-    {% include "quiz/services.html" %}
-    {% elif usagePatterns %}
-    {% include "quiz/usage-patterns.html" %}
-    {% elif apis %}
-    {% include "quiz/apis.html" %}
-    {% elif modelBuilderMain %}
-    {% include "model_builder/model-builder-main.html" %}
-    {% elif analyze %}
-    {% include "analyze.html" %}
-    {% endif %}
-    </main>
+    {% bootstrap_javascript %}
 </body>
 </html>

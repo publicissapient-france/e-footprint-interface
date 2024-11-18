@@ -1,37 +1,61 @@
-<div class="min-h-screen bg-background-4 flex flex-col py-6" id="quiz-container">
-    <h1 class="text-2xl font-bold text-center">Start mapping your service</h1>
-    <div class="flex flex-col justify-center gap-4 mt-8">
-        <h2 class="text-xl font-bold text-center">From scratch</h2>
-        <div class="flex bg-primary-lighter mx-32 p-4 space-x-4 rounded-xl">
-            <div class="relative w-32 h-32 bg-primary rounded-full flex justify-center items-center text-center shadow-xl">
-                <img class="w-24 h-24" src="/static/icons/user-journey-icon.svg" alt="User journey"/>
-            </div>
-            <div class="flex flex-1 gap-4 justify-between items-center">
-                <div class="flex flex-col gap-2">
-                    <p class="font-bold">Set User Journeys</p>
-                    <p>Define the characteristics of your service and estimate the characteristics of services called along your customers' journey...</p>
-                    <p class="text-black">Read more...</p>
+{% load static %}
+
+<div class="container-fluid px-0 py-5 justify-content-center">
+    <div class="row py-5">
+        <div class="col-12 mb-5">
+            <p class="h3"><b>Start mapping your service</b></p>
+        </div>
+        <div class="col-12">
+            <p class="h4 mb-3"><b>From scratch</b></p>
+        </div>
+        <div class="col-10 offset-1 bg-primary rounded-3 p-4 mb-5" style="--bs-bg-opacity: .2;">
+            <div class="row align-items-center">
+                <div class="col">
+                    <div class="bg-primary p-2 rounded-circle shadow align-content-center" style="width: 125px; height: 125px;">
+                        <img src="/static/icons/user-journey-icon.svg" class="mx-auto" alt="User journey"/>
+                    </div>
                 </div>
-                <button id="go-to-user-journeys-button" class="h-min bg-primary text-white mr-2 px-8 py-4 rounded-full hover:bg-primary-dark active:bg-primary-darker"
-                        hx-post="user-journeys" hx-target="#quiz-container" hx-swap="innerHTML" hx-push-url="user-journeys"
-                        hx-indicator="#global_loader" hx-disabled-elt="button"
-                        script="on click get #quiz-container then set its innerHTML to ''">Start
-                </button>
+                <div class="col-8">
+                    <p class="h5">
+                        <b>Set user journeys</b>
+                    </p>
+                    <p>
+                        Define the characteristics of your service and estimate the characteristics of services called along your customers' journey...<br>
+                        Read more ...
+                    </p>
+                </div>      
+                <div class="col">
+                    <button id="go-to-user-journeys-button"
+                            class="btn btn-primary rounded-pill p-4 w-75"
+                            hx-post="user-journeys" hx-target="#main-content-block" hx-swap="innerHTML" hx-push-url="user-journeys"
+                            hx-indicator="#global_loader" hx-disabled-elt="button"
+                            script="on click get #main-content-block then set its innerHTML to ''">Start
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="flex flex-col gap-3 mt-6">
-        <h2 class="text-xl font-bold text-center">Or from an imported model</h2>
-        <div class="flex bg-primary-lighter mx-32 p-4 space-x-4 rounded-xl justify-center">
-            <form hx-post="import-json" hx-target="#main-content-block" hx-swap="innerHTML" enctype="multipart/form-data" class="flex gap-2 items-center">
-                {% csrf_token %}
-                <label for="import-json-input" class="hidden">import json file</label>
-                <input id="import-json-input" name="import-json-input" type="file">
-                <button class="h-min bg-primary text-white mr-2 px-8 py-4 rounded-full hover:bg-primary-dark active:bg-primary-darker" type="submit">Use your model</button>
-            </form>
+        <div class="col-12">
+            <p class="h4"><b>Or from an imported model</b></p>
         </div>
-        {% if uploadError %}
-        <p class="text-center font-bold text-red-1">{{uploadError}}</p>
-        {% endif %}
+        <div class="col-10 offset-1 bg-primary rounded-3 p-4 mb-5" style="--bs-bg-opacity: .2;">
+            <form class="row align-items-center justify-content-center" hx-post="import-json" hx-target="#main-content-block" hx-swap="innerHTML" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="col-3">
+                    <label for="import-json-input" class="hidden">import json file</label>
+                    <input id="import-json-input" name="import-json-input" type="file">
+                </div>
+                <div class="col-3">
+                    <button id="go-to-user-journeys-button"
+                            class="btn btn-primary rounded-pill p-4"
+                            hx-post="user-journeys" hx-target="#main-content-block" hx-swap="innerHTML" hx-push-url="user-journeys"
+                            hx-indicator="#global_loader" hx-disabled-elt="button"
+                            script="on click get #main-content-block then set its innerHTML to ''">Use your model
+                    </button>
+                </div>
+            </form>
+            {% if uploadError %}
+                <p class="text-center font-bold text-red-1">{{uploadError}}</p>
+            {% endif %}
+        </div>
     </div>
 </div>

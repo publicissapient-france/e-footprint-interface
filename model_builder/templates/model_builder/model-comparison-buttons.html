@@ -1,29 +1,43 @@
-<div id="model-comparison-buttons" {% if hx_swap_oob %} hx-swap-oob="true" {% endif %} class="flex gap-8">
-    {% if is_different_from_ref_model %}
-        <button class="relative flex items-center gap-1 py-2 px-6 text-primary border-primary border-2 border-solid rounded-xl hover:text-black hover:border-black"
-                hx-post="set-reference-model" hx-target="#model-comparison-buttons" hx-swap="outerHTML" hx-disabled-elt="button"
-                script="on click hide the first <span/> in me with *opacity"
-        >
-            <img id="set-ref-model-loader" src="/static/loaders/bars.svg" class="htmx-indicator w-10 h-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="pointer-events: none"/>
-            <span>Set model as a reference</span>
-        </button>
-        <button class="py-2 px-6 bg-primary text-white rounded-xl hover:text-primary hover:bg-white hover:border-primary hover:border-2 hover:border-solid"
-                hx-post="compare_with_reference" hx-target="#compare-container" hx-swap="innerHTML" hx-disabled-elt="button"
-                hx-indicator="#compare-loader"
-                script="on click if #graph-comparison-image is not null then remove #graph-comparison-image">
-            Compare the two models
-        </button>
-        <button class="py-2 px-6 bg-primary text-white rounded-xl hover:text-primary hover:bg-white hover:border-primary hover:border-2 hover:border-solid"
-                hx-post="reset_model_reference" hx-target="#main-content-block" hx-swap="beforeend" hx-disabled-elt="button"
-                hx-indicator="#global_loader"
-                script="on click remove the first <div/> in #main-content-block
-                        on htmx:afterRequest js init('{{ request.scheme }}://{{ request.get_host }}', '{{csrf_token}}') end"
-                >
-            Reset to the model reference
-        </button>
-    {% else %}
-        <button class="flex items-center gap-1 py-2 px-6 text-primary border-primary border-2 border-solid rounded-xl" disabled>
-            Model set as a reference <img src="/static/icons/check-green.svg" alt="Check"/>
-        </button>
-    {% endif %}
+<div id="model-comparison-buttons"
+     {% if hx_swap_oob %} hx-swap-oob="true" {% endif %}
+     class="container">
+    <div class="row align-items-center">
+        {% if is_different_from_ref_model %}
+            <!-- Colonne de gauche : Set model as a reference -->
+            <div class="col-md-6 d-flex justify-content-start mb-3 mb-md-0">
+                <button class="btn btn-outline-primary d-flex align-items-center gap-2 position-relative px-4 py-2 rounded"
+                        hx-post="set-reference-model" hx-target="#model-comparison-buttons" hx-swap="outerHTML" hx-disabled-elt="button"
+                        script="on click hide the first <span/> in me with *opacity">
+                    <img id="set-ref-model-loader" src="/static/loaders/bars.svg"
+                         class="htmx-indicator position-absolute top-50 start-50 translate-middle"
+                         style="pointer-events: none; width: 40px; height: 40px;"/>
+                    <span>Set model as a reference</span>
+                </button>
+            </div>
+
+            <!-- Colonne de droite : Compare and Reset buttons -->
+            <div class="col-md-6 d-flex flex-column flex-md-row gap-2 justify-content-end">
+                <button class="btn btn-primary d-flex align-items-center px-4 py-2 rounded"
+                        hx-post="compare_with_reference" hx-target="#compare-container" hx-swap="innerHTML" hx-disabled-elt="button"
+                        hx-indicator="#compare-loader"
+                        script="on click if #graph-comparison-image is not null then remove #graph-comparison-image">
+                    Compare the two models
+                </button>
+                <button class="btn btn-primary d-flex align-items-center px-4 py-2 rounded"
+                        hx-post="reset_model_reference" hx-target="#main-content-block" hx-swap="beforeend" hx-disabled-elt="button"
+                        hx-indicator="#global_loader"
+                        script="on click remove the first <div/> in #main-content-block
+                                on htmx:afterRequest js init('{{ request.scheme }}://{{ request.get_host }}', '{{csrf_token}}') end">
+                    Reset to the model reference
+                </button>
+            </div>
+        {% else %}
+            <!-- Bouton désactivé quand le modèle est défini comme référence -->
+            <div class="col-12 text-center">
+                <button class="btn btn-outline-primary d-flex align-items-center gap-2 px-4 py-2 rounded" disabled>
+                    Model set as a reference <img src="/static/icons/check-green.svg" alt="Check" style="width: 20px; height: 20px;"/>
+                </button>
+            </div>
+        {% endif %}
+    </div>
 </div>
