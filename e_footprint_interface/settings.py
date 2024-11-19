@@ -53,13 +53,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "quiz",
     "model_builder",
-    "tailwind",
     "theme",
     "django_browser_reload",
     'django_bootstrap5',
 ]
-
-TAILWIND_APP_NAME = "theme"
 
 INTERNAL_IPS = [
     "127.0.0.1",

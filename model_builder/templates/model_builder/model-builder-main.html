@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="{% static 'css/drawflow.min.css' %}" />
 <link rel="stylesheet" href="{% static 'css/drawflow.css' %}" />
 
-<div class="container-fluid">
+<div class="container-fluid" id="model-builder-page">
     <div class="row">
         <div class="col-6">
             {% include "./graph-container.html" with systemFootprint=systemFootprint %}
@@ -43,7 +43,7 @@
     </div>
     <div class="row mt-4">
        <div class="col-12">
-            <div style="height: 1600px;width: 1200px; position: relative; overflow: hidden; z-index: 10;">
+            <div style="height: 1600px;width: 1200px; position: relative; overflow: hidden;">
                 <div id="drawflow"></div>
             </div>
         </div>

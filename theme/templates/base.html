@@ -1,21 +1,18 @@
 {% load static %}
-{% load django_bootstrap5 %}
 <!DOCTYPE html>
 <html lang="en" class="min-h-screen min-w-full">
 {% load django_bootstrap5 %}
 <head>
-    {% bootstrap_css %}
-    {% load static tailwind_tags %}
     <meta charset="UTF-8"/>
     <title>e-footprint</title>
+    {% bootstrap_css %}
     <link rel="icon" type="image/x-icon" href="/static/icons/sidenav/logo.svg"/>
-    {% tailwind_css %}
     <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
-<script src="{% static 'scripts/plotly_basic.min.js' %}"></script>
-<script src="{% static 'scripts/htmx.min.js' %}"></script>
-<script src="{% static 'scripts/_hyperscript.min.js' %}"></script>
-<script src="{% static 'scripts/drawflow_source.js' %}" defer></script>
-<script src="{% static 'scripts/drawflow.js' %}" defer></script>
+    <script src="{% static 'scripts/plotly_basic.min.js' %}"></script>
+    <script src="{% static 'scripts/htmx.min.js' %}"></script>
+    <script src="{% static 'scripts/_hyperscript.min.js' %}"></script>
+    <script src="{% static 'scripts/drawflow_source.js' %}" defer></script>
+    <script src="{% static 'scripts/drawflow.js' %}" defer></script>
 </head>
 
 <body class="min-vh-100 d-flex flex-row overflow-auto" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
@@ -30,28 +27,34 @@
                         <button hx-get="/understand" hx-target="#main-content-block" hx-swap="beforeend"
                                     hx-push-url="/understand" hx-indicator="#global_loader" hx-disabled-elt="button"
                                 script="on click remove the first <div/> in #main-content-block"
-                                class="d-flex flex-row gap-2"><img src="/static/icons/sidenav/home.svg" alt="Understand"/>
+                                class="d-flex flex-row gap-2 btn btn-dark text-white"><img src="/static/icons/sidenav/home.svg" alt="Understand"/>
                             <span>Understand</span>
                         </button>
                         <button hx-get="/quiz/onboarding" hx-target="#main-content-block" hx-swap="beforeend"
                                 hx-push-url="/quiz/onboarding" hx-indicator="#global_loader" hx-disabled-elt="button"
                                 script="on click remove the first <div/> in #main-content-block"
-                                class="d-flex flex-row gap-2"><img src="/static/icons/sidenav/analyze.svg" alt="New modeling"/>
+                                class="d-flex flex-row gap-2 btn btn-dark text-white"><img src="/static/icons/sidenav/analyze.svg" alt="New modeling"/>
                             <span class="text-nowrap">Create new modeling</span>
                         </button>
                         <button hx-get="/model_builder" hx-target="#main-content-block" hx-swap="beforeend"
                                 hx-push-url="/model_builder/" hx-indicator="#global_loader" hx-disabled-elt="button"
                                 script="on click remove the first <div/> in #main-content-block
                                         on htmx:afterRequest js init('{{ request.scheme }}://{{ request.get_host }}', '{{csrf_token}}') end"
-                                class="d-flex flex-row gap-2"><img src="/static/icons/sidenav/analyze.svg" alt="Model builder"/>
+                                class="d-flex flex-row gap-2 btn btn-dark text-white"><img src="/static/icons/sidenav/analyze.svg" alt="Model builder"/>
                             <span class="text-nowrap">Dashboard view</span>
                         </button>
                     </div>
                 </nav>
             </div>
-            <div class="col-10 d-flex justify-content-center py-2">
-                <img id="global_loader" src="/static/loaders/bars.svg" class="htmx-indicator absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="pointer-events: none"/>
-                <main id="main-content-block" class="text-center">
+            <div class="col-10 d-flex justify-content-center py-2 position-relative">
+                <!-- Loader -->
+                <img id="global_loader"
+                     src="{% static 'loaders/bars.svg' %}"
+                     class="htmx-indicator position-absolute top-50 start-50 translate-middle"
+                     style="display: none; pointer-events: none;"
+                     alt="Loading...">
+                <!-- Main Content -->
+                <main id="main-content-block" class="text-center w-100">
                     {% if home %}
                     {% include "home.html" %}
                     {% elif understand %}

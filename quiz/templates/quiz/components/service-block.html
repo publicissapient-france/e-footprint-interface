@@ -1,7 +1,7 @@
 {% for step in uj_steps %}
     
 <div class="row align-items-center mb-4 row-form-line">
-    <input type="text" class="hidden" value="{{step.name}}" name="step-{{forloop.counter}}" id="step-{{forloop.counter}}"/>
+    <input type="hidden" value="{{step.name}}" name="step-{{forloop.counter}}" id="step-{{forloop.counter}}"/>
     <div class="col-auto">
         <p class="h6 pt-2"><b>Step {{ forloop.counter }}</b></p>
     </div>

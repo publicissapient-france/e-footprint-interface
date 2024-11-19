@@ -24,38 +24,13 @@ Prerequisite
 #### Dependencies installation
 
     poetry install
+    npm install
 
 ## Run application
 
     poetry run python manage.py runserver
 
-## Run tailwind when developing
-
-    cd theme/static_src
-    npm run dev
-
-To build css before commiting:
-        
-    npm run build
 
 ## Run tests
 
     poetry run python manage.py test
-
-## Run E2E tests
-
-#### Dependencies installation (to do once or when a dependencies is added/updated)
-
-    npm install
-
-#### Start application
-
-    npm start
-
-#### Run tests
-
-    npm test
-
-You can also start the app and run the tests with Cypress dashboard with the command :
-
-    cypress open

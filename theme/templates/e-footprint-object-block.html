@@ -1,9 +1,12 @@
-<div class="flex gap-4 bg-white rounded-xl p-4">
-    <div class="border border-grey-13 rounded-full p-4 h-fit">
-        <img class="max-w-8" src="{{ logo }}" alt=""/>
+{% load static %}
+<div class="d-flex gap-4 bg-white rounded p-4">
+    <div class="p-1">
+        <div class="p-4 align-content-center border rounded-circle" style="width: 100px; height: 100px;">
+            <img src="{{ logo }}" class="mx-auto img-fluid" alt="User journey"/>
+        </div>
     </div>
-    <div class="flex flex-col gap-2">
-        <h4 class="font-bold text-xl">{{ title }}</h4>
-        <p class="leading-8">{{ content }}</p>
+    <div class="d-flex flex-column gap-2">
+        <h4 class="fw-bold fs-4">{{ title }}</h4>
+        <p class="lh-lg">{{ content }}</p>
     </div>
 </div>

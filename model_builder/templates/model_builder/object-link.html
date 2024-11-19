@@ -1,14 +1,17 @@
 <button id="linked-{{ linked_object.class_as_simple_str }}"
         onclick="goToObject('{{ linked_object.id }}')"
-        class=" border-primary border-solid border-2 rounded flex gap-x-2 p-2 w-full text-primary">
+        class="btn border border-primary rounded d-flex align-items-center gap-2 w-100 text-primary">
     <img src="/static/icons/link-icon.svg" alt="Object link" />
     <div class="link-object-title">{{ linked_object.class_as_simple_str }} : {{ linked_object.name }}</div>
 </button>
+
 <script>
     function goToObject(id) {
-        document.getElementById(id).scrollIntoView();
+        const element = document.getElementById(id);
+        if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else {
+            console.error(`Element with ID "${id}" not found.`);
+        }
     }
 </script>
-
-<style>.dummy {color:
-     rgb(94 47 251)}</style>
