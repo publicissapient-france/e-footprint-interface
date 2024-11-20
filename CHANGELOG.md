@@ -6,8 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.3.0] - 2024-11-20
 
+### Changed
 - Switch from the framework front-end Tailwind to Bootstrap.
 - Minor changes in views and templates to match the new front-end framework.
+- Fix python version to 3.11.10.
+- Update README.md, INSTALL.md, RELEASE_PROCESS.md, DEPLOY_TO_PROD.md with new instructions.
 
 ## [0.2.0]  - 2024-11-07
 

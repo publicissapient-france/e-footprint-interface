@@ -1,96 +1,70 @@
-# Dev / Prod switch
+# Local installation
 
-In the [.env file](../.env) set 
+## Install poetry
+
+Follow the instructions on the [official poetry website](https://python-poetry.org/docs/#installation)
+
+## Dependencies installation
+```
+poetry install
+```
+
+## Node
+### Install node
+Download and install nvm (node version manager) node from https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating then install node and npm with
+```
+nvm install node
+```
+
+check installation in the terminal with
+```
+node --version
+npm --version
+```
+### Install js dependencies via npm
+
+``` 
+npm install
+```
+
+## Run Django project
+
+### .env
+
+create a .env file in the root directory of the project and add
 ```
 DJANGO_PROD=False
 ```
-for dev and
-```
-DJANGO_PROD=True
-```
-for prod
 
-## Prod only
-### Activate the local proxy to Gcloud database
-in *another* terminal 
-```
-./cloud-sql-proxy e-footprint-interface:europe-west2:e-footprint-interface
-```
-
-### Setup env variables 
-
-In the initial terminal (where you will run the django server) 
+### Run migrations
 
 ```
-export GOOGLE_CLOUD_PROJECT=e-footprint-interface
-export USE_CLOUD_SQL_AUTH_PROXY=true
+python manage.py makemigrations
+python manage.py migrate
+python manage.py collectstatic
 ```
 
-## Initialization of the database (dev and prod)
-in your terminal
-```
-python3 manage.py makemigrations
-python3 manage.py migrate
-python3 manage.py collectstatic
-```
-
-## Create super user 
+### Create super user 
 
 In the terminal 
 ```
 python3 manage.py createsuperuser
 ```
 
-## Run server
-### Dev
-```
-python3 manage.py runserver 8080
-```
-
-### Prod: first
-In your terminal 
-```
-python3 manage.py check --deploy    
-```
-then
-```
-python3 manage.py runserver 8080 --insecure
-```
-
-# Deploying on App Engine
-Check out [official Gcloud documentation](https://cloud.google.com/python/django/appengine?hl=fr&_ga=2.133171918.-1308282934.1706020941#run-locally)
-
-IMPORTANT: We use poetry to manage python dependencies but app engine expects a requirements.txt file. Update the requirements.txt file with the following command:
-
-    poetry export -f requirements.txt --output requirements.txt
-
-
-To first create a new version but not redirect all traffic to it to first make sure that it doesn’t break anything:
+### Run application
 
 ```
-gcloud app deploy --no-promote
-```
-then browse the url with
-```
-gcloud app browse
+poetry run python manage.py runserver
 ```
 
-If you find a bug and want to deploy a version with DEBUG=True, set DEBUG=True line 157 in [the settings module](e_footprint_interface/settings.py) AND THEN DON’T FORGET TO SET IT BACK TO FALSE WHEN DEPLOYING A NEW VERSION FOR PRODUCTION.
+# Run tests
 
- 
-### Bonus: Connect to google cloud sql instance 
-
-In the google cloud shell console
-
+## Python tests
 ```
-gcloud sql connect e-footprint-interface-sql --database=anti-greenwashing-db --user=anti-greenwashing-superuser
+poetry run python manage.py test
 ```
 
-# Run tests 
-
-### For all django tests
-
-In your terminal 
+## Javascript tests
 ```
-python3 manage.py test    
+npm run test:e2e
 ```
