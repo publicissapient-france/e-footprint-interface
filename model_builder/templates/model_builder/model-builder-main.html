@@ -1,60 +1,305 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/drawflow.min.css' %}" />
 <link rel="stylesheet" href="{% static 'css/drawflow.css' %}" />
+<script src="{% static 'scripts/leader-line.min.js' %}"></script>
+<script src="{% static 'scripts/Sortable.min.js' %}"></script>
 
-<div class="container-fluid" id="model-builder-page">
-    <div class="row">
-        <div class="col-6">
-            {% include "./graph-container.html" with systemFootprint=systemFootprint %}
-        </div>
-        <div class="col-6">
-            {% include "./compare-container.html" with img_base64=img_base64 %}
-        </div>
-        <div class="col-12 mt-4">
-            {% include "./model-comparison-buttons.html" with is_different_from_ref_model=is_different_from_ref_model %}
-        </div>
-        <div class="col-12 mt-4">
-            <div class="row justify-content-around">
-                {% for object_type, object_list in obj_template_dict.items %}
-                <div class="col text-center mb-4 border-0">
-                    <!-- Carte pour chaque type d'objet -->
-                    <div class="card bg-primary text-center p-2" style="--bs-bg-opacity: .1;">
-                        <!-- Bouton Ajouter -->
-                        <button class="btn p-0 mx-auto"
-                                id="add-new-{{ object_type }}-button"
-                                script="on click if #object-creation-or-edition-form is not null then remove #object-creation-or-edition-form"
-                                hx-post="open-create-object-panel/{{ object_type }}/"
-                                hx-swap="beforeend"
-                                hx-target="#model-builder-page"
-                                hx-disabled-elt="button">
-                            <span class="d-flex justify-content-center align-items-center rounded-circle bg-light text-white" style="width: 64px; height: 64px;">
-                                <img src="{% static '/icons/plus-white.svg' %}" alt="Add new object" class="w-50" />
-                            </span>
+<div class="container-fluid bg-white py-2" id="model-builder-page">
+    <div class="row px-2">
+        <div class="col-3 p-2">
+            <div class="bg-light rounded-4 p-4 vh-80">
+                <div class="row justify-content-between mb-4">
+                    <div class="col-md-auto">
+                        <h5>Usage patterns</h5>
+                    </div>
+                    <div class="col-1 me-4">
+                        <button class="btn btn-secondary rounded-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                              <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+                            </svg>
                         </button>
-                        <!-- Nom de l'objet -->
-                        <div class="mt-3">
-                        <p style="font-size: 0.8rem;">Add {{ object_type }}</p>
-                        </div>
                     </div>
                 </div>
-                {% endfor %}
+                <div id="up-list" class="list-group" style="width: 80%;">
+                    {% for up in usage_patterns %}
+                        <div id="{{ up.id }}" class="list-group-item my-3 mb-1 rounded-4 p-2 up-list-item card-hover" style="cursor: move;">
+                            <div class="accordion accordion-flush" id="{{ up.id }}_card">
+                                <div class="accordion-item">
+                                    <h6 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-{{ up.id }}_card" aria-expanded="false" aria-controls="flush-{{ up.id }}_card">
+                                            <b>{{ up.id}}</b>
+                                    </button>
+                                    </h6>
+                                    <div id="flush-{{ up.id }}_card" class="accordion-collapse collapse accordion-all" data-bs-parent="#{{ up.id }}_card">
+                                        <div class="accordion-body">
+                                            <p>{{ up.name }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
-         </div>
-    </div>
-    <div class="row mt-4">
-       <div class="col-12">
-            <div style="height: 1600px;width: 1200px; position: relative; overflow: hidden;">
-                <div id="drawflow"></div>
+        </div>
+        <div class="col-3 p-2">
+            <div class="bg-light rounded-4 p-4 vh-80">
+                <div class="row justify-content-between mb-4">
+                    <div class="col-md-auto">
+                        <h5>User Journeys</h5>
+                    </div>
+                    <div class="col-1 me-4">
+                        <button class="btn btn-secondary rounded-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                              <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div id="uj-list" class="list-group">
+                    {% for uj in user_journeys %}
+                        <div class="card list-group-item my-3 mb-1 rounded-4 p-0 up-list-item card-hover" style="cursor: move;">
+                            <p id="{{ uj.id }}" class="mt-3">
+                                <b>{{uj.id}}</b>
+                            </p>
+                            {% for user_journey_step in user_journey_steps %}
+                                {% if user_journey_step.id in uj.uj_steps %}
+                                    <div id="{{ user_journey_step.id }}" class="py-2 pl-2">
+                                        <div class="accordion accordion-flush" id="{{ user_journey_step.id }}_card">
+                                            <div class="accordion-item">
+                                                <h6 class="accordion-header px-2">
+                                                    <div class="row m-0 align-items-center">
+                                                        <div class="col-1">
+                                                            <img src="{% static 'icons/circle_uj_step.svg' %}" id="icon-{{ forloop.counter }}-step" class="border border-2 border-white rounded-circle" width="20px" height="20px;" alt="circle_step">
+                                                        </div>
+                                                        <div class="col-11">
+                                                            <button id="btn-{{ user_journey_step.id }}-accordion" class="accordion-button accordion-button-uj collapsed" type="button"
+                                                                    data-bs-toggle="collapse" data-bs-target="#flush-{{ user_journey_step.id }}_card"
+                                                                    data-line-uj="{{ uj.id }}"  data-line-uj-step="{{ user_journey_step.id }}"
+                                                                    aria-expanded="false" aria-controls="flush-{{ user_journey_step.id }}_card">
+                                                                {{ user_journey_step.id}}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </h6>
+                                                <div id="flush-{{ user_journey_step.id }}_card" class="accordion-collapse collapse" data-bs-parent="#{{ user_journey_step.id }}_card">
+                                                    <div class="accordion-body p-0 row m-0">
+                                                        {% for job in user_journey_step.jobs %}
+                                                            <div class="col-10 offset-2 p-2" id="{{ job }}">
+                                                                <p class="text-start m-0">{{ job }}</p>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
+        </div>
+        <div class="col-3 p-2">
+            <div class="bg-light rounded-4 p-4  vh-80">
+                <div class="row justify-content-between mb-4">
+                    <div class="col-md-auto">
+                        <h5>Infrastructure</h5>
+                    </div>
+                    <div class="col-1 me-4">
+                        <button class="btn btn-secondary rounded-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                              <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div id="server-list" class="list-group" style="margin-left:20%;width: 80%;">
+                    {% for server in servers %}
+                        <div id="{{ server.id }}" class="list-group-item my-3 mb-1 rounded-4 p-2 up-list-item card-hover" style="cursor: move;">
+                            <div class="accordion accordion-flush" id="{{ server.id }}_card">
+                                <div class="accordion-item">
+                                    <h6 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-{{ server.id }}_card" aria-expanded="false" aria-controls="flush-{{ server.id }}_card">
+                                            <b>{{ server.id}}</b>
+                                    </button>
+                                    </h6>
+                                    <div id="flush-{{ server.id }}_card" class="accordion-collapse collapse accordion-all" data-bs-parent="#{{ server.id }}_card">
+                                        <div class="accordion-body">
+                                            <p>{{ server.name }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-3 p-2">
         </div>
     </div>
 </div>
-<script src="{% static 'scripts/drawflow_listeners.js' %}" defer></script>
-<div>{{ drawflow_json|json_script:"json-data" }}</div>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        init("{{ request.scheme }}://{{ request.get_host }}", "{{csrf_token}}");
-    });
+        // ------------------------------------------------------------
+        // LEADERLINE
+
+        const list_job = [
+            {% for uj_step in user_journey_steps %}
+                {% for job in uj_step.jobs %}
+                    ["{{ uj_step.id }}","{{ job }}"],
+                {% endfor %}
+            {% endfor %}
+        ]
+
+        //settins for leaderline library
+        const leaderline_option = {
+            color: "#9CA3AF",
+            size: 1,
+            startPlug: 'disc',
+            endPlug: 'disc',
+            startPlugColor: "#E5E7EB",
+            endPlugColor: "#E5E7EB",
+            startPlugSize: 5,
+            endPlugSize: 5,
+            startSocket: 'right',
+            endSocket: 'left',
+            showEffectName: 'fade'
+        }
+
+        //settins for leaderline library
+        const leaderline_option_step = {
+            color: "#003235",
+            size: 3,
+            startPlug: 'behind',
+            endPlug: 'behind',
+            startSocket: 'bottom',
+            endSocket: 'top',
+            showEffectName: 'fade'
+        }
+
+        const base_car_set = [{% for leaderline in leaderline_data %}
+                ["{{ leaderline.0 }}", "{{ leaderline.1 }}"],
+            {% endfor %}]
+        const uj_step_server_card_set = [{% for uj_server in leaderline_data_uj_server %}
+                ["{{ uj_server.0 }}", "{{ uj_server.1 }}"],
+            {% endfor %}]
+        const job_server_card_set = [{% for job_server in leaderline_data_job_server %}
+                ["{{ job_server.0 }}", "{{ job_server.1 }}"],
+            {% endfor %}]
+        const uj_step_set = [
+            {% for uj_step in user_journey_steps %}
+                //check if last element
+               {% if not forloop.last %}
+                    ["icon-{{ forloop.counter }}-step", "icon-{{ forloop.counter|add:1 }}-step"]{% if not forloop.last %},{% endif %}
+                {% endif %}
+            {% endfor %}
+        ]
+
+        let card_set=base_car_set.concat(uj_step_server_card_set)
+        let line_set=[]
+
+        function initLeaderLines() {
+            card_set.forEach(card => {
+                const startElem = document.getElementById(card[0]);
+                const endElem = document.getElementById(card[1]);
+                const tmp_line = new LeaderLine(startElem, endElem, leaderline_option);
+                line_set.push(tmp_line);
+            });
+            uj_step_set.forEach(card => {
+                const startElem = document.getElementById(card[0]);
+                const endElem = document.getElementById(card[1]);
+                const tmp_line = new LeaderLine(startElem, endElem, leaderline_option_step);
+                line_set.push(tmp_line);
+            });
+        }
+
+        function updateLeaderLines_accordion() {
+            let select_node = [];
+
+            const accordionButtons = document.querySelectorAll(".accordion-button-uj");
+            accordionButtons.forEach(button => {
+                const isCollapsed = button.classList.contains("collapsed");
+                const dataLineUJStep = button.getAttribute("data-line-uj-step");
+
+                if (isCollapsed) {
+                    for (let card of uj_step_server_card_set) {
+                        if (card[0] === dataLineUJStep) {
+                            select_node.push(card);
+                        }
+                    }
+                } else {
+                    for (let row of list_job) {
+                        if (row[0] === dataLineUJStep) {
+                            for (let card of job_server_card_set) {
+                                if (card[0] === row[1]) {
+                                    select_node.push(card);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            card_set = base_car_set.concat(select_node);
+            line_set.forEach(line => {
+                line.remove();
+            });
+            line_set = [];
+            card_set.forEach(card => {
+                const startElem = document.getElementById(card[0]);
+                const endElem = document.getElementById(card[1]);
+                const tmp_line = new LeaderLine(startElem, endElem, leaderline_option);
+                line_set.push(tmp_line);
+            });
+            uj_step_set.forEach(card => {
+                const startElem = document.getElementById(card[0]);
+                const endElem = document.getElementById(card[1]);
+                const tmp_line = new LeaderLine(startElem, endElem, leaderline_option_step);
+                line_set.push(tmp_line);
+            });
+            updateLines();
+        }
+
+        function updateLines() {
+            line_set.forEach(line => line.position());
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            initLeaderLines();
+        });
+
+        document.querySelectorAll('.accordion-collapse').forEach((accordion) => {
+            const button = accordion.previousElementSibling.querySelector('.accordion-button');
+            if (button && button.classList.contains('accordion-button-uj')) {
+                accordion.addEventListener('shown.bs.collapse', updateLeaderLines_accordion);
+                accordion.addEventListener('hidden.bs.collapse', updateLeaderLines_accordion);
+            } else {
+                // Appeler updateLines pour les autres accordéons
+                accordion.addEventListener('shown.bs.collapse', updateLines);
+                accordion.addEventListener('hidden.bs.collapse', updateLines);
+            }
+        });
+
+
+        // ------------------------------------------------------------
+        // SORTABLE
+        document.addEventListener("DOMContentLoaded", function () {
+            const upList = new Sortable(document.getElementById("up-list"), {
+                animation: 150,
+                onEnd: updateLines
+            });
+
+            // When the DOM is fully loaded, create the Sortable instances for user journey
+            const ujList = new Sortable(document.getElementById("uj-list"), {
+                animation: 150,
+                onEnd: updateLines
+            });
+
+            // When the DOM is fully loaded, create the Sortable instances for user journey
+            const serverList = new Sortable(document.getElementById("server-list"), {
+                animation: 150,
+                onEnd: updateLines
+            });
+        });
 </script>
-
-

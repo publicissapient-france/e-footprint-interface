@@ -52,3 +52,7 @@ cypress/screenshots
 cloud-sql-proxy
 .flake8
 pylintrc
+
+staticfiles/
+/theme/static/css/bs_main.css
+/theme/static/css/bs_main.css.map

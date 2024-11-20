@@ -5,6 +5,7 @@
     "scripts": {
         "start": "poetry run python manage.py runserver",
         "test": "poetry run python manage.py test",
+        "watch": "npx sass --watch theme/static/scss/main.scss:theme/static/css/bs_main.css --load-path=node_modules/bootstrap/scss",
         "test:e2e": "npm run cy:run",
         "cy:open": "cypress open",
         "cy:run": "cypress run",
@@ -17,6 +18,7 @@
         "mochawesome": "7.1.3",
         "mochawesome-merge": "4.3.0",
         "mochawesome-report-generator": "6.2.0",
+        "sass": "^1.81.0",
         "typescript": "5.4.5"
     },
     "dependencies": {

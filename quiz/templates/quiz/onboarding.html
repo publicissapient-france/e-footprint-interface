@@ -45,11 +45,7 @@
                     <input id="import-json-input" name="import-json-input" type="file">
                 </div>
                 <div class="col-3">
-                    <button id="go-to-user-journeys-button"
-                            class="btn btn-primary rounded-pill p-4"
-                            hx-post="user-journeys" hx-target="#main-content-block" hx-swap="innerHTML" hx-push-url="user-journeys"
-                            hx-indicator="#global_loader" hx-disabled-elt="button"
-                            script="on click get #main-content-block then set its innerHTML to ''">Use your model
+                    <button class="btn btn-primary rounded-pill p-4" type="submit">Use your model
                     </button>
                 </div>
             </form>

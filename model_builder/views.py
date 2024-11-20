@@ -33,47 +33,56 @@ def model_builder_main(request):
         with open(os.path.join("model_builder", "default_system_data.json"), "r") as file:
             jsondata = json.load(file)
             request.session["system_data"] = jsondata
-    # compute calculated attributes with e-footprint
-    response_objs, flat_obj_dict = json_to_system(jsondata)
-    system = list(response_objs["System"].values())[0]
-    obj_template_dict = {}
-    for key, obj in response_objs.items():
-        if key not in ["System", "Country"]:
-            mod_obj_list = []
-            for mod_obj in obj.values():
-                mod_obj_dict = mod_obj_dict_from_mod_obj(mod_obj, system)
-                mod_obj_list.append(mod_obj_dict)
-            obj_template_dict[key] = mod_obj_list
 
-    system_footprint_html = system.plot_footprints_by_category_and_object(
-        height=400, width=DEFAULT_GRAPH_WIDTH, return_only_html=True)
+    usage_patterns = jsondata["UsagePattern"].values()
+    user_journeys = jsondata["UserJourney"].values()
+    servers = []
 
-    if "reference_system_data" not in request.session.keys():
-        request.session["reference_system_data"] = jsondata
+    for server_type in ["Autoscaling", "OnPremise", "Serverless"]:
+        if server_type in jsondata:
+            server_type_data = jsondata[server_type].values()
+            for server in server_type_data:
+                server["server_type"] = server_type
+                servers.append(server)
 
-    is_different_from_ref_model = request.session["system_data"] != request.session["reference_system_data"]
+    user_journey_step = jsondata["UserJourneyStep"].values()
+    jobs = jsondata["Job"].values()
 
-    efootprint_ids_to_int_ids_map = {}
-    int_id = 1
-    for efootprint_class in obj_template_dict.keys():
-        for obj_data in obj_template_dict[efootprint_class]:
-            efootprint_ids_to_int_ids_map[obj_data["object"].id] = int_id
-            int_id += 1
+    leaderline_data = []
+    leaderline_data_uj_server = []
+    leaderline_data_job_server = []
 
-    drawflow_data = {}
-    for efootprint_class in obj_template_dict.keys():
-        for obj_data in obj_template_dict[efootprint_class]:
-            drawflow_node_data = create_drawflow_node_data(obj_data, efootprint_ids_to_int_ids_map)
-            drawflow_data[drawflow_node_data["id"]] = drawflow_node_data
+    for up in usage_patterns:
+        leaderline_data.append([up["id"], up["user_journey"]])
+    for job in jobs:
+        leaderline_data_job_server.append([job["id"], job["server"]])
 
-    request.session["drawflow_data"] = drawflow_data
-    request.session["efootprint_ids_to_int_ids_map"] = efootprint_ids_to_int_ids_map
+    for uj in user_journeys:
+        uj_steps = jsondata["UserJourney"][uj["id"]]["uj_steps"]
+        for step in uj_steps:
+            jobs = jsondata['UserJourneyStep'][step]['jobs']
+            for job in jobs:
+                json_job = jsondata["Job"][job]
+                leaderline_data_uj_server.append([step, json_job["server"]])
+
+    # response_objs, flat_obj_dict = json_to_system(jsondata)
+    # system = list(response_objs["System"].values())[0]
+    # system_footprint_html = system.plot_footprints_by_category_and_object(
+    #    height=400, width=DEFAULT_GRAPH_WIDTH, return_only_html=True)
+
 
     return htmx_render(
         request, "model_builder/model-builder-main.html",
-        context={"obj_template_dict": obj_template_dict, "drawflow_json": {"drawflow": {"Home": {"data": drawflow_data}}},
-                 "systemFootprint": system_footprint_html, "img_base64": request.session.get("img_base64", None),
-                 "is_different_from_ref_model": is_different_from_ref_model})
+        context={
+            # "systemFootprint": system_footprint_html,
+            "usage_patterns": usage_patterns,
+            "user_journeys": user_journeys,
+            "servers": servers,
+            "user_journey_steps": user_journey_step,
+            "leaderline_data": leaderline_data,
+            "leaderline_data_uj_server": leaderline_data_uj_server,
+            "leaderline_data_job_server": leaderline_data_job_server,
+        })
 
 
 def open_create_object_panel(request, object_type):

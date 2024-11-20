@@ -1,0 +1,24 @@
+// Accordeon button (expanded state)
+.accordion-button.collapsed,
+.accordion-button.collapsed:hover,
+.accordion-button.collapsed:focus {
+    background-color: #fff; // Fond blanc lorsque déployé
+    color: #000; // Texte noir
+    border: none; // no border
+    box-shadow: none;
+}
+
+.accordion-button:not(.collapsed),
+.accordion-button:not(.collapsed):active,
+.accordion-button:not(.collapsed):focus {
+    background-color: #fff; // Fond blanc lorsque déployé
+    color: #000; // Texte noir
+    border: none; // no border
+    box-shadow: none;
+}
+
+
+.vh-80 {
+  height: 80vh !important;
+}
+

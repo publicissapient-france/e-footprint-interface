@@ -51,6 +51,12 @@ In the terminal
 python3 manage.py createsuperuser
 ```
 
+### Launch boostrap css files continuous generation
+
+```
+npm run watch
+```
+
 ### Run application
 
 ```

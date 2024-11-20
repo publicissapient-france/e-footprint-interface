@@ -432,13 +432,13 @@ testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)"]
 
 [[package]]
 name = "efootprint"
-version = "8.0.0"
+version = "8.0.1"
 description = "Digital service environmental footprint model"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "efootprint-8.0.0-py3-none-any.whl", hash = "sha256:c20211e2a721dfe387c5866ec0c9bb6427ffb0bd32787a4d6778dfb806247e9a"},
-    {file = "efootprint-8.0.0.tar.gz", hash = "sha256:33d57dcea8b2897379aa386daa58838c6c0b5d9abc8e28d6ee77ef60e3bf1427"},
+    {file = "efootprint-8.0.1-py3-none-any.whl", hash = "sha256:fed5a9b417efd1497ef6087b8f8e1c22512f1a871a552d8ddcec103270e3b254"},
+    {file = "efootprint-8.0.1.tar.gz", hash = "sha256:6e572ea1c3140c483f47ca5170884d411b41abca60c75060412ddcbd6501622e"},
 ]
 
 [package.dependencies]
@@ -2067,4 +2067,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "858bbab8ce4f1b60b998ae193e6897223eb253f9907ac995b0682043f808770e"
+content-hash = "e24144931da3b796f273376cb1bfda34140dfce19bf17e42bf599a1c1ef6fa0e"
