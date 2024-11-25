@@ -22,3 +22,17 @@
   height: 80vh !important;
 }
 
+/*Surcharge de la couleur light de bootstrap*/
+.bg-light {
+    background-color: #F4FAFB !important;
+}
+
+/*Surcharge de la couleur primrary de bootstrap et dfes boutons primary*/
+.bg-primary {
+    background-color: #2D4675 !important;
+}
+
+.btn-primary {
+    background-color: #2D4675 !important;
+    border-color: #2D4675 !important;
+}

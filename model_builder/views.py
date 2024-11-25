@@ -48,22 +48,21 @@ def model_builder_main(request):
     user_journey_step = jsondata["UserJourneyStep"].values()
     jobs = jsondata["Job"].values()
 
-    leaderline_data = []
-    leaderline_data_uj_server = []
+    leaderline_data_up_uj = []
+    leaderline_data_uj_step_server = []
     leaderline_data_job_server = []
 
     for up in usage_patterns:
-        leaderline_data.append([up["id"], up["user_journey"]])
+        leaderline_data_up_uj.append([up["id"], up["user_journey"]])
     for job in jobs:
         leaderline_data_job_server.append([job["id"], job["server"]])
-
     for uj in user_journeys:
         uj_steps = jsondata["UserJourney"][uj["id"]]["uj_steps"]
         for step in uj_steps:
             jobs = jsondata['UserJourneyStep'][step]['jobs']
             for job in jobs:
                 json_job = jsondata["Job"][job]
-                leaderline_data_uj_server.append([step, json_job["server"]])
+                leaderline_data_uj_step_server.append([step, json_job["server"]])
 
     # response_objs, flat_obj_dict = json_to_system(jsondata)
     # system = list(response_objs["System"].values())[0]
@@ -79,8 +78,8 @@ def model_builder_main(request):
             "user_journeys": user_journeys,
             "servers": servers,
             "user_journey_steps": user_journey_step,
-            "leaderline_data": leaderline_data,
-            "leaderline_data_uj_server": leaderline_data_uj_server,
+            "leaderline_data_up_uj": leaderline_data_up_uj,
+            "leaderline_data_uj_step_server": leaderline_data_uj_step_server,
             "leaderline_data_job_server": leaderline_data_job_server,
         })
 
