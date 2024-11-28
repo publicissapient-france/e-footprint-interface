@@ -45,7 +45,6 @@ def model_builder_main(request):
                 server["server_type"] = server_type
                 servers.append(server)
 
-    user_journey_step = jsondata["UserJourneyStep"].values()
     jobs = jsondata["Job"].values()
 
     leaderline_data_up_uj = []
@@ -64,11 +63,19 @@ def model_builder_main(request):
                 json_job = jsondata["Job"][job]
                 leaderline_data_uj_step_server.append([step, json_job["server"]])
 
-    # response_objs, flat_obj_dict = json_to_system(jsondata)
+    response_objs, flat_obj_dict = json_to_system(jsondata)
     # system = list(response_objs["System"].values())[0]
+
+    usage_patterns = response_objs["UsagePattern"].values()
+    user_journeys = response_objs["UserJourney"].values()
+    user_journey_steps = response_objs["UserJourneyStep"].values()
+    servers = []
+    for server_type in ["Autoscaling", "OnPremise", "Serverless"]:
+        if server_type in response_objs.keys():
+            servers += response_objs[server_type].values()
+
     # system_footprint_html = system.plot_footprints_by_category_and_object(
     #    height=400, width=DEFAULT_GRAPH_WIDTH, return_only_html=True)
-
 
     return htmx_render(
         request, "model_builder/model-builder-main.html",
@@ -76,8 +83,8 @@ def model_builder_main(request):
             # "systemFootprint": system_footprint_html,
             "usage_patterns": usage_patterns,
             "user_journeys": user_journeys,
+            "user_journey_steps": user_journey_steps,
             "servers": servers,
-            "user_journey_steps": user_journey_step,
             "leaderline_data_up_uj": leaderline_data_up_uj,
             "leaderline_data_uj_step_server": leaderline_data_uj_step_server,
             "leaderline_data_job_server": leaderline_data_job_server,

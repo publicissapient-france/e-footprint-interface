@@ -31,7 +31,7 @@
                                         <div class="accordion-item">
                                             <h6 class="accordion-header">
                                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-{{ up.id }}_card" aria-expanded="false" aria-controls="flush-{{ up.id }}_card">
-                                                    <b>{{ up.id}}</b>
+                                                    <b>{{ up.name}}</b>
                                             </button>
                                             </h6>
                                             <div id="flush-{{ up.id }}_card" class="accordion-collapse collapse accordion-all" data-bs-parent="#{{ up.id }}_card">
@@ -67,39 +67,37 @@
                                     <p id="{{ uj.id }}" class="mt-3 px-4 text-start">
                                         <b>{{uj.id}}</b>
                                     </p>
-                                    {% for user_journey_step in user_journey_steps %}
-                                        {% if user_journey_step.id in uj.uj_steps %}
-                                            <div id="{{ user_journey_step.id }}" class="py-2 pl-2">
-                                                <div class="accordion accordion-flush" id="{{ user_journey_step.id }}_card">
-                                                    <div class="accordion-item">
-                                                        <h6 class="accordion-header px-2">
-                                                            <div class="row m-0 align-items-center">
-                                                                <div class="col-1">
-                                                                    <img src="{% static 'icons/circle_uj_step.svg' %}" id="icon-{{ forloop.counter }}-step" class="border border-2 border-white rounded-circle" width="20px" height="20px;" alt="circle_step">
-                                                                </div>
-                                                                <div class="col-11">
-                                                                    <button id="btn-{{ user_journey_step.id }}-accordion" class="accordion-button accordion-button-uj collapsed" type="button"
-                                                                            data-bs-toggle="collapse" data-bs-target="#flush-{{ user_journey_step.id }}_card"
-                                                                            data-line-uj="{{ uj.id }}"  data-line-uj-step="{{ user_journey_step.id }}"
-                                                                            aria-expanded="false" aria-controls="flush-{{ user_journey_step.id }}_card">
-                                                                        {{ user_journey_step.id}}
-                                                                    </button>
-                                                                </div>
+                                    {% for user_journey_step in uj.uj_steps %}
+                                        <div id="{{ user_journey_step.id }}" class="py-2 pl-2">
+                                            <div class="accordion accordion-flush" id="{{ user_journey_step.id }}_card">
+                                                <div class="accordion-item">
+                                                    <h6 class="accordion-header px-2">
+                                                        <div class="row m-0 align-items-center">
+                                                            <div class="col-1">
+                                                                <img src="{% static 'icons/circle_uj_step.svg' %}" id="icon-{{ forloop.counter }}-step" class="border border-2 border-white rounded-circle" width="20px" height="20px;" alt="circle_step">
                                                             </div>
-                                                        </h6>
-                                                        <div id="flush-{{ user_journey_step.id }}_card" class="accordion-collapse collapse" data-bs-parent="#{{ user_journey_step.id }}_card">
-                                                            <div class="accordion-body p-0 row m-0">
-                                                                {% for job in user_journey_step.jobs %}
-                                                                    <div class="col-10 offset-2 p-2" id="{{ job }}">
-                                                                        <p class="text-start m-0">{{ job }}</p>
-                                                                    </div>
-                                                                {% endfor %}
+                                                            <div class="col-11">
+                                                                <button id="btn-{{ user_journey_step.id }}-accordion" class="accordion-button accordion-button-uj collapsed" type="button"
+                                                                        data-bs-toggle="collapse" data-bs-target="#flush-{{ user_journey_step.id }}_card"
+                                                                        data-line-uj="{{ uj.id }}"  data-line-uj-step="{{ user_journey_step.id }}"
+                                                                        aria-expanded="false" aria-controls="flush-{{ user_journey_step.id }}_card">
+                                                                    {{ user_journey_step.name}}
+                                                                </button>
                                                             </div>
+                                                        </div>
+                                                    </h6>
+                                                    <div id="flush-{{ user_journey_step.id }}_card" class="accordion-collapse collapse" data-bs-parent="#{{ user_journey_step.id }}_card">
+                                                        <div class="accordion-body p-0 row m-0">
+                                                            {% for job in user_journey_step.jobs %}
+                                                                <div class="col-10 offset-2 p-2" id="{{ job.id }}">
+                                                                    <p class="text-start m-0">{{ job.name }}</p>
+                                                                </div>
+                                                            {% endfor %}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        {% endif %}
+                                        </div>
                                     {% endfor %}
                                 </div>
                             {% endfor %}
@@ -128,7 +126,7 @@
                                         <div class="accordion-item">
                                             <h6 class="accordion-header">
                                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-{{ server.id }}_card" aria-expanded="false" aria-controls="flush-{{ server.id }}_card">
-                                                    <b>{{ server.id}}</b>
+                                                    <b>{{ server.name}}</b>
                                             </button>
                                             </h6>
                                             <div id="flush-{{ server.id }}_card" class="accordion-collapse collapse accordion-all" data-bs-parent="#{{ server.id }}_card">
@@ -161,12 +159,11 @@
         const list_job = [
             {% for uj_step in user_journey_steps %}
                 {% for job in uj_step.jobs %}
-                    ["{{ uj_step.id }}","{{ job }}"],
+                    ["{{ uj_step.id }}","{{ job.id }}"],
                 {% endfor %}
             {% endfor %}
         ]
 
-        //settins for leaderline library
         const leaderline_option = {
             color: "#9CA3AF",
             size: 1,
@@ -181,7 +178,6 @@
             showEffectName: 'fade'
         }
 
-        //settins for leaderline library
         const leaderline_option_step = {
             color: "#003235",
             size: 3,
@@ -192,7 +188,7 @@
             showEffectName: 'fade'
         }
 
-        const base_car_set = [{% for up_ju in leaderline_data_up_uj %}
+        const up_uj_card_set = [{% for up_ju in leaderline_data_up_uj %}
                 ["{{ up_ju.0 }}", "{{ up_ju.1 }}"],
             {% endfor %}]
         const uj_step_server_card_set = [{% for uj_server in leaderline_data_uj_step_server %}
@@ -210,7 +206,7 @@
             {% endfor %}
         ]
 
-        let card_set=base_car_set.concat(uj_step_server_card_set)
+        let card_set=up_uj_card_set.concat(uj_step_server_card_set)
         let line_set=[]
 
         function initLeaderLines() {
@@ -254,7 +250,7 @@
                     }
                 }
             });
-            card_set = base_car_set.concat(select_node);
+            card_set = up_uj_card_set.concat(select_node);
             line_set.forEach(line => {
                 line.remove();
             });
@@ -303,13 +299,11 @@
                 onEnd: updateLines
             });
 
-            // When the DOM is fully loaded, create the Sortable instances for user journey
             const ujList = new Sortable(document.getElementById("uj-list"), {
                 animation: 150,
                 onEnd: updateLines
             });
 
-            // When the DOM is fully loaded, create the Sortable instances for user journey
             const serverList = new Sortable(document.getElementById("server-list"), {
                 animation: 150,
                 onEnd: updateLines
