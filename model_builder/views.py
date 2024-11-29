@@ -1,17 +1,13 @@
+import logging
+
 from efootprint.api_utils.json_to_system import json_to_system
-from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity, ExplainableHourlyQuantities
-from efootprint.abstract_modeling_classes.modeling_object import ModelingObject, PREVIOUS_LIST_VALUE_SET_SUFFIX
 from efootprint.api_utils.system_to_json import system_to_json
-from efootprint.constants.units import u
-from efootprint.core.usage.usage_pattern import UsagePattern
 from efootprint.utils.plot_emission_diffs import EmissionPlotter
 
-from model_builder.drawflow_utils import create_drawflow_node_data
 from model_builder.object_creation_utils import add_new_object_to_system, edit_object_in_system
 from model_builder.web_models import ModelWeb
-from utils import htmx_render, EFOOTPRINT_COUNTRIES
+from utils import htmx_render
 
-from django.conf import settings
 import json
 from django.shortcuts import render
 import os
@@ -35,120 +31,37 @@ def model_builder_main(request):
             jsondata = json.load(file)
             request.session["system_data"] = jsondata
 
-    usage_patterns = jsondata["UsagePattern"].values()
-    user_journeys = jsondata["UserJourney"].values()
-    jobs = jsondata["Job"].values()
-
-    leaderline_data_up_uj = []
-    leaderline_data_uj_step_server = []
-    leaderline_data_job_server = []
-
-    for up in usage_patterns:
-        leaderline_data_up_uj.append([up["id"], up["user_journey"]])
-    for job in jobs:
-        leaderline_data_job_server.append([job["id"], job["server"]])
-    for uj in user_journeys:
-        uj_steps = jsondata["UserJourney"][uj["id"]]["uj_steps"]
-        for step in uj_steps:
-            jobs = jsondata['UserJourneyStep'][step]['jobs']
-            for job in jobs:
-                json_job = jsondata["Job"][job]
-                leaderline_data_uj_step_server.append([step, json_job["server"]])
-
     model_web = ModelWeb(jsondata)
 
-    # system_footprint_html = system.plot_footprints_by_category_and_object(
-    #    height=400, width=DEFAULT_GRAPH_WIDTH, return_only_html=True)
-
     return htmx_render(
-        request, "model_builder/model-builder-main.html",
-        context={
-            # "systemFootprint": system_footprint_html,
-            "model_web": model_web,
-            "leaderline_data_up_uj": leaderline_data_up_uj,
-            "leaderline_data_uj_step_server": leaderline_data_uj_step_server,
-            "leaderline_data_job_server": leaderline_data_job_server,
-        })
+        request, "model_builder/model-builder-main.html", context={"model_web": model_web})
 
 
 def open_create_object_panel(request, object_type):
-    with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'object_inputs_and_default_values.json'), "r") as object_inputs_file:
-        object_inputs_and_default_values = json.load(object_inputs_file)
-
-    modeling_obj_attributes, list_attributes = retrieve_existing_mod_obj_and_list_attributes(
-        object_inputs_and_default_values, object_type, request)
+    model_web = ModelWeb(request.session["system_data"])
+    new_object_structure = model_web.get_object_structure(object_type)
 
     context_data = {
         "form_target_url": "add-new-object",
-        "obj_type": object_type,
-        "header": f"New {object_type}", "default_name": "",
-        "numerical_attributes": object_inputs_and_default_values[object_type]["numerical_attributes"],
-        "modeling_obj_attributes": modeling_obj_attributes,
-        "list_attributes": list_attributes,
-        "object_id": "",
         "output_button_label": "Save",
+        "object_structure": new_object_structure
     }
 
     return render(request, "model_builder/object-creation-or-edition-form.html", context=context_data)
 
 
 def open_edit_object_panel(request, object_type):
-    with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'object_inputs_and_default_values.json'), "r") as object_inputs_file:
-        object_inputs_and_default_values = json.load(object_inputs_file)
-
-    modeling_obj_attributes, list_attributes = retrieve_existing_mod_obj_and_list_attributes(
-        object_inputs_and_default_values, object_type, request)
-
-    object_dict = request.session["system_data"][object_type][request.POST["object-id"]]
-    for mod_obj_attribute_desc in modeling_obj_attributes:
-        mod_obj_attribute_desc["selected"] = object_dict[mod_obj_attribute_desc["attr_name"]]
-
-    for list_attributes_desc in list_attributes:
-        list_attributes_desc["selected"] = object_dict[list_attributes_desc["attr_name"]]
-
-    numerical_attributes = []
-    for attr_key, attr_value in object_dict.items():
-        if type(attr_value) == dict and "unit" in attr_value.keys():
-            quantity = attr_value["value"] * u(attr_value["unit"])
-            numerical_attributes.append(
-                {"attr_name": attr_key, "unit": f"{quantity.units:~P}",
-                 "long_unit": attr_value["unit"],
-                 "default_value": round(attr_value["value"], 2)}
-            )
+    model_web = ModelWeb(request.session["system_data"])
+    obj_to_edit = model_web.get_object_from_id(request.POST["object-id"])
 
     context_data = {
         "form_target_url": "edit-object",
-        "obj_type": object_type,
-        "header": f"Editing {object_dict['name']}", "default_name": object_dict["name"],
-        "numerical_attributes": numerical_attributes,
-        "modeling_obj_attributes": modeling_obj_attributes,
-        "list_attributes": list_attributes,
-        "object_id": object_dict["id"],
+        "header": f"Editing {obj_to_edit.name}",
+        "object_to_edit": obj_to_edit,
         "output_button_label": "Save",
     }
 
     return render(request, "model_builder/object-creation-or-edition-form.html", context=context_data)
-
-
-def retrieve_existing_mod_obj_and_list_attributes(object_inputs_and_default_values, object_type, request):
-    modeling_obj_attributes = object_inputs_and_default_values[object_type]["modeling_obj_attributes"]
-    list_attributes = object_inputs_and_default_values[object_type]["list_attributes"]
-
-    for mod_obj_attribute_desc in modeling_obj_attributes:
-        # Retrieve existing objects of this type
-        if mod_obj_attribute_desc["object_type"] == "Country":
-            mod_obj_attribute_desc["existing_objects"] = [
-                country.to_json() for country in EFOOTPRINT_COUNTRIES]
-        else:
-            mod_obj_attribute_desc["existing_objects"] = list(
-                request.session["system_data"][mod_obj_attribute_desc["object_type"]].values())
-
-    for list_attributes_desc in list_attributes:
-        # Retrieve existing objects of this type
-        list_attributes_desc["existing_objects"] = list(
-            request.session["system_data"][list_attributes_desc["object_type"]].values())
-
-    return modeling_obj_attributes, list_attributes
 
 
 def create_object_addition_or_edition_oob_html_updated(request, system, objects_to_update):
@@ -169,8 +82,7 @@ def create_object_addition_or_edition_oob_html_updated(request, system, objects_
     for obj in objects_to_update:
         return_html += render_to_string(
             "model_builder/object-card.html",
-            {"object": mod_obj_dict_from_mod_obj(obj, system),
-             "object_type": obj.class_as_simple_str, "hx_swap_oob": True})
+            {"object": obj, "hx_swap_oob": True})
 
     request.session["img_base64"] = None
 
@@ -178,53 +90,44 @@ def create_object_addition_or_edition_oob_html_updated(request, system, objects_
 
 
 def add_new_object(request):
-    response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
-    added_obj, system, objects_to_update = add_new_object_to_system(request, response_objs, flat_obj_dict)
-    oob_html = create_object_addition_or_edition_oob_html_updated(request, system, objects_to_update)
+    model_web = ModelWeb(request.session["system_data"])
+    added_obj, objects_to_update = add_new_object_to_system(request, model_web)
+    oob_html = create_object_addition_or_edition_oob_html_updated(request, model_web.system, objects_to_update)
 
     http_response = HttpResponse(oob_html)
-    current_drawflow_data_max_index = max([int(index) for index in request.session["drawflow_data"].keys()])
-    request.session["efootprint_ids_to_int_ids_map"][added_obj.id] = current_drawflow_data_max_index + 1
-    drawflow_node_data = create_drawflow_node_data(
-        mod_obj_dict_from_mod_obj(added_obj, system), request.session["efootprint_ids_to_int_ids_map"])
-    drawflow_node_data["html_block_id"] = added_obj.id
-    request.session["drawflow_data"][drawflow_node_data["id"]] = drawflow_node_data
-    request.session.modified = True
-
-    http_response["HX-Trigger-After-Swap"] = json.dumps({"insertNewNode": {"drawflowData": drawflow_node_data}})
 
     return http_response
 
 
 def edit_object(request):
-    response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
+    model_web = ModelWeb(request.session["system_data"])
     (edited_obj, system, objects_to_update, obj_ids_of_connections_to_add,
-     obj_ids_of_connections_to_remove) = edit_object_in_system(request, response_objs, flat_obj_dict)
+     obj_ids_of_connections_to_remove) = edit_object_in_system(request, model_web)
     oob_html = create_object_addition_or_edition_oob_html_updated(request, system, objects_to_update)
 
-    id_map = request.session["efootprint_ids_to_int_ids_map"]
     http_response = HttpResponse(oob_html)
+    # TODO: update below logic to handle link updates
     http_response["HX-Trigger-After-Swap"] = json.dumps(
-        {"editConnections": {"editedNode": id_map[edited_obj.id],
-                             "connectionsToAdd": [id_map[obj_id] for obj_id in obj_ids_of_connections_to_add],
-                             "connectionsToRemove": [id_map[obj_id] for obj_id in obj_ids_of_connections_to_remove]}})
+        {"editConnections": {"editedNode": edited_obj.id,
+                             "connectionsToAdd": obj_ids_of_connections_to_add,
+                             "connectionsToRemove": obj_ids_of_connections_to_remove}})
 
     return http_response
 
 
 def delete_object(request):
-    response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
+    model_web = ModelWeb(request.session["system_data"])
 
     obj_id = request.POST["object-id"]
     obj_type = request.POST["object-type"]
 
-    system = list(response_objs["System"].values())[0]
+    system = model_web.system
     if obj_type == "UsagePattern":
         system.usage_patterns = [up for up in system.usage_patterns if up.id != obj_id]
 
-    flat_obj_dict[obj_id].self_delete()
-    response_objs[obj_type].pop(obj_id, None)
-    flat_obj_dict.pop(obj_id, None)
+    model_web.flat_obj_dict[obj_id].self_delete()
+    model_web.response_objs[obj_type].pop(obj_id, None)
+    model_web.flat_obj_dict.pop(obj_id, None)
 
     request.session["system_data"] = system_to_json(system, save_calculated_attributes=False)
 
@@ -249,62 +152,14 @@ def delete_object(request):
         for up in system.usage_patterns:
             return_html += render_to_string(
                 "model_builder/object-card.html",
-                {"object": mod_obj_dict_from_mod_obj(up, system),
-                 "object_type": "UsagePattern", "hx_swap_oob": True})
+                {"object": up, "hx_swap_oob": True})
 
         http_response = HttpResponse(return_html)
 
-    deleted_object_drawflow_id = request.session["efootprint_ids_to_int_ids_map"][obj_id]
-    http_response["HX-Trigger"] = json.dumps({"deleteNode": {"nodeId": deleted_object_drawflow_id}})
+    # TODO: Update below logic
+    http_response["HX-Trigger"] = json.dumps({"deleteObject": {"ObjectId": obj_id}})
 
     return http_response
-
-
-def mod_obj_dict_from_mod_obj(mod_obj, system):
-    list_attributes = retrieve_attributes_by_type(mod_obj, list)
-    if len(list_attributes) > 0:
-        list_attributes = list_attributes[0][1]
-    is_deletable = False
-    if not mod_obj.modeling_obj_containers:
-        is_deletable = True
-    if isinstance(mod_obj, UsagePattern) and len(system.usage_patterns) > 1:
-        is_deletable = True
-    mod_obj_dict = {
-        "object": mod_obj,
-        "numerical_attributes": [
-            attr_name_value_pair[1]
-            for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ExplainableQuantity)
-            if attr_name_value_pair[1].attr_name_in_mod_obj_container not in mod_obj.calculated_attributes
-        ],
-        "hourly_quantities_attributes": [
-            attr_name_value_pair[1]
-            for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ExplainableHourlyQuantities)
-            if attr_name_value_pair[1].attr_name_in_mod_obj_container not in mod_obj.calculated_attributes
-        ],
-        "modeling_obj_attributes": [
-            attr_name_value_pair[1]
-            for attr_name_value_pair in retrieve_attributes_by_type(mod_obj, ModelingObject)],
-        "list_attributes": list_attributes,
-        "is_deletable": is_deletable
-    }
-    for num_attr in mod_obj_dict["numerical_attributes"]:
-        num_attr.short_unit = f"{num_attr.value.units:~P}"
-        num_attr.readable_attr_name = num_attr.attr_name_in_mod_obj_container.replace("_", " ")
-    for hourly_attr in mod_obj_dict["hourly_quantities_attributes"]:
-        hourly_attr.readable_attr_name = hourly_attr.attr_name_in_mod_obj_container.replace("_", " ")
-
-    return mod_obj_dict
-
-
-def retrieve_attributes_by_type(
-    modeling_obj, attribute_type, attrs_to_ignore=['modeling_obj_containers', "all_changes"]):
-    output_list = []
-    for attr_name, attr_value in vars(modeling_obj).items():
-        if (isinstance(attr_value, attribute_type) and attr_name not in attrs_to_ignore
-                and PREVIOUS_LIST_VALUE_SET_SUFFIX not in attr_name):
-            output_list.append((attr_name, attr_value))
-
-    return output_list
 
 
 def download_json(request):
@@ -360,3 +215,48 @@ def compare_with_reference(request):
     request.session['img_base64'] = img_base64
 
     return render(request, "model_builder/compare-container.html", {"img_base64": img_base64})
+
+def get_object_data(request, object_id, object_type):
+    try:
+        jsondata = request.session.get("system_data", {})
+        if object_type not in jsondata:
+            logging.error(f"Object type '{object_type}' not found in session data.")
+            return HttpResponse(status=404)
+
+        if object_id not in jsondata[object_type]:
+            logging.error(f"Object ID '{object_id}' not found in object type '{object_type}'.")
+            return HttpResponse(status=404)
+
+        object_to_find = jsondata[object_type][object_id]
+        structure = [
+            {"name": key, "type": determine_field_type(value)}
+            for key, value in object_to_find.items()
+        ]
+        return render(
+            request,
+            'model_builder/form_model.html',
+            {
+                'export_object': object_to_find,
+                'structure': structure,
+                'object_type': object_type
+            }
+        )
+    except KeyError as e:
+        logging.error(f"KeyError encountered: {str(e)}")
+        return HttpResponse(status=404)
+
+
+def determine_field_type(value):
+    if isinstance(value, bool):
+        return "boolean"
+    elif isinstance(value, int):
+        return "number"
+    elif isinstance(value, float):
+        return "decimal"
+    elif isinstance(value, str):
+        return "string"
+    elif isinstance(value, list):
+        return "array"
+    elif isinstance(value, dict):
+        return "object"
+    return "string"

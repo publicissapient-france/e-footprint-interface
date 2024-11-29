@@ -179,7 +179,8 @@
                 }
             },
             "jobs": [
-                "uuid-streaming"
+                "uuid-streaming",
+                "uuid-login"
             ]
         },
         "uuid-02e4s-of-upload": {
@@ -195,7 +196,8 @@
                 }
             },
             "jobs": [
-                "uuid-upload"
+                "uuid-upload",
+                "uuid-login"
             ]
         },
         "uuid-Dailymotion-step": {
@@ -233,6 +235,67 @@
         }
     },
     "Job": {
+        "uuid-login": {
+            "name": "login",
+            "id": "uuid-login",
+            "job_type": "undefined",
+            "server": "uuid-Server-1",
+            "data_upload": {
+                "label": "Data upload of request login from hypothesis",
+                "value": 5.0,
+                "unit": "kilobyte",
+                "source": {
+                    "name": "hypothesis",
+                    "link": null
+                }
+            },
+            "data_download": {
+                "label": "Data download of request login from hypothesis",
+                "value": 0.001,
+                "unit": "gigabyte",
+                "source": {
+                    "name": "hypothesis",
+                    "link": null
+                }
+            },
+            "data_stored": {
+                "label": "Data stored by request login from hypothesis",
+                "value": 5.0,
+                "unit": "kilobyte",
+                "source": {
+                    "name": "hypothesis",
+                    "link": null
+                }
+            },
+            "request_duration": {
+                "label": "Request duration of login to Server 1 from hypothesis",
+                "value": 0.5,
+                "unit": "minute",
+                "source": {
+                    "name": "hypothesis",
+                    "link": null
+                }
+            },
+            "ram_needed": {
+                "label": "RAM needed on server Server 1 to process login from hypothesis",
+                "value": 10.0,
+                "unit": "megabyte",
+                "source": {
+                    "name": "hypothesis",
+                    "link": null
+                }
+            },
+            "cpu_needed": {
+                "label": "CPU needed on server Server 1 to process login from hypothesis",
+                "value": 0.1,
+                "unit": "core",
+                "source": {
+                    "name": "hypothesis",
+                    "link": null
+                }
+            },
+            "description": ""
+        },
         "uuid-streaming": {
             "name": "streaming",
             "id": "uuid-streaming",

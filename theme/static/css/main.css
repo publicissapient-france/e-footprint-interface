@@ -61,3 +61,26 @@ box-shadow: 0px 5px 8px 4px rgba(138, 138, 138, 0.24);
 .bg-radiant-reverse{
     background: linear-gradient(92deg, #1B9891 0.47%, #017E7E 50.5%, #2D4675 100.53%);
 }
+
+/* Applique les dimensions et la position de la modal */
+.form_edit_panel {
+    height: 94vh;
+    top: 6%;
+    border-radius: 0;
+    border: none;
+    border-left: #e0e4e8 2px solid;
+    overflow: auto;
+}
+
+.panel-result-btn{
+    position: absolute;
+    bottom: 0;
+    width: 60%;
+    height: 100px;
+    cursor: pointer;
+    z-index: 100;
+}
+
+.chevron-rotate {
+    transform: rotate(90deg); /* Rotation de 90° */
+}

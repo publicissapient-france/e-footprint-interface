@@ -8,7 +8,7 @@
         <div class="col-12">
             <p class="h4 mb-3"><b>From scratch</b></p>
         </div>
-        <div class="col-10 offset-1 bg-primary rounded-3 p-4 mb-5" style="--bs-bg-opacity: .2;">
+        <div class="col-10 offset-1 bg-white rounded-3 p-4 mb-5">
             <div class="row align-items-center">
                 <div class="col">
                     <div class="bg-primary p-2 rounded-circle align-content-center" style="width: 125px; height: 125px;">
@@ -23,7 +23,7 @@
                         Define the characteristics of your service and estimate the characteristics of services called along your customers' journey...<br>
                         Read more ...
                     </p>
-                </div>      
+                </div>
                 <div class="col">
                     <button id="go-to-user-journeys-button"
                             class="btn btn-primary rounded-pill p-4 w-75"
@@ -37,7 +37,7 @@
         <div class="col-12">
             <p class="h4"><b>Or from an imported model</b></p>
         </div>
-        <div class="col-10 offset-1 bg-primary rounded-3 p-4 mb-5" style="--bs-bg-opacity: .2;">
+        <div class="col-10 offset-1 bg-white rounded-3 p-4 mb-5">
             <form class="row align-items-center justify-content-center" hx-post="import-json" hx-target="#main-content-block" hx-swap="innerHTML" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="col-3">

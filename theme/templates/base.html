@@ -13,14 +13,12 @@
     <script src="{% static 'scripts/plotly_basic.min.js' %}"></script>
     <script src="{% static 'scripts/htmx.min.js' %}"></script>
     <script src="{% static 'scripts/_hyperscript.min.js' %}"></script>
-    <script src="{% static 'scripts/drawflow_source.js' %}" defer></script>
-    <script src="{% static 'scripts/drawflow.js' %}" defer></script>
 </head>
 
-<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary" style="height: 5vh;">
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="vh-100">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="/">
                 <img src="{% static 'icons/sidenav/logo.svg' %}" alt="Bootstrap" width="30" height="24">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,40 +26,39 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-link" aria-current="page" href="#">
-                        <button hx-get="/understand" hx-target="#main-content-block" hx-swap="beforeend"
-                                    hx-push-url="/understand" hx-indicator="#global_loader" hx-disabled-elt="button"
-                                script="on click remove the first <div/> in #main-content-block"
-                                class="d-flex flex-row gap-2 btn btn-primary text-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-charge-fill" viewBox="0 0 16 16">
-                              <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"/>
+
+                    <button hx-get="/understand" hx-target="#main-content-block" hx-swap="beforeend"
+                                hx-push-url="/understand" hx-indicator="#global_loader" hx-disabled-elt="button"
+                            script="on click remove the first <div/> in #main-content-block"
+                            class="nav-link d-flex flex-row gap-2 btn btn-primary text-white mx-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-charge-fill" viewBox="0 0 16 16">
+                          <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"/>
+                        </svg>
+                        <span>Understand</span>
+                    </button>
+
+
+                    <button hx-get="/quiz/onboarding" hx-target="#main-content-block" hx-swap="beforeend"
+                            hx-push-url="/quiz/onboarding" hx-indicator="#global_loader" hx-disabled-elt="button"
+                            script="on click remove the first <div/> in #main-content-block"
+                            class="nav-link d-flex flex-row gap-2 btn btn-primary text-white mx-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-plus-fill" viewBox="0 0 16 16">
+                          <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M8.5 7v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 1 0"/>
+                        </svg>
+                        <span class="text-nowrap">Create new modeling</span>
+                    </button>
+
+                    <button hx-get="/model_builder" hx-target="#main-content-block" hx-swap="beforeend"
+                            hx-push-url="/model_builder/" hx-indicator="#global_loader" hx-disabled-elt="button"
+                            script="on click remove the first <div/> in #main-content-block
+                                    on htmx:afterRequest js init('{{ request.scheme }}://{{ request.get_host }}', '{{csrf_token}}') end"
+                            class="nav-link d-flex flex-row gap-2 btn btn-primary text-white mx-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-fill" viewBox="0 0 16 16">
+                              <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"/>
                             </svg>
-                            <span>Understand</span>
-                        </button>
-                    </a>
-                    <a class="nav-link" href="#">
-                        <button hx-get="/quiz/onboarding" hx-target="#main-content-block" hx-swap="beforeend"
-                                hx-push-url="/quiz/onboarding" hx-indicator="#global_loader" hx-disabled-elt="button"
-                                script="on click remove the first <div/> in #main-content-block"
-                                class="d-flex flex-row gap-2 btn btn-primary text-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-plus-fill" viewBox="0 0 16 16">
-                              <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M8.5 7v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 1 0"/>
-                            </svg>
-                            <span class="text-nowrap">Create new modeling</span>
-                        </button>
-                    </a>
-                    <a class="nav-link" href="#">
-                        <button hx-get="/model_builder" hx-target="#main-content-block" hx-swap="beforeend"
-                                hx-push-url="/model_builder/" hx-indicator="#global_loader" hx-disabled-elt="button"
-                                script="on click remove the first <div/> in #main-content-block
-                                        on htmx:afterRequest js init('{{ request.scheme }}://{{ request.get_host }}', '{{csrf_token}}') end"
-                                class="d-flex flex-row gap-2 btn btn-primary text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-fill" viewBox="0 0 16 16">
-                                  <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"/>
-                                </svg>
-                            <span class="text-nowrap">Dashboard view</span>
-                        </button>
-                    </a>
+                        <span class="text-nowrap">Dashboard view</span>
+                    </button>
+
                 </div>
             </div>
         </div>

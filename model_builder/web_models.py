@@ -1,23 +1,39 @@
+import json
+import os
+
+from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
 from efootprint.api_utils.json_to_system import json_to_system
 
+from e_footprint_interface import settings
 from model_builder.web_efootprint_wrappers import wrap_efootprint_object
+from utils import EFOOTPRINT_COUNTRIES
 
 
 class ModelWeb:
     def __init__(self, jsondata):
         self.jsondata = jsondata
         self.response_objs, self.flat_obj_dict = json_to_system(jsondata)
-        self.system = wrap_efootprint_object(list(self.response_objs["System"].values())[0])
+        self.system = wrap_efootprint_object(list(self.response_objs["System"].values())[0], self)
 
         for obj_id, mod_obj in self.flat_obj_dict.items():
-            self.flat_obj_dict[obj_id] = wrap_efootprint_object(mod_obj)
+            self.flat_obj_dict[obj_id] = wrap_efootprint_object(mod_obj, self)
 
         for obj_type in self.response_objs.keys():
             for obj_id, mod_obj in self.response_objs[obj_type].items():
-                self.response_objs[obj_type][obj_id] = wrap_efootprint_object(mod_obj)
+                self.response_objs[obj_type][obj_id] = wrap_efootprint_object(mod_obj, self)
+
+        with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'object_inputs_and_default_values.json'),
+                  "r") as object_inputs_file:
+            self.object_inputs_and_default_values = json.load(object_inputs_file)
 
     def get_objects_from_type(self, obj_type):
         return list(self.response_objs[obj_type].values())
+
+    def get_object_from_id(self, object_id) -> ModelingObject:
+        return self.flat_obj_dict[object_id]
+
+    def get_object_structure(self, object_type):
+        return ObjectStructure(self, object_type)
 
     @property
     def storage(self):
@@ -62,6 +78,10 @@ class ModelWeb:
         return self.get_objects_from_type("Country")
 
     @property
+    def available_countries(self):
+        return EFOOTPRINT_COUNTRIES
+
+    @property
     def hardware(self):
         return self.get_objects_from_type("Hardware")
 
@@ -72,3 +92,43 @@ class ModelWeb:
     @property
     def usage_patterns(self):
         return self.get_objects_from_type("UsagePattern")
+
+
+class ObjectStructure:
+    def __init__(self, model_web: ModelWeb, object_type: str):
+        self.model_web = model_web
+        self.object_type = object_type
+        self.default_name = f"My new {self.object_type}"
+
+    def __getattr__(self, name):
+        attr = getattr(self.model_web.object_inputs_and_default_values[self.object_type], name)
+
+        return attr
+
+    @property
+    def modeling_obj_attributes(self):
+        modeling_obj_attributes = self.model_web.object_inputs_and_default_values[
+            self.object_type]["modeling_obj_attributes"]
+
+        for mod_obj_attribute_desc in modeling_obj_attributes:
+            if mod_obj_attribute_desc["object_type"] == "Country":
+                mod_obj_attribute_desc["existing_objects"] = [
+                    country.to_json() for country in EFOOTPRINT_COUNTRIES]
+            else:
+                mod_obj_attribute_desc["existing_objects"] = self.model_web.get_objects_from_type(self.object_type)
+
+        return modeling_obj_attributes
+
+    @property
+    def list_attributes(self):
+        list_attributes = self.model_web.object_inputs_and_default_values[
+            self.object_type]["list_attributes"]
+
+        for list_attribute_desc in list_attributes:
+            if list_attribute_desc["object_type"] == "Country":
+                list_attribute_desc["existing_objects"] = [
+                    country.to_json() for country in EFOOTPRINT_COUNTRIES]
+            else:
+                list_attribute_desc["existing_objects"] = self.model_web.get_objects_from_type(self.object_type)
+
+        return list_attributes

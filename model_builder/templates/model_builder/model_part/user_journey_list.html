@@ -1,0 +1,88 @@
+{% load static %}
+{% for uj in model_web.user_journeys %}
+    <div class="card list-group-item my-3 mb-1 rounded-4 py-2 px-0 up-list-item card-hover" style="cursor: move;">
+        <div class="accordion accordion-flush leader-line-object" id="{{ uj.id }}" data-link-to="{{ uj.links_to }}" data-line-opt="object-to-object" data-object-type="UserJourney">
+            <div class="accordion-item">
+                <h6 class="accordion-header px-3 d-flex align-items-center">
+                    <button type="button" class="chevron-btn btn btn-link p-0 me-2 text-black"
+                            data-bs-toggle="collapse" data-bs-target="#flush-{{ uj.id }}" aria-expanded="true" aria-controls="collapseOne">
+                            <svg id="icon_accordion_{{ uj.id }}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="bi bi-chevron-right chevron-rotate" viewBox="0 0 16 16">
+                                <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M4.646 1.646l6 6-6 6" />
+                            </svg>
+                    </button>
+                    <button class="btn btn-white ms-1"
+                            type="button"
+                            data-object-id="{{ uj.id }}" data-object-type="UserJourney"
+                            hx-get="/model_builder/get-object-data/{{ uj.id }}/UserJourney/"
+                            hx-target="#formPanel"
+                            hx-trigger="click"
+                            hx-swap="innerHTML"
+                    >
+                    <b>{{ uj.name}}</b>
+                    </button>
+                </h6>
+                <div id="flush-{{ uj.id }}" class="accordion-collapse show accordion-all" data-bs-parent="#{{ uj.id }}">
+                    <div class="accordion-body p-0">
+                        {% for user_journey_step in uj.uj_steps %}
+                            <div id="{{ user_journey_step.id }}" class="my-3">
+                                <div class="accordion accordion-flush leader-line-object" id="{{ user_journey_step.id }}" data-link-to="{{ user_journey_step.links_to }}" data-line-opt="object-to-object" data-object-type="UserJourneyStep">
+                                    <div class="accordion-item">
+                                        <h6 class="accordion-header ps-3 d-flex align-items-center text-start">
+                                            <img src="{% static 'icons/circle_uj_step.svg' %}" id="icon-{{ forloop.counter }}-step"
+                                                             class="border border-2 border-white rounded-circle leader-line-object mx-3"
+                                                             data-link-to="{% if not forloop.last %}icon-{{ forloop.counter|add:1 }}-step{% else %}add_usage_pattern_step{% endif %}"
+                                                             data-line-opt="{% if not forloop.last %}vertical-step-swimlane{% else %}step-dot-line{% endif %}" data-object-type="circle"
+                                                             width="20px" height="20px;" alt="circle_step">
+                                            <button type="button" class="chevron-btn btn btn-link p-0 me-2 text-black"
+                                                    data-bs-toggle="collapse" data-bs-target="#flush-{{ user_journey_step.id }}" aria-expanded="true" aria-controls="collapseOne">
+                                                    <svg id="icon_accordion_{{ user_journey_step.id }}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                                        <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M4.646 1.646l6 6-6 6" />
+                                                    </svg>
+                                            </button>
+                                            <button class="btn btn-white ms-1"
+                                                    type="button"
+                                                    data-object-id="{{ user_journey_step.id }}" data-object-type="UserJourneyStep"
+                                                    hx-get="/model_builder/get-object-data/{{ user_journey_step.id }}/UserJourneyStep/"
+                                                    hx-target="#formPanel"
+                                                    hx-trigger="click"
+                                                    hx-swap="innerHTML"
+                                            >
+                                                {{ user_journey_step.name}}
+                                            </button>
+                                        </h6>
+                                        <div id="flush-{{ user_journey_step.id }}" class="accordion-collapse collapse" data-bs-parent="#{{ user_journey_step.id }}">
+                                            <div class="accordion-body p-0 row m-0 text-start">
+                                                {% for job in user_journey_step.jobs %}
+                                                    <div class="col-10 offset-2 p-2 leader-line-object" id="{{ job.id }}"
+                                                        data-link-to="{{ job.links_to }}" data-line-opt="object-to-object" data-object-type="Job">
+                                                        <button class="btn btn-white text-start m-0"  style="font-size: 0.8rem;"
+                                                        hx-get="/model_builder/get-object-data/{{ job.id }}/Job/"
+                                                            hx-target="#formPanel"
+                                                            hx-trigger="click"
+                                                            hx-swap="innerHTML">
+                                                            {{ job.name }}
+                                                        </button>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="d-flex mx-4 mb-4">
+                            <div class="flex-grow-1 mx-3">
+                                <button class="btn btn-white dotted-border text-start w-100" id="add_usage_pattern_step">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                                </svg>
+                                Add usage journey step
+                            </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}

@@ -1,6 +1,4 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/drawflow.min.css' %}" />
-<link rel="stylesheet" href="{% static 'css/drawflow.css' %}" />
 <script src="{% static 'scripts/leader-line.min.js' %}"></script>
 <script src="{% static 'scripts/Sortable.min.js' %}"></script>
 
@@ -15,7 +13,7 @@
                                 <h5><b>Usage patterns</b></h5>
                             </div>
                             <div class="col-12 mt-2 justify-content-start text-start">
-                                <button class="w-75 btn btn-white dotted-border text-start">
+                                <button class="w-75 btn btn-white dotted-border text-start" id="add_usage_pattern">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                                       <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
                                     </svg>
@@ -23,26 +21,8 @@
                                 </button>
                             </div>
                         </div>
-
                         <div id="up-list" class="list-group w-75">
-                            {% for up in model_web.usage_patterns %}
-                                <div id="{{ up.id }}" class="list-group-item my-3 mb-1 rounded-4 p-2 up-list-item card-hover" style="cursor: move;">
-                                    <div class="accordion accordion-flush" id="{{ up.id }}_card">
-                                        <div class="accordion-item">
-                                            <h6 class="accordion-header">
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-{{ up.id }}_card" aria-expanded="false" aria-controls="flush-{{ up.id }}_card">
-                                                    <b>{{ up.name}}</b>
-                                            </button>
-                                            </h6>
-                                            <div id="flush-{{ up.id }}_card" class="accordion-collapse collapse accordion-all" data-bs-parent="#{{ up.id }}_card">
-                                                <div class="accordion-body">
-                                                    <p>{{ up.name }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
+                            {% include 'model_builder/model_part/usage_pattern_list.html' %}
                         </div>
                     </div>
                 </div>
@@ -62,55 +42,7 @@
                             </div>
                         </div>
                         <div id="uj-list" class="list-group">
-                            {% for uj in model_web.user_journeys %}
-                                <div class="card list-group-item my-3 mb-1 rounded-4 p-0 up-list-item card-hover text-start" style="cursor: move;">
-                                    <p id="{{ uj.id }}" class="mt-3 px-4 text-start">
-                                        <b>{{uj.id}}</b>
-                                    </p>
-                                    {% for user_journey_step in uj.uj_steps %}
-                                        <div id="{{ user_journey_step.id }}" class="py-2 pl-2">
-                                            <div class="accordion accordion-flush" id="{{ user_journey_step.id }}_card">
-                                                <div class="accordion-item">
-                                                    <h6 class="accordion-header px-2">
-                                                        <div class="row p-2">
-                                                            <div class="col-12">
-                                                                <button id="btn-{{ user_journey_step.id }}-accordion" class="accordion-button accordion-button-uj collapsed p-0" type="button"
-                                                                        data-bs-toggle="collapse" data-bs-target="#flush-{{ user_journey_step.id }}_card"
-                                                                        data-line-uj="{{ uj.id }}"  data-line-uj-step="{{ user_journey_step.id }}"
-                                                                        aria-expanded="false" aria-controls="flush-{{ user_journey_step.id }}_card">
-                                                                    <img src="{% static 'icons/circle_uj_step.svg' %}" id="icon-{{ forloop.counter }}-step" class="border border-2 border-white rounded-circle" width="20px" height="20px;" alt="circle_step">
-                                                                    <p class="mb-0"style="padding-left: 10px;">{{ user_journey_step.name}}<p>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </h6>
-                                                    <div id="flush-{{ user_journey_step.id }}_card" class="accordion-collapse collapse" data-bs-parent="#{{ user_journey_step.id }}_card">
-                                                        <div class="accordion-body p-0 row m-0">
-                                                            {% for job in user_journey_step.jobs %}
-                                                                <div class="col-10 offset-2 p-2" id="{{ job.id }}">
-                                                                    <p class="text-start m-0" style="font-size: 0.8rem;">
-                                                                        {{ job.id }}
-                                                                    </p>
-                                                                </div>
-                                                            {% endfor %}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                    <div class="d-flex mx-4 mb-4">
-                                        <div class="flex-grow-1">
-                                            <button class="btn btn-white dotted-border text-start w-100">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-                                              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-                                            </svg>
-                                            Add usage journey step
-                                        </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
+                            {% include 'model_builder/model_part/user_journey_list.html' %}
                         </div>
                     </div>
                 </div>
@@ -120,7 +52,7 @@
                             <div class="col-md-auto">
                                 <h5><b>Infrastructure</b></h5>
                             </div>
-                            <div class="col-12 mt-2 justify-content-start text-start">
+                            <div class="col-12 mt-2 justify-content-start text-start" id="add_server">
                                 <button class="w-75 btn btn-white dotted-border text-start">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                                       <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
@@ -130,256 +62,28 @@
                             </div>
                         </div>
                         <div id="server-list" class="list-group w-75" style="margin-left:25%;">
-                            {% for server in model_web.servers %}
-                                <div id="{{ server.id }}" class="list-group-item my-3 mb-1 rounded-4 p-2 up-list-item card-hover" style="cursor: move;">
-                                    <div class="accordion accordion-flush" id="{{ server.id }}_card">
-                                        <div class="accordion-item">
-                                            <h6 class="accordion-header">
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-{{ server.id }}_card" aria-expanded="false" aria-controls="flush-{{ server.id }}_card">
-                                                    <b>{{ server.name}}</b>
-                                            </button>
-                                            </h6>
-                                            <div id="flush-{{ server.id }}_card" class="accordion-collapse collapse accordion-all" data-bs-parent="#{{ server.id }}_card">
-                                                <div class="accordion-body">
-                                                    <p>{{ server.name }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
+                            {% include 'model_builder/model_part/infrastructure_list.html' %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-3">
-            <button type="button" class="btn bg-radiant mt-4 rounded-pill text-white px-4 py-3" data-bs-toggle="modal" data-bs-target="#fromModal">
-                Launch demo modal
-            </button>
-            <br>
-            <button type="button" class="btn bg-radiant-reverse mt-4 rounded-pill text-white px-4 py-3" data-bs-toggle="modal" data-bs-target="#fromModal">
-                Launch demo modal
-            </button>
-        </div>
-        <div class="col-9" style="cursor: pointer;z-index: 10000; padding-right: 5%">
-            <div class="row bg-white rounded-top-2 reverse-shadow">
-                <div class="col-12 text-center text-secondary">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
-                  <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
-                </svg>
-            </div>
-                <div class="col-12 text-start px-4 mb-5">
-                <h5><b>Results</b></h5>
-            </div>
-            </div>
+        <div class="col-3" style="height: 100vh !important" id="formPanel">
         </div>
     </div>
 </div>
 
-<!-- Modal -->
-<div class="modal custom-modal" id="fromModal" tabindex="-1" aria-labelledby="fromModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 id="fromModalLabel" class="mt-4">
-                    <b>Add a new object</b>
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row text-start">
-                    <div class="col-12 mb-3">
-                        <label for="input-disabled" class="form-label">Name</label>
-                        <input type="email" class="form-control p-2" id="input-disabled" disabled aria-describedby="input-disabled-helper" placeholder="Name objet">
-                        <div id="input-disabled-helper" class="form-text">lorem ipsum</div>
-                    </div>
-                    <div class="col-12 mb-3">
-                        <label for="input-enabled" class="form-label">Name</label>
-                        <input type="email" class="form-control p-2" id="input-enabled" enabled aria-describedby="input-enabled-helper" placeholder="Name objet">
-                        <div id="input-enabled-helper" class="form-text">lorem ipsum</div>
-                    </div>
-                    <div class="col-6 mb-3">
-                        <label for="input-half-width" class="form-label">Name</label>
-                        <input type="email" class="form-control p-2" id="input-half-width" half-width aria-describedby="input-half-width-helper" placeholder="Name objet">
-                        <div id="input-half-width-helper" class="form-text">lorem ipsum</div>
-                    </div>
-                    <div class="col-6 mb-3">
-                    </div>
-                    <div class="col-8 mb-3">
-                        <div class="input-group">
-                            <label for="input-add-on" class="form-label">Carbon footprint fabircation</label>
-                            <input type="text" class="form-control input_with_add_on" placeholder="1000" aria-label="Recipient's username" aria-describedby="basic-addon2">
-                            <span class="input-group-text" id="basic-addon2">kg</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer border border-0">
-                <button type="button" class="btn btn-primary rounded-pill w-100">Sauvegarder</button>
-            </div>
-        </div>
+<div class="panel-result-btn position-fixed bottom-0" style="z-index: 1000;">
+    <div class="row bg-white rounded-top-2 reverse-shadow">
+        <div class="col-12 text-center text-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
+          <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
+        </svg>
+    </div>
+        <div class="col-12 text-start px-4 mb-5">
+            <h5><b>Results</b></h5>
+    </div>
     </div>
 </div>
 
-<script>
-        // ------------------------------------------------------------
-        // LEADERLINE
-
-        const list_job = [
-            {% for uj_step in model_web.uj_steps %}
-                {% for job in uj_step.jobs %}
-                    ["{{ uj_step.id }}","{{ job.id }}"],
-                {% endfor %}
-            {% endfor %}
-        ]
-
-        const leaderline_option = {
-            color: "#9CA3AF",
-            size: 1,
-            startPlug: 'disc',
-            endPlug: 'disc',
-            startPlugColor: "#E5E7EB",
-            endPlugColor: "#E5E7EB",
-            startPlugSize: 5,
-            endPlugSize: 5,
-            startSocket: 'right',
-            endSocket: 'left',
-            showEffectName: 'fade'
-        }
-
-        const leaderline_option_step = {
-            color: "#003235",
-            size: 3,
-            startPlug: 'behind',
-            endPlug: 'behind',
-            startSocket: 'bottom',
-            endSocket: 'top',
-            showEffectName: 'fade'
-        }
-
-        const up_uj_card_set = [{% for up_ju in leaderline_data_up_uj %}
-                ["{{ up_ju.0 }}", "{{ up_ju.1 }}"],
-            {% endfor %}]
-        const uj_step_server_card_set = [{% for uj_server in leaderline_data_uj_step_server %}
-                ["{{ uj_server.0 }}", "{{ uj_server.1 }}"],
-            {% endfor %}]
-        const job_server_card_set = [{% for job_server in leaderline_data_job_server %}
-                ["{{ job_server.0 }}", "{{ job_server.1 }}"],
-            {% endfor %}]
-        const uj_step_set = [
-            {% for uj_step in user_journey_steps %}
-                //check if last element
-               {% if not forloop.last %}
-                    ["icon-{{ forloop.counter }}-step", "icon-{{ forloop.counter|add:1 }}-step"]{% if not forloop.last %},{% endif %}
-                {% endif %}
-            {% endfor %}
-        ]
-
-        let card_set=up_uj_card_set.concat(uj_step_server_card_set)
-        let line_set=[]
-
-        function initLeaderLines() {
-            card_set.forEach(card => {
-                const startElem = document.getElementById(card[0]);
-                const endElem = document.getElementById(card[1]);
-                const tmp_line = new LeaderLine(startElem, endElem, leaderline_option);
-                line_set.push(tmp_line);
-            });
-            uj_step_set.forEach(card => {
-                const startElem = document.getElementById(card[0]);
-                const endElem = document.getElementById(card[1]);
-                const tmp_line = new LeaderLine(startElem, endElem, leaderline_option_step);
-                line_set.push(tmp_line);
-            });
-        }
-
-        function updateLeaderLines_accordion() {
-            let select_node = [];
-
-            const accordionButtons = document.querySelectorAll(".accordion-button-uj");
-            accordionButtons.forEach(button => {
-                const isCollapsed = button.classList.contains("collapsed");
-                const dataLineUJStep = button.getAttribute("data-line-uj-step");
-
-                if (isCollapsed) {
-                    for (let card of uj_step_server_card_set) {
-                        if (card[0] === dataLineUJStep) {
-                            select_node.push(card);
-                        }
-                    }
-                } else {
-                    for (let row of list_job) {
-                        if (row[0] === dataLineUJStep) {
-                            for (let card of job_server_card_set) {
-                                if (card[0] === row[1]) {
-                                    select_node.push(card);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            card_set = up_uj_card_set.concat(select_node);
-            line_set.forEach(line => {
-                line.remove();
-            });
-            line_set = [];
-            card_set.forEach(card => {
-                const startElem = document.getElementById(card[0]);
-                const endElem = document.getElementById(card[1]);
-                const tmp_line = new LeaderLine(startElem, endElem, leaderline_option);
-                line_set.push(tmp_line);
-            });
-            uj_step_set.forEach(card => {
-                const startElem = document.getElementById(card[0]);
-                const endElem = document.getElementById(card[1]);
-                const tmp_line = new LeaderLine(startElem, endElem, leaderline_option_step);
-                line_set.push(tmp_line);
-            });
-            updateLines();
-        }
-
-        function updateLines() {
-            line_set.forEach(line => line.position());
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            initLeaderLines();
-        });
-
-        document.querySelectorAll('.accordion-collapse').forEach((accordion) => {
-            const button = accordion.previousElementSibling.querySelector('.accordion-button');
-            if (button && button.classList.contains('accordion-button-uj')) {
-                accordion.addEventListener('shown.bs.collapse', updateLeaderLines_accordion);
-                accordion.addEventListener('hidden.bs.collapse', updateLeaderLines_accordion);
-            } else {
-                // Appeler updateLines pour les autres accordéons
-                accordion.addEventListener('shown.bs.collapse', updateLines);
-                accordion.addEventListener('hidden.bs.collapse', updateLines);
-            }
-        });
-
-        const scrollContainer = document.querySelector('#model-canva');
-        scrollContainer.addEventListener('scroll', updateLines);
-
-
-        // ------------------------------------------------------------
-        // SORTABLE
-        document.addEventListener("DOMContentLoaded", function () {
-            const upList = new Sortable(document.getElementById("up-list"), {
-                animation: 150,
-                onEnd: updateLines
-            });
-
-            const ujList = new Sortable(document.getElementById("uj-list"), {
-                animation: 150,
-                onEnd: updateLines
-            });
-
-            const serverList = new Sortable(document.getElementById("server-list"), {
-                animation: 150,
-                onEnd: updateLines
-            });
-        });
-</script>
+<script src="{% static 'scripts/efootprint_model.js' %}"></script>
