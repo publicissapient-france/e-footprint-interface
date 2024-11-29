@@ -3,20 +3,29 @@
 .accordion-button.collapsed:hover,
 .accordion-button.collapsed:focus {
     background-color: #fff; // Fond blanc lorsque déployé
-    color: #000; // Texte noir
+    color: #111928; // Texte noir
     border: none; // no border
     box-shadow: none;
+    font-size: 0.8rem;
 }
 
 .accordion-button:not(.collapsed),
 .accordion-button:not(.collapsed):active,
 .accordion-button:not(.collapsed):focus {
     background-color: #fff; // Fond blanc lorsque déployé
-    color: #000; // Texte noir
+    color: #111928; // Texte noir
     border: none; // no border
     box-shadow: none;
+    font-size: 0.8rem;
 }
 
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    color: #111928;
+}
+
+.form-label{
+    color: #111928;
+}
 
 .vh-80 {
   height: 80vh !important;
@@ -35,4 +44,63 @@
 .btn-primary {
     background-color: #2D4675 !important;
     border-color: #2D4675 !important;
+}
+
+/* Désactive le fond grisé */
+.modal-backdrop {
+  display: none !important;
+}
+
+/* Applique les dimensions et la position de la modal */
+.custom-modal .modal-dialog .modal-content {
+    height: 94vh;
+    width: 25%;
+    position: fixed;
+    right: 0;
+    top: 6%;
+    margin: 0;
+    transform: none;
+    border-radius: 0;
+    border: none;
+    border-left: #e0e4e8 2px solid;
+}
+
+.custom-modal .modal-header{
+    border-bottom: none;
+}
+
+/* Permet de scroller si nécessaire */
+.custom-modal .modal-content {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.input-group{
+    border-color: #6B7280;
+}
+
+.input-group-text{
+    background-color: #F9FAFB;
+    color: #6B7280;
+    border-color: #D1D5DB;
+    font-size: 0.8rem;
+}
+
+.form-control{
+    font-size: 0.8rem;
+    color: #6B7280;
+}
+
+.form-text{
+    font-size: 0.7rem;
+    color: #6B7280;
+}
+
+.input_with_add_on{
+    border-top-left-radius: 5px !important;
+    border-bottom-left-radius: 5px !important;
+}
+
+input:disabled{
+    background-color: #F9FAFB;
 }

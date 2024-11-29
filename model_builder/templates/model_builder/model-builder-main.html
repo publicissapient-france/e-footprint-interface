@@ -6,13 +6,13 @@
 
 <div class="container-fluid bg-white" id="model-builder-page">
     <div class="row">
-        <div class="col-9">
+        <div class="col-9" id="model-canva" style="height: 80vh !important; overflow: auto;">
             <div class="row p-0">
-                <div class="col-4  vh-80 p-4">
+                <div class="col-4 p-4">
                     <div class="bg-light rounded-4 p-4 shadow-sm">
                         <div class="row mb-4">
                             <div class="col-md-auto">
-                                <h5>Usage patterns</h5>
+                                <h5><b>Usage patterns</b></h5>
                             </div>
                             <div class="col-12 mt-2 justify-content-start text-start">
                                 <button class="w-75 btn btn-white dotted-border text-start">
@@ -25,7 +25,7 @@
                         </div>
 
                         <div id="up-list" class="list-group w-75">
-                            {% for up in usage_patterns %}
+                            {% for up in model_web.usage_patterns %}
                                 <div id="{{ up.id }}" class="list-group-item my-3 mb-1 rounded-4 p-2 up-list-item card-hover" style="cursor: move;">
                                     <div class="accordion accordion-flush" id="{{ up.id }}_card">
                                         <div class="accordion-item">
@@ -46,11 +46,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-4  vh-80 p-4">
+                <div class="col-4 p-4">
                     <div class="bg-light rounded-4 p-4 shadow-sm">
                         <div class="row justify-content-between mb-4">
                             <div class="col-md-auto">
-                                <h5>User Journeys</h5>
+                                <h5><b>User Journeys</b></h5>
                             </div>
                             <div class="col-12 mt-2 justify-content-start text-start">
                                 <button class="w-75 btn btn-white dotted-border text-start">
@@ -62,7 +62,7 @@
                             </div>
                         </div>
                         <div id="uj-list" class="list-group">
-                            {% for uj in user_journeys %}
+                            {% for uj in model_web.user_journeys %}
                                 <div class="card list-group-item my-3 mb-1 rounded-4 p-0 up-list-item card-hover text-start" style="cursor: move;">
                                     <p id="{{ uj.id }}" class="mt-3 px-4 text-start">
                                         <b>{{uj.id}}</b>
@@ -72,16 +72,14 @@
                                             <div class="accordion accordion-flush" id="{{ user_journey_step.id }}_card">
                                                 <div class="accordion-item">
                                                     <h6 class="accordion-header px-2">
-                                                        <div class="row m-0 align-items-center">
-                                                            <div class="col-1">
-                                                                <img src="{% static 'icons/circle_uj_step.svg' %}" id="icon-{{ forloop.counter }}-step" class="border border-2 border-white rounded-circle" width="20px" height="20px;" alt="circle_step">
-                                                            </div>
-                                                            <div class="col-11">
-                                                                <button id="btn-{{ user_journey_step.id }}-accordion" class="accordion-button accordion-button-uj collapsed" type="button"
+                                                        <div class="row p-2">
+                                                            <div class="col-12">
+                                                                <button id="btn-{{ user_journey_step.id }}-accordion" class="accordion-button accordion-button-uj collapsed p-0" type="button"
                                                                         data-bs-toggle="collapse" data-bs-target="#flush-{{ user_journey_step.id }}_card"
                                                                         data-line-uj="{{ uj.id }}"  data-line-uj-step="{{ user_journey_step.id }}"
                                                                         aria-expanded="false" aria-controls="flush-{{ user_journey_step.id }}_card">
-                                                                    {{ user_journey_step.name}}
+                                                                    <img src="{% static 'icons/circle_uj_step.svg' %}" id="icon-{{ forloop.counter }}-step" class="border border-2 border-white rounded-circle" width="20px" height="20px;" alt="circle_step">
+                                                                    <p class="mb-0"style="padding-left: 10px;">{{ user_journey_step.name}}<p>
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -90,7 +88,9 @@
                                                         <div class="accordion-body p-0 row m-0">
                                                             {% for job in user_journey_step.jobs %}
                                                                 <div class="col-10 offset-2 p-2" id="{{ job.id }}">
-                                                                    <p class="text-start m-0">{{ job.name }}</p>
+                                                                    <p class="text-start m-0" style="font-size: 0.8rem;">
+                                                                        {{ job.id }}
+                                                                    </p>
                                                                 </div>
                                                             {% endfor %}
                                                         </div>
@@ -99,16 +99,26 @@
                                             </div>
                                         </div>
                                     {% endfor %}
+                                    <div class="d-flex mx-4 mb-4">
+                                        <div class="flex-grow-1">
+                                            <button class="btn btn-white dotted-border text-start w-100">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                                            </svg>
+                                            Add usage journey step
+                                        </button>
+                                        </div>
+                                    </div>
                                 </div>
                             {% endfor %}
                         </div>
                     </div>
                 </div>
-                <div class="col-4  vh-80 p-4">
+                <div class="col-4 p-4">
                     <div class="bg-light rounded-4 p-4 shadow-sm">
                         <div class="row justify-content-between mb-4">
                             <div class="col-md-auto">
-                                <h5>Infrastructure</h5>
+                                <h5><b>Infrastructure</b></h5>
                             </div>
                             <div class="col-12 mt-2 justify-content-start text-start">
                                 <button class="w-75 btn btn-white dotted-border text-start">
@@ -120,7 +130,7 @@
                             </div>
                         </div>
                         <div id="server-list" class="list-group w-75" style="margin-left:25%;">
-                            {% for server in servers %}
+                            {% for server in model_web.servers %}
                                 <div id="{{ server.id }}" class="list-group-item my-3 mb-1 rounded-4 p-2 up-list-item card-hover" style="cursor: move;">
                                     <div class="accordion accordion-flush" id="{{ server.id }}_card">
                                         <div class="accordion-item">
@@ -141,23 +151,83 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 ">
-
-                </div>
             </div>
         </div>
-
-        <div class="col-3 vh-100 shadow-custom">
-
+        <div class="col-3">
+            <button type="button" class="btn bg-radiant mt-4 rounded-pill text-white px-4 py-3" data-bs-toggle="modal" data-bs-target="#fromModal">
+                Launch demo modal
+            </button>
+            <br>
+            <button type="button" class="btn bg-radiant-reverse mt-4 rounded-pill text-white px-4 py-3" data-bs-toggle="modal" data-bs-target="#fromModal">
+                Launch demo modal
+            </button>
+        </div>
+        <div class="col-9" style="cursor: pointer;z-index: 10000; padding-right: 5%">
+            <div class="row bg-white rounded-top-2 reverse-shadow">
+                <div class="col-12 text-center text-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
+                  <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
+                </svg>
+            </div>
+                <div class="col-12 text-start px-4 mb-5">
+                <h5><b>Results</b></h5>
+            </div>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal custom-modal" id="fromModal" tabindex="-1" aria-labelledby="fromModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="fromModalLabel" class="mt-4">
+                    <b>Add a new object</b>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row text-start">
+                    <div class="col-12 mb-3">
+                        <label for="input-disabled" class="form-label">Name</label>
+                        <input type="email" class="form-control p-2" id="input-disabled" disabled aria-describedby="input-disabled-helper" placeholder="Name objet">
+                        <div id="input-disabled-helper" class="form-text">lorem ipsum</div>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label for="input-enabled" class="form-label">Name</label>
+                        <input type="email" class="form-control p-2" id="input-enabled" enabled aria-describedby="input-enabled-helper" placeholder="Name objet">
+                        <div id="input-enabled-helper" class="form-text">lorem ipsum</div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="input-half-width" class="form-label">Name</label>
+                        <input type="email" class="form-control p-2" id="input-half-width" half-width aria-describedby="input-half-width-helper" placeholder="Name objet">
+                        <div id="input-half-width-helper" class="form-text">lorem ipsum</div>
+                    </div>
+                    <div class="col-6 mb-3">
+                    </div>
+                    <div class="col-8 mb-3">
+                        <div class="input-group">
+                            <label for="input-add-on" class="form-label">Carbon footprint fabircation</label>
+                            <input type="text" class="form-control input_with_add_on" placeholder="1000" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                            <span class="input-group-text" id="basic-addon2">kg</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border border-0">
+                <button type="button" class="btn btn-primary rounded-pill w-100">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
         // ------------------------------------------------------------
         // LEADERLINE
 
         const list_job = [
-            {% for uj_step in user_journey_steps %}
+            {% for uj_step in model_web.uj_steps %}
                 {% for job in uj_step.jobs %}
                     ["{{ uj_step.id }}","{{ job.id }}"],
                 {% endfor %}
@@ -289,6 +359,9 @@
                 accordion.addEventListener('hidden.bs.collapse', updateLines);
             }
         });
+
+        const scrollContainer = document.querySelector('#model-canva');
+        scrollContainer.addEventListener('scroll', updateLines);
 
 
         // ------------------------------------------------------------

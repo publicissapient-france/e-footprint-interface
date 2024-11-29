@@ -8,6 +8,7 @@ from efootprint.utils.plot_emission_diffs import EmissionPlotter
 
 from model_builder.drawflow_utils import create_drawflow_node_data
 from model_builder.object_creation_utils import add_new_object_to_system, edit_object_in_system
+from model_builder.web_models import ModelWeb
 from utils import htmx_render, EFOOTPRINT_COUNTRIES
 
 from django.conf import settings
@@ -36,15 +37,6 @@ def model_builder_main(request):
 
     usage_patterns = jsondata["UsagePattern"].values()
     user_journeys = jsondata["UserJourney"].values()
-    servers = []
-
-    for server_type in ["Autoscaling", "OnPremise", "Serverless"]:
-        if server_type in jsondata:
-            server_type_data = jsondata[server_type].values()
-            for server in server_type_data:
-                server["server_type"] = server_type
-                servers.append(server)
-
     jobs = jsondata["Job"].values()
 
     leaderline_data_up_uj = []
@@ -63,16 +55,7 @@ def model_builder_main(request):
                 json_job = jsondata["Job"][job]
                 leaderline_data_uj_step_server.append([step, json_job["server"]])
 
-    response_objs, flat_obj_dict = json_to_system(jsondata)
-    # system = list(response_objs["System"].values())[0]
-
-    usage_patterns = response_objs["UsagePattern"].values()
-    user_journeys = response_objs["UserJourney"].values()
-    user_journey_steps = response_objs["UserJourneyStep"].values()
-    servers = []
-    for server_type in ["Autoscaling", "OnPremise", "Serverless"]:
-        if server_type in response_objs.keys():
-            servers += response_objs[server_type].values()
+    model_web = ModelWeb(jsondata)
 
     # system_footprint_html = system.plot_footprints_by_category_and_object(
     #    height=400, width=DEFAULT_GRAPH_WIDTH, return_only_html=True)
@@ -81,10 +64,7 @@ def model_builder_main(request):
         request, "model_builder/model-builder-main.html",
         context={
             # "systemFootprint": system_footprint_html,
-            "usage_patterns": usage_patterns,
-            "user_journeys": user_journeys,
-            "user_journey_steps": user_journey_steps,
-            "servers": servers,
+            "model_web": model_web,
             "leaderline_data_up_uj": leaderline_data_up_uj,
             "leaderline_data_uj_step_server": leaderline_data_uj_step_server,
             "leaderline_data_job_server": leaderline_data_job_server,
