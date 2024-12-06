@@ -70,41 +70,32 @@ function updateObjectToObjectLinesUJStepAccordionOpening(ujStepAccordion) {
     jobs.forEach(job => {createLines(job);});
 }
 
-function updateObjectToObjectLinesUJStepAccordionClosing(ujStepAccordion) {
-    createLines(ujStepAccordion);
-    let jobs = document.querySelectorAll('#'+ujStepAccordion.id+" .accordion-collapse"+' .leader-line-object');
-    jobs.forEach(job => {
-        allLines[job.id].forEach(line => {line.remove();});
-        delete allLines[job.id];
-    });
-}
-
 function updateObjectToObjectLinesUJAccordionOpening(ujAccordion) {
     allLines[ujAccordion.id].forEach(line => line.remove());
     delete allLines[ujAccordion.id];
-    let elements = document.querySelectorAll('#' + ujAccordion.id + ' .leader-line-object[data-object-type="UserJourneyStep"]');
-    elements.forEach(element => {
-        let collapsible = document.querySelector(`#flush-${element.id}`);
+    let ujSteps = document.querySelectorAll('#' + ujAccordion.id + ' .leader-line-object[data-object-type="UserJourneyStep"]');
+    ujSteps.forEach(ujStep => {
+        let collapsible = document.querySelector(`#flush-${ujStep.id}`);
         if (collapsible && collapsible.classList.contains('show')) {
-           let sub_elements = document.querySelectorAll('#' + element.id + ' .leader-line-object[data-object-type="Job"]');
-            sub_elements.forEach(sub_element => {createLines(sub_element);});
+           let jobs = document.querySelectorAll('#' + ujStep.id + ' .leader-line-object[data-object-type="Job"]');
+            jobs.forEach(job => {createLines(job);});
         }else{
-            createLines(element);
+            createLines(ujStep);
         }
     });
-    elements = document.querySelectorAll('#' + ujAccordion.id + ' .leader-line-object[data-object-type="circle"]');
-    elements.forEach(element => {createLines(element);});
+    let circles = document.querySelectorAll('#' + ujAccordion.id + ' .leader-line-object[data-object-type="circle"]');
+    circles.forEach(circle => {createLines(circle);});
 }
 
-function updateObjectToObjectLinesUJAccordionClosing(ujAccordion) {
+function updateObjectToObjectLinesAccordionClosing(ujAccordion) {
     createLines(ujAccordion);
-    let uj_steps = document.querySelectorAll('#'+ujAccordion.id+" .accordion-collapse"+' .leader-line-object');
-    uj_steps.forEach(uj_step => {
-       if (allLines[uj_step.id] !== undefined) {
-           allLines[uj_step.id].forEach(line => {
+    let allLeaderLineChildren = document.querySelectorAll('#'+ujAccordion.id+" .accordion-collapse"+' .leader-line-object');
+    allLeaderLineChildren.forEach(leaderLineChild => {
+       if (allLines[leaderLineChild.id] !== undefined) {
+           allLines[leaderLineChild.id].forEach(line => {
                line.remove();
            });
-           delete allLines[uj_step.id];
+           delete allLines[leaderLineChild.id];
        }
     });
 }
@@ -142,7 +133,7 @@ document.querySelectorAll('.accordion').forEach((accordion) => {
         });
         accordion.addEventListener('hidden.bs.collapse', function () {
             event.stopPropagation();
-            updateObjectToObjectLinesUJStepAccordionClosing(accordion);
+            updateObjectToObjectLinesAccordionClosing(accordion);
             updateLines();
             reverse_icon_accordion(accordion.id);
         });
@@ -153,7 +144,7 @@ document.querySelectorAll('.accordion').forEach((accordion) => {
             reverse_icon_accordion(accordion.id);
         });
         accordion.addEventListener('hidden.bs.collapse', function () {
-            updateObjectToObjectLinesUJAccordionClosing(accordion);
+            updateObjectToObjectLinesAccordionClosing(accordion);
             updateLines();
             reverse_icon_accordion(accordion.id);
         });
