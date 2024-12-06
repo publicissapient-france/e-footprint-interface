@@ -87,9 +87,9 @@ function updateObjectToObjectLinesUJAccordionOpening(ujAccordion) {
     circles.forEach(circle => {createLines(circle);});
 }
 
-function updateObjectToObjectLinesAccordionClosing(ujAccordion) {
-    createLines(ujAccordion);
-    let allLeaderLineChildren = document.querySelectorAll('#'+ujAccordion.id+" .accordion-collapse"+' .leader-line-object');
+function updateObjectToObjectLinesAccordionClosing(accordion) {
+    createLines(accordion);
+    let allLeaderLineChildren = document.querySelectorAll('#'+accordion.id+" .accordion-collapse"+' .leader-line-object');
     allLeaderLineChildren.forEach(leaderLineChild => {
        if (allLines[leaderLineChild.id] !== undefined) {
            allLines[leaderLineChild.id].forEach(line => {
@@ -118,20 +118,16 @@ function reverse_icon_accordion(object_id){
     }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    initLeaderLines();
-});
-
-document.querySelectorAll('.accordion').forEach((accordion) => {
+function addAccordionListener(accordion){
     let obj = accordion.getAttribute('data-object-type')
     if (obj === "UserJourneyStep") {
-        accordion.addEventListener('shown.bs.collapse', function () {
+        accordion.addEventListener('shown.bs.collapse', function (event) {
             event.stopPropagation();
             updateObjectToObjectLinesUJStepAccordionOpening(accordion);
             updateLines();
             reverse_icon_accordion(accordion.id);
         });
-        accordion.addEventListener('hidden.bs.collapse', function () {
+        accordion.addEventListener('hidden.bs.collapse', function (event) {
             event.stopPropagation();
             updateObjectToObjectLinesAccordionClosing(accordion);
             updateLines();
@@ -158,6 +154,14 @@ document.querySelectorAll('.accordion').forEach((accordion) => {
             reverse_icon_accordion(accordion.id);
         });
     }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    initLeaderLines();
+});
+
+document.querySelectorAll('.accordion').forEach((accordion) => {
+    addAccordionListener(accordion);
 });
 
 const scrollContainer = document.querySelector('#model-canva');
@@ -176,6 +180,43 @@ function closePanel() {
     const formPanel = document.getElementById('formPanel');
     formPanel.innerHTML = '';
 }
+
+function fixMissingIds() {
+    const elements = Array.from(document.querySelectorAll('[id*="icon-"][id*="-step"]'));
+
+    let expectedIndex = 1;
+    elements.forEach(element => {
+        const idMatch = element.id.match(/icon-(\d*)-step/);
+        const currentIndex = idMatch && idMatch[1] ? parseInt(idMatch[1]) : null;
+        if (currentIndex !== expectedIndex) {
+            element.id = `icon-${expectedIndex}-step`;
+            if (expectedIndex === elements.length) {
+                element.setAttribute('data-link-to', 'add_usage_pattern_step');
+                element.setAttribute('data-line-opt', 'step-dot-line');
+            } else {
+                element.setAttribute('data-link-to', 'icon-'+parseInt(expectedIndex+1)+'-step');
+                element.setAttribute('data-line-opt', 'vertical-step-swimlane');
+            }
+        }
+
+        expectedIndex++;
+    });
+}
+
+document.addEventListener("htmx:afterSwap", function (event) {
+    if (event.target.getAttribute("hx-swap-oob") === "true") {
+        event.stopPropagation();
+        Object.values(allLines).forEach(lineList => {
+            lineList.forEach(line => {
+                line.remove();
+            });
+        });
+        allLines = {};
+        fixMissingIds();
+        initLeaderLines();
+        addAccordionListener(event.target);
+    }
+});
 
 
 // ------------------------------------------------------------

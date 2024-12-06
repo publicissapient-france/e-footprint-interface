@@ -106,6 +106,10 @@ class ObjectStructure:
         return attr
 
     @property
+    def numerical_attributes(self):
+        return self.model_web.object_inputs_and_default_values[self.object_type]["numerical_attributes"]
+
+    @property
     def modeling_obj_attributes(self):
         modeling_obj_attributes = self.model_web.object_inputs_and_default_values[
             self.object_type]["modeling_obj_attributes"]

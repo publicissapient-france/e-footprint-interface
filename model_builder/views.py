@@ -50,39 +50,67 @@ def open_create_object_panel(request, object_type):
     return render(request, "model_builder/object-creation-or-edition-form.html", context=context_data)
 
 
-def open_edit_object_panel(request, object_type):
+def open_edit_object_panel(request, object_id):
     model_web = ModelWeb(request.session["system_data"])
-    obj_to_edit = model_web.get_object_from_id(request.POST["object-id"])
+    obj_to_edit = model_web.get_object_from_id(object_id)
 
     context_data = {
-        "form_target_url": "edit-object",
-        "header": f"Editing {obj_to_edit.name}",
-        "object_to_edit": obj_to_edit,
-        "output_button_label": "Save",
+        "object_to_edit": obj_to_edit
     }
 
-    return render(request, "model_builder/object-creation-or-edition-form.html", context=context_data)
+    return render(request, "model_builder/edit_object_panel.html", context=context_data)
 
 
-def create_object_addition_or_edition_oob_html_updated(request, system, objects_to_update):
-    system_footprint_html = system.plot_footprints_by_category_and_object(
-        height=400, width=DEFAULT_GRAPH_WIDTH, return_only_html=True)
+def create_object_addition_or_edition_oob_html_updated(request, objects_to_update):
+    #system_footprint_html = system.plot_footprints_by_category_and_object(
+    #    height=400, width=DEFAULT_GRAPH_WIDTH, return_only_html=True)
 
-    graph_container_html = render_to_string(
-        "model_builder/graph-container.html",
-        context={"systemFootprint": system_footprint_html, "hx_swap_oob": True})
+    #graph_container_html = render_to_string(
+    #    "model_builder/graph-container.html",
+    #    context={"systemFootprint": system_footprint_html, "hx_swap_oob": True})
 
-    model_comparison_buttons_html = render_to_string(
-        "model_builder/model-comparison-buttons.html",
-        {"is_different_from_ref_model": request.session["system_data"] != request.session["reference_system_data"],
-         "hx_swap_oob": True})
+    #model_comparison_buttons_html = render_to_string(
+    #    "model_builder/model-comparison-buttons.html",
+    #    {"is_different_from_ref_model": request.session["system_data"] != request.session["reference_system_data"],
+    #    "hx_swap_oob": True})
 
-    return_html = graph_container_html + model_comparison_buttons_html
+    #return_html = graph_container_html + model_comparison_buttons_html
+
+    return_html = ""
+
+    template_dict = {
+        'UsagePattern': 'usage_pattern.html',
+        'UserJourney': 'user_journey_card.html',
+        'UserJourneyStep': 'user_journey_step_card.html',
+        'Job': 'job_card.html',
+        'Autoscaling': 'infrastructure_card.html',
+        'OnPremise': 'infrastructure_card.html',
+        'Serverless': 'infrastructure_card.html'
+    }
+
+    key_obj_dict = {
+        'UsagePattern': 'usage_pattern',
+        'UserJourney': 'user_journey',
+        'UserJourneyStep': 'user_journey_step',
+        'Job': 'job',
+        'Autoscaling': 'server',
+        'OnPremise': 'server',
+        'Serverless': 'server'
+    }
 
     for obj in objects_to_update:
+        template_name= template_dict[obj.class_as_simple_str]
+        key_obj= key_obj_dict[obj.class_as_simple_str]
         return_html += render_to_string(
-            "model_builder/object-card.html",
-            {"object": obj, "hx_swap_oob": True})
+            f"model_builder/model_part/card/{template_name}",
+            {key_obj: obj,
+             "hx_swap_oob": True}
+        )
+
+    #for obj in objects_to_update:
+    #    return_html += render_to_string(
+    #        "model_builder/object-card.html",
+    #       {"object": obj, "hx_swap_oob": True})
 
     request.session["img_base64"] = None
 
@@ -99,18 +127,20 @@ def add_new_object(request):
     return http_response
 
 
-def edit_object(request):
+def edit_object(request, object_id):
     model_web = ModelWeb(request.session["system_data"])
-    (edited_obj, system, objects_to_update, obj_ids_of_connections_to_add,
-     obj_ids_of_connections_to_remove) = edit_object_in_system(request, model_web)
-    oob_html = create_object_addition_or_edition_oob_html_updated(request, system, objects_to_update)
+    obj_to_edit = model_web.get_object_from_id(object_id)
+    (edited_obj, objects_to_update) = edit_object_in_system(request, obj_to_edit)
+    #(edited_obj, objects_to_update, obj_ids_of_connections_to_add,
+    # obj_ids_of_connections_to_remove) = edit_object_in_system(request, obj_to_edit)
+    oob_html = create_object_addition_or_edition_oob_html_updated(request, objects_to_update)
 
     http_response = HttpResponse(oob_html)
     # TODO: update below logic to handle link updates
-    http_response["HX-Trigger-After-Swap"] = json.dumps(
-        {"editConnections": {"editedNode": edited_obj.id,
-                             "connectionsToAdd": obj_ids_of_connections_to_add,
-                             "connectionsToRemove": obj_ids_of_connections_to_remove}})
+    #http_response["HX-Trigger-After-Swap"] = json.dumps(
+    #    {"editConnections": {"editedNode": edited_obj.id,
+    #                         "connectionsToAdd": obj_ids_of_connections_to_add,
+    #                         "connectionsToRemove": obj_ids_of_connections_to_remove}})
 
     return http_response
 
@@ -215,48 +245,3 @@ def compare_with_reference(request):
     request.session['img_base64'] = img_base64
 
     return render(request, "model_builder/compare-container.html", {"img_base64": img_base64})
-
-def get_object_data(request, object_id, object_type):
-    try:
-        jsondata = request.session.get("system_data", {})
-        if object_type not in jsondata:
-            logging.error(f"Object type '{object_type}' not found in session data.")
-            return HttpResponse(status=404)
-
-        if object_id not in jsondata[object_type]:
-            logging.error(f"Object ID '{object_id}' not found in object type '{object_type}'.")
-            return HttpResponse(status=404)
-
-        object_to_find = jsondata[object_type][object_id]
-        structure = [
-            {"name": key, "type": determine_field_type(value)}
-            for key, value in object_to_find.items()
-        ]
-        return render(
-            request,
-            'model_builder/form_model.html',
-            {
-                'export_object': object_to_find,
-                'structure': structure,
-                'object_type': object_type
-            }
-        )
-    except KeyError as e:
-        logging.error(f"KeyError encountered: {str(e)}")
-        return HttpResponse(status=404)
-
-
-def determine_field_type(value):
-    if isinstance(value, bool):
-        return "boolean"
-    elif isinstance(value, int):
-        return "number"
-    elif isinstance(value, float):
-        return "decimal"
-    elif isinstance(value, str):
-        return "string"
-    elif isinstance(value, list):
-        return "array"
-    elif isinstance(value, dict):
-        return "object"
-    return "string"

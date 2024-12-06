@@ -10,7 +10,7 @@ def retrieve_attributes_by_type(
     for attr_name, attr_value in vars(modeling_obj).items():
         if (isinstance(attr_value, attribute_type) and attr_name not in attrs_to_ignore
                 and PREVIOUS_LIST_VALUE_SET_SUFFIX not in attr_name):
-            output_list.append((attr_name, attr_value))
+            output_list.append({'attr_name': attr_name, 'attr_value': attr_value})
 
     return output_list
 
@@ -20,9 +20,13 @@ class ExplainableObjectWeb:
         self.explainable_quantity = explainable_quantity
 
     def __getattr__(self, name):
-        attr = getattr(self._modeling_obj, name)
+        attr = getattr(self.explainable_quantity, name)
 
         return attr
+
+    @property
+    def rounded_magnitude(self):
+        return round(self.magnitude, 2)
 
     @property
     def short_unit(self):
@@ -53,8 +57,15 @@ class ModelingObjectWrapper:
         return attr
 
     @property
+    def structure(self):
+        return self.model_web.get_object_structure(self.class_as_simple_str)
+
+    @property
     def explainable_quantities(self):
-        return retrieve_attributes_by_type(self, ExplainableQuantity)
+        efootprint_explainable_quantities = retrieve_attributes_by_type(self._modeling_obj, ExplainableQuantity)
+        for explainable_quantity_dict in efootprint_explainable_quantities:
+            explainable_quantity_dict["attr_value"] = ExplainableObjectWeb(explainable_quantity_dict["attr_value"])
+        return efootprint_explainable_quantities
 
     @property
     def explainable_hourly_quantities(self):
@@ -62,11 +73,26 @@ class ModelingObjectWrapper:
 
     @property
     def mod_obj_attributes(self):
-        return retrieve_attributes_by_type(self, ModelingObject)
+        efootprint_mod_obj_attributes = retrieve_attributes_by_type(self._modeling_obj, ModelingObject)
+        for mod_obj_dict in efootprint_mod_obj_attributes:
+            mod_obj_dict["existing_objects"] = self.model_web.get_objects_from_type(mod_obj_dict["attr_value"].class_as_simple_str)
+            mod_obj_dict["attr_value"] = wrap_efootprint_object(mod_obj_dict["attr_value"], self.model_web)
+
+        return efootprint_mod_obj_attributes
 
     @property
     def list_attributes(self):
-        return retrieve_attributes_by_type(self, list)
+        attributes_from_structure = self.structure.list_attributes
+        list_efootprint_mod_obj_attributes = retrieve_attributes_by_type(self._modeling_obj, list)
+        for list_mod_obj_dict in list_efootprint_mod_obj_attributes:
+            # TODO: test that logic works in case e-footprint object has empty list attribute
+            list_attribute_object_type = [attribute["object_type"] for attribute in attributes_from_structure
+                                          if attribute["attr_name"] == list_mod_obj_dict["attr_name"]][0]
+            list_mod_obj_dict["existing_objects"] = self.model_web.get_objects_from_type(list_attribute_object_type)
+            list_mod_obj_dict["attr_value"] = [
+                wrap_efootprint_object(item, self.model_web) for item in list_mod_obj_dict["attr_value"]]
+
+        return list_efootprint_mod_obj_attributes
 
     @property
     def is_deletable(self):

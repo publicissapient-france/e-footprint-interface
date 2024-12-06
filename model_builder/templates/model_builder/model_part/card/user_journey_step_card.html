@@ -1,0 +1,39 @@
+{% load static %}
+<div class="accordion accordion-flush leader-line-object my-3" id="{{ user_journey_step.id }}" data-link-to="{{ user_journey_step.links_to }}" data-line-opt="object-to-object" data-object-type="UserJourneyStep"
+    {%  if hx_swap_oob %}
+        hx-swap-oob="true"
+     {% endif %}
+>
+    <div class="accordion-item">
+        <h6 class="accordion-header ps-3 d-flex align-items-center text-start">
+            <img src="{% static 'icons/circle_uj_step.svg' %}" id="icon-{{ forloop.counter }}-step"
+                             class="border border-2 border-white bg-white rounded-circle leader-line-object mx-3"
+                             data-link-to="{% if not forloop.last %}icon-{{ forloop.counter|add:1 }}-step{% else %}add_usage_pattern_step{% endif %}"
+                             data-line-opt="{% if not forloop.last %}vertical-step-swimlane{% else %}step-dot-line{% endif %}" data-object-type="circle"
+                             width="20px" height="20px;" alt="circle_step">
+            <button type="button" class="chevron-btn btn btn-link p-0 me-2 text-black"
+                    data-bs-toggle="collapse" data-bs-target="#flush-{{ user_journey_step.id }}" aria-expanded="true" aria-controls="collapseOne">
+                    <svg id="icon_accordion_{{ user_journey_step.id }}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="bi bi-chevron-right {%  if hx_swap_oob %}chevron-rotate{% endif %}" viewBox="0 0 16 16">
+                        <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M4.646 1.646l6 6-6 6" />
+                    </svg>
+            </button>
+            <button class="btn btn-white ms-1 text-start"
+                    type="button"
+                    data-object-id="{{ user_journey_step.id }}" data-object-type="UserJourneyStep"
+                    hx-get="/model_builder/open-edit-object-panel/{{ user_journey_step.id }}"
+                    hx-target="#formPanel"
+                    hx-trigger="click"
+                    hx-swap="innerHTML"
+            >
+                {{ user_journey_step.name}}
+            </button>
+        </h6>
+        <div id="flush-{{ user_journey_step.id }}" class="accordion-collapse {%  if hx_swap_oob %}show{% endif %} collapse" data-bs-parent="#{{ user_journey_step.id }}">
+            <div class="accordion-body p-0 row m-0 text-start">
+                {% for job in user_journey_step.jobs %}
+                    {% include 'model_builder/model_part/card/job_card.html' with job=job hx_swap_oob=false %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

@@ -15,6 +15,7 @@ from efootprint.abstract_modeling_classes.source_objects import SourceValue, Sou
 from efootprint.constants.units import u
 from efootprint.logger import logger
 
+from model_builder.web_efootprint_wrappers import ModelingObjectWrapper
 from model_builder.web_models import ModelWeb
 from utils import EFOOTPRINT_COUNTRIES
 
@@ -87,57 +88,63 @@ def add_new_object_to_system(request, model_web: ModelWeb):
     return new_efootprint_obj, objects_to_update
 
 
-def edit_object_in_system(request, model_web: ModelWeb):
-    obj_to_edit = model_web.get_object_from_id(request.POST["obj_id"])
-    obj_structure = model_web.get_object_structure(obj_to_edit.class_as_simple_str)
+def edit_object_in_system(request, obj_to_edit: ModelingObjectWrapper):
+    model_web = obj_to_edit.model_web
+    obj_structure = obj_to_edit.structure
 
-    obj_to_edit.name = request.POST["name"]
+    #obj_to_edit.name = request.POST["form_edit_name"]#
+    obj_to_edit._modeling_obj.name= request.POST["form_edit_name"]
+
     objects_to_update = [obj_to_edit]
-    obj_ids_of_connections_to_add = []
-    obj_ids_of_connections_to_remove = []
+    #obj_ids_of_connections_to_add = []
+    #obj_ids_of_connections_to_remove = []
 
-    for attr_dict in obj_structure["numerical_attributes"]:
-        request_value = request.POST.getlist(attr_dict["attr_name"])[0]
-        request_unit = request.POST.getlist(attr_dict["attr_name"])[1]
+    for attr_dict in obj_structure.numerical_attributes:
+        request_unit = attr_dict["unit"]
+        request_value = request.POST.getlist("form_edit_" + attr_dict["attr_name"])[0]
         new_value = SourceValue(float(request_value) * u(request_unit), Sources.USER_DATA)
         current_value = getattr(obj_to_edit, attr_dict["attr_name"])
-        if new_value != current_value:
+        if new_value.value != current_value.value:
             logger.info(f"{attr_dict['attr_name']} has changed")
             new_value.set_label(current_value.label)
-            obj_to_edit.__setattr__(attr_dict["attr_name"], new_value)
-    for mod_obj in obj_structure["modeling_obj_attributes"]:
-        new_mod_obj_id = request.POST[mod_obj["attr_name"]]
+            obj_to_edit._modeling_obj.__setattr__(attr_dict["attr_name"], new_value)
+    for mod_obj in obj_structure.modeling_obj_attributes:
+        new_mod_obj_id = request.POST["form_edit_" + mod_obj["attr_name"]]
         current_mod_obj_id = getattr(obj_to_edit, mod_obj["attr_name"]).id
         if new_mod_obj_id != current_mod_obj_id:
             logger.info(f"{mod_obj['attr_name']} has changed")
+            # TODO for DEVICES, HARDWARE and NETWORK, STORAGE ?
             if mod_obj["object_type"] == "Country" and new_mod_obj_id not in model_web.flat_obj_dict.keys():
                 obj_to_add = [country for country in EFOOTPRINT_COUNTRIES if country.id == new_mod_obj_id][0]
                 request.session["system_data"]["Country"][new_mod_obj_id] = obj_to_add.to_json()
             else:
                 obj_to_add = model_web.flat_obj_dict[new_mod_obj_id]
                 objects_to_update.append(obj_to_add)
-                obj_ids_of_connections_to_add.append(new_mod_obj_id)
-            obj_to_edit.__setattr__(mod_obj["attr_name"], obj_to_add)
-            obj_ids_of_connections_to_remove.append(current_mod_obj_id)
-    for mod_obj in obj_structure["list_attributes"]:
-        new_mod_obj_id_list = request.POST.getlist(mod_obj["attr_name"])
-        current_mod_obj_id_list = [mod_obj.id for mod_obj in getattr(obj_to_edit, mod_obj["attr_name"])]
+                #obj_ids_of_connections_to_add.append(new_mod_obj_id)
+            obj_to_edit._modeling_obj.__setattr__(mod_obj["attr_name"], obj_to_add)
+            #obj_ids_of_connections_to_remove.append(current_mod_obj_id)
+    for mod_obj in obj_structure.list_attributes:
+        new_mod_obj_id_list = request.POST.getlist("form_edit_" +mod_obj["attr_name"])
+        current_mod_obj_id_list = [mod_obj._modeling_obj.id for mod_obj in getattr(obj_to_edit, mod_obj["attr_name"])]
         logger.info(f"{mod_obj['attr_name']} has changed")
         removed_mod_obj_ids = [id for id in current_mod_obj_id_list if id not in new_mod_obj_id_list]
         added_mod_obj_ids = [id for id in new_mod_obj_id_list if id not in current_mod_obj_id_list]
-        obj_ids_of_connections_to_add += added_mod_obj_ids
-        obj_ids_of_connections_to_remove += removed_mod_obj_ids
+        #obj_ids_of_connections_to_add += added_mod_obj_ids
+        #obj_ids_of_connections_to_remove += removed_mod_obj_ids
         for mod_obj_id in removed_mod_obj_ids + added_mod_obj_ids:
             # Changed list attributes are updated because their deletability might have changed
             objects_to_update.append(model_web.flat_obj_dict[mod_obj_id])
         if new_mod_obj_id_list != current_mod_obj_id_list:
-            obj_to_edit.__setattr__(mod_obj["attr_name"],
-                                    [model_web.flat_obj_dict[obj_id] for obj_id in new_mod_obj_id_list])
+            # TODO to test if not use._modeling_obj
+            obj_to_edit._modeling_obj.__setattr__(mod_obj["attr_name"],
+                                    [model_web.flat_obj_dict[obj_id]._modeling_obj for obj_id in new_mod_obj_id_list])
 
     # Update session data
-    request.session["system_data"][request.POST["obj_type"]][obj_to_edit.id] = obj_to_edit.to_json()
+    request.session["system_data"][obj_to_edit.class_as_simple_str][obj_to_edit.id] = obj_to_edit.to_json()
     # Here we updated a sub dict of request.session so we have to explicitly tell Django that it has been updated
     request.session.modified = True
 
-    return (obj_to_edit, objects_to_update, obj_ids_of_connections_to_add,
-            obj_ids_of_connections_to_remove)
+    return obj_to_edit, objects_to_update
+
+    #return (obj_to_edit, objects_to_update, obj_ids_of_connections_to_add,
+    #       obj_ids_of_connections_to_remove)
