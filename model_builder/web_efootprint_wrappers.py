@@ -1,3 +1,5 @@
+import re
+
 from efootprint.abstract_modeling_classes.explainable_object_base_class import ExplainableObject
 from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity, ExplainableHourlyQuantities
 from efootprint.abstract_modeling_classes.modeling_object import ModelingObject, PREVIOUS_LIST_VALUE_SET_SUFFIX
@@ -101,6 +103,11 @@ class ModelingObjectWrapper:
         return self.model_web.get_object_structure(self.class_as_simple_str)
 
     @property
+    def template_name(self):
+        snake_case_class_name = re.sub(r'(?<!^)(?=[A-Z])', '_', self.class_as_simple_str).lower()
+        return f"{snake_case_class_name}"
+
+    @property
     def explainable_quantities(self):
         efootprint_explainable_quantities = retrieve_attributes_by_type(self._modeling_obj, ExplainableQuantity)
         for explainable_quantity_dict in efootprint_explainable_quantities:
@@ -144,6 +151,11 @@ class ModelingObjectWrapper:
 
         return is_deletable
 
+class ServerWeb(ModelingObjectWrapper):
+    @property
+    def template_name(self):
+        return "server"
+
 
 class JobWeb(ModelingObjectWrapper):
     @property
@@ -159,7 +171,6 @@ class DuplicatedJobWeb(JobWeb):
     @property
     def web_id(self):
         return f"{self.efootprint_id}_{self.user_journey_step.efootprint_id}"
-
 
 class UserJourneyStepWeb(ModelingObjectWrapper):
     @property
@@ -177,6 +188,15 @@ class UserJourneyStepWeb(ModelingObjectWrapper):
                 web_jobs.append(DuplicatedJobWeb(job, self))
 
         return web_jobs
+
+    def index_step(self, user_journey):
+        user_journey_steps = user_journey.uj_steps
+        index = user_journey_steps.index(self)
+        if index == len(user_journey_steps) - 1:
+            link_to = f"{index+1}"
+        else:
+            link_to = 'add_usage_pattern'
+        return index, link_to
 
 
 class DuplicatedUserJourneyStepWeb(UserJourneyStepWeb):
@@ -216,6 +236,9 @@ class UsagePatternWeb(ModelingObjectWrapper):
         return self.user_journey.web_id
 
 wrapper_mapping = {
+    "Autoscaling": ServerWeb,
+    "OnPremise": ServerWeb,
+    "Serverless": ServerWeb,
     "Job": JobWeb,
     "UserJourneyStep": UserJourneyStepWeb,
     "UserJourney": UserJourneyWeb,

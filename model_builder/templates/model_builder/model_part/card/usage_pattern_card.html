@@ -5,11 +5,11 @@
         hx-swap-oob="true"
      {% endif %}
 >
-    <div class="accordion accordion-flush" id="{{ usage_pattern.web_id }}">
+    <div class="accordion accordion-flush" id="{{ usage_pattern.web_id }}" data-object-type="UsagePattern">
         <div class="accordion-item">
             <h6 class="accordion-header d-flex align-items-center">
                 <button type="button" class="chevron-btn btn btn-link p-0 me-2 text-black"
-                        data-bs-toggle="collapse" data-bs-target="#flush-{{ usage_pattern.web_id }}" aria-expanded="true" aria-controls="collapseOne">
+                        data-bs-toggle="collapse" data-bs-target="#flush-{{ usage_pattern.web_id }}" onclick="reverse_icon_accordion('{{ usage_pattern.web_id }}')" aria-expanded="true" aria-controls="collapseOne">
                         <svg id="icon_accordion_{{ usage_pattern.web_id }}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="bi bi-chevron-right" viewBox="0 0 16 16">
                             <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M4.646 1.646l6 6-6 6" />
                         </svg>
@@ -25,7 +25,7 @@
                     <b>{{ usage_pattern.name}}</b>
             </button>
             </h6>
-            <div id="flush-{{ usage_pattern.web_id }}" class="accordion-collapse collapse accordion-all" data-bs-parent="#{{ usage_pattern.web_id }}">
+            <div id="flush-{{ usage_pattern.web_id }}" class="accordion-collapse collapse accordion-all" data-bs-parent="#{{ usage_pattern.web_id }}" data-object-type="UsagePattern">
                 <div class="accordion-body">
                     <p>{{ usage_pattern.name }}</p>
                 </div>

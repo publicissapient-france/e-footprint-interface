@@ -1,6 +1,7 @@
 // ------------------------------------------------------------
 // LEADERLINE
 
+const object_type_to_exclude = ["UsagePattern","Server"];
 const dict_leaderline_option = {
     'object-to-object': {
         color: "#9CA3AF",
@@ -38,75 +39,7 @@ const dict_leaderline_option = {
     }
 };
 
-let allLines={};
-
-function createLines(element) {
-    let link_to_objets = element.getAttribute('data-link-to');
-    let objectLines = [];
-    for (let link_to of link_to_objets.split('|')) {
-        let opt_line = element.getAttribute('data-line-opt');
-        const endElem = document.getElementById(link_to);
-        let line = new LeaderLine(element, endElem, dict_leaderline_option[opt_line]);
-        objectLines.push(line);
-    }
-    allLines[element.id] = objectLines;
-}
-
-function initLeaderLines() {
-    let elements = document.querySelectorAll('.leader-line-object');
-    let type_object_to_not_init = ['Job','UserJourney']
-    elements.forEach(element => {
-        let objectType = element.getAttribute('data-object-type');
-        if (!type_object_to_not_init.includes(objectType)) {
-            createLines(element);
-        }
-    });
-}
-
-function updateObjectToObjectLinesUJStepAccordionOpening(ujStepAccordion) {
-    allLines[ujStepAccordion.id].forEach(line => {line.remove();});
-    delete allLines[ujStepAccordion.id];
-    let jobs = document.querySelectorAll('#'+ujStepAccordion.id+" .accordion-collapse"+' .leader-line-object');
-    jobs.forEach(job => {createLines(job);});
-}
-
-function updateObjectToObjectLinesUJAccordionOpening(ujAccordion) {
-    allLines[ujAccordion.id].forEach(line => line.remove());
-    delete allLines[ujAccordion.id];
-    let ujSteps = document.querySelectorAll('#' + ujAccordion.id + ' .leader-line-object[data-object-type="UserJourneyStep"]');
-    ujSteps.forEach(ujStep => {
-        let collapsible = document.querySelector(`#flush-${ujStep.id}`);
-        if (collapsible && collapsible.classList.contains('show')) {
-           let jobs = document.querySelectorAll('#' + ujStep.id + ' .leader-line-object[data-object-type="Job"]');
-            jobs.forEach(job => {createLines(job);});
-        }else{
-            createLines(ujStep);
-        }
-    });
-    let circles = document.querySelectorAll('#' + ujAccordion.id + ' .leader-line-object[data-object-type="circle"]');
-    circles.forEach(circle => {createLines(circle);});
-}
-
-function updateObjectToObjectLinesAccordionClosing(accordion) {
-    createLines(accordion);
-    let allLeaderLineChildren = document.querySelectorAll('#'+accordion.id+" .accordion-collapse"+' .leader-line-object');
-    allLeaderLineChildren.forEach(leaderLineChild => {
-       if (allLines[leaderLineChild.id] !== undefined) {
-           allLines[leaderLineChild.id].forEach(line => {
-               line.remove();
-           });
-           delete allLines[leaderLineChild.id];
-       }
-    });
-}
-
-function updateLines() {
-    Object.values(allLines).forEach(lineList => {
-        lineList.forEach(line => {
-            line.position();
-        });
-    });
-}
+let allLines=[];
 
 function reverse_icon_accordion(object_id){
     let icon = document.getElementById('icon_accordion_'+object_id);
@@ -118,106 +51,137 @@ function reverse_icon_accordion(object_id){
     }
 }
 
-function addAccordionListener(accordion){
-    let obj = accordion.getAttribute('data-object-type')
-    if (obj === "UserJourneyStep") {
-        accordion.addEventListener('shown.bs.collapse', function (event) {
-            event.stopPropagation();
-            updateObjectToObjectLinesUJStepAccordionOpening(accordion);
-            updateLines();
-            reverse_icon_accordion(accordion.id);
-        });
-        accordion.addEventListener('hidden.bs.collapse', function (event) {
-            event.stopPropagation();
-            updateObjectToObjectLinesAccordionClosing(accordion);
-            updateLines();
-            reverse_icon_accordion(accordion.id);
-        });
-    } else if ( obj === "UserJourney") {
-        accordion.addEventListener('shown.bs.collapse', function () {
-            updateObjectToObjectLinesUJAccordionOpening(accordion);
-            updateLines();
-            reverse_icon_accordion(accordion.id);
-        });
-        accordion.addEventListener('hidden.bs.collapse', function () {
-            updateObjectToObjectLinesAccordionClosing(accordion);
-            updateLines();
-            reverse_icon_accordion(accordion.id);
-        });
-    } else {
-        accordion.addEventListener('shown.bs.collapse', function (){
-            updateLines();
-            reverse_icon_accordion(accordion.id);
-        });
-        accordion.addEventListener('hidden.bs.collapse', function (){
-            updateLines();
-            reverse_icon_accordion(accordion.id);
-        });
+
+function createLines(element) {
+    let link_to_objets = element.getAttribute('data-link-to');
+    for (let link_to of link_to_objets.split('|')) {
+        let opt_line = element.getAttribute('data-line-opt');
+        const endElem = document.getElementById(link_to);
+        let line = new LeaderLine(element, endElem, dict_leaderline_option[opt_line]);
+        allLines.push(line);
     }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    initLeaderLines();
-});
+function removeLiveLines(element) {
+    Object.keys(allLines).forEach(key => {
+        let line = allLines[key];
+        if (line.start.id === element.id ) {
+            line.remove();
+            delete allLines[key];
+        }
+    });
+}
 
-document.querySelectorAll('.accordion').forEach((accordion) => {
-    addAccordionListener(accordion);
-});
+function updateLines() {
+    Object.values(allLines).forEach(line => {
+        line.position();
+    });
+}
 
 const scrollContainer = document.querySelector('#model-canva');
 scrollContainer.addEventListener('scroll', updateLines);
 
-/*
-document.querySelectorAll('.right-click-target').forEach((element, index) => {
-    element.addEventListener('contextmenu', function (e) {
-        let id_objet = element.getAttribute('data-object-id');
-        console.log('Right-click detected on:', id_objet);
-    e.preventDefault();
-    });
-});
-*/
 function closePanel() {
     const formPanel = document.getElementById('formPanel');
     formPanel.innerHTML = '';
 }
 
-function fixMissingIds() {
-    const elements = Array.from(document.querySelectorAll('[id*="icon-"][id*="-step"]'));
+document.addEventListener("htmx:oobAfterSwap", function (event) {
+    Object.keys(allLines).forEach(key => {
+        allLines[key].remove();
+        delete allLines[key];
+    });
+    initLeaderLines();
+    updateLines();
+    addAccordionListener(event.target);
+});
 
-    let expectedIndex = 1;
-    elements.forEach(element => {
-        const idMatch = element.id.match(/icon-(\d*)-step/);
-        const currentIndex = idMatch && idMatch[1] ? parseInt(idMatch[1]) : null;
-        if (currentIndex !== expectedIndex) {
-            element.id = `icon-${expectedIndex}-step`;
-            if (expectedIndex === elements.length) {
-                element.setAttribute('data-link-to', 'add_usage_pattern_step');
-                element.setAttribute('data-line-opt', 'step-dot-line');
-            } else {
-                element.setAttribute('data-link-to', 'icon-'+parseInt(expectedIndex+1)+'-step');
-                element.setAttribute('data-line-opt', 'vertical-step-swimlane');
+function showLinesAccordionOpening(accordion) {
+    removeLiveLines(accordion);
+    let allLeaderLineChildren = document.querySelectorAll('#'+accordion.id+" .leader-line-object");
+    allLeaderLineChildren.forEach(leaderLineChild => {
+        let parent_accordion = leaderLineChild.closest('.accordion-collapse');
+        if(parent_accordion.classList.contains('show')){
+            if(leaderLineChild.querySelectorAll(".leader-line-object").length > 0){
+                if(leaderLineChild.querySelectorAll('#'+leaderLineChild.id+" .leader-line-object").length > 0) {
+                    if (
+                        document.getElementById('flush-' + leaderLineChild.id) !== null
+                        && document.getElementById('flush-' + leaderLineChild.id).classList.contains('show')
+                    ){
+                        showLinesAccordionOpening(leaderLineChild);
+                    } else {
+                        createLines(leaderLineChild);
+                    }
+                }
+            }else{
+                createLines(leaderLineChild);
             }
         }
+    });
+    updateLines();
+}
 
-        expectedIndex++;
+function showLinesAccordionClosed(accordion , init_accordion) {
+    let allLeaderLineChildren = document.querySelectorAll('#'+accordion.id+" .leader-line-object");
+    allLeaderLineChildren.forEach(leaderLineChild => {
+        removeLiveLines(leaderLineChild);
+        if(leaderLineChild.querySelectorAll('#'+leaderLineChild.id+" .leader-line-object").length > 0){
+           showLinesAccordionClosed(leaderLineChild, init_accordion);
+        }
+    });
+    if(accordion === init_accordion){
+        createLines(accordion);
+    }
+    updateLines()
+}
+
+function addAccordionListener(accordion){
+    accordion.addEventListener('shown.bs.collapse', function (event) {
+        event.stopPropagation();
+        let obj_type = accordion.getAttribute('data-object-type')
+        if (!object_type_to_exclude.includes(obj_type)) {
+            showLinesAccordionOpening(accordion);
+        }
+        updateLines();
+    });
+    accordion.addEventListener('hidden.bs.collapse', function (event) {
+        event.stopPropagation();
+        let obj_type = accordion.getAttribute('data-object-type')
+        if (!object_type_to_exclude.includes(obj_type)) {
+            showLinesAccordionClosed(accordion, accordion);
+        }
+        updateLines();
+});
+}
+
+document.querySelectorAll('.accordion').forEach((accordion) => {
+    addAccordionListener(accordion);
+});
+
+function getLeaderLineObjects() {
+    let elements = document.querySelectorAll('.leader-line-object');
+    elements.forEach(element => {
+        let object_type = element.getAttribute('data-object-type');
+        if (!object_type_to_exclude.includes(object_type)) {
+            let accordionParent = element.closest('.accordion-collapse');
+            if (accordionParent) {
+                if (accordionParent.classList.contains('show')) {
+                    createLines(element);
+                }
+            }
+        }else{
+             createLines(element);
+        }
     });
 }
 
-document.addEventListener("htmx:afterSwap", function (event) {
-    if (event.target.getAttribute("hx-swap-oob") === "true") {
-        event.stopPropagation();
-        Object.values(allLines).forEach(lineList => {
-            lineList.forEach(line => {
-                line.remove();
-            });
-        });
-        allLines = {};
-        fixMissingIds();
-        initLeaderLines();
-        addAccordionListener(event.target);
-    }
-});
+function initLeaderLines() {
+    getLeaderLineObjects();
+}
 
+document.addEventListener("DOMContentLoaded", function () {
+    initLeaderLines();
+});
 
 // ------------------------------------------------------------
 // SORTABLE

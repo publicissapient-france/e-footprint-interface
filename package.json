@@ -22,6 +22,7 @@
         "typescript": "5.4.5"
     },
     "dependencies": {
-        "bootstrap": "^5.3.3"
+        "bootstrap": "^5.3.3",
+        "chart.js": "^4.4.7"
     }
 }

@@ -56,56 +56,16 @@ def open_edit_object_panel(request, object_id):
 
 
 def create_object_addition_or_edition_oob_html_updated(request, objects_to_update):
-    #system_footprint_html = system.plot_footprints_by_category_and_object(
-    #    height=400, width=DEFAULT_GRAPH_WIDTH, return_only_html=True)
-
-    #graph_container_html = render_to_string(
-    #    "model_builder/graph-container.html",
-    #    context={"systemFootprint": system_footprint_html, "hx_swap_oob": True})
-
-    #model_comparison_buttons_html = render_to_string(
-    #    "model_builder/model-comparison-buttons.html",
-    #    {"is_different_from_ref_model": request.session["system_data"] != request.session["reference_system_data"],
-    #    "hx_swap_oob": True})
-
-    #return_html = graph_container_html + model_comparison_buttons_html
-
     return_html = ""
-
-    template_dict = {
-        'UsagePattern': 'usage_pattern.html',
-        'UserJourney': 'user_journey_card.html',
-        'UserJourneyStep': 'user_journey_step_card.html',
-        'Job': 'job_card.html',
-        'Autoscaling': 'infrastructure_card.html',
-        'OnPremise': 'infrastructure_card.html',
-        'Serverless': 'infrastructure_card.html'
-    }
-
-    key_obj_dict = {
-        'UsagePattern': 'usage_pattern',
-        'UserJourney': 'user_journey',
-        'UserJourneyStep': 'user_journey_step',
-        'Job': 'job',
-        'Autoscaling': 'server',
-        'OnPremise': 'server',
-        'Serverless': 'server'
-    }
-
     for obj in objects_to_update:
-        template_name= template_dict[obj.class_as_simple_str]
-        key_obj= key_obj_dict[obj.class_as_simple_str]
-        return_html += render_to_string(
-            f"model_builder/model_part/card/{template_name}",
-            {key_obj: obj, "hx_swap_oob": True}
-        )
-
-    #for obj in objects_to_update:
-    #    return_html += render_to_string(
-    #        "model_builder/object-card.html",
-    #       {"object": obj, "hx_swap_oob": True})
-
-    request.session["img_base64"] = None
+        if obj.class_as_simple_str not in ['Country', 'Network', 'Hardware', 'Storage']:
+            template_name= f'{obj.template_name}_card.html'
+            key_obj= obj.template_name
+            return_html += render_to_string(
+                f"model_builder/model_part/card/{template_name}",
+                {key_obj: obj,
+                 "hx_swap_oob": True}
+            )
 
     return return_html
 
@@ -114,29 +74,25 @@ def add_new_object(request):
     model_web = ModelWeb(request.session["system_data"])
     added_obj, objects_to_update = add_new_object_to_system(request, model_web)
     oob_html = create_object_addition_or_edition_oob_html_updated(request, model_web.system, objects_to_update)
-
     http_response = HttpResponse(oob_html)
-
     return http_response
 
 
 def edit_object(request, object_id):
     model_web = ModelWeb(request.session["system_data"])
     obj_to_edit = model_web.get_object_from_id(object_id)
-    (edited_obj, objects_to_update) = edit_object_in_system(request, obj_to_edit)
-    #(edited_obj, objects_to_update, obj_ids_of_connections_to_add,
-    # obj_ids_of_connections_to_remove) = edit_object_in_system(request, obj_to_edit)
-    oob_html = create_object_addition_or_edition_oob_html_updated(request, objects_to_update)
+    edited_obj = edit_object_in_system(request, obj_to_edit)
+    obj_to_update = []
 
+    if edited_obj.class_as_simple_str == 'UserJourneyStep' or edited_obj.class_as_simple_str == 'Job':
+        obj_to_update.extend(edited_obj.user_journeys)
+    else:
+        obj_to_update.append(edited_obj)
+
+    oob_html = create_object_addition_or_edition_oob_html_updated(request, obj_to_update)
     http_response = HttpResponse(oob_html)
-    # TODO: update below logic to handle link updates
-    #http_response["HX-Trigger-After-Swap"] = json.dumps(
-    #    {"editConnections": {"editedNode": edited_obj.id,
-    #                         "connectionsToAdd": obj_ids_of_connections_to_add,
-    #                         "connectionsToRemove": obj_ids_of_connections_to_remove}})
 
     return http_response
-
 
 def delete_object(request):
     model_web = ModelWeb(request.session["system_data"])
