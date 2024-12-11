@@ -38,12 +38,16 @@ class ExplainableObjectWeb:
 
 
 class ModelingObjectWrapper:
-    def __init__(self, modeling_obj, model_web):
+    def __init__(self, modeling_obj: ModelingObject, model_web):
         self._modeling_obj = modeling_obj
         self.model_web = model_web
 
     def __getattr__(self, name):
         attr = getattr(self._modeling_obj, name)
+
+        if name == "id":
+            raise ValueError("The id attribute shouldn’t be retrieved by ModelingObjectWrapper objects. "
+                             "Use efootprint_id and web_id for clear disambiguation.")
 
         if isinstance(attr, list) and len(attr) > 0 and isinstance(attr[0], ModelingObject):
             return [wrap_efootprint_object(item, self.model_web) for item in attr]
@@ -55,6 +59,42 @@ class ModelingObjectWrapper:
             return ExplainableObjectWeb(attr)
 
         return attr
+
+    def __setattr__(self, key, value):
+        if key in ["_modeling_obj", "model_web"]:
+            super.__setattr__(self, key, value)
+        elif key in self.structure.all_attribute_names + ["name", "id"]:
+            raise PermissionError(f"{self} is trying to set the {key} attribute that is also an attribute of its "
+                                  f"underlying e-footprint object.")
+        else:
+            super.__setattr__(self, key, value)
+
+    def set_efootprint_value(self, key, value):
+        error_message = (f"{self} tried to set a ModelingObjectWrapper attribute to its underlying e-footprint "
+                         f"object, which is forbidden. Only set e-footprint objects as attributes of e-footprint "
+                         f"objects.")
+        if isinstance(value, list) and len(value) > 0 and isinstance(value[0], ModelingObjectWrapper):
+            raise PermissionError(error_message)
+
+        if isinstance(value, ModelingObjectWrapper):
+            raise PermissionError(error_message)
+
+        if isinstance(value, ExplainableObjectWeb):
+            raise PermissionError(error_message)
+
+        self._modeling_obj.__setattr__(key, value)
+
+    @property
+    def modeling_obj(self):
+        return self._modeling_obj
+
+    @property
+    def efootprint_id(self):
+        return self._modeling_obj.id
+
+    @property
+    def web_id(self):
+        return self._modeling_obj.id
 
     @property
     def structure(self):
@@ -108,20 +148,23 @@ class ModelingObjectWrapper:
 class JobWeb(ModelingObjectWrapper):
     @property
     def links_to(self):
-        return self.server.id
+        return self.server.web_id
 
 
 class DuplicatedJobWeb(JobWeb):
-    def __init__(self, modeling_obj, model_web, web_id, uj_step):
-        super().__init__(modeling_obj, model_web)
-        self.id = web_id
-        self.user_journey_steps = uj_step
+    def __init__(self, modeling_obj: ModelingObject, uj_step: ModelingObjectWrapper):
+        super().__init__(modeling_obj, uj_step.model_web)
+        self.user_journey_step = uj_step
+
+    @property
+    def web_id(self):
+        return f"{self.efootprint_id}_{self.user_journey_step.efootprint_id}"
 
 
 class UserJourneyStepWeb(ModelingObjectWrapper):
     @property
     def links_to(self):
-        linked_server_ids = set([job.server.id for job in self.jobs])
+        linked_server_ids = set([job.server.web_id for job in self.jobs])
         return "|".join(linked_server_ids)
 
     @property
@@ -129,19 +172,21 @@ class UserJourneyStepWeb(ModelingObjectWrapper):
         web_jobs = []
         for job in self._modeling_obj.jobs:
             if len(job.user_journey_steps) == 1:
-                job_id = job.id
+                web_jobs.append(JobWeb(job, self.model_web))
             else:
-                job_id = f"{job.id}_{self.id}"
-            web_jobs.append(DuplicatedJobWeb(job, self.model_web, job_id, self._modeling_obj))
+                web_jobs.append(DuplicatedJobWeb(job, self))
 
         return web_jobs
 
 
 class DuplicatedUserJourneyStepWeb(UserJourneyStepWeb):
-    def __init__(self, modeling_obj, model_web, web_id, user_journey):
-        super().__init__(modeling_obj, model_web)
-        self.id = web_id
-        self.user_journeys = [user_journey]
+    def __init__(self, modeling_obj: ModelingObject, user_journey: ModelingObjectWrapper):
+        super().__init__(modeling_obj, user_journey.model_web)
+        self.user_journey = user_journey
+
+    @property
+    def web_id(self):
+        return f"{self.efootprint_id}_{self.user_journey.efootprint_id}"
 
 
 class UserJourneyWeb(ModelingObjectWrapper):
@@ -150,10 +195,9 @@ class UserJourneyWeb(ModelingObjectWrapper):
         web_uj_steps = []
         for uj_step in self._modeling_obj.uj_steps:
             if len(uj_step.user_journeys) == 1:
-                uj_step_id = uj_step.id
+                web_uj_steps.append(UserJourneyStepWeb(uj_step, self.model_web))
             else:
-                uj_step_id = f"{uj_step.id}_{self.id}"
-            web_uj_steps.append(DuplicatedUserJourneyStepWeb(uj_step, self.model_web, uj_step_id, self._modeling_obj))
+                web_uj_steps.append(DuplicatedUserJourneyStepWeb(uj_step, self))
 
         return web_uj_steps
 
@@ -162,14 +206,14 @@ class UserJourneyWeb(ModelingObjectWrapper):
         linked_server_ids = set()
         for uj_step in self.uj_steps:
             for job in uj_step.jobs:
-                linked_server_ids.add(job.server.id)
+                linked_server_ids.add(job.server.web_id)
         return "|".join(sorted(linked_server_ids))
 
 
 class UsagePatternWeb(ModelingObjectWrapper):
     @property
     def links_to(self):
-        return self.user_journey.id
+        return self.user_journey.web_id
 
 wrapper_mapping = {
     "Job": JobWeb,

@@ -3,19 +3,19 @@
         hx-swap-oob="true"
      {% endif %}
 >
-    <div class="accordion accordion-flush leader-line-object" id="{{ uj.id }}" data-link-to="{{ uj.links_to }}" data-line-opt="object-to-object" data-object-type="UserJourney">
+    <div class="accordion accordion-flush leader-line-object" id="{{ uj.web_id }}" data-link-to="{{ uj.links_to }}" data-line-opt="object-to-object" data-object-type="UserJourney">
         <div class="accordion-item">
             <h6 class="accordion-header px-3 d-flex align-items-center">
                 <button type="button" class="chevron-btn btn btn-link p-0 me-2 text-black"
-                        data-bs-toggle="collapse" data-bs-target="#flush-{{ uj.id }}" aria-expanded="true" aria-controls="collapseOne">
-                        <svg id="icon_accordion_{{ uj.id }}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="bi bi-chevron-right chevron-rotate" viewBox="0 0 16 16">
+                        data-bs-toggle="collapse" data-bs-target="#flush-{{ uj.web_id }}" aria-expanded="true" aria-controls="collapseOne">
+                        <svg id="icon_accordion_{{ uj.web_id }}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="bi bi-chevron-right chevron-rotate" viewBox="0 0 16 16">
                             <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M4.646 1.646l6 6-6 6" />
                         </svg>
                 </button>
                 <button class="btn btn-white ms-1"
                         type="button"
-                        data-object-id="{{ uj.id }}" data-object-type="UserJourney"
-                        hx-get="/model_builder/open-edit-object-panel/{{ uj.id }}/"
+                        data-object-id="{{ uj.web_id }}" data-object-type="UserJourney"
+                        hx-get="/model_builder/open-edit-object-panel/{{ uj.efootprint_id }}/"
                         hx-target="#formPanel"
                         hx-trigger="click"
                         hx-swap="innerHTML"
@@ -23,7 +23,7 @@
                 <b>{{ uj.name}}</b>
                 </button>
             </h6>
-            <div id="flush-{{ uj.id }}" class="accordion-collapse show accordion-all" data-bs-parent="#{{ uj.id }}">
+            <div id="flush-{{ uj.web_id }}" class="accordion-collapse show accordion-all" data-bs-parent="#{{ uj.web_id }}">
                 <div class="accordion-body p-0">
                     {% for user_journey_step in uj.uj_steps %}
                         {% include 'model_builder/model_part/card/user_journey_step_card.html' with uj_step=user_journey_step %}

@@ -1,7 +1,6 @@
 import json
 import os
 
-from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
 from efootprint.api_utils.json_to_system import json_to_system
 
 from e_footprint_interface import settings
@@ -29,7 +28,7 @@ class ModelWeb:
     def get_objects_from_type(self, obj_type):
         return list(self.response_objs[obj_type].values())
 
-    def get_object_from_id(self, object_id) -> ModelingObject:
+    def get_object_from_id(self, object_id):
         return self.flat_obj_dict[object_id]
 
     def get_object_structure(self, object_type):
@@ -98,21 +97,21 @@ class ObjectStructure:
     def __init__(self, model_web: ModelWeb, object_type: str):
         self.model_web = model_web
         self.object_type = object_type
-        self.default_name = f"My new {self.object_type}"
+        self.default_name = f"My new {object_type}"
+        self.structure_dict = model_web.object_inputs_and_default_values[object_type]
 
     def __getattr__(self, name):
-        attr = getattr(self.model_web.object_inputs_and_default_values[self.object_type], name)
+        attr = getattr(self.structure_dict, name)
 
         return attr
 
     @property
     def numerical_attributes(self):
-        return self.model_web.object_inputs_and_default_values[self.object_type]["numerical_attributes"]
+        return self.structure_dict["numerical_attributes"]
 
     @property
     def modeling_obj_attributes(self):
-        modeling_obj_attributes = self.model_web.object_inputs_and_default_values[
-            self.object_type]["modeling_obj_attributes"]
+        modeling_obj_attributes = self.structure_dict["modeling_obj_attributes"]
 
         for mod_obj_attribute_desc in modeling_obj_attributes:
             if mod_obj_attribute_desc["object_type"] == "Country":
@@ -125,8 +124,7 @@ class ObjectStructure:
 
     @property
     def list_attributes(self):
-        list_attributes = self.model_web.object_inputs_and_default_values[
-            self.object_type]["list_attributes"]
+        list_attributes = self.structure_dict["list_attributes"]
 
         for list_attribute_desc in list_attributes:
             if list_attribute_desc["object_type"] == "Country":
@@ -136,3 +134,12 @@ class ObjectStructure:
                 list_attribute_desc["existing_objects"] = self.model_web.get_objects_from_type(self.object_type)
 
         return list_attributes
+
+    @property
+    def all_attribute_names(self):
+        all_attribute_names = []
+        for attribute_type in self.structure_dict.keys():
+            for attribute in self.structure_dict[attribute_type]:
+                all_attribute_names.append(attribute["attr_name"])
+
+        return all_attribute_names

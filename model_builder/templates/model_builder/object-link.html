@@ -1,5 +1,5 @@
 <button id="linked-{{ linked_object.class_as_simple_str }}"
-        onclick="goToObject('{{ linked_object.id }}')"
+        onclick="goToObject('{{ linked_object.web_id }}')"
         class="btn border border-primary rounded d-flex align-items-center gap-2 w-100 text-primary">
     <img src="/static/icons/link-icon.svg" alt="Object link" />
     <div class="link-object-title">{{ linked_object.class_as_simple_str }} : {{ linked_object.name }}</div>

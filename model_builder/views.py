@@ -1,5 +1,3 @@
-import logging
-
 from efootprint.api_utils.json_to_system import json_to_system
 from efootprint.api_utils.system_to_json import system_to_json
 from efootprint.utils.plot_emission_diffs import EmissionPlotter
@@ -54,11 +52,7 @@ def open_edit_object_panel(request, object_id):
     model_web = ModelWeb(request.session["system_data"])
     obj_to_edit = model_web.get_object_from_id(object_id)
 
-    context_data = {
-        "object_to_edit": obj_to_edit
-    }
-
-    return render(request, "model_builder/edit_object_panel.html", context=context_data)
+    return render(request, "model_builder/edit_object_panel.html", context={"object_to_edit": obj_to_edit})
 
 
 def create_object_addition_or_edition_oob_html_updated(request, objects_to_update):
@@ -103,8 +97,7 @@ def create_object_addition_or_edition_oob_html_updated(request, objects_to_updat
         key_obj= key_obj_dict[obj.class_as_simple_str]
         return_html += render_to_string(
             f"model_builder/model_part/card/{template_name}",
-            {key_obj: obj,
-             "hx_swap_oob": True}
+            {key_obj: obj, "hx_swap_oob": True}
         )
 
     #for obj in objects_to_update:

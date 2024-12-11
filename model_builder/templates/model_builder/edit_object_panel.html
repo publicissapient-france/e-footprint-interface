@@ -1,6 +1,6 @@
 
 <form class="form_edit_panel p-4 text-start"
-      hx-post="/model_builder/edit-object/{{ object_to_edit.id }}/"
+      hx-post="/model_builder/edit-object/{{ object_to_edit.efootprint_id }}/"
 >
     <div class="w-100 text-end">
         <button type="button" class="btn btn-white" aria-label="Close"
@@ -45,7 +45,7 @@
                     <label for="form_edit_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
                     <select class="form-control p-2" id="form_edit_{{ attr.attr_name }}" name="form_edit_{{ attr.attr_name }}">
                         {% for obj in attr.existing_objects %}
-                             <option value="{{ obj.id }}" {% if attr.attr_value.id == obj.id %}selected{% endif %}>{{ obj.name }}</option>
+                             <option value="{{ obj.efootprint_id }}" {% if attr.attr_value.efootprint_id == obj.efootprint_id %}selected{% endif %}>{{ obj.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -56,7 +56,7 @@
                     <label for="form_edit_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
                     <select class="form-control p-2" id="form_edit_{{ attr.attr_name }}" name="form_edit_{{ attr.attr_name }}" multiple>
                         {% for obj in attr.existing_objects %}
-                             <option value="{{ obj.id }}" {% for obj_selected in attr.attr_value %}{% if obj_selected.id == obj.id %}selected{% endif %}{% endfor %} >{{ obj.name }}</option>
+                             <option value="{{ obj.efootprint_id }}" {% for obj_selected in attr.attr_value %}{% if obj_selected.efootprint_id == obj.efootprint_id %}selected{% endif %}{% endfor %} >{{ obj.name }}</option>
                         {% endfor %}
                     </select>
                 </div>

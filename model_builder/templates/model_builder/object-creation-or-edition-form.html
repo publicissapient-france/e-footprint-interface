@@ -36,7 +36,7 @@
             <div class="col-8">
                 <select id="{{ modeling_obj_attribute.attr_name }}" name="{{ modeling_obj_attribute.attr_name }}" class="form-select rounded-2">
                     {% for existing_object in modeling_obj_attribute.existing_objects %}
-                        <option value="{{ existing_object.id }}" {% if existing_object.id == modeling_obj_attribute.selected %} selected {% endif %}>{{ existing_object.name }}</option>
+                        <option value="{{ existing_object.efootprint_id }}" {% if existing_object.efootprint_id == modeling_obj_attribute.selected %} selected {% endif %}>{{ existing_object.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -50,8 +50,8 @@
                 <div id="{{ list_attribute.attr_name }}" class="d-flex flex-column gap-2">
                     {% for existing_object in list_attribute.existing_objects %}
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="{{ existing_object.id }}" id="checkbox-{{ existing_object.id }}" name="{{ list_attribute.attr_name }}" {% if existing_object.id in list_attribute.selected %} checked {% endif %}>
-                            <label class="form-check-label" for="checkbox-{{ existing_object.id }}">{{ existing_object.name }}</label>
+                            <input class="form-check-input" type="checkbox" value="{{ existing_object.efootprint_id }}" id="checkbox-{{ existing_object.web_id }}" name="{{ list_attribute.attr_name }}" {% if existing_object.efootprint_id in list_attribute.selected %} checked {% endif %}>
+                            <label class="form-check-label" for="checkbox-{{ existing_object.web_id }}">{{ existing_object.name }}</label>
                         </div>
                     {% endfor %}
                 </div>
