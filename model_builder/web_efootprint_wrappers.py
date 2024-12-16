@@ -43,6 +43,7 @@ class ModelingObjectWrapper:
     def __init__(self, modeling_obj: ModelingObject, model_web):
         self._modeling_obj = modeling_obj
         self.model_web = model_web
+        self.structure = self.model_web.get_object_structure(self.class_as_simple_str)
 
     def __getattr__(self, name):
         attr = getattr(self._modeling_obj, name)
@@ -63,7 +64,7 @@ class ModelingObjectWrapper:
         return attr
 
     def __setattr__(self, key, value):
-        if key in ["_modeling_obj", "model_web"]:
+        if key in ["_modeling_obj", "model_web", "structure"]:
             super.__setattr__(self, key, value)
         elif key in self.structure.all_attribute_names + ["name", "id"]:
             raise PermissionError(f"{self} is trying to set the {key} attribute that is also an attribute of its "
@@ -97,10 +98,6 @@ class ModelingObjectWrapper:
     @property
     def web_id(self):
         return self._modeling_obj.id
-
-    @property
-    def structure(self):
-        return self.model_web.get_object_structure(self.class_as_simple_str)
 
     @property
     def template_name(self):
@@ -158,6 +155,11 @@ class ServerWeb(ModelingObjectWrapper):
 
 
 class JobWeb(ModelingObjectWrapper):
+    def __init__(self, modeling_obj: ModelingObject, model_web):
+        super().__init__(modeling_obj, model_web)
+        if len(self.user_journey_steps) == 1:
+            self.user_journey_step = self.user_journey_steps[0]
+
     @property
     def links_to(self):
         return self.server.web_id
@@ -173,6 +175,12 @@ class DuplicatedJobWeb(JobWeb):
         return f"{self.efootprint_id}_{self.user_journey_step.efootprint_id}"
 
 class UserJourneyStepWeb(ModelingObjectWrapper):
+    def __init__(self, modeling_obj: ModelingObject, model_web):
+        super().__init__(modeling_obj, model_web)
+        self.user_journey = None
+        if len(self.user_journeys) == 1:
+            self.user_journey = self.user_journeys[0]
+
     @property
     def links_to(self):
         linked_server_ids = set([job.server.web_id for job in self.jobs])

@@ -8,11 +8,8 @@
                          width="20px" height="20px;" alt="circle_step">
     </div>
     <div class="col-10 p-0">
-        <div class="accordion accordion-flush leader-line-object p-0" id="{{ user_journey_step.web_id }}" data-link-to="{{ user_journey_step.links_to }}" data-line-opt="object-to-object" data-object-type="UserJourneyStep"
-    {%  if hx_swap_oob %}
-        hx-swap-oob="true"
-     {% endif %}
-        >
+            <div class="accordion accordion-flush leader-line-object p-0" id="{{ user_journey_step.web_id }}"
+             data-link-to="{{ user_journey_step.links_to }}" data-line-opt="object-to-object" data-object-type="UserJourneyStep" {% if hx_swap_oob %}hx-swap-oob="true"{% endif %} >
             <div class="accordion-item">
                 <h6 class="accordion-header p-0 d-flex align-items-center text-start">
                     <button type="button" class="chevron-btn btn btn-link p-0 me-1 text-black"

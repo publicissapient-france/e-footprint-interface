@@ -41,143 +41,106 @@ const dict_leaderline_option = {
 
 let allLines=[];
 
-function reverse_icon_accordion(object_id){
-    let icon = document.getElementById('icon_accordion_'+object_id);
-    if (icon.classList.contains('chevron-rotate')) {
-        icon.classList.remove('chevron-rotate');
-    }
-    else {
-        icon.classList.add('chevron-rotate');
-    }
-}
-
-
-function createLines(element) {
-    let link_to_objets = element.getAttribute('data-link-to');
-    for (let link_to of link_to_objets.split('|')) {
-        let opt_line = element.getAttribute('data-line-opt');
-        const endElem = document.getElementById(link_to);
-        let line = new LeaderLine(element, endElem, dict_leaderline_option[opt_line]);
-        allLines.push(line);
-    }
-}
-
-function removeLiveLines(element) {
-    Object.keys(allLines).forEach(key => {
-        let line = allLines[key];
-        if (line.start.id === element.id ) {
-            line.remove();
-            delete allLines[key];
-        }
-    });
-}
-
 function updateLines() {
-    Object.values(allLines).forEach(line => {
-        line.position();
+    Object.values(allLines).forEach(lineArray => {
+        lineArray.forEach(line => {
+            line.position();
+        });
     });
 }
 
 const scrollContainer = document.querySelector('#model-canva');
 scrollContainer.addEventListener('scroll', updateLines);
 
-function closePanel() {
-    const formPanel = document.getElementById('formPanel');
-    formPanel.innerHTML = '';
+function removeLines(elementId) {
+    if (allLines[elementId]) {
+        allLines[elementId].forEach( line => line.remove());
+        delete allLines[elementId];
+    }
+}
+
+function updateOrCreateLines(element) {
+    const elementId = element.id;
+
+    function drawLines(fromElement) {
+        const linkedIds = element.dataset.linkTo?.split('|') || [];
+        linkedIds.forEach(toElementId => {
+            if (!allLines[fromElement.id]) {
+                allLines[fromElement.id] = [];
+            }
+            const existingLine = allLines[fromElement.id].find(line => line.end.id === toElementId);
+            if (!existingLine) {
+                const toElement = document.getElementById(toElementId);
+                if (toElement) {
+                    let opt_line = fromElement.getAttribute('data-line-opt');
+                    const line = new LeaderLine(fromElement, toElement, dict_leaderline_option[opt_line]);
+                    allLines[fromElement.id].push(line);
+                }
+            }
+        });
+    }
+
+    function getDirectLeaderLineChildren(parent) {
+        return Array.from(parent.querySelectorAll('.leader-line-object'))
+            .filter(child => child.parentElement.closest('.leader-line-object') === parent);
+    }
+
+    if (element.classList.contains('accordion')) {
+        const accordion_collapse = document.getElementById("flush-" + elementId);
+        let isOpen =  accordion_collapse.classList.contains('show');
+        if (!isOpen) {
+            drawLines(element);
+            const childElements = element.querySelectorAll('.leader-line-object');
+            childElements.forEach(child => removeLines(child.id));
+        } else {
+            const childElements = getDirectLeaderLineChildren(element);
+            if (childElements.length > 0) {
+                removeLines(elementId);
+                childElements.forEach(child => updateOrCreateLines(child));
+            } else {
+                drawLines(element);
+            }
+        }
+    } else {
+        drawLines(element);
+    }
 }
 
 document.addEventListener("htmx:oobAfterSwap", function (event) {
-    Object.keys(allLines).forEach(key => {
-        allLines[key].remove();
-        delete allLines[key];
-    });
-    initLeaderLines();
+    updateOrCreateLines(event.target);
     updateLines();
     addAccordionListener(event.target);
 });
 
-function showLinesAccordionOpening(accordion) {
-    removeLiveLines(accordion);
-    let allLeaderLineChildren = document.querySelectorAll('#'+accordion.id+" .leader-line-object");
-    allLeaderLineChildren.forEach(leaderLineChild => {
-        let parent_accordion = leaderLineChild.closest('.accordion-collapse');
-        if(parent_accordion.classList.contains('show')){
-            if(leaderLineChild.querySelectorAll(".leader-line-object").length > 0){
-                if(leaderLineChild.querySelectorAll('#'+leaderLineChild.id+" .leader-line-object").length > 0) {
-                    if (
-                        document.getElementById('flush-' + leaderLineChild.id) !== null
-                        && document.getElementById('flush-' + leaderLineChild.id).classList.contains('show')
-                    ){
-                        showLinesAccordionOpening(leaderLineChild);
-                    } else {
-                        createLines(leaderLineChild);
-                    }
-                }
-            }else{
-                createLines(leaderLineChild);
-            }
-        }
-    });
-    updateLines();
-}
-
-function showLinesAccordionClosed(accordion , init_accordion) {
-    let allLeaderLineChildren = document.querySelectorAll('#'+accordion.id+" .leader-line-object");
-    allLeaderLineChildren.forEach(leaderLineChild => {
-        removeLiveLines(leaderLineChild);
-        if(leaderLineChild.querySelectorAll('#'+leaderLineChild.id+" .leader-line-object").length > 0){
-           showLinesAccordionClosed(leaderLineChild, init_accordion);
-        }
-    });
-    if(accordion === init_accordion){
-        createLines(accordion);
-    }
-    updateLines()
-}
-
 function addAccordionListener(accordion){
-    accordion.addEventListener('shown.bs.collapse', function (event) {
-        event.stopPropagation();
-        let obj_type = accordion.getAttribute('data-object-type')
-        if (!object_type_to_exclude.includes(obj_type)) {
-            showLinesAccordionOpening(accordion);
-        }
+    accordion.addEventListener('shown.bs.collapse', function () {
+        updateOrCreateLines(accordion);
         updateLines();
     });
-    accordion.addEventListener('hidden.bs.collapse', function (event) {
-        event.stopPropagation();
-        let obj_type = accordion.getAttribute('data-object-type')
-        if (!object_type_to_exclude.includes(obj_type)) {
-            showLinesAccordionClosed(accordion, accordion);
-        }
+    accordion.addEventListener('hidden.bs.collapse', function () {
+        updateOrCreateLines(accordion);
         updateLines();
-});
-}
-
-document.querySelectorAll('.accordion').forEach((accordion) => {
-    addAccordionListener(accordion);
-});
-
-function getLeaderLineObjects() {
-    let elements = document.querySelectorAll('.leader-line-object');
-    elements.forEach(element => {
-        let object_type = element.getAttribute('data-object-type');
-        if (!object_type_to_exclude.includes(object_type)) {
-            let accordionParent = element.closest('.accordion-collapse');
-            if (accordionParent) {
-                if (accordionParent.classList.contains('show')) {
-                    createLines(element);
-                }
-            }
-        }else{
-             createLines(element);
-        }
+    });
+    accordion.addEventListener('hide.bs.collapse', function (event) {
+        event.stopPropagation();
+        const childElements = accordion.querySelectorAll('.leader-line-object');
+        childElements.forEach(child => removeLines(child.id));
     });
 }
 
 function initLeaderLines() {
-    getLeaderLineObjects();
+    let accordions = document.querySelectorAll('.accordion');
+    accordions.forEach(accordion => {
+        let accordionParent = accordion.parentElement.closest('.accordion');
+        if (accordionParent == null) {
+            updateOrCreateLines(accordion);
+        }
+    });
 }
+
+document.querySelectorAll('.accordion').forEach(accordion => {
+    addAccordionListener(accordion);
+});
 
 document.addEventListener("DOMContentLoaded", function () {
     initLeaderLines();
@@ -201,3 +164,18 @@ document.addEventListener("DOMContentLoaded", function () {
         onEnd: updateLines
     });
 });
+
+function closePanel() {
+    const formPanel = document.getElementById('formPanel');
+    formPanel.innerHTML = '';
+}
+
+function reverse_icon_accordion(object_id){
+    let icon = document.getElementById('icon_accordion_'+object_id);
+    if (icon.classList.contains('chevron-rotate')) {
+        icon.classList.remove('chevron-rotate');
+    }
+    else {
+        icon.classList.add('chevron-rotate');
+    }
+}

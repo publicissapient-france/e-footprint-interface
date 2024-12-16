@@ -1,11 +1,6 @@
-<div class="list-group-item my-3 mb-1 rounded-4 p-2 up-list-item card-hover leader-line-object"
-     id="{{ usage_pattern.web_id }}"  style="cursor: move;"
-     data-link-to="{{ usage_pattern.links_to }}" data-line-opt="object-to-object" data-object-type="UsagePattern"
-    {% if hx_swap_oob %}
-        hx-swap-oob="true"
-     {% endif %}
->
-    <div class="accordion accordion-flush" id="{{ usage_pattern.web_id }}" data-object-type="UsagePattern">
+<div class="list-group-item my-3 mb-1 rounded-4 p-2 up-list-item card-hover" style="cursor: move;">
+    <div class="accordion accordion-flush leader-line-object" id="{{ usage_pattern.web_id }}" data-object-type="UsagePattern"
+         data-link-to="{{ usage_pattern.links_to }}" data-line-opt="object-to-object" data-object-type="UsagePattern" {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}>
         <div class="accordion-item">
             <h6 class="accordion-header d-flex align-items-center">
                 <button type="button" class="chevron-btn btn btn-link p-0 me-2 text-black"

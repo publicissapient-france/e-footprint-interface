@@ -12,6 +12,10 @@ class ModelWeb:
     def __init__(self, jsondata):
         self.jsondata = jsondata
         self.response_objs, self.flat_obj_dict = json_to_system(jsondata)
+        with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'object_inputs_and_default_values.json'),
+                  "r") as object_inputs_file:
+            self.object_inputs_and_default_values = json.load(object_inputs_file)
+
         self.system = wrap_efootprint_object(list(self.response_objs["System"].values())[0], self)
 
         for obj_id, mod_obj in self.flat_obj_dict.items():
@@ -20,10 +24,6 @@ class ModelWeb:
         for obj_type in self.response_objs.keys():
             for obj_id, mod_obj in self.response_objs[obj_type].items():
                 self.response_objs[obj_type][obj_id] = wrap_efootprint_object(mod_obj, self)
-
-        with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'object_inputs_and_default_values.json'),
-                  "r") as object_inputs_file:
-            self.object_inputs_and_default_values = json.load(object_inputs_file)
 
     def get_objects_from_type(self, obj_type):
         return list(self.response_objs[obj_type].values())
