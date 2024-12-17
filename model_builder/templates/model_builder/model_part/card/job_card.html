@@ -1,11 +1,10 @@
-<div class="col-10 offset-2 p-2 leader-line-object" id="{{ job.web_id }}"
+<div id="{{ job.web_id }}" class="col-10 offset-2 p-2 leader-line-object"
     data-link-to="{{ job.links_to }}" data-line-opt="object-to-object" data-object-type="Job"
-    {% if hx_swap_oob %}
-        hx-swap-oob="true"
-     {% endif %}
 >
-    <button class="btn btn-white text-start m-0"  style="font-size: 0.8rem;"
-    hx-get="/model_builder/open-edit-object-panel/{{ job.efootprint_id }}/"
+    <button
+        id="button-{{ job.web_id }}"
+        class="btn btn-white text-start m-0"  style="font-size: 0.8rem;"
+        hx-get="/model_builder/open-edit-object-panel/{{ job.efootprint_id }}/"
         hx-target="#formPanel"
         hx-trigger="click"
         hx-swap="innerHTML">

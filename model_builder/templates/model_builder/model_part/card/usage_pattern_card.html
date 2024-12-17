@@ -1,6 +1,6 @@
-<div class="list-group-item my-3 mb-1 rounded-4 p-2 up-list-item card-hover" style="cursor: move;">
-    <div class="accordion accordion-flush leader-line-object" id="{{ usage_pattern.web_id }}" data-object-type="UsagePattern"
-         data-link-to="{{ usage_pattern.links_to }}" data-line-opt="object-to-object" data-object-type="UsagePattern" {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}>
+<div id="{{ usage_pattern.web_id }}" class="leader-line-object list-group-item my-3 mb-1 rounded-4 p-2 up-list-item card-hover"
+     data-link-to="{{ usage_pattern.links_to }}" data-line-opt="object-to-object" data-object-type="UsagePattern"style="cursor: move;">
+    <div class="accordion accordion-flush">
         <div class="accordion-item">
             <h6 class="accordion-header d-flex align-items-center">
                 <button type="button" class="chevron-btn btn btn-link p-0 me-2 text-black"
@@ -9,7 +9,8 @@
                             <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M4.646 1.646l6 6-6 6" />
                         </svg>
                 </button>
-                <button class="btn btn-white ms-1"
+                <button id="button-{{ usage_pattern.web_id }}"
+                        class="btn btn-white ms-1"
                         type="button"
                         data-object-id="{{ usage_pattern.web_id }}" data-object-type="UsagePattern"
                         hx-get="/model_builder/open-edit-object-panel/{{ usage_pattern.efootprint_id }}"
@@ -17,7 +18,7 @@
                         hx-trigger="click"
                         hx-swap="innerHTML"
                 >
-                    <b>{{ usage_pattern.name}}</b>
+                    {{ usage_pattern.name}}
             </button>
             </h6>
             <div id="flush-{{ usage_pattern.web_id }}" class="accordion-collapse collapse accordion-all" data-bs-parent="#{{ usage_pattern.web_id }}" data-object-type="UsagePattern">

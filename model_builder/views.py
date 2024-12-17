@@ -1,9 +1,11 @@
+from copy import copy
+
 from efootprint.api_utils.json_to_system import json_to_system
 from efootprint.api_utils.system_to_json import system_to_json
 from efootprint.utils.plot_emission_diffs import EmissionPlotter
 
 from model_builder.object_creation_utils import add_new_object_to_system, edit_object_in_system
-from model_builder.web_models import ModelWeb
+from model_builder.model_web import ModelWeb
 from utils import htmx_render
 
 import json
@@ -50,7 +52,7 @@ def open_create_object_panel(request, object_type):
 
 def open_edit_object_panel(request, object_id):
     model_web = ModelWeb(request.session["system_data"])
-    obj_to_edit = model_web.get_object_from_id(object_id)
+    obj_to_edit = model_web.get_web_object_from_efootprint_id(object_id)
 
     return render(request, "model_builder/edit_object_panel.html", context={"object_to_edit": obj_to_edit})
 
@@ -80,17 +82,78 @@ def add_new_object(request):
 
 def edit_object(request, object_id):
     model_web = ModelWeb(request.session["system_data"])
-    obj_to_edit = model_web.get_object_from_id(object_id)
+    obj_to_edit = model_web.get_web_object_from_efootprint_id(object_id)
+    accordion_children_before_edit = {}
+    for duplicated_card in obj_to_edit.duplicated_cards:
+        accordion_children_before_edit[duplicated_card] = copy(duplicated_card.accordion_children)
+
     edited_obj = edit_object_in_system(request, obj_to_edit)
-    obj_to_update = []
+    accordion_children_after_edit = {}
+    data_link_to_change = []
+    for duplicated_card in edited_obj.duplicated_cards:
+        accordion_children_after_edit[duplicated_card] = copy(duplicated_card.accordion_children)
+        parent_duplicated_card = duplicated_card.all_accordion_parents
+        data_link_to_change.append({'id': duplicated_card.web_id, 'data-link-to': duplicated_card.links_to})
+        for parent in parent_duplicated_card:
+            if parent.web_id not in data_link_to_change:
+                data_link_to_change.append({'id': parent.web_id, 'data-link-to': parent.links_to})
 
-    if edited_obj.class_as_simple_str == 'UserJourneyStep' or edited_obj.class_as_simple_str == 'Job':
-        obj_to_update.extend(edited_obj.user_journeys)
-    else:
-        obj_to_update.append(edited_obj)
+    assert accordion_children_before_edit.keys() == accordion_children_after_edit.keys()
 
-    oob_html = create_object_addition_or_edition_oob_html_updated(request, obj_to_update)
-    http_response = HttpResponse(oob_html)
+    response_html = ""
+    list_id_to_remove = []
+    for duplicated_card in accordion_children_before_edit.keys():
+        response_html += f"<p hx-swap-oob='innerHTML:#button-{duplicated_card.web_id}'>{duplicated_card.name}</p>"
+        added_accordion_children = [acc_child for acc_child in accordion_children_after_edit[duplicated_card]
+                                    if acc_child not in accordion_children_before_edit[duplicated_card]]
+
+        removed_accordion_children = [acc_child for acc_child in accordion_children_before_edit[duplicated_card]
+                                      if acc_child not in accordion_children_after_edit[duplicated_card]]
+
+        for removed_accordion_child in removed_accordion_children:
+            response_html += f"<div hx-swap-oob='delete:#{removed_accordion_child.web_id}'></div>"
+            list_id_to_remove.append(removed_accordion_child.web_id)
+
+        unchanged_children = [acc_child for acc_child in accordion_children_after_edit[duplicated_card]
+                              if acc_child not in added_accordion_children]
+
+        added_children_html = ""
+        for added_accordion_child in added_accordion_children:
+            added_children_html += render_to_string(
+                f"model_builder/model_part/card/{added_accordion_child.template_name}_card.html",
+                {added_accordion_child.template_name: added_accordion_child})
+
+        if unchanged_children and added_accordion_children:
+            last_unchanged_child = unchanged_children[-1]
+            last_unchanged_child_html = render_to_string(
+                f"model_builder/model_part/card/{last_unchanged_child.template_name}_card.html",
+                {last_unchanged_child.template_name: last_unchanged_child})
+
+            response_html += (f"<div hx-swap-oob='outerHTML:#{last_unchanged_child.web_id}'>"
+                                  f"{last_unchanged_child_html + added_children_html}</div>")
+
+        elif added_accordion_children and not unchanged_children:
+            response_html += (f"<div hx-swap-oob='beforeend:#flush-{duplicated_card.web_id} "
+                              f".accordion-body'>{added_children_html}</div>")
+
+    http_response = HttpResponse(response_html)
+
+    all_parent_to_update = [parent for duplicated_card in accordion_children_before_edit
+                            for parent in duplicated_card.all_accordion_parents]
+
+    top_parents = []
+    for parent in all_parent_to_update:
+        if parent.top_parent.web_id and parent.top_parent.web_id not in top_parents:
+            top_parents.append(parent.top_parent.web_id)
+
+
+    http_response["HX-Trigger"] = json.dumps({
+        "editLeaderLine": {
+            "idToRemove": list_id_to_remove,
+            "idDataLinkToChange": data_link_to_change,
+            "topParents": top_parents
+        }
+    })
 
     return http_response
 
@@ -104,9 +167,9 @@ def delete_object(request):
     if obj_type == "UsagePattern":
         system.usage_patterns = [up for up in system.usage_patterns if up.id != obj_id]
 
-    model_web.flat_obj_dict[obj_id].self_delete()
+    model_web.flat_efootprint_objs_dict[obj_id].self_delete()
     model_web.response_objs[obj_type].pop(obj_id, None)
-    model_web.flat_obj_dict.pop(obj_id, None)
+    model_web.flat_efootprint_objs_dict.pop(obj_id, None)
 
     request.session["system_data"] = system_to_json(system, save_calculated_attributes=False)
 
@@ -164,8 +227,8 @@ def reset_model_reference(request):
 
 
 def compare_with_reference(request):
-    ref_response_objs, ref_flat_obj_dict = json_to_system(request.session["reference_system_data"])
-    response_objs, flat_obj_dict = json_to_system(request.session["system_data"])
+    ref_response_objs, ref_flat_efootprint_objs_dict = json_to_system(request.session["reference_system_data"])
+    response_objs, flat_efootprint_objs_dict = json_to_system(request.session["system_data"])
 
     ref_system = list(ref_response_objs["System"].values())[0]
     system = list(response_objs["System"].values())[0]

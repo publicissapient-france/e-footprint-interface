@@ -12,7 +12,7 @@ with open("default_system_data.json", "r") as file:
     json_data = json.load(file)
 
 efootprint_obj_structure = {}
-response_objs, flat_obj_dict = json_to_system(json_data)
+response_objs, flat_efootprint_objs_dict = json_to_system(json_data)
 
 for efootprint_object_type in response_objs.keys():
     first_efootprint_obj = list(response_objs[efootprint_object_type].values())[0]

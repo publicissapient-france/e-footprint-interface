@@ -1,6 +1,6 @@
-<div class="card list-group-item my-3 mb-1 rounded-4 py-2 px-0 up-list-item card-hover" style="cursor: move;">
-    <div class="accordion accordion-flush leader-line-object" id="{{ user_journey.web_id }}" data-link-to="{{ user_journey.links_to }}"
-         data-line-opt="object-to-object" data-object-type="UserJourney" {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}>
+<div id="{{ user_journey.web_id }}" class="leader-line-object card list-group-item my-3 mb-1 rounded-4 py-2 px-0 up-list-item card-hover" style="cursor: move;"
+     data-link-to="{{ user_journey.links_to }}" data-line-opt="object-to-object" data-object-type="UserJourney">
+    <div class="accordion accordion-flush">
         <div class="accordion-item">
             <h6 class="accordion-header px-3 d-flex align-items-center">
                 <button type="button" class="chevron-btn btn btn-link p-0 me-2 text-black"
@@ -9,7 +9,8 @@
                             <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M4.646 1.646l6 6-6 6" />
                         </svg>
                 </button>
-                <button class="btn btn-white ms-1"
+                <button id="button-{{ user_journey.web_id }}"
+                        class="btn btn-white ms-1"
                         type="button"
                         data-object-id="{{ user_journey.web_id }}" data-object-type="UserJourney"
                         hx-get="/model_builder/open-edit-object-panel/{{ user_journey.efootprint_id }}/"
@@ -17,7 +18,7 @@
                         hx-trigger="click"
                         hx-swap="innerHTML"
                 >
-                <b>{{ user_journey.name}}</b>
+                    {{ user_journey.name }}
                 </button>
             </h6>
             <div id="flush-{{ user_journey.web_id }}" class="accordion-collapse show accordion-all" data-bs-parent="#{{ user_journey.web_id }}">
@@ -27,7 +28,7 @@
                     {% endfor %}
                     <div class="row py-0 ps-3 m-0 my-3">
                     <!--<div class="d-flex mx-4 mb-4">-->
-                        <div class="flex-grow-1 mx-3 w-75">
+                        <div class="flex-grow-1 w-75">
                             <button class="btn btn-white dotted-border text-start w-100" id="add_step_{{ user_journey.web_id }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                               <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>

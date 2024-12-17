@@ -4,77 +4,68 @@ import os
 from efootprint.api_utils.json_to_system import json_to_system
 
 from e_footprint_interface import settings
-from model_builder.web_efootprint_wrappers import wrap_efootprint_object
+from model_builder.modeling_objects_web import wrap_efootprint_object
 from utils import EFOOTPRINT_COUNTRIES
 
 
 class ModelWeb:
     def __init__(self, jsondata):
         self.jsondata = jsondata
-        self.response_objs, self.flat_obj_dict = json_to_system(jsondata)
+        self.response_objs, self.flat_efootprint_objs_dict = json_to_system(jsondata)
         with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'object_inputs_and_default_values.json'),
                   "r") as object_inputs_file:
             self.object_inputs_and_default_values = json.load(object_inputs_file)
 
         self.system = wrap_efootprint_object(list(self.response_objs["System"].values())[0], self)
 
-        for obj_id, mod_obj in self.flat_obj_dict.items():
-            self.flat_obj_dict[obj_id] = wrap_efootprint_object(mod_obj, self)
+    def get_efootprint_objects_from_type(self, obj_type):
+        if obj_type in self.response_objs.keys():
+            return list(self.response_objs[obj_type].values())
+        else:
+            return []
 
-        for obj_type in self.response_objs.keys():
-            for obj_id, mod_obj in self.response_objs[obj_type].items():
-                self.response_objs[obj_type][obj_id] = wrap_efootprint_object(mod_obj, self)
+    def get_web_objects_from_type(self, obj_type):
+        return [wrap_efootprint_object(obj, self) for obj in self.get_efootprint_objects_from_type(obj_type)]
 
-    def get_objects_from_type(self, obj_type):
-        return list(self.response_objs[obj_type].values())
-
-    def get_object_from_id(self, object_id):
-        return self.flat_obj_dict[object_id]
+    def get_web_object_from_efootprint_id(self, object_id):
+        efootprint_object = self.flat_efootprint_objs_dict[object_id]
+        return wrap_efootprint_object(efootprint_object, self)
 
     def get_object_structure(self, object_type):
         return ObjectStructure(self, object_type)
 
     @property
     def storage(self):
-        return self.get_objects_from_type("Storage")
+        return self.get_web_objects_from_type("Storage")
 
     @property
     def servers(self):
         servers = []
 
         for server_type in ["Autoscaling", "OnPremise", "Serverless"]:
-            if server_type in self.response_objs.keys():
-                servers += self.response_objs[server_type].values()
+            servers += self.get_web_objects_from_type(server_type)
 
         return servers
 
     @property
     def autoscaling_servers(self):
-        return self.get_objects_from_type("Autoscaling")
+        return self.get_web_objects_from_type("Autoscaling")
 
     @property
     def on_premise_servers(self):
-        return self.get_objects_from_type("OnPremise")
+        return self.get_web_objects_from_type("OnPremise")
 
     @property
     def serverless_servers(self):
-        return self.get_objects_from_type("Serverless")
-
-    @property
-    def jobs(self):
-        return self.get_objects_from_type("Job")
-
-    @property
-    def uj_steps(self):
-        return self.get_objects_from_type("UserJourneyStep")
+        return self.get_web_objects_from_type("Serverless")
 
     @property
     def user_journeys(self):
-        return self.get_objects_from_type("UserJourney")
+        return self.get_web_objects_from_type("UserJourney")
 
     @property
     def countries(self):
-        return self.get_objects_from_type("Country")
+        return self.get_web_objects_from_type("Country")
 
     @property
     def available_countries(self):
@@ -82,15 +73,15 @@ class ModelWeb:
 
     @property
     def hardware(self):
-        return self.get_objects_from_type("Hardware")
+        return self.get_web_objects_from_type("Hardware")
 
     @property
     def networks(self):
-        return self.get_objects_from_type("Network")
+        return self.get_web_objects_from_type("Network")
 
     @property
     def usage_patterns(self):
-        return self.get_objects_from_type("UsagePattern")
+        return self.get_web_objects_from_type("UsagePattern")
 
 
 class ObjectStructure:
@@ -118,7 +109,7 @@ class ObjectStructure:
                 mod_obj_attribute_desc["existing_objects"] = [
                     country.to_json() for country in EFOOTPRINT_COUNTRIES]
             else:
-                mod_obj_attribute_desc["existing_objects"] = self.model_web.get_objects_from_type(self.object_type)
+                mod_obj_attribute_desc["existing_objects"] = self.model_web.get_web_objects_from_type(self.object_type)
 
         return modeling_obj_attributes
 
@@ -131,7 +122,7 @@ class ObjectStructure:
                 list_attribute_desc["existing_objects"] = [
                     country.to_json() for country in EFOOTPRINT_COUNTRIES]
             else:
-                list_attribute_desc["existing_objects"] = self.model_web.get_objects_from_type(self.object_type)
+                list_attribute_desc["existing_objects"] = self.model_web.get_web_objects_from_type(self.object_type)
 
         return list_attributes
 

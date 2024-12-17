@@ -60,7 +60,6 @@ function removeLines(elementId) {
 }
 
 function updateOrCreateLines(element) {
-    const elementId = element.id;
 
     function drawLines(fromElement) {
         const linkedIds = element.dataset.linkTo?.split('|') || [];
@@ -85,9 +84,10 @@ function updateOrCreateLines(element) {
             .filter(child => child.parentElement.closest('.leader-line-object') === parent);
     }
 
-    if (element.classList.contains('accordion')) {
-        const accordion_collapse = document.getElementById("flush-" + elementId);
-        let isOpen =  accordion_collapse.classList.contains('show');
+    const elementId = element.id;
+    let accordion_collapse = document.getElementById("flush-" + elementId);
+    if (accordion_collapse) {
+        let isOpen = accordion_collapse.classList.contains('show');
         if (!isOpen) {
             drawLines(element);
             const childElements = element.querySelectorAll('.leader-line-object');
@@ -106,19 +106,13 @@ function updateOrCreateLines(element) {
     }
 }
 
-document.addEventListener("htmx:oobAfterSwap", function (event) {
-    updateOrCreateLines(event.target);
-    updateLines();
-    addAccordionListener(event.target);
-});
-
 function addAccordionListener(accordion){
     accordion.addEventListener('shown.bs.collapse', function () {
-        updateOrCreateLines(accordion);
+        updateOrCreateLines(accordion.closest('.leader-line-object'));
         updateLines();
     });
     accordion.addEventListener('hidden.bs.collapse', function () {
-        updateOrCreateLines(accordion);
+        updateOrCreateLines(accordion.closest('.leader-line-object'));
         updateLines();
     });
     accordion.addEventListener('hide.bs.collapse', function (event) {
@@ -129,11 +123,11 @@ function addAccordionListener(accordion){
 }
 
 function initLeaderLines() {
-    let accordions = document.querySelectorAll('.accordion');
-    accordions.forEach(accordion => {
-        let accordionParent = accordion.parentElement.closest('.accordion');
-        if (accordionParent == null) {
-            updateOrCreateLines(accordion);
+    let leaderLineObjects = document.querySelectorAll('.leader-line-object');
+    leaderLineObjects.forEach(leaderLineObject => {
+        let leaderLineObjectParent = leaderLineObject.parentElement.closest('.leader-line-object');
+        if (leaderLineObjectParent == null) {
+            updateOrCreateLines(leaderLineObject);
         }
     });
 }
@@ -144,6 +138,21 @@ document.querySelectorAll('.accordion').forEach(accordion => {
 
 document.addEventListener("DOMContentLoaded", function () {
     initLeaderLines();
+});
+
+document.body.addEventListener('editLeaderLine', function (event) {
+    event.detail['idToRemove'].forEach(idToRemove => {
+        removeLines(idToRemove);
+        updateLines();
+    });
+    event.detail['idDataLinkToChange'].forEach(idDataLinkToChange => {
+        document.getElementById(idDataLinkToChange['id']).setAttribute('data-link-to', idDataLinkToChange['data-link-to']);
+        removeLines(idDataLinkToChange['id']);
+        updateLines();
+    });
+    event.detail['topParents'].forEach(topParent => {
+        updateOrCreateLines(document.getElementById(topParent));
+    });
 });
 
 // ------------------------------------------------------------
@@ -178,4 +187,5 @@ function reverse_icon_accordion(object_id){
     else {
         icon.classList.add('chevron-rotate');
     }
+    updateLines();
 }

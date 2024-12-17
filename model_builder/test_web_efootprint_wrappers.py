@@ -2,10 +2,10 @@ from unittest import TestCase
 
 from efootprint.builders.hardware.storage_defaults import default_ssd
 
-from model_builder.web_efootprint_wrappers import ModelingObjectWrapper
+from model_builder.modeling_objects_web import ModelingObjectWeb
 
 
-class StorageWeb(ModelingObjectWrapper):
+class StorageWeb(ModelingObjectWeb):
     @property
     def id(self):
         return f"{self._modeling_obj.id}_modeling_obj"

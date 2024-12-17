@@ -15,8 +15,8 @@ from efootprint.abstract_modeling_classes.source_objects import SourceValue, Sou
 from efootprint.constants.units import u
 from efootprint.logger import logger
 
-from model_builder.web_efootprint_wrappers import ModelingObjectWrapper
-from model_builder.web_models import ModelWeb
+from model_builder.modeling_objects_web import ModelingObjectWeb
+from model_builder.model_web import ModelWeb
 from utils import EFOOTPRINT_COUNTRIES
 
 from django.conf import settings
@@ -24,7 +24,7 @@ import json
 import os
 
 
-def create_efootprint_obj_from_post_data(request, flat_obj_dict):
+def create_efootprint_obj_from_post_data(request, flat_efootprint_objs_dict):
     with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'object_inputs_and_default_values.json'), "r") as file:
         obj_inputs_and_default_values = json.load(file)
 
@@ -44,15 +44,15 @@ def create_efootprint_obj_from_post_data(request, flat_obj_dict):
             float(request.POST.getlist(attr_dict["attr_name"])[0]) * u(attr_dict["unit"]))
     for mod_obj in obj_inputs["modeling_obj_attributes"]:
         new_mod_obj_id = request.POST[mod_obj["attr_name"]]
-        if mod_obj["object_type"] == "Country" and new_mod_obj_id not in flat_obj_dict.keys():
+        if mod_obj["object_type"] == "Country" and new_mod_obj_id not in flat_efootprint_objs_dict.keys():
             obj_to_add = [country for country in EFOOTPRINT_COUNTRIES if country.id == new_mod_obj_id][0]
             request.session["system_data"]["Country"][new_mod_obj_id] = obj_to_add.to_json()
         else:
-            obj_to_add = flat_obj_dict[new_mod_obj_id]
+            obj_to_add = flat_efootprint_objs_dict[new_mod_obj_id]
         obj_creation_kwargs[mod_obj["attr_name"]] = obj_to_add
     for mod_obj in obj_inputs["list_attributes"]:
         obj_creation_kwargs[mod_obj["attr_name"]] = [
-            flat_obj_dict[obj_id] for obj_id in request.POST.getlist(mod_obj["attr_name"])]
+            flat_efootprint_objs_dict[obj_id] for obj_id in request.POST.getlist(mod_obj["attr_name"])]
 
     new_efootprint_obj.__init__(**obj_creation_kwargs)
 
@@ -60,7 +60,7 @@ def create_efootprint_obj_from_post_data(request, flat_obj_dict):
 
 
 def add_new_object_to_system(request, model_web: ModelWeb):
-    new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web.flat_obj_dict)
+    new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web.flat_efootprint_objs_dict)
 
     # If object is a usage pattern it has to be added to the System to trigger recomputation
     system = model_web.system
@@ -88,7 +88,7 @@ def add_new_object_to_system(request, model_web: ModelWeb):
     return new_efootprint_obj, objects_to_update
 
 
-def edit_object_in_system(request, obj_to_edit: ModelingObjectWrapper):
+def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
     model_web = obj_to_edit.model_web
     obj_structure = obj_to_edit.structure
 
@@ -109,11 +109,11 @@ def edit_object_in_system(request, obj_to_edit: ModelingObjectWrapper):
         if new_mod_obj_id != current_mod_obj_id:
             logger.info(f"{mod_obj['attr_name']} has changed")
             # TODO for DEVICES, HARDWARE and NETWORK, STORAGE ?
-            if mod_obj["object_type"] == "Country" and new_mod_obj_id not in model_web.flat_obj_dict.keys():
+            if mod_obj["object_type"] == "Country" and new_mod_obj_id not in model_web.flat_efootprint_objs_dict.keys():
                 obj_to_add = [country for country in EFOOTPRINT_COUNTRIES if country.id == new_mod_obj_id][0]
                 request.session["system_data"]["Country"][new_mod_obj_id] = obj_to_add.to_json()
             else:
-                obj_to_add = model_web.get_object_from_id(new_mod_obj_id)
+                obj_to_add = model_web.get_web_object_from_efootprint_id(new_mod_obj_id)
             obj_to_edit.set_efootprint_value(mod_obj["attr_name"], obj_to_add.modeling_obj)
     for mod_obj in obj_structure.list_attributes:
         new_mod_obj_id_list = request.POST.getlist("form_edit_" +mod_obj["attr_name"])
@@ -122,7 +122,7 @@ def edit_object_in_system(request, obj_to_edit: ModelingObjectWrapper):
         if new_mod_obj_id_list != current_mod_obj_id_list:
             obj_to_edit.set_efootprint_value(
                 mod_obj["attr_name"],
-                [model_web.get_object_from_id(obj_id).modeling_obj for obj_id in new_mod_obj_id_list])
+                [model_web.get_web_object_from_efootprint_id(obj_id).modeling_obj for obj_id in new_mod_obj_id_list])
 
     # Update session data
     request.session["system_data"][obj_to_edit.class_as_simple_str][obj_to_edit.efootprint_id] = obj_to_edit.to_json()
