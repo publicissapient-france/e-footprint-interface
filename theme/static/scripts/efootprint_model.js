@@ -62,7 +62,7 @@ function removeLines(elementId) {
 function updateOrCreateLines(element) {
 
     function drawLines(fromElement) {
-        const linkedIds = element.dataset.linkTo?.split('|') || [];
+        const linkedIds = fromElement.dataset.linkTo?.split('|') || [];
         linkedIds.forEach(toElementId => {
             if (!allLines[fromElement.id]) {
                 allLines[fromElement.id] = [];
@@ -88,11 +88,7 @@ function updateOrCreateLines(element) {
     let accordion_collapse = document.getElementById("flush-" + elementId);
     if (accordion_collapse) {
         let isOpen = accordion_collapse.classList.contains('show');
-        if (!isOpen) {
-            drawLines(element);
-            const childElements = element.querySelectorAll('.leader-line-object');
-            childElements.forEach(child => removeLines(child.id));
-        } else {
+        if (isOpen) {
             const childElements = getDirectLeaderLineChildren(element);
             if (childElements.length > 0) {
                 removeLines(elementId);
@@ -100,6 +96,14 @@ function updateOrCreateLines(element) {
             } else {
                 drawLines(element);
             }
+            // Handle user journey step circles
+            const imgLeaderLineChildren = element.querySelectorAll('img.leader-line-object');
+            imgLeaderLineChildren.forEach(child => drawLines(child));
+        }
+        else {
+            drawLines(element);
+            const childElements = element.querySelectorAll('.leader-line-object');
+            childElements.forEach(child => removeLines(child.id));
         }
     } else {
         drawLines(element);
