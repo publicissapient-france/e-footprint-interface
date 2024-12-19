@@ -1,5 +1,5 @@
 <div id="{{ user_journey.web_id }}" class="leader-line-object card list-group-item my-3 mb-1 rounded-4 py-2 px-0 up-list-item card-hover" style="cursor: move;"
-     data-link-to="{{ user_journey.links_to }}" data-line-opt="object-to-object" data-object-type="UserJourney">
+     data-link-to="{{ user_journey.links_to }}" data-line-opt="object-to-object">
     <div class="accordion accordion-flush">
         <div class="accordion-item">
             <h6 class="accordion-header px-3 d-flex align-items-center">
@@ -12,7 +12,6 @@
                 <button id="button-{{ user_journey.web_id }}"
                         class="btn btn-white ms-1"
                         type="button"
-                        data-object-id="{{ user_journey.web_id }}" data-object-type="UserJourney"
                         hx-get="/model_builder/open-edit-object-panel/{{ user_journey.efootprint_id }}/"
                         hx-target="#formPanel"
                         hx-trigger="click"

@@ -4,13 +4,12 @@
         <img src="{% static 'icons/circle_uj_step.svg' %}" id="icon-{{ forloop.counter }}-step"
                          class="leader-line-object border border-2 border-white bg-white rounded-circle"
                          data-link-to="{% if not forloop.last %}icon-{{ forloop.counter|add:1 }}-step{% else %}add_step_{{ user_journey_step.user_journey.web_id }}{% endif %}"
-                         data-line-opt="{% if not forloop.last %}vertical-step-swimlane{% else %}step-dot-line{% endif %}" data-object-type="circle"
+                         data-line-opt="{% if not forloop.last %}vertical-step-swimlane{% else %}step-dot-line{% endif %}"
                          width="20px" height="20px;" alt="circle_step">
     </div>
     <div id="{{ user_journey_step.web_id }}" class="leader-line-object col-10 p-0"
         data-link-to="{{ user_journey_step.links_to }}"
-        data-line-opt="object-to-object"
-        data-object-type="UserJourneyStep">
+        data-line-opt="object-to-object">
         <div class="accordion accordion-flush">
             <div class="accordion-item">
                 <h6 class="accordion-header p-0 d-flex align-items-center text-start">
@@ -23,7 +22,6 @@
                 <button id="button-{{ user_journey_step.web_id }}"
                         class="btn btn-white p-0 text-start"
                         type="button"
-                        data-object-id="{{ user_journey_step.web_id }}" data-object-type="UserJourneyStep"
                         hx-get="/model_builder/open-edit-object-panel/{{ user_journey_step.efootprint_id }}"
                         hx-target="#formPanel"
                         hx-trigger="click"

@@ -108,11 +108,17 @@ function updateOrCreateLines(element) {
 
 function addAccordionListener(accordion){
     accordion.addEventListener('shown.bs.collapse', function () {
-        updateOrCreateLines(accordion.closest('.leader-line-object'));
+        let closestLeaderlineObject = accordion.closest('.leader-line-object');
+        if (closestLeaderlineObject) {
+            updateOrCreateLines(closestLeaderlineObject);
+        }
         updateLines();
     });
     accordion.addEventListener('hidden.bs.collapse', function () {
-        updateOrCreateLines(accordion.closest('.leader-line-object'));
+        let closestLeaderlineObject = accordion.closest('.leader-line-object');
+        if (closestLeaderlineObject) {
+            updateOrCreateLines(closestLeaderlineObject);
+        }
         updateLines();
     });
     accordion.addEventListener('hide.bs.collapse', function (event) {

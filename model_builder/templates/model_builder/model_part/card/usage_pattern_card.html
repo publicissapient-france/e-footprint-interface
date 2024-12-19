@@ -1,5 +1,5 @@
 <div id="{{ usage_pattern.web_id }}" class="leader-line-object list-group-item my-3 mb-1 rounded-4 p-2 up-list-item card-hover"
-     data-link-to="{{ usage_pattern.links_to }}" data-line-opt="object-to-object" data-object-type="UsagePattern"style="cursor: move;">
+     data-link-to="{{ usage_pattern.links_to }}" data-line-opt="object-to-object" style="cursor: move;">
     <div class="accordion accordion-flush">
         <div class="accordion-item">
             <h6 class="accordion-header d-flex align-items-center">
@@ -12,7 +12,6 @@
                 <button id="button-{{ usage_pattern.web_id }}"
                         class="btn btn-white ms-1"
                         type="button"
-                        data-object-id="{{ usage_pattern.web_id }}" data-object-type="UsagePattern"
                         hx-get="/model_builder/open-edit-object-panel/{{ usage_pattern.efootprint_id }}"
                         hx-target="#formPanel"
                         hx-trigger="click"
@@ -21,7 +20,7 @@
                     {{ usage_pattern.name}}
             </button>
             </h6>
-            <div id="flush-{{ usage_pattern.web_id }}" class="accordion-collapse collapse accordion-all" data-bs-parent="#{{ usage_pattern.web_id }}" data-object-type="UsagePattern">
+            <div id="flush-{{ usage_pattern.web_id }}" class="accordion-collapse collapse accordion-all" data-bs-parent="#{{ usage_pattern.web_id }}">
                 <div class="accordion-body">
                     <p>{{ usage_pattern.name }}</p>
                 </div>

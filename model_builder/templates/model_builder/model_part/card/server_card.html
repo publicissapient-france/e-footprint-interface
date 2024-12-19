@@ -2,7 +2,7 @@
      class="list-group-item my-3 mb-1 rounded-4 p-2 up-list-item card-hover"
      style="cursor: move;"
 >
-    <div class="accordion accordion-flush" data-object-type="Server">
+    <div class="accordion accordion-flush">
         <div class="accordion-item">
             <h6 class="accordion-header text-start">
                 <button type="button" class="chevron-btn btn btn-link p-0 me-2 text-black"
@@ -14,7 +14,6 @@
                 <button id="button-{{ server.web_id }}"
                         class="btn btn-white ms-auto"
                         type="button"
-                        data-object-id="{{ server.web_id }}" data-object-type="Server"
                         hx-get="/model_builder/open-edit-object-panel/{{ server.efootprint_id }}/"
                         hx-target="#formPanel"
                         hx-trigger="click"
@@ -23,7 +22,7 @@
                     {{ server.name}}
                 </button>
             </h6>
-            <div id="flush-{{ server.web_id }}" class="accordion-collapse collapse accordion-all" data-bs-parent="#{{ server.web_id }}" data-object-type="UsagePattern">
+            <div id="flush-{{ server.web_id }}" class="accordion-collapse collapse accordion-all" data-bs-parent="#{{ server.web_id }}">
                 <div class="accordion-body">
                     <p>{{ server.name }}</p>
                 </div>
