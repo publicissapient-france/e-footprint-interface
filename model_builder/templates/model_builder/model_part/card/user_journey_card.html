@@ -1,5 +1,6 @@
+{% load static %}
 <div id="{{ user_journey.web_id }}" class="leader-line-object card list-group-item my-3 mb-1 rounded-4 py-2 px-0 up-list-item card-hover" style="cursor: move;"
-     data-link-to="{{ user_journey.links_to }}" data-line-opt="object-to-object">
+     data-link-to="{{ user_journey.links_to }}" data-line-opt="object-to-object" {{ hx_swap_oob }}>
     <div class="accordion accordion-flush">
         <div class="accordion-item">
             <h6 class="accordion-header px-3 d-flex align-items-center">
@@ -21,19 +22,18 @@
                 </button>
             </h6>
             <div id="flush-{{ user_journey.web_id }}" class="accordion-collapse show accordion-all" data-bs-parent="#{{ user_journey.web_id }}">
-                <div class="accordion-body p-0">
+                <div class="accordion-body py-0 px-3">
                     {% for user_journey_step in user_journey.uj_steps %}
                         {% include 'model_builder/model_part/card/user_journey_step_card.html' %}
                     {% endfor %}
-                    <div class="row py-0 ps-3 m-0 my-3">
-                    <!--<div class="d-flex mx-4 mb-4">-->
-                        <div class="flex-grow-1 w-75">
-                            <button class="btn btn-white dotted-border text-start w-100" id="add_step_{{ user_journey.web_id }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-                              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-                            </svg>
-                            Add usage journey step
-                        </button>
+                    <div class="row mx-0 my-0 dotted-border align-items-center rounded-2" style="z-index: 1000 !important; background-color: #ffffff !important;">
+                        <div class="col-2 p-0 justify-content-center bg-white my-2" id="add-usage-pattern-{{ user_journey.web_id }}">
+                            <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white"  width="16px" height="16px" alt="add icon" />
+                        </div>
+                        <div class="col-10 p-0 text-start">
+                            <button class="btn btn-white text-start p-0">
+                                Add usage journey step
+                            </button>
                         </div>
                     </div>
                 </div>

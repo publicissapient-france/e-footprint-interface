@@ -1,5 +1,6 @@
 from copy import copy
 
+from dill.pointers import parent
 from efootprint.api_utils.json_to_system import json_to_system
 from efootprint.api_utils.system_to_json import system_to_json
 from efootprint.utils.plot_emission_diffs import EmissionPlotter
@@ -34,7 +35,10 @@ def model_builder_main(request):
     model_web = ModelWeb(jsondata)
 
     return htmx_render(
-        request, "model_builder/model-builder-main.html", context={"model_web": model_web})
+        request, "model_builder/model-builder-main.html", context={
+            "model_web": model_web,
+            "init_leader_lines": True
+        })
 
 
 def open_create_object_panel(request, object_type):
@@ -82,6 +86,8 @@ def add_new_object(request):
 
 def edit_object(request, object_id):
     model_web = ModelWeb(request.session["system_data"])
+    list_of_web_id_with_data_attribute_to_update = []
+    list_of_web_id_to_delete_their_associated_lines = []
     obj_to_edit = model_web.get_web_object_from_efootprint_id(object_id)
     accordion_children_before_edit = {}
     for duplicated_card in obj_to_edit.duplicated_cards:
@@ -89,19 +95,12 @@ def edit_object(request, object_id):
 
     edited_obj = edit_object_in_system(request, obj_to_edit)
     accordion_children_after_edit = {}
-    data_link_to_change = []
     for duplicated_card in edited_obj.duplicated_cards:
         accordion_children_after_edit[duplicated_card] = copy(duplicated_card.accordion_children)
-        parent_duplicated_card = duplicated_card.all_accordion_parents
-        data_link_to_change.append({'id': duplicated_card.web_id, 'data-link-to': duplicated_card.links_to})
-        for parent in parent_duplicated_card:
-            if parent.web_id not in data_link_to_change:
-                data_link_to_change.append({'id': parent.web_id, 'data-link-to': parent.links_to})
 
     assert accordion_children_before_edit.keys() == accordion_children_after_edit.keys()
 
     response_html = ""
-    list_id_to_remove = []
     for duplicated_card in accordion_children_before_edit.keys():
         response_html += f"<p hx-swap-oob='innerHTML:#button-{duplicated_card.web_id}'>{duplicated_card.name}</p>"
         added_accordion_children = [acc_child for acc_child in accordion_children_after_edit[duplicated_card]
@@ -112,7 +111,15 @@ def edit_object(request, object_id):
 
         for removed_accordion_child in removed_accordion_children:
             response_html += f"<div hx-swap-oob='delete:#{removed_accordion_child.web_id}'></div>"
-            list_id_to_remove.append(removed_accordion_child.web_id)
+            list_of_web_id_to_delete_their_associated_lines.append(removed_accordion_child.web_id)
+            index_removed_accordion_child = accordion_children_before_edit[duplicated_card].index(
+                removed_accordion_child)
+            if (index_removed_accordion_child-1) >= 0:
+                previous_accordion = accordion_children_before_edit[duplicated_card][index_removed_accordion_child-1]
+                if previous_accordion.has_icon:
+                    list_of_web_id_with_data_attribute_to_update.append(
+                        previous_accordion.generate_new_data_attribute_for_web_element(True))
+
 
         unchanged_children = [acc_child for acc_child in accordion_children_after_edit[duplicated_card]
                               if acc_child not in added_accordion_children]
@@ -125,33 +132,66 @@ def edit_object(request, object_id):
 
         if unchanged_children and added_accordion_children:
             last_unchanged_child = unchanged_children[-1]
+
+            list_of_web_id_with_data_attribute_to_update.append(
+                last_unchanged_child.generate_new_data_attribute_for_web_element(False))
+            if last_unchanged_child.has_icon:
+                list_of_web_id_with_data_attribute_to_update.append(
+                    last_unchanged_child.generate_new_data_attribute_for_web_element(True))
+
             last_unchanged_child_html = render_to_string(
                 f"model_builder/model_part/card/{last_unchanged_child.template_name}_card.html",
-                {last_unchanged_child.template_name: last_unchanged_child})
-
-            response_html += (f"<div hx-swap-oob='outerHTML:#{last_unchanged_child.web_id}'>"
-                                  f"{last_unchanged_child_html + added_children_html}</div>")
+                {
+                    last_unchanged_child.template_name: last_unchanged_child,
+                    "hx_swap_oob": f"hx-swap-oob='outerHTML:#{last_unchanged_child.web_id}"
+                })
+            response_html += last_unchanged_child_html
+            response_html += (f"<div hx-swap-oob='afterend:#{last_unchanged_child.web_id}'>"
+                                  f"{added_children_html}</div>")
 
         elif added_accordion_children and not unchanged_children:
             response_html += (f"<div hx-swap-oob='beforeend:#flush-{duplicated_card.web_id} "
                               f".accordion-body'>{added_children_html}</div>")
 
+
+        if unchanged_children:
+            last_unchanged_child = unchanged_children[-1]
+            list_of_web_id_with_data_attribute_to_update.append(
+                last_unchanged_child.generate_new_data_attribute_for_web_element(False))
+            if last_unchanged_child.has_icon:
+                list_of_web_id_with_data_attribute_to_update.append(
+                    last_unchanged_child.generate_new_data_attribute_for_web_element(True))
+
     http_response = HttpResponse(response_html)
 
-    all_parent_to_update = [parent for duplicated_card in accordion_children_before_edit
-                            for parent in duplicated_card.all_accordion_parents]
+    parents_of_edited_obj = []
+    for duplicated_card in edited_obj.duplicated_cards:
+        list_of_web_id_with_data_attribute_to_update.append(
+            duplicated_card.generate_new_data_attribute_for_web_element(False))
+        if duplicated_card.has_icon:
+            list_of_web_id_with_data_attribute_to_update.append(
+                duplicated_card.generate_new_data_attribute_for_web_element(True))
+        for parent in duplicated_card.all_accordion_parents:
+            parents_of_edited_obj.append(parent)
+    for parent in parents_of_edited_obj:
+        list_of_web_id_with_data_attribute_to_update.append(parent.generate_new_data_attribute_for_web_element(False))
+        if parent.has_icon:
+            list_of_web_id_with_data_attribute_to_update.append(
+                parent.generate_new_data_attribute_for_web_element(True))
 
-    top_parents = []
-    for parent in all_parent_to_update:
-        if parent.top_parent.web_id and parent.top_parent.web_id not in top_parents:
-            top_parents.append(parent.top_parent.web_id)
-
+    list_of_top_parents = list(set([duplicated_card.top_parent.web_id for duplicated_card in
+                                   edited_obj.duplicated_cards]))
 
     http_response["HX-Trigger"] = json.dumps({
-        "editLeaderLine": {
-            "idToRemove": list_id_to_remove,
-            "idDataLinkToChange": data_link_to_change,
-            "topParents": top_parents
+        "removeLinesAndEditDataLinkTo": {
+            "listOfElementsToDeleteTheirAssociatedLines": list_of_web_id_to_delete_their_associated_lines,
+            "listOfElementsToUpdateDataLinkToAttribute": list_of_web_id_with_data_attribute_to_update
+        }
+    })
+
+    http_response["HX-Trigger-After-Swap"] = json.dumps({
+        "createOrUpdateLines": {
+            "listOftopParents": list_of_top_parents
         }
     })
 

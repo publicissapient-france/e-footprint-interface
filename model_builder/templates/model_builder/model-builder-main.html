@@ -58,9 +58,7 @@
                             </div>
                             <div class="col-12 mt-2 justify-content-start text-start" id="add_server">
                                 <button class="w-75 btn btn-white dotted-border text-start">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-                                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-                                    </svg>
+                                    <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-3"  width="16px" height="16px" alt="add icon" />
                                     Add server
                                 </button>
                             </div>
@@ -95,3 +93,15 @@
 {% include 'model_builder/resultPanel.html' %}
 
 <script src="{% static 'scripts/efootprint_model.js' %}"></script>
+
+{% if init_leader_lines %}
+<script>
+    document.addEventListener("htmx:load", function () {
+        console.log("I have been loaded");
+        if (typeof initLeaderLines === "function") {
+            initLeaderLines();
+        }
+    });
+</script>
+{% endif %}
+

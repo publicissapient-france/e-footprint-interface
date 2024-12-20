@@ -207,6 +207,90 @@
         ],
         "list_attributes": []
     },
+    "OnPremise": {
+        "numerical_attributes": [
+            {
+                "attr_name": "carbon_footprint_fabrication",
+                "unit": "kg",
+                "long_unit": "kilogram",
+                "default_value": 600.0
+            },
+            {
+                "attr_name": "power",
+                "unit": "W",
+                "long_unit": "watt",
+                "default_value": 300.0
+            },
+            {
+                "attr_name": "lifespan",
+                "unit": "yr",
+                "long_unit": "year",
+                "default_value": 6.0
+            },
+            {
+                "attr_name": "average_carbon_intensity",
+                "unit": "g/kWh",
+                "long_unit": "gram / kilowatt_hour",
+                "default_value": 100.0
+            },
+            {
+                "attr_name": "server_utilization_rate",
+                "unit": "",
+                "long_unit": "dimensionless",
+                "default_value": 0.9
+            },
+            {
+                "attr_name": "idle_power",
+                "unit": "W",
+                "long_unit": "watt",
+                "default_value": 50.0
+            },
+            {
+                "attr_name": "ram",
+                "unit": "GB",
+                "long_unit": "gigabyte",
+                "default_value": 128.0
+            },
+            {
+                "attr_name": "cpu_cores",
+                "unit": "core",
+                "long_unit": "core",
+                "default_value": 24.0
+            },
+            {
+                "attr_name": "power_usage_effectiveness",
+                "unit": "",
+                "long_unit": "dimensionless",
+                "default_value": 1.2
+            },
+            {
+                "attr_name": "base_ram_consumption",
+                "unit": "MB",
+                "long_unit": "megabyte",
+                "default_value": 300.0
+            },
+            {
+                "attr_name": "base_cpu_consumption",
+                "unit": "core",
+                "long_unit": "core",
+                "default_value": 2.0
+            },
+            {
+                "attr_name": "fixed_nb_of_instances",
+                "unit": "",
+                "long_unit": "dimensionless",
+                "default_value": 3
+            }
+        ],
+        "hourly_quantities_attributes": [],
+        "modeling_obj_attributes": [
+            {
+                "attr_name": "storage",
+                "object_type": "Storage"
+            }
+        ],
+        "list_attributes": []
+    },
     "Serverless": {
         "numerical_attributes": [
             {

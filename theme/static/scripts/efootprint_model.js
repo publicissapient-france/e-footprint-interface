@@ -1,9 +1,21 @@
 // ------------------------------------------------------------
 // LEADERLINE
 
-const object_type_to_exclude = ["UsagePattern","Server"];
 const dict_leaderline_option = {
     'object-to-object': {
+        color: "#9CA3AF",
+        size: 1,
+        startPlug: 'disc',
+        endPlug: 'disc',
+        startPlugColor: "#E5E7EB",
+        endPlugColor: "#E5E7EB",
+        startPlugSize: 5,
+        endPlugSize: 5,
+        startSocket: "right",
+        endSocket: "left",
+        showEffectName: 'fade'
+    },
+    'object-to-object-inside-card': {
         color: "#9CA3AF",
         size: 1,
         startPlug: 'disc',
@@ -33,13 +45,18 @@ const dict_leaderline_option = {
         startPlug: 'behind',
         endPlug: 'behind',
         startSocket: "bottom",
-        endSocket: "left",
+        endSocket: "top",
         showEffectName: 'fade',
         dash: true
     }
 };
 
 let allLines=[];
+
+let one_rem_value = parseFloat(getComputedStyle(document.documentElement).fontSize);
+let start_element_width = 1
+let start_element_height = 1
+
 
 function updateLines() {
     Object.values(allLines).forEach(lineArray => {
@@ -52,11 +69,29 @@ function updateLines() {
 const scrollContainer = document.querySelector('#model-canva');
 scrollContainer.addEventListener('scroll', updateLines);
 
-function removeLines(elementId) {
+function removeAllLinesDepartingFromElement(elementId) {
     if (allLines[elementId]) {
         allLines[elementId].forEach( line => line.remove());
         delete allLines[elementId];
     }
+}
+
+function removeAllLinesArrivingAtElement(elementId) {
+    Object.values(allLines).forEach(lineArray => {
+        lineArray.forEach(line => {
+            if (line.end.id === elementId) {
+                line.remove();
+            }
+            delete allLines[elementId];
+        });
+    });
+}
+
+function removeAllLines() {
+    Object.values(allLines).forEach(lineArray => {
+        lineArray.forEach(line => line.remove());
+    });
+    allLines = [];
 }
 
 function updateOrCreateLines(element) {
@@ -72,7 +107,29 @@ function updateOrCreateLines(element) {
                 const toElement = document.getElementById(toElementId);
                 if (toElement) {
                     let opt_line = fromElement.getAttribute('data-line-opt');
-                    const line = new LeaderLine(fromElement, toElement, dict_leaderline_option[opt_line]);
+                    let line = null
+                    if(opt_line ==='object-to-object-inside-card'){
+                        start_element_width = fromElement.offsetWidth;
+                        start_element_height = fromElement.offsetHeight;
+                        line = new LeaderLine(
+                            LeaderLine.pointAnchor(
+                                fromElement, {x: (start_element_width +one_rem_value), y: (start_element_height/2)}),
+                            toElement, dict_leaderline_option[opt_line]
+                        );
+                    } else if (opt_line ==='step-dot-line'){
+                        start_element_width = toElement.offsetWidth;
+                        start_element_height = toElement.offsetHeight;
+                        line = new LeaderLine(
+                            fromElement,
+                            LeaderLine.pointAnchor(
+                                toElement, {x: (start_element_width/2), y: (-one_rem_value/2)}
+                            ),
+                            dict_leaderline_option[opt_line]
+                        );
+                    }
+                    else{
+                        line = new LeaderLine(fromElement, toElement, dict_leaderline_option[opt_line]);
+                    }
                     allLines[fromElement.id].push(line);
                 }
             }
@@ -91,7 +148,7 @@ function updateOrCreateLines(element) {
         if (isOpen) {
             const childElements = getDirectLeaderLineChildren(element);
             if (childElements.length > 0) {
-                removeLines(elementId);
+                removeAllLinesDepartingFromElement(elementId);
                 childElements.forEach(child => updateOrCreateLines(child));
             } else {
                 drawLines(element);
@@ -103,7 +160,7 @@ function updateOrCreateLines(element) {
         else {
             drawLines(element);
             const childElements = element.querySelectorAll('.leader-line-object');
-            childElements.forEach(child => removeLines(child.id));
+            childElements.forEach(child => removeAllLinesDepartingFromElement(child.id));
         }
     } else {
         drawLines(element);
@@ -128,7 +185,7 @@ function addAccordionListener(accordion){
     accordion.addEventListener('hide.bs.collapse', function (event) {
         event.stopPropagation();
         const childElements = accordion.querySelectorAll('.leader-line-object');
-        childElements.forEach(child => removeLines(child.id));
+        childElements.forEach(child => removeAllLinesDepartingFromElement(child.id));
     });
 }
 
@@ -146,23 +203,38 @@ document.querySelectorAll('.accordion').forEach(accordion => {
     addAccordionListener(accordion);
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-    initLeaderLines();
+// ------------------------------------------------------------
+// HTMX AFTER SWAP
+
+document.body.addEventListener('removeLinesAndEditDataLinkTo', function (event) {
+    event.detail['listOfElementsToDeleteTheirAssociatedLines'].forEach(idToRemove => {
+        removeAllLinesDepartingFromElement(idToRemove);
+        removeAllLinesArrivingAtElement(idToRemove);
+        let start_icon_element = document.getElementById('icon-'+idToRemove)
+        if(start_icon_element){
+            removeAllLinesDepartingFromElement(start_icon_element.id)
+            removeAllLinesArrivingAtElement(idToRemove);
+        }
+    });
+    event.detail['listOfElementsToUpdateDataLinkToAttribute'].forEach(idDataLinkToChange => {
+        if (idDataLinkToChange && idDataLinkToChange['data-link-to']) {
+            let element = document.getElementById(idDataLinkToChange['id']);
+            if (element) {
+                element.setAttribute('data-link-to', idDataLinkToChange['data-link-to']);
+                if (idDataLinkToChange['data-line-opt'] !== '') {
+                    element.setAttribute('data-line-opt', idDataLinkToChange['data-line-opt']);
+                }
+                removeAllLinesDepartingFromElement(idDataLinkToChange['id']);
+            }
+        }
+    });
 });
 
-document.body.addEventListener('editLeaderLine', function (event) {
-    event.detail['idToRemove'].forEach(idToRemove => {
-        removeLines(idToRemove);
-        updateLines();
-    });
-    event.detail['idDataLinkToChange'].forEach(idDataLinkToChange => {
-        document.getElementById(idDataLinkToChange['id']).setAttribute('data-link-to', idDataLinkToChange['data-link-to']);
-        removeLines(idDataLinkToChange['id']);
-        updateLines();
-    });
-    event.detail['topParents'].forEach(topParent => {
+document.body.addEventListener('createOrUpdateLines', function (event) {
+    event.detail['listOftopParents'].forEach(topParent => {
         updateOrCreateLines(document.getElementById(topParent));
     });
+    updateLines();
 });
 
 // ------------------------------------------------------------
@@ -184,6 +256,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+// ------------------------------------------------------------
+// User interaction
+
 function closePanel() {
     const formPanel = document.getElementById('formPanel');
     formPanel.innerHTML = '';
@@ -199,3 +274,31 @@ function reverse_icon_accordion(object_id){
     }
     updateLines();
 }
+
+let resizeTimeout;
+
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        removeAllLines();
+        initLeaderLines();
+    }, 100);
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const cards = document.querySelectorAll(".card")
+    cards.forEach(card => {
+        card.addEventListener("mouseover", function () {
+            updateLines();
+        });
+        card.addEventListener("mouseout", function () {
+            updateLines();
+        });
+    });
+});
+
+window.addEventListener("load", function () {
+    setTimeout(() => {
+        initLeaderLines();
+    }, 100);
+});

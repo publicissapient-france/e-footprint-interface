@@ -115,6 +115,10 @@ class ModelingObjectWeb:
         return f"{snake_case_class_name}"
 
     @property
+    def has_icon(self):
+        return False
+
+    @property
     def all_accordion_parents(self):
         list_parents = []
         parent = self.accordion_parent
@@ -227,20 +231,22 @@ class DuplicatedJobWeb(ModelingObjectWeb):
     def accordion_children(self):
         return []
 
+    @property
+    def previous_object_in_accordion(self):
+        return None
+
+    def generate_new_data_attribute_for_web_element(self, has_an_icon: bool = False):
+        line_to_return = {'id': f'{self.web_id}',
+                          'data-link-to': self.links_to,
+                          'data-line-opt': 'object-to-object-inside-card'
+                          }
+        return line_to_return
+
 class UserJourneyStepWeb(ModelingObjectWeb):
     @property
     def web_id(self):
         raise AttributeError(f"UserJourneyStepWeb objects don’t have a web_id attribute because their html "
                              f"representation should be managed by the DuplicatedUserJourneyStepWeb object")
-
-    def index_step(self, user_journey):
-        user_journey_steps = user_journey.uj_steps
-        index = user_journey_steps.index(self)
-        if index == len(user_journey_steps) - 1:
-            link_to = f"{index+1}"
-        else:
-            link_to = 'add_usage_pattern'
-        return index, link_to
 
     @property
     def duplicated_cards(self):
@@ -280,6 +286,62 @@ class DuplicatedUserJourneyStepWeb(UserJourneyStepWeb):
 
         return web_jobs
 
+    @property
+    def icon_links_to(self):
+        user_journey_steps = self.user_journey.uj_steps
+        index = user_journey_steps.index(self)
+        if index < len(user_journey_steps) - 1:
+            link_to = f"icon-{user_journey_steps[index+1].web_id}"
+        else:
+            link_to = f'add-usage-pattern-{self.user_journey.web_id}'
+
+        return link_to
+
+    @property
+    def style_leaderline(self):
+        user_journey_steps = self.user_journey.uj_steps
+        index = user_journey_steps.index(self)
+        if index < len(user_journey_steps) - 1:
+            class_name = "vertical-step-swimlane"
+        else:
+            class_name = 'step-dot-line'
+
+        return class_name
+
+
+    @property
+    def previous_object_in_accordion(self):
+        user_journey_steps = self.user_journey.uj_steps
+        index = user_journey_steps.index(self)
+        if index > 0:
+            return f'icon-{user_journey_steps[index - 1]}'
+
+        return None
+
+    @property
+    def has_icon(self):
+        return True
+
+    def generate_new_data_attribute_for_web_element(self, has_an_icon):
+        user_journey_steps = self.user_journey.uj_steps
+        if(self in user_journey_steps):
+            index = user_journey_steps.index(self)
+            if has_an_icon:
+                if index < len(user_journey_steps) - 1:
+                    opt_name = "vertical-step-swimlane"
+                else:
+                    opt_name = 'step-dot-line'
+                line_to_return = {'id': f'icon-{self.web_id}',
+                                  'data-link-to': self.icon_links_to,
+                                  'data-line-opt': opt_name
+                                  }
+            else:
+                line_to_return = {'id': f'{self.web_id}',
+                                  'data-link-to': self.links_to,
+                                  'data-line-opt': 'object-to-object-inside-card'
+                                  }
+            return line_to_return
+
 class UserJourneyWeb(ModelingObjectWeb):
     @property
     def links_to(self):
@@ -306,6 +368,13 @@ class UserJourneyWeb(ModelingObjectWeb):
 
         return web_uj_steps
 
+    def generate_new_data_attribute_for_web_element(self, has_an_icon: bool = False):
+        line_to_return = {'id': f'{self.web_id}',
+                          'data-link-to': self.links_to,
+                          'data-line-opt': 'object-to-object'
+                          }
+        return line_to_return
+
 
 class UsagePatternWeb(ModelingObjectWeb):
     @property
@@ -320,6 +389,10 @@ class UsagePatternWeb(ModelingObjectWeb):
     def accordion_children(self):
         # TODO: Add Device mix Network mix and Country mix
         return []
+
+    @property
+    def previous_object_in_accordion(self):
+        return None
 
 
 wrapper_mapping = {
