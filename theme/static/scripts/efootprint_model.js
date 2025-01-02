@@ -1,7 +1,7 @@
 // ------------------------------------------------------------
 // LEADERLINE
 
-const dict_leaderline_option = {
+const dictLeaderLineOption = {
     'object-to-object': {
         color: "#9CA3AF",
         size: 1,
@@ -53,9 +53,9 @@ const dict_leaderline_option = {
 
 let allLines=[];
 
-let one_rem_value = parseFloat(getComputedStyle(document.documentElement).fontSize);
-let start_element_width = 1
-let start_element_height = 1
+let oneRemValue = parseFloat(getComputedStyle(document.documentElement).fontSize);
+let startElementWidth = 1
+let startElementHeight = 1
 
 
 function updateLines() {
@@ -77,12 +77,13 @@ function removeAllLinesDepartingFromElement(elementId) {
 }
 
 function removeAllLinesArrivingAtElement(elementId) {
-    Object.values(allLines).forEach(lineArray => {
-        lineArray.forEach(line => {
+    Object.keys(allLines).forEach(key => {
+        allLines[key] = allLines[key].filter(line => {
             if (line.end.id === elementId) {
                 line.remove();
+                return false; // Remove this line from the array
             }
-            delete allLines[elementId];
+            return true; // Keep this line in the array
         });
     });
 }
@@ -106,29 +107,29 @@ function updateOrCreateLines(element) {
             if (!existingLine) {
                 const toElement = document.getElementById(toElementId);
                 if (toElement) {
-                    let opt_line = fromElement.getAttribute('data-line-opt');
+                    let optLine = fromElement.getAttribute('data-line-opt');
                     let line = null
-                    if(opt_line ==='object-to-object-inside-card'){
-                        start_element_width = fromElement.offsetWidth;
-                        start_element_height = fromElement.offsetHeight;
+                    if(optLine ==='object-to-object-inside-card'){
+                        startElementWidth = fromElement.offsetWidth;
+                        startElementHeight = fromElement.offsetHeight;
                         line = new LeaderLine(
                             LeaderLine.pointAnchor(
-                                fromElement, {x: (start_element_width +one_rem_value), y: (start_element_height/2)}),
-                            toElement, dict_leaderline_option[opt_line]
+                                fromElement, {x: (startElementWidth + oneRemValue), y: (startElementHeight/2)}),
+                            toElement, dictLeaderLineOption[optLine]
                         );
-                    } else if (opt_line ==='step-dot-line'){
-                        start_element_width = toElement.offsetWidth;
-                        start_element_height = toElement.offsetHeight;
+                    } else if (optLine ==='step-dot-line'){
+                        startElementWidth = toElement.offsetWidth;
+                        startElementHeight = toElement.offsetHeight;
                         line = new LeaderLine(
                             fromElement,
                             LeaderLine.pointAnchor(
-                                toElement, {x: (start_element_width/2), y: (-one_rem_value/2)}
+                                toElement, {x: (startElementWidth/2), y: (-oneRemValue/2)}
                             ),
-                            dict_leaderline_option[opt_line]
+                            dictLeaderLineOption[optLine]
                         );
                     }
                     else{
-                        line = new LeaderLine(fromElement, toElement, dict_leaderline_option[opt_line]);
+                        line = new LeaderLine(fromElement, toElement, dictLeaderLineOption[optLine]);
                     }
                     allLines[fromElement.id].push(line);
                 }
@@ -142,9 +143,9 @@ function updateOrCreateLines(element) {
     }
 
     const elementId = element.id;
-    let accordion_collapse = document.getElementById("flush-" + elementId);
-    if (accordion_collapse) {
-        let isOpen = accordion_collapse.classList.contains('show');
+    let accordionCollapse = document.getElementById("flush-" + elementId);
+    if (accordionCollapse) {
+        let isOpen = accordionCollapse.classList.contains('show');
         if (isOpen) {
             const childElements = getDirectLeaderLineChildren(element);
             if (childElements.length > 0) {
@@ -206,33 +207,32 @@ document.querySelectorAll('.accordion').forEach(accordion => {
 // ------------------------------------------------------------
 // HTMX AFTER SWAP
 
-document.body.addEventListener('removeLinesAndEditDataLinkTo', function (event) {
-    event.detail['listOfElementsToDeleteTheirAssociatedLines'].forEach(idToRemove => {
-        removeAllLinesDepartingFromElement(idToRemove);
-        removeAllLinesArrivingAtElement(idToRemove);
-        let start_icon_element = document.getElementById('icon-'+idToRemove)
-        if(start_icon_element){
-            removeAllLinesDepartingFromElement(start_icon_element.id)
-            removeAllLinesArrivingAtElement(idToRemove);
-        }
+document.body.addEventListener('removeLinesAndUpdateDataAttributes', function (event) {
+    event.detail['elementIdsOfLinesToRemove'].forEach(elementIdWithLinesToRemove => {
+        removeAllLinesDepartingFromElement(elementIdWithLinesToRemove);
+        removeAllLinesArrivingAtElement(elementIdWithLinesToRemove);
+        let leaderlineObjectChildren = document.getElementById(elementIdWithLinesToRemove)
+            .querySelectorAll('.leader-line-object');
+        leaderlineObjectChildren.forEach(leaderlineObjectChild => {
+            removeAllLinesDepartingFromElement(leaderlineObjectChild.id);
+            removeAllLinesArrivingAtElement(leaderlineObjectChild.id);
+        });
     });
-    event.detail['listOfElementsToUpdateDataLinkToAttribute'].forEach(idDataLinkToChange => {
-        if (idDataLinkToChange && idDataLinkToChange['data-link-to']) {
-            let element = document.getElementById(idDataLinkToChange['id']);
-            if (element) {
-                element.setAttribute('data-link-to', idDataLinkToChange['data-link-to']);
-                if (idDataLinkToChange['data-line-opt'] !== '') {
-                    element.setAttribute('data-line-opt', idDataLinkToChange['data-line-opt']);
-                }
-                removeAllLinesDepartingFromElement(idDataLinkToChange['id']);
+    event.detail['dataAttributeUpdates'].forEach(dataAttributeUpdate => {
+        let element = document.getElementById(dataAttributeUpdate['id']);
+        if (element) {
+            element.setAttribute('data-link-to', dataAttributeUpdate['data-link-to']);
+            if (dataAttributeUpdate['data-line-opt'] !== '') {
+                element.setAttribute('data-line-opt', dataAttributeUpdate['data-line-opt']);
             }
+            removeAllLinesDepartingFromElement(dataAttributeUpdate['id']);
         }
     });
 });
 
-document.body.addEventListener('createOrUpdateLines', function (event) {
-    event.detail['listOftopParents'].forEach(topParent => {
-        updateOrCreateLines(document.getElementById(topParent));
+document.body.addEventListener('updateTopParentLines', function (event) {
+    event.detail['topParentIds'].forEach(topParentId => {
+        updateOrCreateLines(document.getElementById(topParentId));
     });
     updateLines();
 });
@@ -264,8 +264,8 @@ function closePanel() {
     formPanel.innerHTML = '';
 }
 
-function reverse_icon_accordion(object_id){
-    let icon = document.getElementById('icon_accordion_'+object_id);
+function reverseIconAccordion(objectId){
+    let icon = document.getElementById('icon_accordion_'+objectId);
     if (icon.classList.contains('chevron-rotate')) {
         icon.classList.remove('chevron-rotate');
     }

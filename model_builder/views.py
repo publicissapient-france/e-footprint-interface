@@ -1,6 +1,5 @@
 from copy import copy
 
-from dill.pointers import parent
 from efootprint.api_utils.json_to_system import json_to_system
 from efootprint.api_utils.system_to_json import system_to_json
 from efootprint.utils.plot_emission_diffs import EmissionPlotter
@@ -86,8 +85,8 @@ def add_new_object(request):
 
 def edit_object(request, object_id):
     model_web = ModelWeb(request.session["system_data"])
-    list_of_web_id_with_data_attribute_to_update = []
-    list_of_web_id_to_delete_their_associated_lines = []
+    data_attribute_updates = []
+    ids_of_web_elements_with_lines_to_remove = []
     obj_to_edit = model_web.get_web_object_from_efootprint_id(object_id)
     accordion_children_before_edit = {}
     for duplicated_card in obj_to_edit.duplicated_cards:
@@ -111,15 +110,13 @@ def edit_object(request, object_id):
 
         for removed_accordion_child in removed_accordion_children:
             response_html += f"<div hx-swap-oob='delete:#{removed_accordion_child.web_id}'></div>"
-            list_of_web_id_to_delete_their_associated_lines.append(removed_accordion_child.web_id)
+            ids_of_web_elements_with_lines_to_remove.append(removed_accordion_child.web_id)
             index_removed_accordion_child = accordion_children_before_edit[duplicated_card].index(
                 removed_accordion_child)
-            if (index_removed_accordion_child-1) >= 0:
+            if index_removed_accordion_child >= 1:
                 previous_accordion = accordion_children_before_edit[duplicated_card][index_removed_accordion_child-1]
-                if previous_accordion.has_icon:
-                    list_of_web_id_with_data_attribute_to_update.append(
-                        previous_accordion.generate_new_data_attribute_for_web_element(True))
-
+                if previous_accordion not in removed_accordion_children:
+                    data_attribute_updates += previous_accordion.data_attributes_as_list_of_dict
 
         unchanged_children = [acc_child for acc_child in accordion_children_after_edit[duplicated_card]
                               if acc_child not in added_accordion_children]
@@ -132,20 +129,7 @@ def edit_object(request, object_id):
 
         if unchanged_children and added_accordion_children:
             last_unchanged_child = unchanged_children[-1]
-
-            list_of_web_id_with_data_attribute_to_update.append(
-                last_unchanged_child.generate_new_data_attribute_for_web_element(False))
-            if last_unchanged_child.has_icon:
-                list_of_web_id_with_data_attribute_to_update.append(
-                    last_unchanged_child.generate_new_data_attribute_for_web_element(True))
-
-            last_unchanged_child_html = render_to_string(
-                f"model_builder/model_part/card/{last_unchanged_child.template_name}_card.html",
-                {
-                    last_unchanged_child.template_name: last_unchanged_child,
-                    "hx_swap_oob": f"hx-swap-oob='outerHTML:#{last_unchanged_child.web_id}"
-                })
-            response_html += last_unchanged_child_html
+            data_attribute_updates += last_unchanged_child.data_attributes_as_list_of_dict
             response_html += (f"<div hx-swap-oob='afterend:#{last_unchanged_child.web_id}'>"
                                   f"{added_children_html}</div>")
 
@@ -153,45 +137,26 @@ def edit_object(request, object_id):
             response_html += (f"<div hx-swap-oob='beforeend:#flush-{duplicated_card.web_id} "
                               f".accordion-body'>{added_children_html}</div>")
 
-
-        if unchanged_children:
-            last_unchanged_child = unchanged_children[-1]
-            list_of_web_id_with_data_attribute_to_update.append(
-                last_unchanged_child.generate_new_data_attribute_for_web_element(False))
-            if last_unchanged_child.has_icon:
-                list_of_web_id_with_data_attribute_to_update.append(
-                    last_unchanged_child.generate_new_data_attribute_for_web_element(True))
-
     http_response = HttpResponse(response_html)
 
-    parents_of_edited_obj = []
     for duplicated_card in edited_obj.duplicated_cards:
-        list_of_web_id_with_data_attribute_to_update.append(
-            duplicated_card.generate_new_data_attribute_for_web_element(False))
-        if duplicated_card.has_icon:
-            list_of_web_id_with_data_attribute_to_update.append(
-                duplicated_card.generate_new_data_attribute_for_web_element(True))
+        data_attribute_updates += duplicated_card.data_attributes_as_list_of_dict
         for parent in duplicated_card.all_accordion_parents:
-            parents_of_edited_obj.append(parent)
-    for parent in parents_of_edited_obj:
-        list_of_web_id_with_data_attribute_to_update.append(parent.generate_new_data_attribute_for_web_element(False))
-        if parent.has_icon:
-            list_of_web_id_with_data_attribute_to_update.append(
-                parent.generate_new_data_attribute_for_web_element(True))
+            data_attribute_updates += parent.data_attributes_as_list_of_dict
 
-    list_of_top_parents = list(set([duplicated_card.top_parent.web_id for duplicated_card in
+    top_parent_ids = list(set([duplicated_card.top_parent.web_id for duplicated_card in
                                    edited_obj.duplicated_cards]))
 
     http_response["HX-Trigger"] = json.dumps({
-        "removeLinesAndEditDataLinkTo": {
-            "listOfElementsToDeleteTheirAssociatedLines": list_of_web_id_to_delete_their_associated_lines,
-            "listOfElementsToUpdateDataLinkToAttribute": list_of_web_id_with_data_attribute_to_update
+        "removeLinesAndUpdateDataAttributes": {
+            "elementIdsOfLinesToRemove": ids_of_web_elements_with_lines_to_remove,
+            "dataAttributeUpdates": data_attribute_updates
         }
     })
 
     http_response["HX-Trigger-After-Swap"] = json.dumps({
-        "createOrUpdateLines": {
-            "listOftopParents": list_of_top_parents
+        "updateTopParentLines": {
+            "topParentIds": top_parent_ids
         }
     })
 

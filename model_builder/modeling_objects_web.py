@@ -115,8 +115,16 @@ class ModelingObjectWeb:
         return f"{snake_case_class_name}"
 
     @property
-    def has_icon(self):
-        return False
+    def links_to(self):
+        return ""
+
+    @property
+    def data_line_opt(self):
+        return "object-to-object"
+
+    @property
+    def data_attributes_as_list_of_dict(self):
+        return [{'id': f'{self.web_id}', 'data-link-to': self.links_to, 'data-line-opt': self.data_line_opt}]
 
     @property
     def all_accordion_parents(self):
@@ -232,15 +240,9 @@ class DuplicatedJobWeb(ModelingObjectWeb):
         return []
 
     @property
-    def previous_object_in_accordion(self):
-        return None
+    def data_line_opt(self):
+        return "object-to-object-inside-card"
 
-    def generate_new_data_attribute_for_web_element(self, has_an_icon: bool = False):
-        line_to_return = {'id': f'{self.web_id}',
-                          'data-link-to': self.links_to,
-                          'data-line-opt': 'object-to-object-inside-card'
-                          }
-        return line_to_return
 
 class UserJourneyStepWeb(ModelingObjectWeb):
     @property
@@ -298,7 +300,7 @@ class DuplicatedUserJourneyStepWeb(UserJourneyStepWeb):
         return link_to
 
     @property
-    def style_leaderline(self):
+    def icon_leaderline_style(self):
         user_journey_steps = self.user_journey.uj_steps
         index = user_journey_steps.index(self)
         if index < len(user_journey_steps) - 1:
@@ -308,39 +310,18 @@ class DuplicatedUserJourneyStepWeb(UserJourneyStepWeb):
 
         return class_name
 
+    @property
+    def data_line_opt(self):
+        return "object-to-object-inside-card"
 
     @property
-    def previous_object_in_accordion(self):
-        user_journey_steps = self.user_journey.uj_steps
-        index = user_journey_steps.index(self)
-        if index > 0:
-            return f'icon-{user_journey_steps[index - 1]}'
+    def data_attributes_as_list_of_dict(self):
+        data_attribute_updates = super().data_attributes_as_list_of_dict
+        data_attribute_updates.append(
+            {'id': f'icon-{self.web_id}', 'data-link-to': self.icon_links_to,
+             'data-line-opt': self.icon_leaderline_style})
 
-        return None
-
-    @property
-    def has_icon(self):
-        return True
-
-    def generate_new_data_attribute_for_web_element(self, has_an_icon):
-        user_journey_steps = self.user_journey.uj_steps
-        if(self in user_journey_steps):
-            index = user_journey_steps.index(self)
-            if has_an_icon:
-                if index < len(user_journey_steps) - 1:
-                    opt_name = "vertical-step-swimlane"
-                else:
-                    opt_name = 'step-dot-line'
-                line_to_return = {'id': f'icon-{self.web_id}',
-                                  'data-link-to': self.icon_links_to,
-                                  'data-line-opt': opt_name
-                                  }
-            else:
-                line_to_return = {'id': f'{self.web_id}',
-                                  'data-link-to': self.links_to,
-                                  'data-line-opt': 'object-to-object-inside-card'
-                                  }
-            return line_to_return
+        return data_attribute_updates
 
 class UserJourneyWeb(ModelingObjectWeb):
     @property
@@ -368,13 +349,6 @@ class UserJourneyWeb(ModelingObjectWeb):
 
         return web_uj_steps
 
-    def generate_new_data_attribute_for_web_element(self, has_an_icon: bool = False):
-        line_to_return = {'id': f'{self.web_id}',
-                          'data-link-to': self.links_to,
-                          'data-line-opt': 'object-to-object'
-                          }
-        return line_to_return
-
 
 class UsagePatternWeb(ModelingObjectWeb):
     @property
@@ -389,10 +363,6 @@ class UsagePatternWeb(ModelingObjectWeb):
     def accordion_children(self):
         # TODO: Add Device mix Network mix and Country mix
         return []
-
-    @property
-    def previous_object_in_accordion(self):
-        return None
 
 
 wrapper_mapping = {

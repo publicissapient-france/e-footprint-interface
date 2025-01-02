@@ -1,12 +1,12 @@
 {% load static %}
 <div id="{{ user_journey_step.web_id }}" class="leader-line-object row mx-0 my-3 border border-2 border-white"
      data-link-to="{{ user_journey_step.links_to }}"
-     data-line-opt="object-to-object-inside-card" {{ hx_swap_oob }}>
+     data-line-opt="{{ user_journey_step.data_line_opt }}" {{ hx_swap_oob }}>
     <div class="col-2 p-0 justify-content-center">
         <img src="{% static 'icons/circle_uj_step.svg' %}" id="icon-{{user_journey_step.web_id }}"
                          class="leader-line-object border border-2 border-white bg-white rounded-circle"
                          data-link-to="{{ user_journey_step.icon_links_to }}"
-                         data-line-opt="{{ user_journey_step.style_leaderline }}"
+                         data-line-opt="{{ user_journey_step.icon_leaderline_style }}"
                          width="18px" height="18px;" alt="circle_step">
     </div>
     <div class="col-10 p-0">
@@ -14,7 +14,7 @@
             <div class="accordion-item">
                 <h6 class="accordion-header p-0 d-flex align-items-center text-start">
                 <button type="button" class="chevron-btn btn btn-link p-0 me-1 text-black"
-                        data-bs-toggle="collapse" data-bs-target="#flush-{{ user_journey_step.web_id }}" onclick="reverse_icon_accordion('{{ user_journey_step.web_id }}')" aria-expanded="true" aria-controls="collapseOne">
+                        data-bs-toggle="collapse" data-bs-target="#flush-{{ user_journey_step.web_id }}" onclick="reverseIconAccordion('{{ user_journey_step.web_id }}')" aria-expanded="true" aria-controls="collapseOne">
                         <svg id="icon_accordion_{{ user_journey_step.web_id }}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="bi bi-chevron-right" viewBox="0 0 16 16">
                             <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M4.646 1.646l6 6-6 6" />
                         </svg>
