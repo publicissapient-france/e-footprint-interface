@@ -18,14 +18,14 @@ class ModelWeb:
 
         self.system = wrap_efootprint_object(list(self.response_objs["System"].values())[0], self)
 
-    def get_efootprint_objects_from_type(self, obj_type):
+    def get_efootprint_objects_from_efootprint_type(self, obj_type):
         if obj_type in self.response_objs.keys():
             return list(self.response_objs[obj_type].values())
         else:
             return []
 
-    def get_web_objects_from_type(self, obj_type):
-        return [wrap_efootprint_object(obj, self) for obj in self.get_efootprint_objects_from_type(obj_type)]
+    def get_web_objects_from_efootprint_type(self, obj_type):
+        return [wrap_efootprint_object(obj, self) for obj in self.get_efootprint_objects_from_efootprint_type(obj_type)]
 
     def get_web_object_from_efootprint_id(self, object_id):
         efootprint_object = self.flat_efootprint_objs_dict[object_id]
@@ -36,36 +36,36 @@ class ModelWeb:
 
     @property
     def storage(self):
-        return self.get_web_objects_from_type("Storage")
+        return self.get_web_objects_from_efootprint_type("Storage")
 
     @property
     def servers(self):
         servers = []
 
         for server_type in ["Autoscaling", "OnPremise", "Serverless"]:
-            servers += self.get_web_objects_from_type(server_type)
+            servers += self.get_web_objects_from_efootprint_type(server_type)
 
         return servers
 
     @property
     def autoscaling_servers(self):
-        return self.get_web_objects_from_type("Autoscaling")
+        return self.get_web_objects_from_efootprint_type("Autoscaling")
 
     @property
     def on_premise_servers(self):
-        return self.get_web_objects_from_type("OnPremise")
+        return self.get_web_objects_from_efootprint_type("OnPremise")
 
     @property
     def serverless_servers(self):
-        return self.get_web_objects_from_type("Serverless")
+        return self.get_web_objects_from_efootprint_type("Serverless")
 
     @property
     def user_journeys(self):
-        return self.get_web_objects_from_type("UserJourney")
+        return self.get_web_objects_from_efootprint_type("UserJourney")
 
     @property
     def countries(self):
-        return self.get_web_objects_from_type("Country")
+        return self.get_web_objects_from_efootprint_type("Country")
 
     @property
     def available_countries(self):
@@ -73,15 +73,15 @@ class ModelWeb:
 
     @property
     def hardware(self):
-        return self.get_web_objects_from_type("Hardware")
+        return self.get_web_objects_from_efootprint_type("Hardware")
 
     @property
     def networks(self):
-        return self.get_web_objects_from_type("Network")
+        return self.get_web_objects_from_efootprint_type("Network")
 
     @property
     def usage_patterns(self):
-        return self.get_web_objects_from_type("UsagePattern")
+        return self.get_web_objects_from_efootprint_type("UsagePattern")
 
 
 class ObjectStructure:
@@ -109,7 +109,7 @@ class ObjectStructure:
                 mod_obj_attribute_desc["existing_objects"] = [
                     country.to_json() for country in EFOOTPRINT_COUNTRIES]
             else:
-                mod_obj_attribute_desc["existing_objects"] = self.model_web.get_web_objects_from_type(self.object_type)
+                mod_obj_attribute_desc["existing_objects"] = self.model_web.get_web_objects_from_efootprint_type(self.object_type)
 
         return modeling_obj_attributes
 
@@ -122,7 +122,7 @@ class ObjectStructure:
                 list_attribute_desc["existing_objects"] = [
                     country.to_json() for country in EFOOTPRINT_COUNTRIES]
             else:
-                list_attribute_desc["existing_objects"] = self.model_web.get_web_objects_from_type(self.object_type)
+                list_attribute_desc["existing_objects"] = self.model_web.get_web_objects_from_efootprint_type(self.object_type)
 
         return list_attributes
 

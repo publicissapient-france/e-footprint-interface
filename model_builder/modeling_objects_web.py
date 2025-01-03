@@ -158,7 +158,7 @@ class ModelingObjectWeb:
     def mod_obj_attributes(self):
         efootprint_mod_obj_attributes = retrieve_attributes_by_type(self._modeling_obj, ModelingObject)
         for mod_obj_dict in efootprint_mod_obj_attributes:
-            mod_obj_dict["existing_objects"] = self.model_web.get_web_objects_from_type(
+            mod_obj_dict["existing_objects"] = self.model_web.get_web_objects_from_efootprint_type(
                 mod_obj_dict["attr_value"].class_as_simple_str)
             mod_obj_dict["attr_value"] = wrap_efootprint_object(mod_obj_dict["attr_value"], self.model_web)
 
@@ -168,13 +168,22 @@ class ModelingObjectWeb:
     def list_attributes(self):
         attributes_from_structure = self.structure.list_attributes
         list_efootprint_mod_obj_attributes = retrieve_attributes_by_type(self._modeling_obj, list)
-        for list_mod_obj_dict in list_efootprint_mod_obj_attributes:
+        for efootprint_mod_obj_attribute_dict in list_efootprint_mod_obj_attributes:
             # TODO: test that logic works in case e-footprint object has empty list attribute
-            list_attribute_object_type = [attribute["object_type"] for attribute in attributes_from_structure
-                                          if attribute["attr_name"] == list_mod_obj_dict["attr_name"]][0]
-            list_mod_obj_dict["existing_objects"] = self.model_web.get_web_objects_from_type(list_attribute_object_type)
-            list_mod_obj_dict["attr_value"] = [
-                wrap_efootprint_object(item, self.model_web) for item in list_mod_obj_dict["attr_value"]]
+            efootprint_mod_obj_attribute_dict["attr_value"] = [
+                self.model_web.get_web_object_from_efootprint_id(efootprint_mod_obj.id)
+                for efootprint_mod_obj in efootprint_mod_obj_attribute_dict["attr_value"]]
+            list_attribute_object_type = [
+                attribute["object_type"] for attribute in attributes_from_structure
+                if attribute["attr_name"] == efootprint_mod_obj_attribute_dict["attr_name"]][0]
+            efootprint_attribute_ids = [
+                obj.efootprint_id for obj in efootprint_mod_obj_attribute_dict["attr_value"]]
+            existing_web_objects_of_same_type_that_are_not_attributes = [
+                obj for obj in self.model_web.get_web_objects_from_efootprint_type(list_attribute_object_type)
+                if obj.efootprint_id not in efootprint_attribute_ids]
+            efootprint_mod_obj_attribute_dict["existing_objects"] = (
+                efootprint_mod_obj_attribute_dict["attr_value"]
+                + existing_web_objects_of_same_type_that_are_not_attributes)
 
         return list_efootprint_mod_obj_attributes
 
@@ -205,7 +214,7 @@ class ServerWeb(ModelingObjectWeb):
 class JobWeb(ModelingObjectWeb):
     @property
     def web_id(self):
-        raise AttributeError(f"JobWeb objects don’t have a web_id attribute because their html "
+        raise PermissionError(f"JobWeb objects don’t have a web_id attribute because their html "
                              f"representation should be managed by the DuplicatedJobWeb object")
 
     @property
@@ -247,7 +256,7 @@ class DuplicatedJobWeb(ModelingObjectWeb):
 class UserJourneyStepWeb(ModelingObjectWeb):
     @property
     def web_id(self):
-        raise AttributeError(f"UserJourneyStepWeb objects don’t have a web_id attribute because their html "
+        raise PermissionError(f"UserJourneyStepWeb objects don’t have a web_id attribute because their html "
                              f"representation should be managed by the DuplicatedUserJourneyStepWeb object")
 
     @property
