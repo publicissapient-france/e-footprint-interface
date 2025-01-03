@@ -5,14 +5,14 @@
 <head>
     <meta charset="UTF-8"/>
     <title>e-footprint</title>
-{#    {% bootstrap_css %}#}
     <link rel="stylesheet" href="{% static 'css/bs_main.css' %}"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="/static/icons/sidenav/logo.svg"/>
     <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
-    <script src="{% static 'scripts/plotly_basic.min.js' %}"></script>
     <script src="{% static 'scripts/htmx.min.js' %}"></script>
     <script src="{% static 'scripts/_hyperscript.min.js' %}"></script>
+    <script src="{% static 'scripts/leader-line.min.js' %}"></script>
+    <script src="{% static 'scripts/Sortable.min.js' %}"></script>
 </head>
 
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="vh-100">
@@ -38,9 +38,9 @@
                     </button>
 
 
-                    <button hx-get="/quiz/onboarding" hx-target="#main-content-block" hx-swap="beforeend"
+                    <button hx-get="/quiz/onboarding" hx-target="#main-content-block" hx-swap="innerHTML"
                             hx-push-url="/quiz/onboarding" hx-indicator="#global_loader" hx-disabled-elt="button"
-                            script="on click remove the first <div/> in #main-content-block"
+                            script="on click call removeAllLines()"
                             class="nav-link d-flex flex-row gap-2 btn btn-primary text-white mx-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-plus-fill" viewBox="0 0 16 16">
                           <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M8.5 7v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 1 0"/>
@@ -48,10 +48,8 @@
                         <span class="text-nowrap">Create new modeling</span>
                     </button>
 
-                    <button hx-get="/model_builder" hx-target="#main-content-block" hx-swap="beforeend"
+                    <button hx-get="/model_builder" hx-target="#main-content-block" hx-swap="innerHTML"
                             hx-push-url="/model_builder/" hx-indicator="#global_loader" hx-disabled-elt="button"
-                            script="on click remove the first <div/> in #main-content-block
-                                    on htmx:afterRequest js init('{{ request.scheme }}://{{ request.get_host }}', '{{csrf_token}}') end"
                             class="nav-link d-flex flex-row gap-2 btn btn-primary text-white mx-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-fill" viewBox="0 0 16 16">
                               <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"/>
@@ -100,5 +98,6 @@
         </div>
     </div>
     {% bootstrap_javascript %}
+    <script src="{% static 'scripts/efootprint_model.js' %}"></script>
 </body>
 </html>

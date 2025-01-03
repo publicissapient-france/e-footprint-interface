@@ -1,4 +1,3 @@
-// ------------------------------------------------------------
 // LEADERLINE
 
 const dictLeaderLineOption = {
@@ -65,9 +64,6 @@ function updateLines() {
         });
     });
 }
-
-const scrollContainer = document.querySelector('#model-canva');
-scrollContainer.addEventListener('scroll', updateLines);
 
 function removeAllLinesDepartingFromElement(elementId) {
     if (allLines[elementId]) {
@@ -198,11 +194,12 @@ function initLeaderLines() {
             updateOrCreateLines(leaderLineObject);
         }
     });
+    document.querySelectorAll('.accordion').forEach(accordion => {
+        addAccordionListener(accordion);
+    });
+    const scrollContainer = document.querySelector('#model-canva');
+    scrollContainer.addEventListener('scroll', updateLines);
 }
-
-document.querySelectorAll('.accordion').forEach(accordion => {
-    addAccordionListener(accordion);
-});
 
 // ------------------------------------------------------------
 // HTMX AFTER SWAP
@@ -235,6 +232,10 @@ document.body.addEventListener('updateTopParentLines', function (event) {
         updateOrCreateLines(document.getElementById(topParentId));
     });
     updateLines();
+});
+
+document.body.addEventListener('initLeaderLines', function (event) {
+    initLeaderLines();
 });
 
 // ------------------------------------------------------------

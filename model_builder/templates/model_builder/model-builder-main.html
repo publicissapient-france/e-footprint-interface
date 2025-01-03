@@ -1,7 +1,4 @@
 {% load static %}
-<script src="{% static 'scripts/leader-line.min.js' %}"></script>
-<script src="{% static 'scripts/Sortable.min.js' %}"></script>
-
 <div class="container-fluid bg-white" id="model-builder-page">
     <div class="row">
         <div class="col-9" id="model-canva" style="height: 80vh !important; overflow: auto;">
@@ -91,17 +88,3 @@
 </div>
 
 {% include 'model_builder/resultPanel.html' %}
-
-<script src="{% static 'scripts/efootprint_model.js' %}"></script>
-
-{% if init_leader_lines %}
-<script>
-    document.addEventListener("htmx:load", function () {
-        console.log("I have been loaded");
-        if (typeof initLeaderLines === "function") {
-            initLeaderLines();
-        }
-    });
-</script>
-{% endif %}
-

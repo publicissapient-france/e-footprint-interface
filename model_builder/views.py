@@ -33,11 +33,13 @@ def model_builder_main(request):
 
     model_web = ModelWeb(jsondata)
 
-    return htmx_render(
-        request, "model_builder/model-builder-main.html", context={
-            "model_web": model_web,
-            "init_leader_lines": True
-        })
+    http_response = htmx_render(
+        request, "model_builder/model-builder-main.html", context={"model_web": model_web})
+
+    if request.headers.get("HX-Request") == "true":
+        http_response["HX-Trigger-After-Swap"] = "initLeaderLines"
+
+    return http_response
 
 
 def open_create_object_panel(request, object_type):
