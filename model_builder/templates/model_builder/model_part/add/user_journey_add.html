@@ -1,9 +1,15 @@
 
 <form class="form_add_panel p-4 text-start"
         hx-post="/model_builder/add-new-user-journey/"
-        hx-target="#uj-list"
-        hx-swap="beforeend"
-        script="on htmx:afterSwap closePanel()"
+        {% if efootprint_id_of_empty_object_origin %}
+            hx-vals='{"efootprint_id_of_empty_object_origin": "{{ efootprint_id_of_empty_object_origin }}"}'
+            hx-target="#{{ efootprint_id_of_empty_object_origin }}"
+            hx-swap="outerHTML"
+        {% else %}
+            hx-target="#uj-list"
+            hx-swap="beforeend"
+        {% endif %}
+        script="on htmx:afterRequest closePanel()"
 >
     <div class="w-100 text-end">
         <button type="button" class="btn btn-white" aria-label="Close"
@@ -15,7 +21,7 @@
     </div>
     <div class="form-header" id="panel-header">
         <h5 id="formModalLabel" class="mt-4">
-            <b>{{ object_structure.name }}</b>
+            <b>{{ header_name }}</b>
         </h5>
     </div>
     <div class="form-body" id="panel-body">
@@ -23,10 +29,12 @@
 
             <div class="col-12 mb-3">
                 <label for="form_add_name" class="form-label">Name</label>
-                <input type="text" class="form-control p-2" id="form_add_name" name="form_add_name">
+                <input type="text" class="form-control p-2" id="form_add_name" name="form_add_name"
+                value="{{ new_object_name }}">
+
             </div>
 
-            {% for attr in object_structure.structure_dict.explainable_quantities %}
+            {% for attr in object_structure.explainable_quantities %}
                 <div class="col-8 mb-3">
                     <div class="input-group">
                         <label for="form_add_{{ attr.attr_name }}" class="form-label w-100">{{ attr.attr_name }}</label>
@@ -42,7 +50,7 @@
                 </div>
             {% endfor %}
 
-            {% for attr in object_structure.structure_dict.mod_obj_attributes %}
+            {% for attr in object_structure.mod_obj_attributes %}
                 <div class="col-12 mb-3">
                     <label for="form_add_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
                     <select class="form-control p-2" id="form_add_{{ attr.attr_name }}" name="form_add_{{ attr.attr_name }}">

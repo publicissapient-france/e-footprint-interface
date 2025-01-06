@@ -2,7 +2,7 @@
 <form class="form_edit_panel p-4 text-start"
       hx-post="/model_builder/edit-object/{{ object_to_edit.efootprint_id }}/"
       hx-swap="none"
-      script="on htmx:afterSwap closePanel()"
+      script="on htmx:afterRequest closePanel()"
 >
     <div class="w-100 text-end">
         <button type="button" class="btn btn-white" aria-label="Close"

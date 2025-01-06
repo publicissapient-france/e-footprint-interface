@@ -212,6 +212,7 @@ def import_json(request):
         try:
             json_to_system(data)
             request.session["system_data"] = data
+            request.session["empty_objects"] = {}
             response = model_builder_main(request)
             response.headers = {"HX-Push-Url": "/model_builder/"}
             return response

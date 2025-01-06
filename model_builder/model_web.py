@@ -11,9 +11,10 @@ from utils import EFOOTPRINT_COUNTRIES
 
 
 class ModelWeb:
-    def __init__(self, jsondata):
-        self.jsondata = jsondata
-        self.response_objs, self.flat_efootprint_objs_dict = json_to_system(jsondata)
+    def __init__(self, session_data: SessionBase):
+        self.system_data = session_data["system_data"]
+        self.response_objs, self.flat_efootprint_objs_dict = json_to_system(self.system_data)
+        self.empty_objects = session_data.get("empty_objects", {})
         with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'object_inputs_and_default_values.json'),
                   "r") as object_inputs_file:
             self.object_inputs_and_default_values = json.load(object_inputs_file)
@@ -96,6 +97,13 @@ class ModelWeb:
     @property
     def usage_patterns(self):
         return self.get_web_objects_from_efootprint_type("UsagePattern")
+
+    @property
+    def empty_user_journeys(self):
+        if "UserJourney" in self.empty_objects.keys():
+            return self.empty_objects["UserJourney"].values()
+        else:
+            return []
 
 
 class ObjectStructure:

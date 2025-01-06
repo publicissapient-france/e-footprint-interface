@@ -1,3 +1,4 @@
+import uuid
 from copy import copy
 
 from efootprint.api_utils.json_to_system import json_to_system
@@ -24,14 +25,12 @@ DEFAULT_GRAPH_WIDTH = 700
 
 
 def model_builder_main(request):
-    try:
-        jsondata = request.session["system_data"]
-    except KeyError:
+    if "system_data" not in request.session.keys():
         with open(os.path.join("model_builder", "default_system_data.json"), "r") as file:
-            jsondata = json.load(file)
-            request.session["system_data"] = jsondata
+            system_data = json.load(file)
+            request.session["system_data"] = system_data
 
-    model_web = ModelWeb(jsondata)
+    model_web = ModelWeb(request.session)
 
     http_response = htmx_render(
         request, "model_builder/model-builder-main.html", context={"model_web": model_web})
@@ -43,18 +42,24 @@ def model_builder_main(request):
 
 
 def open_create_object_panel(request, object_type):
-    model_web = ModelWeb(request.session["system_data"])
+    model_web = ModelWeb(request.session)
     new_object_structure = model_web.get_object_structure(object_type)
     template_name = f'{new_object_structure.template_name}_add.html'
-    context_data = {"object_structure": new_object_structure}
-    if request.GET.get('parent_to_link_to_efootprint_id'):
-        context_data['parent_to_link_to_efootprint_id'] = request.GET['parent_to_link_to_efootprint_id']
+    context_data = {"object_structure": new_object_structure,
+                    "header_name": "Create " +  new_object_structure.template_name.replace("_", " "),
+                    "new_object_name": "New " + new_object_structure.template_name.replace("_", " ")}
+    if request.GET.get('efootprint_id_of_parent_to_link_to'):
+        context_data['efootprint_id_of_parent_to_link_to'] = request.GET['efootprint_id_of_parent_to_link_to']
+    if request.GET.get("name"):
+        context_data["new_object_name"] = request.GET["name"]
+    if request.GET.get("efootprint_id_of_empty_object_origin"):
+        context_data["efootprint_id_of_empty_object_origin"] = request.GET["efootprint_id_of_empty_object_origin"]
 
     return render(request, f"model_builder/model_part/add/{template_name}", context=context_data)
 
 
 def open_edit_object_panel(request, object_id):
-    model_web = ModelWeb(request.session["system_data"])
+    model_web = ModelWeb(request.session)
     obj_to_edit = model_web.get_web_object_from_efootprint_id(object_id)
 
     return render(request, "model_builder/edit_object_panel.html", context={"object_to_edit": obj_to_edit})
@@ -80,22 +85,45 @@ def add_new_object(request):
 
 
 def add_new_user_journey(request):
-    model_web = ModelWeb(request.session["system_data"])
-    added_obj = add_new_object_to_system(request, model_web, 'UserJourney')
-    response = render(
-        request, "model_builder/model_part/card/user_journey_card.html", {"user_journey": added_obj})
-    response["HX-Trigger-After-Swap"] = json.dumps({
-        "updateTopParentLines": {
-            "topParentIds": [added_obj.web_id]
-        },
-        "setAccordionListeners": {
-            "accordionIds": [added_obj.web_id]
+    model_web = ModelWeb(request.session)
+    if request.POST.getlist("form_add_uj_steps"):
+        added_obj = add_new_object_to_system(request, model_web, 'UserJourney')
+        response = render(
+            request, "model_builder/model_part/card/user_journey_card.html", {"user_journey": added_obj})
+        response["HX-Trigger-After-Swap"] = json.dumps({
+            "updateTopParentLines": {"topParentIds": [added_obj.web_id]},
+            "setAccordionListeners": {"accordionIds": [added_obj.web_id]}})
+    else:
+        if not request.POST.get("efootprint_id_of_empty_object_origin"):
+            empty_uj_id = f"new-uj-{str(uuid.uuid4())[:6]}"
+        else:
+            empty_uj_id = request.POST["efootprint_id_of_empty_object_origin"]
+        added_obj = {
+            "name": request.POST["form_add_name"],
+            "web_id": empty_uj_id,
+            "efootprint_id": empty_uj_id,
+            "links_to": "",
+            "data_line_opt": "",
+            "uj_steps": [],
+            "list_attributes": [{"attr_name": "uj_steps", "existing_objects": []}]
         }
-    })
+
+        if "empty_objects" not in request.session:
+            request.session["empty_objects"] = {"UserJourney": {empty_uj_id: added_obj}}
+        else:
+            if "UserJourney" not in request.session["empty_objects"]:
+                request.session["empty_objects"]["UserJourney"] = {empty_uj_id: added_obj}
+            else:
+                request.session["empty_objects"]["UserJourney"][empty_uj_id] = added_obj
+            request.session.modified = True
+
+        response = render(request, "model_builder/model_part/card/user_journey_empty.html",
+                  context={"user_journey": added_obj})
+
     return response
 
 def add_new_user_journey_step(request, user_journey_efootprint_id):
-    model_web = ModelWeb(request.session["system_data"])
+    model_web = ModelWeb(request.session)
     added_obj = add_new_object_to_system(request, model_web, 'UserJourneyStep')
     user_journey_to_edit = model_web.get_web_object_from_efootprint_id(user_journey_efootprint_id)
     mutable_post = request.POST.copy()
@@ -114,7 +142,7 @@ def add_new_user_journey_step(request, user_journey_efootprint_id):
 
 def edit_object(request, object_id, model_web=None):
     if model_web is None:
-        model_web = ModelWeb(request.session["system_data"])
+        model_web = ModelWeb(request.session)
     data_attribute_updates = []
     ids_of_web_elements_with_lines_to_remove = []
     obj_to_edit = model_web.get_web_object_from_efootprint_id(object_id)
@@ -193,7 +221,7 @@ def edit_object(request, object_id, model_web=None):
     return http_response
 
 def delete_object(request):
-    model_web = ModelWeb(request.session["system_data"])
+    model_web = ModelWeb(request.session)
 
     obj_id = request.POST["object-id"]
     obj_type = request.POST["object-type"]

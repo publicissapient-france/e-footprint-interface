@@ -13,12 +13,13 @@
                 <button id="button-{{ user_journey.web_id }}"
                         class="btn btn-white ms-1"
                         type="button"
-                        hx-get="/model_builder/open-edit-object-panel/{{ user_journey.efootprint_id }}/"
+                        hx-get="/model_builder/open-create-object-panel/UserJourney/"
                         hx-target="#formPanel"
                         hx-trigger="click"
                         hx-swap="innerHTML"
+                        hx-vals='{"name": "{{ user_journey.name }}", "efootprint_id_of_empty_object_origin": "{{ user_journey.efootprint_id }}"}'
                 >
-                    {{ user_journey.name }}
+                    {{ user_journey.name }} ⚠️
                 </button>
             </h6>
             <div id="flush-{{ user_journey.web_id }}" class="accordion-collapse show accordion-all" data-bs-parent="#{{ user_journey.web_id }}">
@@ -32,12 +33,11 @@
                         </div>
                         <div class="col-10 p-0 text-start">
                             <button class="btn btn-white text-start p-0"
-                                    hx-get="/model_builder/open-create-object-panel/UserJourneyStep"
+                                    hx-get="/model_builder/open-create-object-panel/UserJourney/"
                                     hx-target="#formPanel"
                                     hx-trigger="click"
                                     hx-swap="innerHTML"
-                                    hx-vals='{"efootprint_id_of_parent_to_link_to": "{{ user_journey.efootprint_id }}"}'
-                            >
+                                    hx-vals='{"name": "{{ user_journey.name }}", "efootprint_id_of_empty_object_origin": "{{ user_journey.efootprint_id }}"}'>
                                 Add usage journey step
                             </button>
                         </div>

@@ -1,8 +1,8 @@
 
 <form class="form_add_panel p-4 text-start"
-        hx-post="/model_builder/add-new-user-journey-step/{{ parent_to_link_to_efootprint_id }}/"
+        hx-post="/model_builder/add-new-user-journey-step/{{ efootprint_id_of_parent_to_link_to }}/"
         hx-swap="none"
-        script="on htmx:afterSwap closePanel()"
+        script="on htmx:afterRequest closePanel()"
 >
     <div class="w-100 text-end">
         <button type="button" class="btn btn-white" aria-label="Close"

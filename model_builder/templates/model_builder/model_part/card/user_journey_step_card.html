@@ -1,7 +1,7 @@
 {% load static %}
 <div id="{{ user_journey_step.web_id }}" class="leader-line-object row mx-0 my-3 border border-2 border-white"
      data-link-to="{{ user_journey_step.links_to }}"
-     data-line-opt="{{ user_journey_step.data_line_opt }}" {{ hx_swap_oob }}>
+     data-line-opt="{{ user_journey_step.data_line_opt }}">
     <div class="col-2 p-0 justify-content-center">
         <img src="{% static 'icons/circle_uj_step.svg' %}" id="icon-{{user_journey_step.web_id }}"
                          class="leader-line-object border border-2 border-white bg-white rounded-circle"

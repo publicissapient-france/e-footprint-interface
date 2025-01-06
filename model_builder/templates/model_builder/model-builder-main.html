@@ -49,6 +49,9 @@
                             {% for user_journey in model_web.user_journeys %}
                                 {% include 'model_builder/model_part/card/user_journey_card.html' %}
                             {% endfor %}
+                            {% for empty_user_journey in model_web.empty_user_journeys %}
+                                {% include 'model_builder/model_part/card/user_journey_empty.html' with user_journey=empty_user_journey %}
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
