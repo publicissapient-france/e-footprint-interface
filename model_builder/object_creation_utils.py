@@ -15,77 +15,64 @@ from efootprint.abstract_modeling_classes.source_objects import SourceValue, Sou
 from efootprint.constants.units import u
 from efootprint.logger import logger
 
-from model_builder.modeling_objects_web import ModelingObjectWeb
+from model_builder.modeling_objects_web import ModelingObjectWeb, wrap_efootprint_object
 from model_builder.model_web import ModelWeb
-from utils import EFOOTPRINT_COUNTRIES
-
-from django.conf import settings
-import json
-import os
 
 
-def create_efootprint_obj_from_post_data(request, flat_efootprint_objs_dict):
-    with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'object_inputs_and_default_values.json'), "r") as file:
-        obj_inputs_and_default_values = json.load(file)
-
-    new_efootprint_obj_class = globals()[request.POST["obj_type"]]
+def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_type: str):
+    new_efootprint_obj_class = globals()[object_type]
     new_efootprint_obj = new_efootprint_obj_class.__new__(new_efootprint_obj_class)
 
     obj_creation_kwargs = {}
-    obj_inputs = obj_inputs_and_default_values[request.POST["obj_type"]]
-    obj_creation_kwargs["name"] = request.POST["name"]
-    for attr_dict in obj_inputs["numerical_attributes"]:
-        assert request.POST.getlist(attr_dict["attr_name"])[1] == attr_dict["unit"]
+    obj_structure = model_web.get_object_structure(object_type)
+    obj_creation_kwargs["name"] = request.POST["form_add_name"]
+
+    for attr_dict in obj_structure.numerical_attributes:
         obj_creation_kwargs[attr_dict["attr_name"]] = SourceValue(
-            float(request.POST.getlist(attr_dict["attr_name"])[0]) * u(attr_dict["unit"]))
-    for attr_dict in obj_inputs["hourly_quantities_attributes"]:
-        assert request.POST.getlist(attr_dict["attr_name"])[1] == attr_dict["unit"]
+            float(request.POST.getlist(f'form_add_{attr_dict["attr_name"]}')[0]) * u(attr_dict["unit"]))
+
+    for attr_dict in obj_structure.hourly_quantities_attributes:
         obj_creation_kwargs[attr_dict["attr_name"]] = SourceHourlyValues(
-            float(request.POST.getlist(attr_dict["attr_name"])[0]) * u(attr_dict["unit"]))
-    for mod_obj in obj_inputs["modeling_obj_attributes"]:
-        new_mod_obj_id = request.POST[mod_obj["attr_name"]]
-        if mod_obj["object_type"] == "Country" and new_mod_obj_id not in flat_efootprint_objs_dict.keys():
-            obj_to_add = [country for country in EFOOTPRINT_COUNTRIES if country.id == new_mod_obj_id][0]
-            request.session["system_data"]["Country"][new_mod_obj_id] = obj_to_add.to_json()
-        else:
-            obj_to_add = flat_efootprint_objs_dict[new_mod_obj_id]
+            float(request.POST.getlist(f'form_add_{attr_dict["attr_name"]}')[0]) * u(attr_dict["unit"]))
+
+    for mod_obj in obj_structure.modeling_obj_attributes:
+        new_mod_obj_id = request.POST[f'form_add_{mod_obj["attr_name"]}']
+        obj_to_add = model_web.get_efootprint_object_from_efootprint_id(
+            new_mod_obj_id, mod_obj["object_type"], request.session)
         obj_creation_kwargs[mod_obj["attr_name"]] = obj_to_add
-    for mod_obj in obj_inputs["list_attributes"]:
+
+    for mod_obj in obj_structure.list_attributes:
         obj_creation_kwargs[mod_obj["attr_name"]] = [
-            flat_efootprint_objs_dict[obj_id] for obj_id in request.POST.getlist(mod_obj["attr_name"])]
+            model_web.flat_efootprint_objs_dict[obj_id]
+            for obj_id in request.POST.getlist(f'form_add_{mod_obj["attr_name"]}')]
 
     new_efootprint_obj.__init__(**obj_creation_kwargs)
 
     return new_efootprint_obj
 
 
-def add_new_object_to_system(request, model_web: ModelWeb):
-    new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web.flat_efootprint_objs_dict)
+def add_new_object_to_system(request, model_web: ModelWeb, object_type: str):
+    new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, object_type)
 
     # If object is a usage pattern it has to be added to the System to trigger recomputation
     system = model_web.system
-    if request.POST["obj_type"] == "UsagePattern":
+    if object_type == "UsagePattern":
         system.usage_patterns += [new_efootprint_obj]
         request.session["system_data"]["System"][system.id]["usage_patterns"] = [up.id for up in system.usage_patterns]
-    else:
-        new_efootprint_obj.launch_attributes_computation_chain()
+
+    new_obj_wrapped = wrap_efootprint_object(new_efootprint_obj, model_web)
 
     # Update session data
-    request.session["system_data"][request.POST["obj_type"]][new_efootprint_obj.id] = new_efootprint_obj.to_json()
+    request.session["system_data"][new_obj_wrapped.class_as_simple_str][new_obj_wrapped.efootprint_id] = (
+        new_obj_wrapped.to_json())
     # Here we updated a sub dict of request.session so we have to explicitly tell Django that it has been updated
     request.session.modified = True
 
     # Add new object to object dict to recompute context
-    model_web.response_objs[request.POST["obj_type"]][new_efootprint_obj.id] = new_efootprint_obj
+    model_web.response_objs[object_type][new_efootprint_obj.id] = new_efootprint_obj
+    model_web.flat_efootprint_objs_dict[new_efootprint_obj.id] = new_efootprint_obj
 
-    objects_to_update = []
-    if request.POST["obj_type"] == "UsagePattern":
-        # Special case where adding a UsagePattern makes all UsagePatterns deletable and thus need to be updated
-        for up in system.usage_patterns:
-            if up.id != new_efootprint_obj.id:
-                objects_to_update.append(up)
-
-    return new_efootprint_obj, objects_to_update
+    return new_obj_wrapped
 
 
 def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
@@ -108,13 +95,9 @@ def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
         current_mod_obj_id = getattr(obj_to_edit, mod_obj["attr_name"]).efootprint_id
         if new_mod_obj_id != current_mod_obj_id:
             logger.info(f"{mod_obj['attr_name']} has changed")
-            # TODO for DEVICES, HARDWARE and NETWORK, STORAGE ?
-            if mod_obj["object_type"] == "Country" and new_mod_obj_id not in model_web.flat_efootprint_objs_dict.keys():
-                obj_to_add = [country for country in EFOOTPRINT_COUNTRIES if country.id == new_mod_obj_id][0]
-                request.session["system_data"]["Country"][new_mod_obj_id] = obj_to_add.to_json()
-            else:
-                obj_to_add = model_web.get_web_object_from_efootprint_id(new_mod_obj_id)
-            obj_to_edit.set_efootprint_value(mod_obj["attr_name"], obj_to_add.modeling_obj)
+            obj_to_add = model_web.get_efootprint_object_from_efootprint_id(
+                new_mod_obj_id, mod_obj["object_type"], request.session)
+            obj_to_edit.set_efootprint_value(mod_obj["attr_name"], obj_to_add)
     for mod_obj in obj_structure.list_attributes:
         new_mod_obj_ids = request.POST.getlist("form_edit_" +mod_obj["attr_name"])
         current_mod_obj_ids = [mod_obj.efootprint_id for mod_obj in getattr(obj_to_edit, mod_obj["attr_name"])]

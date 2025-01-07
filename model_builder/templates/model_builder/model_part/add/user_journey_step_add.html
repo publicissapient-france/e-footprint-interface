@@ -1,0 +1,70 @@
+
+<form class="form_add_panel p-4 text-start"
+        hx-post="/model_builder/add-new-user-journey-step/{{ parent_to_link_to_efootprint_id }}/"
+        hx-swap="none"
+        script="on htmx:afterSwap closePanel()"
+>
+    <div class="w-100 text-end">
+        <button type="button" class="btn btn-white" aria-label="Close"
+                onclick="closePanel()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+              <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+            </svg>
+        </button>
+    </div>
+    <div class="form-header" id="panel-header">
+        <h5 id="formModalLabel" class="mt-4">
+            <b>{{ object_structure.name }}</b>
+        </h5>
+    </div>
+    <div class="form-body" id="panel-body">
+        <div class="row text-start">
+
+            <div class="col-12 mb-3">
+                <label for="form_add_name" class="form-label">Name</label>
+                <input type="text" class="form-control p-2" id="form_add_name" name="form_add_name">
+            </div>
+            {% for attr in object_structure.structure_dict.numerical_attributes %}
+                <div class="col-8 mb-3">
+                    <div class="input-group">
+                        <label for="form_add_{{ attr.attr_name }}" class="form-label w-100">{{ attr.attr_name }}</label>
+                        <input type="text"
+                               class="form-control input_with_add_on"
+                               id="form_add_{{ attr.attr_name }}"
+                               name="form_add_{{ attr.attr_name }}"
+                               placeholder="Enter value">
+                        <span class="input-group-text" id="basic-addon2">
+                            {{ attr.unit }}
+                        </span>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% for attr in object_structure.structure_dict.mod_obj_attributes %}
+                <div class="col-12 mb-3">
+                    <label for="form_add_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
+                    <select class="form-control p-2" id="form_add_{{ attr.attr_name }}" name="form_add_{{ attr.attr_name }}">
+                        {% for obj in attr.existing_objects %}
+                             <option value="{{ obj.efootprint_id }}">{{ obj.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endfor %}
+
+            {% for attr in object_structure.list_attributes %}
+                <div class="col-12 mb-3">
+                    <label for="form_add_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
+                    <select class="form-control p-2" id="form_add_{{ attr.attr_name }}" name="form_add_{{ attr.attr_name }}" multiple>
+                        {% for obj in attr.existing_objects %}
+                             <option value="{{ obj.efootprint_id }}">{{ obj.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <hr>
+            {% endfor %}
+        </div>
+        <div class="modal-footer border border-0">
+            <button type="submit" class="btn btn-primary rounded-pill w-100">Sauvegarder</button>
+        </div>
+    </div>
+</form>

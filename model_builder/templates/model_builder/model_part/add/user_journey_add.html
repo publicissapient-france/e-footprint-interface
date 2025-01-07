@@ -1,8 +1,9 @@
 
-<form class="form_edit_panel p-4 text-start"
-      hx-post="/model_builder/edit-object/{{ object_to_edit.efootprint_id }}/"
-      hx-swap="none"
-      script="on htmx:afterSwap closePanel()"
+<form class="form_add_panel p-4 text-start"
+        hx-post="/model_builder/add-new-user-journey/"
+        hx-target="#uj-list"
+        hx-swap="beforeend"
+        script="on htmx:afterSwap closePanel()"
 >
     <div class="w-100 text-end">
         <button type="button" class="btn btn-white" aria-label="Close"
@@ -14,26 +15,25 @@
     </div>
     <div class="form-header" id="panel-header">
         <h5 id="formModalLabel" class="mt-4">
-            <b>{{ object_to_edit.name }}</b>
+            <b>{{ object_structure.name }}</b>
         </h5>
     </div>
     <div class="form-body" id="panel-body">
         <div class="row text-start">
 
             <div class="col-12 mb-3">
-                <label for="form_edit_name" class="form-label">Name</label>
-                <input type="text" class="form-control p-2" id="form_edit_name" name="form_edit_name" value="{{ object_to_edit.name }}">
+                <label for="form_add_name" class="form-label">Name</label>
+                <input type="text" class="form-control p-2" id="form_add_name" name="form_add_name">
             </div>
 
-            {% for attr in object_to_edit.numerical_attributes %}
+            {% for attr in object_structure.structure_dict.explainable_quantities %}
                 <div class="col-8 mb-3">
                     <div class="input-group">
-                        <label for="form_edit_{{ attr.attr_name }}" class="form-label w-100">{{ attr.attr_name }}</label>
+                        <label for="form_add_{{ attr.attr_name }}" class="form-label w-100">{{ attr.attr_name }}</label>
                         <input type="text"
                                class="form-control input_with_add_on"
-                               id="form_edit_{{ attr.attr_name }}"
-                               name="form_edit_{{ attr.attr_name }}"
-                               value="{{ attr.attr_value.rounded_magnitude }}"
+                               id="form_add_{{ attr.attr_name }}"
+                               name="form_add_{{ attr.attr_name }}"
                                placeholder="Enter value">
                         <span class="input-group-text" id="basic-addon2">
                             {{ attr.attr_value.short_unit }}
@@ -42,29 +42,28 @@
                 </div>
             {% endfor %}
 
-            {% for attr in object_to_edit.mod_obj_attributes %}
+            {% for attr in object_structure.structure_dict.mod_obj_attributes %}
                 <div class="col-12 mb-3">
-                    <label for="form_edit_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
-                    <select class="form-control p-2" id="form_edit_{{ attr.attr_name }}" name="form_edit_{{ attr.attr_name }}">
+                    <label for="form_add_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
+                    <select class="form-control p-2" id="form_add_{{ attr.attr_name }}" name="form_add_{{ attr.attr_name }}">
                         {% for obj in attr.existing_objects %}
-                             <option value="{{ obj.efootprint_id }}" {% if attr.attr_value.efootprint_id == obj.efootprint_id %}selected{% endif %}>{{ obj.name }}</option>
+                             <option value="{{ obj.efootprint_id }}">{{ obj.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
             {% endfor %}
 
-            {% for attr in object_to_edit.list_attributes %}
+            {% for attr in object_structure.list_attributes %}
                 <div class="col-12 mb-3">
-                    <label for="form_edit_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
-                    <select class="form-control p-2" id="form_edit_{{ attr.attr_name }}" name="form_edit_{{ attr.attr_name }}" multiple>
+                    <label for="form_add_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
+                    <select class="form-control p-2" id="form_add_{{ attr.attr_name }}" name="form_add_{{ attr.attr_name }}" multiple>
                         {% for obj in attr.existing_objects %}
-                             <option value="{{ obj.efootprint_id }}" {% for obj_selected in attr.attr_value %}{% if obj_selected.efootprint_id == obj.efootprint_id %}selected{% endif %}{% endfor %} >{{ obj.name }}</option>
+                             <option value="{{ obj.efootprint_id }}">{{ obj.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <hr>
             {% endfor %}
-
         </div>
         <div class="modal-footer border border-0">
             <button type="submit" class="btn btn-primary rounded-pill w-100">Sauvegarder</button>

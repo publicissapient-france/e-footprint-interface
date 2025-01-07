@@ -31,7 +31,13 @@
                             <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white"  width="16px" height="16px" alt="add icon" />
                         </div>
                         <div class="col-10 p-0 text-start">
-                            <button class="btn btn-white text-start p-0">
+                            <button class="btn btn-white text-start p-0"
+                                    hx-get="/model_builder/open-create-object-panel/UserJourneyStep"
+                                    hx-target="#formPanel"
+                                    hx-trigger="click"
+                                    hx-swap="innerHTML"
+                                    hx-vals='{"parent_to_link_to_efootprint_id": "{{ user_journey.efootprint_id }}"}'
+                            >
                                 Add usage journey step
                             </button>
                         </div>

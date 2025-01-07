@@ -234,6 +234,12 @@ document.body.addEventListener('updateTopParentLines', function (event) {
     updateLines();
 });
 
+document.body.addEventListener('setAccordionListeners', function (event) {
+    event.detail['accordionIds'].forEach(accordionId => {
+        addAccordionListener(document.getElementById(accordionId));
+    });
+});
+
 document.body.addEventListener('initLeaderLines', function (event) {
     initLeaderLines();
 });

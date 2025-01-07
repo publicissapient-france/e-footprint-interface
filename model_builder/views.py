@@ -45,14 +45,12 @@ def model_builder_main(request):
 def open_create_object_panel(request, object_type):
     model_web = ModelWeb(request.session["system_data"])
     new_object_structure = model_web.get_object_structure(object_type)
+    template_name = f'{new_object_structure.template_name}_add.html'
+    context_data = {"object_structure": new_object_structure}
+    if request.GET.get('parent_to_link_to_efootprint_id'):
+        context_data['parent_to_link_to_efootprint_id'] = request.GET['parent_to_link_to_efootprint_id']
 
-    context_data = {
-        "form_target_url": "add-new-object",
-        "output_button_label": "Save",
-        "object_structure": new_object_structure
-    }
-
-    return render(request, "model_builder/object-creation-or-edition-form.html", context=context_data)
+    return render(request, f"model_builder/model_part/add/{template_name}", context=context_data)
 
 
 def open_edit_object_panel(request, object_id):
@@ -78,15 +76,45 @@ def create_object_addition_or_edition_oob_html_updated(request, objects_to_updat
 
 
 def add_new_object(request):
-    model_web = ModelWeb(request.session["system_data"])
-    added_obj, objects_to_update = add_new_object_to_system(request, model_web)
-    oob_html = create_object_addition_or_edition_oob_html_updated(request, model_web.system, objects_to_update)
-    http_response = HttpResponse(oob_html)
-    return http_response
+    return None
 
 
-def edit_object(request, object_id):
+def add_new_user_journey(request):
     model_web = ModelWeb(request.session["system_data"])
+    added_obj = add_new_object_to_system(request, model_web, 'UserJourney')
+    response = render(
+        request, "model_builder/model_part/card/user_journey_card.html", {"user_journey": added_obj})
+    response["HX-Trigger-After-Swap"] = json.dumps({
+        "updateTopParentLines": {
+            "topParentIds": [added_obj.web_id]
+        },
+        "setAccordionListeners": {
+            "accordionIds": [added_obj.web_id]
+        }
+    })
+    return response
+
+def add_new_user_journey_step(request, user_journey_efootprint_id):
+    model_web = ModelWeb(request.session["system_data"])
+    added_obj = add_new_object_to_system(request, model_web, 'UserJourneyStep')
+    user_journey_to_edit = model_web.get_web_object_from_efootprint_id(user_journey_efootprint_id)
+    mutable_post = request.POST.copy()
+    for key in list(mutable_post.keys()):
+        if key.startswith('form_add'):
+            del mutable_post[key]
+    mutable_post['form_edit_name'] = user_journey_to_edit.name
+    user_journey_step_ids = []
+    for uj_step in user_journey_to_edit.uj_steps:
+        user_journey_step_ids.append(uj_step.efootprint_id)
+    user_journey_step_ids.append(added_obj.efootprint_id)
+    mutable_post.setlist('form_edit_uj_steps', user_journey_step_ids)
+    request.POST = mutable_post
+    return edit_object(request, user_journey_efootprint_id, model_web)
+
+
+def edit_object(request, object_id, model_web=None):
+    if model_web is None:
+        model_web = ModelWeb(request.session["system_data"])
     data_attribute_updates = []
     ids_of_web_elements_with_lines_to_remove = []
     obj_to_edit = model_web.get_web_object_from_efootprint_id(object_id)
@@ -264,3 +292,5 @@ def compare_with_reference(request):
     request.session['img_base64'] = img_base64
 
     return render(request, "model_builder/compare-container.html", {"img_base64": img_base64})
+
+
