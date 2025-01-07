@@ -2,7 +2,7 @@ import re
 
 from efootprint.abstract_modeling_classes.explainable_object_base_class import ExplainableObject
 from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity, ExplainableHourlyQuantities
-from efootprint.abstract_modeling_classes.modeling_object import ModelingObject, PREVIOUS_LIST_VALUE_SET_SUFFIX
+from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
 from efootprint.core.usage.usage_pattern import UsagePattern
 
 
@@ -10,8 +10,7 @@ def retrieve_attributes_by_type(
     modeling_obj, attribute_type, attrs_to_ignore=['modeling_obj_containers', "all_changes"]):
     output_list = []
     for attr_name, attr_value in vars(modeling_obj).items():
-        if (isinstance(attr_value, attribute_type) and attr_name not in attrs_to_ignore
-                and PREVIOUS_LIST_VALUE_SET_SUFFIX not in attr_name):
+        if isinstance(attr_value, attribute_type) and attr_name not in attrs_to_ignore:
             output_list.append({'attr_name': attr_name, 'attr_value': attr_value})
 
     return output_list

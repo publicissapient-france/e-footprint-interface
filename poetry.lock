@@ -416,13 +416,13 @@ testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)"]
 
 [[package]]
 name = "efootprint"
-version = "8.2.0"
+version = "8.2.1"
 description = "Digital service environmental footprint model"
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "efootprint-8.2.0-py3-none-any.whl", hash = "sha256:8ac4cc154d8f3a0981551069ff3aa07c85a0887a11288a146d4689e5e38f87a5"},
-    {file = "efootprint-8.2.0.tar.gz", hash = "sha256:6d8f9dbab5fd327827da6c9f38e60982026755fd6322516ca62518edaea504d2"},
+    {file = "efootprint-8.2.1-py3-none-any.whl", hash = "sha256:47b5977934c1fa8ae69d8ff6794051964e6f5c6ee4e854dcc9a6c753f1043003"},
+    {file = "efootprint-8.2.1.tar.gz", hash = "sha256:c3fb9ca512b385082c02c384cd51fcd90687a8ab15f1343b37ce41a7c75585cd"},
 ]
 
 [package.dependencies]
@@ -1698,13 +1698,13 @@ files = [
 
 [[package]]
 name = "pygments"
-version = "2.19.0"
+version = "2.19.1"
 description = "Pygments is a syntax highlighting package written in Python."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pygments-2.19.0-py3-none-any.whl", hash = "sha256:4755e6e64d22161d5b61432c0600c923c5927214e7c956e31c23923c89251a9b"},
-    {file = "pygments-2.19.0.tar.gz", hash = "sha256:afc4146269910d4bdfabcd27c24923137a74d562a23a320a41a55ad303e19783"},
+    {file = "pygments-2.19.1-py3-none-any.whl", hash = "sha256:9ea1544ad55cecf4b8242fab6dd35a93bbce657034b0611ee383099054ab6d8c"},
+    {file = "pygments-2.19.1.tar.gz", hash = "sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f"},
 ]
 
 [package.extras]
@@ -2014,4 +2014,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "73d058d95c0cae1d0ee97ce0f0a42fe518c0a488178dc88ae12f9b9990d8ece5"
+content-hash = "61bf37f10a2aaedd34ae7d8204aebe5f39066b4639ba289b179638fb1b1347e0"
