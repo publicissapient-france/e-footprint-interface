@@ -4,16 +4,15 @@
         <div class="col-9" id="model-canva" style="height: 80vh !important; overflow: auto;">
             <div class="row p-0">
                 <div class="col-4 p-4">
-                    <div class="bg-light rounded-4 p-4 shadow-sm">
+                    <div class="rounded-4 p-4 shadow-sm" id="usage-pattern-container">
                         <div class="row mb-4">
                             <div class="col-md-auto">
                                 <h5><b>Usage patterns</b></h5>
                             </div>
                             <div class="col-12 mt-2 justify-content-start text-start">
-                                <button class="w-75 btn btn-white dotted-border text-start" id="add_usage_pattern">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-                                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-                                    </svg>
+                                <button class="w-75 btn btn-white dotted-border text-start fz-0-9"
+                                        id="add_usage_pattern">
+                                    <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-3"  width="14px" height="14px" alt="add icon" />
                                     Add usage pattern
                                 </button>
                             </div>
@@ -32,15 +31,13 @@
                                 <h5><b>User Journeys</b></h5>
                             </div>
                             <div class="col-12 mt-2 justify-content-start text-start">
-                                <button class="w-75 btn btn-white dotted-border text-start"
-                                    hx-get="/model_builder/open-create-object-panel/UserJourney/"
+                                <button class="w-75 btn btn-white dotted-border text-start fz-0-9"
+                                    hx-get="/model_builder/open-create-object-panel-with-object-structure-defined/UserJourney/"
                                     hx-target="#formPanel"
                                     hx-trigger="click"
                                     hx-swap="innerHTML"
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-                                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-                                    </svg>
+                                    <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-3"  width="14px" height="14px" alt="add icon" />
                                     Add usage journey
                                 </button>
                             </div>
@@ -62,8 +59,13 @@
                                 <h5><b>Infrastructure</b></h5>
                             </div>
                             <div class="col-12 mt-2 justify-content-start text-start" id="add_server">
-                                <button class="w-75 btn btn-white dotted-border text-start">
-                                    <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-3"  width="16px" height="16px" alt="add icon" />
+                                <button class="w-75 btn btn-white dotted-border text-start fz-0-9"
+                                    hx-get="/model_builder/open-create-object-panel-without-object-structure-defined/Server/"
+                                    hx-target="#formPanel"
+                                    hx-trigger="click"
+                                    hx-swap="innerHTML"
+                                >
+                                    <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-3"  width="14px" height="14px" alt="add icon" />
                                     Add server
                                 </button>
                             </div>
@@ -77,7 +79,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-3" style="height: 100vh !important" id="formPanel">
+        <div class="col-3" style="height: 96vh !important; overflow: auto;" id="formPanel">
         </div>
     </div>
 </div>

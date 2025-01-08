@@ -1,0 +1,122 @@
+
+<form class="form_add_panel p-4 text-start"
+        hx-post="/model_builder/add-new-server/"
+        hx-target="#server-list"
+        hx-swap="beforeend"
+        script="on htmx:afterRequest closePanel()"
+>
+    <div class="w-100 text-end">
+        <button type="button" class="btn btn-white" aria-label="Close"
+                onclick="closePanel()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+              <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+            </svg>
+        </button>
+    </div>
+    <div class="form-header" id="panel-header">
+        <h5 id="formModalLabel" class="mt-4">
+            <b>Add a new server</b>
+        </h5>
+    </div>
+    <div class="form-body" id="panel-body" style="height:70vh !important; overflow: auto;">
+        <div class="row text-start">
+            <div class="col-12 mt-3 mb-5">
+                <label for="form_add_name" class="form-label">Name</label>
+                <input type="text" class="form-control p-2" id="form_add_name" name="form_add_name" value="New server" required>
+            </div>
+            <div class="col-12">
+                <div class="accordion accordion-panel" id="accordionFormAdd">
+                    {%for item in structure_dict.server_items %}
+                    <div class="accordion-item {{ item.class }} {% if forloop.counter > 1 %}rounded-bottom-2{% endif %}" id="item-{{ item.category }}">
+                        <h2 class="accordion-header {% if forloop.counter > 1 %}rounded-bottom-2{% endif %}">
+                            <button class="accordion-button fz-1 {% if forloop.counter > 1 %}rounded-bottom-2{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ item.category }}" aria-expanded="true" aria-controls="collapse_{{ item.category }}">
+                                {{ item.header }}
+                            </button>
+                        </h2>
+                        <div id="collapse_{{ item.category }}"
+                             class="accordion-collapse" data-bs-parent="accordionFormAdd">
+                            <div class="accordion-body">
+                                {% for field in item.fields %}
+                                <div class="mb-3">
+                                    {% if field.input_type == 'select' %}
+                                    <label for="form_add_{{ field.id }}" class="form-label">{{ field.name }}</label>
+                                    <select
+                                        class="form-control p-2"
+                                        id="form_add_{{ field.id }}"
+                                        name="form_add_{{ field.id }}"
+                                        {% if field.required %}required{% endif %}
+                                    >
+                                        {% for option in field.options %}
+                                            <option value="{{ option }}">{{ option }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% else %}
+                                    <div class="input-group">
+                                        <label for="form_add_{{ field.id }}" class="form-label w-100">{{ field.name }}</label>
+                                        <input type="number"
+                                            class="form-control input_with_add_on"
+                                            id="form_add_{{ field.id }}"
+                                            name="form_add_{{ field.id }}"
+                                            value="{{ field.default }}"
+                                            {% if field.required %}required{% endif %}>
+                                        <span class="input-group-text" id="basic-addon2">
+                                            {{ field.unit }}
+                                        </span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-12">
+                <p class="mt-4">
+                    You will be able to edit all attributes about the server later in the dedicated panel.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="form-footer" id="panel-footer">
+        <div class="row justify-content-between">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary rounded-pill w-100">Save</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% block scripts %}
+<script>
+    function modifyFormAddServer(){
+        let selectedValue = document.getElementById('form_add_server_type').value;
+        let item_to_hide;
+        let item_to_show;
+        //select all input/select inside item_to_show
+        if (selectedValue === 'OnPremise'){
+            item_to_hide = document.getElementById('item-cloud_creation_helper');
+            item_to_show = document.getElementById('item-on_premise_creation_helper');
+            item_to_hide.classList.add('d-none');
+            item_to_show.classList.remove('d-none');
+        }else{
+            item_to_show = document.getElementById('item-cloud_creation_helper');
+            item_to_hide = document.getElementById('item-on_premise_creation_helper');
+            item_to_hide.classList.add('d-none');
+            item_to_show.classList.remove('d-none');
+        }
+        let inputs_to_add_required = item_to_show.querySelectorAll('input, select');
+        let inputs_to_remove_required = item_to_hide.querySelectorAll('input, select');
+        inputs_to_add_required.forEach(function(item){
+            item.required = true;
+        });
+        inputs_to_remove_required.forEach(function(item){
+            item.required = false;
+        });
+    }
+
+    document.getElementById('form_add_server_type').addEventListener('change', modifyFormAddServer);
+</script>
+
+{% endblock %}

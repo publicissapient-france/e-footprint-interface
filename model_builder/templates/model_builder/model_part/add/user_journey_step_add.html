@@ -22,7 +22,7 @@
 
             <div class="col-12 mb-3">
                 <label for="form_add_name" class="form-label">Name</label>
-                <input type="text" class="form-control p-2" id="form_add_name" name="form_add_name">
+                <input type="text" class="form-control p-2" id="form_add_name" name="form_add_name" required>
             </div>
             {% for attr in object_structure.structure_dict.numerical_attributes %}
                 <div class="col-8 mb-3">
@@ -32,7 +32,7 @@
                                class="form-control input_with_add_on"
                                id="form_add_{{ attr.attr_name }}"
                                name="form_add_{{ attr.attr_name }}"
-                               placeholder="Enter value">
+                               placeholder="Enter value" required>
                         <span class="input-group-text" id="basic-addon2">
                             {{ attr.unit }}
                         </span>

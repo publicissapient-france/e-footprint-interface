@@ -1,3 +1,4 @@
+import re
 import uuid
 from copy import copy
 
@@ -5,7 +6,8 @@ from efootprint.api_utils.json_to_system import json_to_system
 from efootprint.api_utils.system_to_json import system_to_json
 from efootprint.utils.plot_emission_diffs import EmissionPlotter
 
-from model_builder.object_creation_utils import add_new_object_to_system, edit_object_in_system
+from model_builder.object_creation_utils import edit_object_in_system, \
+    add_new_object_to_system_from_builder, create_efootprint_obj_from_post_data, add_new_efootprint_object_to_system
 from model_builder.model_web import ModelWeb
 from utils import htmx_render
 
@@ -41,7 +43,7 @@ def model_builder_main(request):
     return http_response
 
 
-def open_create_object_panel(request, object_type):
+def open_create_object_panel_with_object_structure_defined(request, object_type):
     model_web = ModelWeb(request.session)
     new_object_structure = model_web.get_object_structure(object_type)
     template_name = f'{new_object_structure.template_name}_add.html'
@@ -56,6 +58,49 @@ def open_create_object_panel(request, object_type):
         context_data["efootprint_id_of_empty_object_origin"] = request.GET["efootprint_id_of_empty_object_origin"]
 
     return render(request, f"model_builder/model_part/add/{template_name}", context=context_data)
+
+def open_create_object_panel_without_object_structure_defined(request, object_type):
+    template_name = f"{re.sub(r'(?<!^)(?=[A-Z])', '_', object_type).lower()}_add.html"
+    structure_dict = {
+        'str_attributes': ['name'],
+        'server_items': [
+            {'category':'server_type_helper','header': 'Server type','class': '','fields': [
+                    {'input_type':'select', 'id':'server_type', 'name' : 'Server type', 'required':True, 'options': [
+                        'Autoscaling', 'OnPremise', 'Serverless']}]},
+            {'category':'cloud_creation_helper','header': 'Server creation helper','class': '','fields': [
+                    {'input_type': 'select', 'id': 'provider', 'name': 'Provider', 'required':True, 'options': [
+                        'aws', 'Azure', 'GCP', 'IBM', 'Oracle', 'Other']},
+                    {'input_type': 'select', 'id': 'configuration', 'name': 'Server configuration', 'required':True,
+                     'options': [
+                        'a1.4xlarge', 'a1.2xlarge', 'a1.large', 'a1.medium', 'a1.xlarge',
+                        'm6g.12xlarge', 'm6g.16xlarge', 'm6g.2xlarge', 'm6g.4xlarge', 'm6g.8xlarge', 'm6g.large',
+                        'm6g.medium', 'm6g.xlarge', 'm5.12xlarge', 'm5.16xlarge', 'm5.24xlarge',
+                        'm5.2xlarge', 'm5.4xlarge', 'm5.8xlarge', 'm5.large', 'm5.metal', 'm5.xlarge',
+                        'm5a.12xlarge', 'm5a.16xlarge', 'm5a.24xlarge', 'm5a.2xlarge', 'm5a.4xlarge',
+                        'm5a.8xlarge', 'm5a.large', 'm5a.xlarge', 'm5ad.12xlarge', 'm5ad.16xlarge',
+                        'm5ad.24xlarge', 'm5ad.2xlarge', 'm5ad.4xlarge', 'm5ad.8xlarge', 'm5ad.large',
+                        'm5ad.xlarge', 'm5d.12xlarge', 'm5d.16xlarge', 'm5d.24xlarge', 'm5d.2xlarge',
+                        'm5d.4xlarge', 'm5d.8xlarge', 'm5d.large', 'm5d.metal', 'm5d.xlarge', 'm5dn.12xlarge',
+                        'm5dn.16xlarge', 'm5dn.24xlarge', 'm5dn.2xlarge', 'm5dn.4xlarge', 'm5dn.8xlarge',
+                        'm5dn.large', 'm5dn.xlarge', 'm5n.12xlarge', 'm5n.16xlarge', 'm5n.24xlarge',
+                        'm5n.2xlarge', 'm5n.4xlarge', 'm5n.8xlarge', 'm5n.large', 'm5n.xlarge', 't3.2']
+                    },
+                    {'input_type': 'input', 'id': 'average_carbon_intensity', 'name': 'Average carbon intensity',
+                     'unit': 'g/KWh', 'default': '100'}
+                ]
+            },
+            {'category':'on_premise_creation_helper','header': 'Server creation helper','class': 'd-none','fields': [
+                    {'input_type':'input', 'id': 'nb_of_cpu_units', 'name': 'Number of CPU units', 'unit': '',
+                     'default': '2'},
+                    {'input_type':'input', 'id': 'nb_of_cores_per_cpu_unit', 'name': 'Number of CPU Cores',
+                     'unit': 'core', 'default': '24'},
+                    {'input_type':'input', 'id': 'nb_of_ram_units', 'name': 'RAM unit', 'unit': 'GB', 'default': '12'},
+                    {'input_type':'input', 'id': 'ram_quantity_per_unit_in_gb', 'name': 'RAM per unit', 'unit': '',
+                     'default': '32'},
+                    {'input_type': 'input', 'id': 'average_carbon_intensity', 'name': 'Average carbon intensity',
+                     'unit': 'g/KWh', 'default': '100'}]}]}
+    return render(request, f"model_builder/model_part/add/{template_name}",
+                  context={'structure_dict': structure_dict})
 
 
 def open_edit_object_panel(request, object_id):
@@ -87,7 +132,9 @@ def add_new_object(request):
 def add_new_user_journey(request):
     model_web = ModelWeb(request.session)
     if request.POST.getlist("form_add_uj_steps"):
-        added_obj = add_new_object_to_system(request, model_web, 'UserJourney')
+        new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web.flat_efootprint_objs_dict,
+                                                             'UserJourney')
+        added_obj = add_new_efootprint_object_to_system(request, model_web, 'UserJourney', new_efootprint_obj)
         response = render(
             request, "model_builder/model_part/card/user_journey_card.html", {"user_journey": added_obj})
         response["HX-Trigger-After-Swap"] = json.dumps({
@@ -124,7 +171,9 @@ def add_new_user_journey(request):
 
 def add_new_user_journey_step(request, user_journey_efootprint_id):
     model_web = ModelWeb(request.session)
-    added_obj = add_new_object_to_system(request, model_web, 'UserJourneyStep')
+    new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web.flat_efootprint_objs_dict,
+                                                              'UserJourneyStep')
+    added_obj = add_new_efootprint_object_to_system(request, model_web, 'UserJourneyStep', new_efootprint_obj)
     user_journey_to_edit = model_web.get_web_object_from_efootprint_id(user_journey_efootprint_id)
     mutable_post = request.POST.copy()
     for key in list(mutable_post.keys()):
@@ -139,6 +188,14 @@ def add_new_user_journey_step(request, user_journey_efootprint_id):
     request.POST = mutable_post
     return edit_object(request, user_journey_efootprint_id, model_web)
 
+def add_new_server(request):
+    model_web = ModelWeb(request.session)
+    server_type = request.POST.get('form_add_server_type')
+    server_added = add_new_object_to_system_from_builder(request, model_web, server_type)
+    response = render(
+        request, "model_builder/model_part/card/server_card.html", {"server": server_added})
+
+    return response
 
 def edit_object(request, object_id, model_web=None):
     if model_web is None:

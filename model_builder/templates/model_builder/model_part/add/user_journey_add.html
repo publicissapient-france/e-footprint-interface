@@ -29,9 +29,8 @@
 
             <div class="col-12 mb-3">
                 <label for="form_add_name" class="form-label">Name</label>
-                <input type="text" class="form-control p-2" id="form_add_name" name="form_add_name"
+                <input type="text" class="form-control p-2" id="form_add_name" name="form_add_name" required>
                 value="{{ new_object_name }}">
-
             </div>
 
             {% for attr in object_structure.explainable_quantities %}
@@ -42,7 +41,7 @@
                                class="form-control input_with_add_on"
                                id="form_add_{{ attr.attr_name }}"
                                name="form_add_{{ attr.attr_name }}"
-                               placeholder="Enter value">
+                               placeholder="Enter value" required>
                         <span class="input-group-text" id="basic-addon2">
                             {{ attr.attr_value.short_unit }}
                         </span>
@@ -50,21 +49,10 @@
                 </div>
             {% endfor %}
 
-            {% for attr in object_structure.mod_obj_attributes %}
-                <div class="col-12 mb-3">
-                    <label for="form_add_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
-                    <select class="form-control p-2" id="form_add_{{ attr.attr_name }}" name="form_add_{{ attr.attr_name }}">
-                        {% for obj in attr.existing_objects %}
-                             <option value="{{ obj.efootprint_id }}">{{ obj.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            {% endfor %}
-
             {% for attr in object_structure.list_attributes %}
                 <div class="col-12 mb-3">
                     <label for="form_add_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
-                    <select class="form-control p-2" id="form_add_{{ attr.attr_name }}" name="form_add_{{ attr.attr_name }}" multiple>
+                    <select class="form-control p-2" id="form_add_{{ attr.attr_name }}" name="form_add_{{ attr.attr_name }}" multiple required>
                         {% for obj in attr.existing_objects %}
                              <option value="{{ obj.efootprint_id }}">{{ obj.name }}</option>
                         {% endfor %}

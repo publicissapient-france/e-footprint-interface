@@ -1,4 +1,5 @@
 # Important to keep these imports because they constitute the globals() dict
+from efootprint.builders.hardware.servers_boaviztapi import get_cloud_server, on_premise_server_from_config
 from efootprint.core.system import System
 from efootprint.core.hardware.storage import Storage
 from efootprint.core.hardware.servers.autoscaling import Autoscaling
@@ -14,6 +15,7 @@ from efootprint.constants.countries import Country
 from efootprint.abstract_modeling_classes.source_objects import SourceValue, Sources, SourceHourlyValues
 from efootprint.constants.units import u
 from efootprint.logger import logger
+from urllib3 import request
 
 from model_builder.modeling_objects_web import ModelingObjectWeb, wrap_efootprint_object
 from model_builder.model_web import ModelWeb
@@ -50,30 +52,45 @@ def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_ty
 
     return new_efootprint_obj
 
+def add_new_object_to_system_from_builder(request, model_web: ModelWeb, object_type: str):
+    if object_type in ["Autoscaling", "Serverless"]:
+        new_efootprint_obj = get_cloud_server(request.POST.get('form_add_provider'), request.POST.get(
+            'form_add_configuration'), SourceValue(100 * u.g / u.kWh))
+    elif object_type == "OnPremise":
+        new_efootprint_obj = on_premise_server_from_config(
+            request.POST['form_add_name'],
+            request.POST['form_add_nb_of_cpu_units'],
+            request.POST['form_add_nb_of_cores_per_cpu_unit'],
+            request.POST['form_add_nb_of_ram_units'],
+            request.POST['form_add_ram_quantity_per_unit_in_gb'],
+            SourceValue(int(request.POST['form_add_average_carbon_intensity'])* u.g / u.kWh)
+        )
+    else:
+        raise PermissionError(f"Object type {object_type} not supported yet")
+    new_efootprint_obj.name = request.POST.get('form_add_name')
 
-def add_new_object_to_system(request, model_web: ModelWeb, object_type: str):
-    new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, object_type)
+    new_obj_wrapped = add_new_efootprint_object_to_system(request, model_web, object_type, new_efootprint_obj)
+    return new_obj_wrapped
 
-    # If object is a usage pattern it has to be added to the System to trigger recomputation
-    system = model_web.system
-    if object_type == "UsagePattern":
-        system.usage_patterns += [new_efootprint_obj]
-        request.session["system_data"]["System"][system.id]["usage_patterns"] = [up.id for up in system.usage_patterns]
 
-    new_obj_wrapped = wrap_efootprint_object(new_efootprint_obj, model_web)
+def add_new_efootprint_object_to_system(request, model_web: ModelWeb, object_type: str, efootprint_object):
+    new_obj_wrapped = wrap_efootprint_object(efootprint_object, model_web)
 
     # Update session data
+    if new_obj_wrapped.class_as_simple_str not in request.session["system_data"]:
+        request.session["system_data"][new_obj_wrapped.class_as_simple_str] = {}
     request.session["system_data"][new_obj_wrapped.class_as_simple_str][new_obj_wrapped.efootprint_id] = (
         new_obj_wrapped.to_json())
     # Here we updated a sub dict of request.session so we have to explicitly tell Django that it has been updated
     request.session.modified = True
 
     # Add new object to object dict to recompute context
-    model_web.response_objs[object_type][new_efootprint_obj.id] = new_efootprint_obj
-    model_web.flat_efootprint_objs_dict[new_efootprint_obj.id] = new_efootprint_obj
+    if object_type not in model_web.response_objs:
+        model_web.response_objs[object_type] = {}
+    model_web.response_objs[object_type][efootprint_object.id] = efootprint_object
+    model_web.flat_efootprint_objs_dict[efootprint_object.id] = efootprint_object
 
     return new_obj_wrapped
-
 
 def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
     model_web = obj_to_edit.model_web

@@ -17,7 +17,7 @@
             <b>{{ object_to_edit.name }}</b>
         </h5>
     </div>
-    <div class="form-body" id="panel-body">
+    <div class="form-body" id="panel-body" style="height:70vh !important; overflow: auto;">
         <div class="row text-start">
 
             <div class="col-12 mb-3">
@@ -64,10 +64,13 @@
                 </div>
                 <hr>
             {% endfor %}
-
         </div>
-        <div class="modal-footer border border-0">
-            <button type="submit" class="btn btn-primary rounded-pill w-100">Sauvegarder</button>
+    </div>
+    <div class="form-footer" id="panel-footer">
+        <div class="row justify-content-between">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary rounded-pill w-100">Save</button>
+            </div>
         </div>
     </div>
 </form>

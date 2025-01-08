@@ -4,6 +4,7 @@ body{
         "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
     color: #111928;
+    font-size: 0.8em;
 }
 
 .home-btn-1,
@@ -108,4 +109,35 @@ box-shadow: 0px 5px 8px 4px rgba(138, 138, 138, 0.24);
 
 .modal-backdrop.show {
     display: none !important;
+}
+
+.accordion-panel .accordion-button{
+    background-color: #F3F4F6;
+    color: #4B5563 ;
+    cursor: pointer;
+}
+
+.accordion-panel .accordion-button{
+    color: #4B5563 ;
+}
+
+#user-journey-container,
+#usage-pattern-container{
+    background-color: rgba(230, 250, 252, 0.5);
+}
+
+#server-container{
+    background-color: rgba(241, 247, 253, 0.5);
+}
+
+.fz-0-8{
+    font-size: 0.8em;
+}
+
+.fz-0-9{
+    font-size: 0.9em;
+}
+
+.fz-1{
+    font-size: 1em;
 }

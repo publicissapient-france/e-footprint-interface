@@ -1,9 +1,8 @@
-<div id="{{ server.web_id }}"
-     class="list-group-item my-3 mb-1 rounded-4 p-2 up-list-item card-hover"
+<div id="{{ server.web_id }}" class="list-group-item my-3 mb-1 rounded-4 p-2 up-list-item card-hover"
      style="cursor: move;">
     <div class="accordion accordion-flush">
         <div class="accordion-item">
-            <h6 class="accordion-header text-start">
+            <h6 class="accordion-header d-flex align-items-center">
                 <button type="button" class="chevron-btn btn btn-link p-0 me-2 text-black"
                         data-bs-toggle="collapse" data-bs-target="#flush-{{ server.web_id }}" onclick="reverseIconAccordion('{{ server.web_id }}')" aria-expanded="true" aria-controls="collapseOne">
                         <svg id="icon_accordion_{{ server.web_id }}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="bi bi-chevron-right" viewBox="0 0 16 16">
@@ -11,7 +10,7 @@
                         </svg>
                 </button>
                 <button id="button-{{ server.web_id }}"
-                        class="btn btn-white ms-auto"
+                        class="btn btn-white ms-1 text-start fz-0-8"
                         type="button"
                         hx-get="/model_builder/open-edit-object-panel/{{ server.efootprint_id }}/"
                         hx-target="#formPanel"
