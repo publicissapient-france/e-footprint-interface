@@ -1,7 +1,7 @@
 from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity, ExplainableHourlyQuantities
 from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
 from efootprint.api_utils.json_to_system import json_to_system
-from model_builder.views import retrieve_attributes_by_type
+from model_builder.modeling_objects_web import retrieve_attributes_by_type
 
 import json
 import inspect

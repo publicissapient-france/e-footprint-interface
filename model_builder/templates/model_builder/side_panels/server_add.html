@@ -39,30 +39,42 @@
                                 {% for field in item.fields %}
                                 <div class="mb-3">
                                     {% if field.input_type == 'select' %}
-                                    <label for="form_add_{{ field.id }}" class="form-label">{{ field.name }}</label>
-                                    <select
-                                        class="form-control p-2"
-                                        id="form_add_{{ field.id }}"
-                                        name="form_add_{{ field.id }}"
-                                        {% if field.required %}required{% endif %}
-                                    >
-                                        {% for option in field.options %}
-                                            <option value="{{ option }}">{{ option }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    {% else %}
-                                    <div class="input-group">
-                                        <label for="form_add_{{ field.id }}" class="form-label w-100">{{ field.name }}</label>
-                                        <input type="number"
-                                            class="form-control input_with_add_on"
+                                        <label for="form_add_{{ field.id }}" class="form-label">{{ field.name }}</label>
+                                        <select
+                                            class="form-control p-2"
                                             id="form_add_{{ field.id }}"
                                             name="form_add_{{ field.id }}"
-                                            value="{{ field.default }}"
-                                            {% if field.required %}required{% endif %}>
-                                        <span class="input-group-text" id="basic-addon2">
-                                            {{ field.unit }}
-                                        </span>
-                                    </div>
+                                            {% if field.required %}required{% endif %}
+                                        >
+                                            {% for option in field.options %}
+                                                <option value="{{ option }}">{{ option }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    {% elif field.input_type == 'datalist' %}
+                                        <label for="form_add_{{ field.id }}" class="form-label">{{ field.name }}</label>
+                                        <input
+                                                class="form-control p-2"
+                                                list="list_{{ field.id }}"
+                                                id="form_add_{{ field.id }}"
+                                                name="form_add_{{ field.id }}"
+                                               {% if field.required %}required{% endif %}
+                                               {% if field.disabled %}disabled{% endif %}>
+                                        <datalist id="list_{{ field.id }}">
+                                            <option selected value="select a provider">
+                                        </datalist>
+                                    {% else %}
+                                        <div class="input-group">
+                                            <label for="form_add_{{ field.id }}" class="form-label w-100">{{ field.name }}</label>
+                                            <input type="number"
+                                                class="form-control input_with_add_on"
+                                                id="form_add_{{ field.id }}"
+                                                name="form_add_{{ field.id }}"
+                                                value="{{ field.default }}"
+                                                {% if field.required %}required{% endif %}>
+                                            <span class="input-group-text" id="basic-addon2">
+                                                {{ field.unit }}
+                                            </span>
+                                        </div>
                                     {% endif %}
                                 </div>
                                 {% endfor %}
@@ -87,9 +99,12 @@
         </div>
     </div>
 </form>
-
 {% block scripts %}
 <script>
+
+    let list_providers = {{ all_boavizta_cloud_providers|safe }};
+    let list_configuration = {{ instance_types_by_provider|safe }};
+
     function modifyFormAddServer(){
         let selectedValue = document.getElementById('form_add_server_type').value;
         let item_to_hide;
@@ -116,7 +131,31 @@
         });
     }
 
+    function fillDatalistConfiguration(){
+        let datalist = document.getElementById('list_configuration');
+        let selected_provider = document.getElementById('form_add_provider').value;
+        let options = ['select a configuration'];
+        list_configuration[selected_provider].forEach(function(item){
+            options.push(item);
+        });
+        datalist.innerHTML = '';
+        options.forEach(function(item){
+            let option = document.createElement('option');
+            option.value = item;
+            datalist.appendChild(option);
+        });
+        document.getElementById('form_add_configuration').removeAttribute('disabled');
+    }
+
+
     document.getElementById('form_add_server_type').addEventListener('change', modifyFormAddServer);
+
+    document.body.addEventListener("initServerAddPanel", function() {
+        fillDatalistConfiguration();
+        document.getElementById('form_add_provider').addEventListener('change', function(){
+            fillDatalistConfiguration();
+        });
+    });
 </script>
 
 {% endblock %}

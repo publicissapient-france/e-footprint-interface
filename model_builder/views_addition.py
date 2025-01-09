@@ -1,7 +1,7 @@
 import json
-import re
 import uuid
 
+import requests
 from django.shortcuts import render
 
 from model_builder.model_web import ModelWeb
@@ -27,8 +27,20 @@ def open_create_object_panel(request, object_type):
     return render(request, f"model_builder/side_panels/{template_name}", context=context_data)
 
 
-def open_create_server_panel(request, object_type):
-    template_name = f"{re.sub(r'(?<!^)(?=[A-Z])', '_', object_type).lower()}_add.html"
+def open_create_server_panel(request):
+    all_boavizta_cloud_providers = json.loads(
+        requests.get(
+            "https://api.boavizta.org/v1/cloud/instance/all_providers", headers={'accept': 'application/json'}
+        ).content.decode('utf-8')
+    )
+    instance_types_by_provider = {}
+    for cloud_provider in all_boavizta_cloud_providers:
+        instance_types_by_provider[cloud_provider] = json.loads(
+            requests.get(
+                f"https://api.boavizta.org/v1/cloud/instance/all_instances",
+                headers={'accept': 'application/json'}, params = {"provider": cloud_provider}
+            ).content.decode('utf-8')
+        )
     structure_dict = {
         'str_attributes': ['name'],
         'server_items': [
@@ -36,23 +48,10 @@ def open_create_server_panel(request, object_type):
                     {'input_type':'select', 'id':'server_type', 'name' : 'Server type', 'required':True, 'options': [
                         'Autoscaling', 'OnPremise', 'Serverless']}]},
             {'category':'cloud_creation_helper','header': 'Server creation helper','class': '','fields': [
-                    {'input_type': 'select', 'id': 'provider', 'name': 'Provider', 'required':True, 'options': [
-                        'aws', 'Azure', 'GCP', 'IBM', 'Oracle', 'Other']},
-                    {'input_type': 'select', 'id': 'configuration', 'name': 'Server configuration', 'required':True,
-                     'options': [
-                        'a1.4xlarge', 'a1.2xlarge', 'a1.large', 'a1.medium', 'a1.xlarge',
-                        'm6g.12xlarge', 'm6g.16xlarge', 'm6g.2xlarge', 'm6g.4xlarge', 'm6g.8xlarge', 'm6g.large',
-                        'm6g.medium', 'm6g.xlarge', 'm5.12xlarge', 'm5.16xlarge', 'm5.24xlarge',
-                        'm5.2xlarge', 'm5.4xlarge', 'm5.8xlarge', 'm5.large', 'm5.metal', 'm5.xlarge',
-                        'm5a.12xlarge', 'm5a.16xlarge', 'm5a.24xlarge', 'm5a.2xlarge', 'm5a.4xlarge',
-                        'm5a.8xlarge', 'm5a.large', 'm5a.xlarge', 'm5ad.12xlarge', 'm5ad.16xlarge',
-                        'm5ad.24xlarge', 'm5ad.2xlarge', 'm5ad.4xlarge', 'm5ad.8xlarge', 'm5ad.large',
-                        'm5ad.xlarge', 'm5d.12xlarge', 'm5d.16xlarge', 'm5d.24xlarge', 'm5d.2xlarge',
-                        'm5d.4xlarge', 'm5d.8xlarge', 'm5d.large', 'm5d.metal', 'm5d.xlarge', 'm5dn.12xlarge',
-                        'm5dn.16xlarge', 'm5dn.24xlarge', 'm5dn.2xlarge', 'm5dn.4xlarge', 'm5dn.8xlarge',
-                        'm5dn.large', 'm5dn.xlarge', 'm5n.12xlarge', 'm5n.16xlarge', 'm5n.24xlarge',
-                        'm5n.2xlarge', 'm5n.4xlarge', 'm5n.8xlarge', 'm5n.large', 'm5n.xlarge', 't3.2']
-                    },
+                    {'input_type': 'select', 'id': 'provider', 'name': 'Provider', 'required':True,
+                     'options': all_boavizta_cloud_providers},
+                    {'input_type': 'datalist', 'id': 'configuration', 'name': 'Server configuration', 'required':True,
+                     'disabled':True, 'options': instance_types_by_provider},
                     {'input_type': 'input', 'id': 'average_carbon_intensity', 'name': 'Average carbon intensity',
                      'unit': 'g/KWh', 'default': '100'}
                 ]
@@ -67,8 +66,17 @@ def open_create_server_panel(request, object_type):
                      'default': '32'},
                     {'input_type': 'input', 'id': 'average_carbon_intensity', 'name': 'Average carbon intensity',
                      'unit': 'g/KWh', 'default': '100'}]}]}
-    return render(request, f"model_builder/side_panels/{template_name}",
-                  context={'structure_dict': structure_dict})
+
+    http_response = render(request, f"model_builder/side_panels/server_add.html",
+                  context={
+                      'structure_dict': structure_dict,
+                      'all_boavizta_cloud_providers' : all_boavizta_cloud_providers,
+                      'instance_types_by_provider': instance_types_by_provider
+                  })
+
+    http_response["HX-Trigger-After-Swap"] = "initServerAddPanel"
+
+    return http_response
 
 
 def add_new_user_journey(request):
