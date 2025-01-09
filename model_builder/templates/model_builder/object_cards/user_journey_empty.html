@@ -25,7 +25,7 @@
             <div id="flush-{{ user_journey.web_id }}" class="accordion-collapse show accordion-all" data-bs-parent="#{{ user_journey.web_id }}">
                 <div class="accordion-body py-0 px-3">
                     {% for user_journey_step in user_journey.uj_steps %}
-                        {% include 'model_builder/model_part/card/user_journey_step_card.html' %}
+                        {% include 'model_builder/object_cards/user_journey_step_card.html' %}
                     {% endfor %}
                     <div class="row mx-0 my-0 dotted-border align-items-center rounded-2" style="z-index: 1000 !important; background-color: #ffffff !important;">
                         <div class="col-2 p-0 justify-content-center bg-white my-2" id="add-usage-pattern-{{ user_journey.web_id }}">

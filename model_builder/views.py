@@ -57,7 +57,7 @@ def open_create_object_panel_with_object_structure_defined(request, object_type)
     if request.GET.get("efootprint_id_of_empty_object_origin"):
         context_data["efootprint_id_of_empty_object_origin"] = request.GET["efootprint_id_of_empty_object_origin"]
 
-    return render(request, f"model_builder/model_part/add/{template_name}", context=context_data)
+    return render(request, f"model_builder/side_panels/{template_name}", context=context_data)
 
 def open_create_object_panel_without_object_structure_defined(request, object_type):
     template_name = f"{re.sub(r'(?<!^)(?=[A-Z])', '_', object_type).lower()}_add.html"
@@ -99,7 +99,7 @@ def open_create_object_panel_without_object_structure_defined(request, object_ty
                      'default': '32'},
                     {'input_type': 'input', 'id': 'average_carbon_intensity', 'name': 'Average carbon intensity',
                      'unit': 'g/KWh', 'default': '100'}]}]}
-    return render(request, f"model_builder/model_part/add/{template_name}",
+    return render(request, f"model_builder/side_panels/{template_name}",
                   context={'structure_dict': structure_dict})
 
 
@@ -107,7 +107,7 @@ def open_edit_object_panel(request, object_id):
     model_web = ModelWeb(request.session)
     obj_to_edit = model_web.get_web_object_from_efootprint_id(object_id)
 
-    return render(request, "model_builder/edit_object_panel.html", context={"object_to_edit": obj_to_edit})
+    return render(request, "model_builder/side_panels/edit_object_panel.html", context={"object_to_edit": obj_to_edit})
 
 
 def create_object_addition_or_edition_oob_html_updated(request, objects_to_update):
@@ -117,7 +117,7 @@ def create_object_addition_or_edition_oob_html_updated(request, objects_to_updat
             template_name= f'{obj.template_name}_card.html'
             key_obj= obj.template_name
             return_html += render_to_string(
-                f"model_builder/model_part/card/{template_name}",
+                f"model_builder/object_cards/{template_name}",
                 {key_obj: obj,
                  "hx_swap_oob": True}
             )
@@ -136,7 +136,7 @@ def add_new_user_journey(request):
                                                              'UserJourney')
         added_obj = add_new_efootprint_object_to_system(request, model_web, 'UserJourney', new_efootprint_obj)
         response = render(
-            request, "model_builder/model_part/card/user_journey_card.html", {"user_journey": added_obj})
+            request, "model_builder/object_cards/user_journey_card.html", {"user_journey": added_obj})
         response["HX-Trigger-After-Swap"] = json.dumps({
             "updateTopParentLines": {"topParentIds": [added_obj.web_id]},
             "setAccordionListeners": {"accordionIds": [added_obj.web_id]}})
@@ -164,7 +164,7 @@ def add_new_user_journey(request):
                 request.session["empty_objects"]["UserJourney"][empty_uj_id] = added_obj
             request.session.modified = True
 
-        response = render(request, "model_builder/model_part/card/user_journey_empty.html",
+        response = render(request, "model_builder/object_cards/user_journey_empty.html",
                   context={"user_journey": added_obj})
 
     return response
@@ -193,7 +193,7 @@ def add_new_server(request):
     server_type = request.POST.get('form_add_server_type')
     server_added = add_new_object_to_system_from_builder(request, model_web, server_type)
     response = render(
-        request, "model_builder/model_part/card/server_card.html", {"server": server_added})
+        request, "model_builder/object_cards/server_card.html", {"server": server_added})
 
     return response
 
@@ -239,7 +239,7 @@ def edit_object(request, object_id, model_web=None):
         added_children_html = ""
         for added_accordion_child in added_accordion_children:
             added_children_html += render_to_string(
-                f"model_builder/model_part/card/{added_accordion_child.template_name}_card.html",
+                f"model_builder/object_cards/{added_accordion_child.template_name}_card.html",
                 {added_accordion_child.template_name: added_accordion_child})
 
         if unchanged_children and added_accordion_children:

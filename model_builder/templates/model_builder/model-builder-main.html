@@ -19,7 +19,7 @@
                         </div>
                         <div id="up-list" class="list-group w-75">
                             {% for usage_pattern in model_web.usage_patterns %}
-                                {% include 'model_builder/model_part/card/usage_pattern_card.html' %}
+                                {% include 'model_builder/object_cards/usage_pattern_card.html' %}
                             {% endfor %}
                         </div>
                     </div>
@@ -44,10 +44,10 @@
                         </div>
                         <div id="uj-list" class="list-group w-100">
                             {% for user_journey in model_web.user_journeys %}
-                                {% include 'model_builder/model_part/card/user_journey_card.html' %}
+                                {% include 'model_builder/object_cards/user_journey_card.html' %}
                             {% endfor %}
                             {% for empty_user_journey in model_web.empty_user_journeys %}
-                                {% include 'model_builder/model_part/card/user_journey_empty.html' with user_journey=empty_user_journey %}
+                                {% include 'model_builder/object_cards/user_journey_empty.html' with user_journey=empty_user_journey %}
                             {% endfor %}
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                         </div>
                         <div id="server-list" class="list-group w-75" style="margin-left:25%;">
                             {% for server in model_web.servers %}
-                                {% include 'model_builder/model_part/card/server_card.html' %}
+                                {% include 'model_builder/object_cards/server_card.html' %}
                             {% endfor %}
                         </div>
                     </div>
