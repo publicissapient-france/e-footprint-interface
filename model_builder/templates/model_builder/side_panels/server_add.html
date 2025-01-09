@@ -1,11 +1,11 @@
 
-<form class="form_add_panel p-4 text-start"
+<form class="container-fluid form_edit_panel text-start"
         hx-post="/model_builder/add-new-server/"
         hx-target="#server-list"
         hx-swap="beforeend"
         script="on htmx:afterRequest closePanel()"
 >
-    <div class="w-100 text-end">
+    <div class="text-end">
         <button type="button" class="btn btn-white" aria-label="Close"
                 onclick="closePanel()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
@@ -13,12 +13,12 @@
             </svg>
         </button>
     </div>
-    <div class="form-header" id="panel-header">
+    <div class="form-header p-1" id="panel-header">
         <h5 id="formModalLabel" class="mt-4">
             <b>Add a new server</b>
         </h5>
     </div>
-    <div class="form-body" id="panel-body" style="height:70vh !important; overflow: auto;">
+    <div class="form-body p-1" id="panel-body">
         <div class="row text-start">
             <div class="col-12 mt-3 mb-5">
                 <label for="form_add_name" class="form-label">Name</label>
@@ -91,7 +91,7 @@
             </div>
         </div>
     </div>
-    <div class="form-footer" id="panel-footer">
+    <div class="form-footer p-1" id="panel-footer">
         <div class="row justify-content-between">
             <div class="col-12">
                 <button type="submit" class="btn btn-primary rounded-pill w-100">Save</button>
@@ -101,10 +101,6 @@
 </form>
 {% block scripts %}
 <script>
-
-    let list_providers = {{ all_boavizta_cloud_providers|safe }};
-    let list_configuration = {{ instance_types_by_provider|safe }};
-
     function modifyFormAddServer(){
         let selectedValue = document.getElementById('form_add_server_type').value;
         let item_to_hide;
@@ -132,6 +128,7 @@
     }
 
     function fillDatalistConfiguration(){
+        let list_configuration = {{ instance_types_by_provider|safe }};
         let datalist = document.getElementById('list_configuration');
         let selected_provider = document.getElementById('form_add_provider').value;
         let options = ['select a configuration'];

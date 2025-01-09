@@ -1,10 +1,11 @@
 
-<form class="form_edit_panel p-4 text-start"
+<form class="container-fluid form_edit_panel text-start"
       hx-post="/model_builder/edit-object/{{ object_to_edit.efootprint_id }}/"
       hx-swap="none"
       script="on htmx:afterRequest closePanel()"
 >
-    <div class="w-100 text-end">
+
+    <div class="text-end">
         <button type="button" class="btn btn-white" aria-label="Close"
                 onclick="closePanel()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
@@ -12,20 +13,19 @@
             </svg>
         </button>
     </div>
-    <div class="form-header" id="panel-header">
+    <div class="form-header p-1" id="panel-header">
         <h5 id="formModalLabel" class="mt-4">
             <b>{{ object_to_edit.name }}</b>
         </h5>
     </div>
-    <div class="form-body" id="panel-body" style="height:70vh !important; overflow: auto;">
+    <div class="form-body p-1" id="panel-body">
         <div class="row text-start">
-
             <div class="col-12 mb-3">
                 <label for="form_edit_name" class="form-label">Name</label>
                 <input type="text" class="form-control p-2" id="form_edit_name" name="form_edit_name" value="{{ object_to_edit.name }}">
             </div>
 
-            {% for attr in object_to_edit.numerical_attributes %}
+            {% for attr in object_to_edit.explainable_quantities %}
                 <div class="col-8 mb-3">
                     <div class="input-group">
                         <label for="form_edit_{{ attr.attr_name }}" class="form-label w-100">{{ attr.attr_name }}</label>
@@ -66,7 +66,7 @@
             {% endfor %}
         </div>
     </div>
-    <div class="form-footer" id="panel-footer">
+    <div class="form-footer p-1" id="panel-footer">
         <div class="row justify-content-between">
             <div class="col-12">
                 <button type="submit" class="btn btn-primary rounded-pill w-100">Save</button>

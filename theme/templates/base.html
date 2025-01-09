@@ -15,8 +15,8 @@
     <script src="{% static 'scripts/Sortable.min.js' %}"></script>
 </head>
 
-<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="vh-100">
-    <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary" style="height: 5vh;">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">
                 <img src="{% static 'icons/sidenav/logo.svg' %}" alt="Bootstrap" width="30" height="24">
@@ -62,40 +62,30 @@
         </div>
     </nav>
     <div class="container-fluid p-0">
-        <div class="row g-0 p-0">
-            <div class="col-12 d-flex justify-content-center py-2 position-relative">
-                <!-- Loader -->
-                <img id="global_loader"
-                     src="{% static 'loaders/bars.svg' %}"
-                     class="htmx-indicator position-absolute top-50 start-50 translate-middle"
-                     style="display: none; pointer-events: none;"
-                     alt="Loading...">
-                <!-- Main Content -->
-                <main id="main-content-block" class="text-center w-100">
-                    {% if home %}
-                    {% include "home.html" %}
-                    {% elif understand %}
-                    {% include "understand.html" %}
-                    {% elif analyze %}
-                    {% include "analyze/analyze.html" %}
-                    {% elif onboarding %}
-                    {% include "quiz/onboarding.html" %}
-                    {% elif userJourneys %}
-                    {% include "quiz/user-journeys.html" %}
-                    {% elif services %}
-                    {% include "quiz/services.html" %}
-                    {% elif usagePatterns %}
-                    {% include "quiz/usage-patterns.html" %}
-                    {% elif apis %}
-                    {% include "quiz/apis.html" %}
-                    {% elif modelBuilderMain %}
-                    {% include "model_builder/model-builder-main.html" %}
-                    {% elif analyze %}
-                    {% include "analyze.html" %}
-                    {% endif %}
-                </main>
-            </div>
-        </div>
+        <!-- Main Content -->
+        <main id="main-content-block" class="text-center w-100">
+            {% if home %}
+            {% include "home.html" %}
+            {% elif understand %}
+            {% include "understand.html" %}
+            {% elif analyze %}
+            {% include "analyze/analyze.html" %}
+            {% elif onboarding %}
+            {% include "quiz/onboarding.html" %}
+            {% elif userJourneys %}
+            {% include "quiz/user-journeys.html" %}
+            {% elif services %}
+            {% include "quiz/services.html" %}
+            {% elif usagePatterns %}
+            {% include "quiz/usage-patterns.html" %}
+            {% elif apis %}
+            {% include "quiz/apis.html" %}
+            {% elif modelBuilderMain %}
+            {% include "model_builder/model-builder-main.html" %}
+            {% elif analyze %}
+            {% include "analyze.html" %}
+            {% endif %}
+        </main>
     </div>
     {% bootstrap_javascript %}
     <script src="{% static 'scripts/efootprint_model.js' %}"></script>
