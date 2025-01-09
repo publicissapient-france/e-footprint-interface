@@ -15,8 +15,6 @@ from efootprint.constants.countries import Country
 from efootprint.abstract_modeling_classes.source_objects import SourceValue, Sources, SourceHourlyValues
 from efootprint.constants.units import u
 from efootprint.logger import logger
-from urllib3 import request
-
 from model_builder.modeling_objects_web import ModelingObjectWeb, wrap_efootprint_object
 from model_builder.model_web import ModelWeb
 
@@ -52,6 +50,23 @@ def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_ty
 
     return new_efootprint_obj
 
+
+def add_new_efootprint_object_to_system(request, model_web: ModelWeb, efootprint_object):
+    object_type = efootprint_object.class_as_simple_str
+
+    if object_type not in request.session["system_data"]:
+        request.session["system_data"][object_type] = {}
+        model_web.response_objs[object_type] = {}
+    request.session["system_data"][object_type][efootprint_object.id] = efootprint_object.to_json()
+    # Here we updated a sub dict of request.session so we have to explicitly tell Django that it has been updated
+    request.session.modified = True
+
+    model_web.response_objs[object_type][efootprint_object.id] = efootprint_object
+    model_web.flat_efootprint_objs_dict[efootprint_object.id] = efootprint_object
+
+    return wrap_efootprint_object(efootprint_object, model_web)
+
+
 def add_new_object_to_system_from_builder(request, model_web: ModelWeb, object_type: str):
     if object_type in ["Autoscaling", "Serverless"]:
         new_efootprint_obj = get_cloud_server(request.POST.get('form_add_provider'), request.POST.get(
@@ -69,28 +84,10 @@ def add_new_object_to_system_from_builder(request, model_web: ModelWeb, object_t
         raise PermissionError(f"Object type {object_type} not supported yet")
     new_efootprint_obj.name = request.POST.get('form_add_name')
 
-    new_obj_wrapped = add_new_efootprint_object_to_system(request, model_web, object_type, new_efootprint_obj)
-    return new_obj_wrapped
-
-
-def add_new_efootprint_object_to_system(request, model_web: ModelWeb, object_type: str, efootprint_object):
-    new_obj_wrapped = wrap_efootprint_object(efootprint_object, model_web)
-
-    # Update session data
-    if new_obj_wrapped.class_as_simple_str not in request.session["system_data"]:
-        request.session["system_data"][new_obj_wrapped.class_as_simple_str] = {}
-    request.session["system_data"][new_obj_wrapped.class_as_simple_str][new_obj_wrapped.efootprint_id] = (
-        new_obj_wrapped.to_json())
-    # Here we updated a sub dict of request.session so we have to explicitly tell Django that it has been updated
-    request.session.modified = True
-
-    # Add new object to object dict to recompute context
-    if object_type not in model_web.response_objs:
-        model_web.response_objs[object_type] = {}
-    model_web.response_objs[object_type][efootprint_object.id] = efootprint_object
-    model_web.flat_efootprint_objs_dict[efootprint_object.id] = efootprint_object
+    new_obj_wrapped = add_new_efootprint_object_to_system(request, model_web, new_efootprint_obj)
 
     return new_obj_wrapped
+
 
 def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
     model_web = obj_to_edit.model_web
@@ -104,14 +101,14 @@ def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
         new_value = SourceValue(float(request_value) * u(request_unit), Sources.USER_DATA)
         current_value = getattr(obj_to_edit, attr_dict["attr_name"])
         if new_value.value != current_value.value:
-            logger.info(f"{attr_dict['attr_name']} has changed")
+            logger.debug(f"{attr_dict['attr_name']} has changed in {obj_to_edit.efootprint_id}")
             new_value.set_label(current_value.label)
             obj_to_edit.set_efootprint_value(attr_dict["attr_name"], new_value)
     for mod_obj in obj_structure.modeling_obj_attributes:
         new_mod_obj_id = request.POST["form_edit_" + mod_obj["attr_name"]]
         current_mod_obj_id = getattr(obj_to_edit, mod_obj["attr_name"]).efootprint_id
         if new_mod_obj_id != current_mod_obj_id:
-            logger.info(f"{mod_obj['attr_name']} has changed")
+            logger.debug(f"{mod_obj['attr_name']} has changed in {obj_to_edit.efootprint_id}")
             obj_to_add = model_web.get_efootprint_object_from_efootprint_id(
                 new_mod_obj_id, mod_obj["object_type"], request.session)
             obj_to_edit.set_efootprint_value(mod_obj["attr_name"], obj_to_add)
@@ -120,7 +117,7 @@ def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
         current_mod_obj_ids = [mod_obj.efootprint_id for mod_obj in getattr(obj_to_edit, mod_obj["attr_name"])]
         added_mod_obj_ids = [obj_id for obj_id in new_mod_obj_ids if obj_id not in current_mod_obj_ids]
         removed_mod_obj_ids = [obj_id for obj_id in current_mod_obj_ids if obj_id not in new_mod_obj_ids]
-        logger.info(f"{mod_obj['attr_name']} has changed")
+        logger.debug(f"{mod_obj['attr_name']} has changed in {obj_to_edit.efootprint_id}")
         unchanged_mod_obj_ids = [obj_id for obj_id in current_mod_obj_ids if obj_id not in removed_mod_obj_ids]
         if new_mod_obj_ids != current_mod_obj_ids:
             obj_to_edit.set_efootprint_value(

@@ -29,7 +29,7 @@
 
             <div class="col-12 mb-3">
                 <label for="form_add_name" class="form-label">Name</label>
-                <input type="text" class="form-control p-2" id="form_add_name" name="form_add_name" required>
+                <input type="text" class="form-control p-2" id="form_add_name" name="form_add_name" required
                 value="{{ new_object_name }}">
             </div>
 
@@ -52,7 +52,7 @@
             {% for attr in object_structure.list_attributes %}
                 <div class="col-12 mb-3">
                     <label for="form_add_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
-                    <select class="form-control p-2" id="form_add_{{ attr.attr_name }}" name="form_add_{{ attr.attr_name }}" multiple required>
+                    <select class="form-control p-2" id="form_add_{{ attr.attr_name }}" name="form_add_{{ attr.attr_name }}" multiple>
                         {% for obj in attr.existing_objects %}
                              <option value="{{ obj.efootprint_id }}">{{ obj.name }}</option>
                         {% endfor %}
