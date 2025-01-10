@@ -1,4 +1,5 @@
-<div id="{{ server.web_id }}" class="list-group-item my-3 mb-1 rounded-4 p-2 up-list-item card-hover"
+{% load static %}
+<div id="{{ server.web_id }}" class="list-group-item my-3 mb-1 rounded-4 up-list-item card-hover"
      style="cursor: move;">
     <div class="accordion accordion-flush">
         <div class="accordion-item">
@@ -23,6 +24,21 @@
             <div id="flush-{{ server.web_id }}" class="accordion-collapse collapse accordion-all" data-bs-parent="#{{ server.web_id }}">
                 <div class="accordion-body">
                     <p>{{ server.name }}</p>
+                    <div class="row mx-0 my-0 dotted-border align-items-center rounded-2" style="z-index: 1000 !important; background-color: #ffffff !important;">
+                        <div class="col-2 p-0 justify-content-center bg-white my-2" id="add-usage-pattern-{{ user_journey.web_id }}">
+                            <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white"  width="16px" height="16px" alt="add icon" />
+                        </div>
+                        <div class="col-10 p-0 text-start">
+                            <button class="btn btn-white text-start p-0 fz-0-8"
+                                    hx-get="/model_builder/open-create-service-panel/{{ server.efootprint_id }}/"
+                                    hx-target="#formPanel"
+                                    hx-trigger="click"
+                                    hx-swap="innerHTML"
+                            >
+                                Install service
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

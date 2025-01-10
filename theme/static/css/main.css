@@ -53,7 +53,7 @@ box-shadow: 0px 5px 8px 4px rgba(138, 138, 138, 0.24);
 }
 
 .leader-line {
-  z-index: 123;
+  z-index: 100;
 }
 
 .bg-radiant{

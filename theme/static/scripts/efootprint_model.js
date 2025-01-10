@@ -199,6 +199,7 @@ function initLeaderLines() {
     });
     const scrollContainer = document.querySelector('#model-canva');
     scrollContainer.addEventListener('scroll', updateLines);
+    updateLines();
 }
 
 // ------------------------------------------------------------

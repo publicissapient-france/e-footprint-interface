@@ -28,13 +28,16 @@ def open_create_object_panel(request, object_type):
 
 
 def open_create_server_panel(request):
-    all_boavizta_cloud_providers = json.loads(
+    boavizta_cloud_providers_request_result = json.loads(
         requests.get(
             "https://api.boavizta.org/v1/cloud/instance/all_providers", headers={'accept': 'application/json'}
         ).content.decode('utf-8')
     )
+    all_boavizta_cloud_providers = []
+    for provider in boavizta_cloud_providers_request_result:
+        all_boavizta_cloud_providers.append({'label': provider, 'value': provider})
     instance_types_by_provider = {}
-    for cloud_provider in all_boavizta_cloud_providers:
+    for cloud_provider in boavizta_cloud_providers_request_result:
         instance_types_by_provider[cloud_provider] = json.loads(
             requests.get(
                 f"https://api.boavizta.org/v1/cloud/instance/all_instances",
@@ -43,20 +46,33 @@ def open_create_server_panel(request):
         )
     structure_dict = {
         'str_attributes': ['name'],
-        'server_items': [
+        'items': [
             {'category':'server_type_helper','header': 'Server type','class': '','fields': [
                     {'input_type':'select', 'id':'server_type', 'name' : 'Server type', 'required':True, 'options': [
-                        'Autoscaling', 'OnPremise', 'Serverless']}]},
-            {'category':'cloud_creation_helper','header': 'Server creation helper','class': '','fields': [
-                    {'input_type': 'select', 'id': 'provider', 'name': 'Provider', 'required':True,
+                        {'label':'Autoscaling', 'value':'autoscaling'},
+                        {'label':'OnPremise', 'value':'on_premise'},
+                        {'label':'Serverless', 'value':'serverless'}
+                    ]}]},
+            {'category':'autoscaling','header': 'Server creation helper','class': '', 'fields': [
+                    {'input_type': 'select', 'id': 'autoscaling_provider', 'name': 'Provider', 'required':True,
                      'options': all_boavizta_cloud_providers},
-                    {'input_type': 'datalist', 'id': 'configuration', 'name': 'Server configuration', 'required':True,
-                     'disabled':True, 'options': instance_types_by_provider},
+                    {'input_type': 'datalist', 'id': 'autoscaling_configuration', 'name': 'Server configuration',
+                     'required':True, 'options': instance_types_by_provider},
                     {'input_type': 'input', 'id': 'average_carbon_intensity', 'name': 'Average carbon intensity',
                      'required':True, 'unit': 'g/KWh', 'default': '100'}
                 ]
             },
-            {'category':'on_premise_creation_helper','header': 'Server creation helper','class': 'd-none','fields': [
+            {'category': 'serverless', 'header': 'Server creation helper', 'class': 'd-none', 'fields': [
+                {'input_type': 'select', 'id': 'serverless_provider', 'name': 'Provider', 'required': True,
+                 'options': all_boavizta_cloud_providers},
+                {'input_type': 'datalist', 'id': 'serverless_configuration', 'name': 'Server configuration',
+                 'required':
+                    True, 'options': instance_types_by_provider},
+                {'input_type': 'input', 'id': 'average_carbon_intensity', 'name': 'Average carbon intensity',
+                 'required': True, 'unit': 'g/KWh', 'default': '100'}
+            ]
+             },
+            {'category':'on_premise','header': 'Server creation helper','class': 'd-none','fields': [
                     {'input_type':'input', 'id': 'nb_of_cpu_units', 'name': 'Number of CPU units', 'unit': '',
                      'required':True, 'default': '2'},
                     {'input_type':'input', 'id': 'nb_of_cores_per_cpu_unit', 'name': 'Number of CPU Cores',
@@ -66,16 +82,22 @@ def open_create_server_panel(request):
                     {'input_type':'input', 'id': 'ram_quantity_per_unit_in_gb', 'name': 'RAM per unit', 'unit': '',
                      'required':True, 'default': '32'},
                     {'input_type': 'input', 'id': 'average_carbon_intensity', 'name': 'Average carbon intensity',
-                     'unit': 'g/KWh', 'required':True, 'default': '100'}]}]}
+                     'unit': 'g/KWh', 'required':True, 'default': '100'}]}],
+        'switch_item': 'server_type',
+        'dynamic_lists':[
+            {'input':'autoscaling_configuration','filter_by':'autoscaling_provider',
+             'list_value': instance_types_by_provider},
+            {'input': 'serverless_configuration', 'filter_by': 'serverless_provider',
+             'list_value': instance_types_by_provider}
+        ]
+    }
 
     http_response = render(request, f"model_builder/side_panels/server_add.html",
                   context={
-                      'structure_dict': structure_dict,
-                      'all_boavizta_cloud_providers' : all_boavizta_cloud_providers,
-                      'instance_types_by_provider': instance_types_by_provider
+                      'structure_dict': structure_dict
                   })
 
-    http_response["HX-Trigger-After-Swap"] = "initServerAddPanel"
+    http_response["HX-Trigger-After-Swap"] = "initAddPanel"
 
     return http_response
 
@@ -147,3 +169,132 @@ def add_new_server(request):
         request, "model_builder/object_cards/server_card.html", {"server": server_added})
 
     return response
+
+
+def open_create_service_panel(request, server_efootprint_id):
+    helper_text = ('The following jobs types are now available to add to your usage journey steps and connect to your '
+                   'infrastrusture')
+    gen_ai_models = {'open_ai':['gpt3', 'gpt4', 'o1'], 'google':['Gemini', 'Gemini Pro']}
+    structure_dict = {
+        'str_attributes': ['name'],
+        'items': [
+            {'category': 'services_available', 'header': 'Services available for this server', 'class': '', 'fields': [
+                {'input_type': 'select', 'id': 'type_service_available', 'name': 'Service', 'required': True,
+                 'options': [
+                    {'label':'Web Application', 'value':'web_app'},
+                    {'label':'Gen AI Service', 'value':'gen_ai'},
+                    {'label':'Streaming', 'value':'streaming'}
+                ]}]},
+            {'category': 'web_app', 'header': 'Server creation helper', 'class': '', 'fields': [
+                {'input_type': 'input', 'id': 'base_ram_consumption', 'name': 'Base RAM consumption', 'unit': 'GB',
+                 'required': True, 'default': '2'},
+                {'input_type': 'input', 'id': 'base_cpu_consumption', 'name': 'Base CPU consumption', 'unit': 'cores',
+                 'required': True, 'default': '2'},
+                {'input_type': 'input', 'id': 'base_storage_consumption', 'name': 'Base Storage consumption',
+                 'unit': 'GB',
+                 'required': True, 'default': '100'},
+                {'input_type': 'select', 'id': 'technology', 'name': 'Technology installed', 'required': True,
+                 'options': [
+                    {'label':'Python', 'value':'python'},
+                    {'label':'Java', 'value':'java'},
+                    {'label':'Node.js', 'value':'nodejs'},
+                    {'label':'C#', 'value':'csharp'},
+                    {'label':'Ruby', 'value':'ruby'},
+                    {'label':'PHP', 'value':'php'},
+                    {'label':'Go', 'value':'go'},
+                    {'label':'Rust', 'value':'rust'},
+                    {'label':'Scala', 'value':'scala'},
+                    {'label':'Kotlin', 'value':'kotlin'},
+                    {'label':'Swift', 'value':'swift'},
+                    {'label':'Objective-C', 'value':'objective_c'},
+                    {'label':'C++', 'value':'cpp'},
+                    {'label':'C', 'value':'c'},
+                    {'label':'HTML/CSS/JS', 'value':'html_css_js'},
+                    {'label':'Other', 'value':'other'}
+                ]},
+                {'input_type': 'select', 'id': 'implementation_details', 'name': 'Implementation details',
+                 'required':True, 'options': [
+                    {'label': 'default', 'value': 'default'},
+                    {'label': 'mysql', 'value': 'mysql'},
+                    {'label': 'noindex', 'value': 'noindex'},
+                    {'label': 'other', 'value': 'other'}
+                    ]}
+                ]},
+            {'category': 'streaming', 'header': 'Server creation helper', 'class': 'd-none', 'fields': [
+                {'input_type': 'input', 'id': 'base_ram_consumption', 'name': 'Base RAM consumption', 'unit': 'GB',
+                 'required': True, 'default': '2'},
+                {'input_type': 'input', 'id': 'base_cpu_consumption', 'name': 'Base CPU consumption', 'unit': 'cores',
+                 'required': True, 'default': '2'},
+                {'input_type': 'input', 'id': 'base_storage_consumption', 'name': 'Base Storage consumption',
+                 'unit': 'GB',
+                 'required': True, 'default': '100'},
+                {'input_type': 'select', 'id': 'video_resolution', 'name': 'Video resolution', 'required': True,
+                 'options': [
+                    {'label': '360p', 'value': '360p'},
+                    {'label': '480p', 'value': '480p'},
+                    {'label': '720p', 'value': '720p'},
+                    {'label': '1080p', 'value': '1080p'},
+                    {'label': '4K', 'value': '4K'},
+                    {'label': '8K', 'value': '8K'}
+                 ]}
+            ]},
+            {'category': 'gen_ai', 'header': 'Server creation helper', 'class': 'd-none', 'fields': [
+                {'input_type': 'input', 'id': 'base_ram_consumption', 'name': 'Base RAM consumption', 'unit': 'GB',
+                 'required': True, 'default': '2'},
+                {'input_type': 'input', 'id': 'base_cpu_consumption', 'name': 'Base CPU consumption', 'unit': 'cores',
+                 'required': True, 'default': '2'},
+                {'input_type': 'input', 'id': 'base_storage_consumption', 'name': 'Base Storage consumption',
+                 'unit': 'GB',
+                 'required': True, 'default': '100'},
+                {'input_type': 'select', 'id': 'gen_ai_provider', 'name': 'Provider', 'required': True, 'options': [
+                     {'label': 'Google', 'value': 'google'},
+                     {'label': 'Open AI', 'value': 'open_ai'}
+                 ]},
+                {'input_type': 'datalist', 'id': 'gen_ai_model', 'name': 'Model', 'required': True, 'options':
+                    gen_ai_models}
+            ]},
+            {'category': 'job_types_associated', 'header': 'Job types associated', 'class': 'd-none',
+             'fields': [
+                {'input_type' : 'p', 'id': 'job_types_associated_p', 'text': helper_text},
+                {'input_type': 'list', 'id': 'job_types_associated_list', 'options': [
+                    'Job type 1', 'Job type 2', 'Job type 3']}]}],
+        'switch_item': 'type_service_available',
+        'dynamic_lists':[
+            {'input':'gen_ai_model','filter_by':'gen_ai_provider', 'list_value': gen_ai_models}
+        ]
+    }
+    http_response = render(
+        request, "model_builder/side_panels/service_add.html", {
+            "server_id": server_efootprint_id,
+            "structure_dict": structure_dict
+        })
+
+    http_response["HX-Trigger-After-Swap"] = "initAddPanel"
+
+    return http_response
+
+
+def add_new_service(request, server_efootprint_id):
+    model_web = ModelWeb(request.session)
+    server = model_web.get_web_object_from_efootprint_id(server_efootprint_id)
+    service_id = str(uuid.uuid4())[:6]
+    added_obj = {
+        "id": service_id,
+        "name": request.POST["form_add_name"],
+        "server": server,
+        "service_type" : request.POST["form_add_server_available"],
+        "cpu_required": request.POST["form_add_cpu_required"],
+        "ram_required": request.POST["form_add_ram_required"],
+        "storage_required": request.POST["form_add_storage_required"]
+    }
+
+    if "interface_objects" not in request.session:
+        request.session["interface_objects"] = {"Service": {id: added_obj}}
+    else:
+        if "Service" not in request.session["interface_objects"]:
+            request.session["interface_objects"]["Service"] = {service_id: added_obj}
+        else:
+            request.session["interface_objects"]["Service"][service_id] = added_obj
+        request.session.modified = True
+
+    return None
