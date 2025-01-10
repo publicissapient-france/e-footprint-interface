@@ -33,7 +33,7 @@
                 value="{{ new_object_name }}">
             </div>
 
-            {% for attr in object_structure.explainable_quantities %}
+            {% for attr in object_structure.numerical_attributes %}
                 <div class="col-8 mb-3">
                     <div class="input-group">
                         <label for="form_add_{{ attr.attr_name }}" class="form-label w-100">{{ attr.attr_name }}</label>

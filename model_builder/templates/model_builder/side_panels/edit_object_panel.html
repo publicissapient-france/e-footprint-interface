@@ -25,7 +25,7 @@
                 <input type="text" class="form-control p-2" id="form_edit_name" name="form_edit_name" value="{{ object_to_edit.name }}">
             </div>
 
-            {% for attr in object_to_edit.explainable_quantities %}
+            {% for attr in object_to_edit.numerical_attributes %}
                 <div class="col-8 mb-3">
                     <div class="input-group">
                         <label for="form_edit_{{ attr.attr_name }}" class="form-label w-100">{{ attr.attr_name }}</label>

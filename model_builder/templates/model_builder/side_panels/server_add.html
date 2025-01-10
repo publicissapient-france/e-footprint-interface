@@ -94,7 +94,7 @@
     <div class="form-footer p-1" id="panel-footer">
         <div class="row justify-content-between">
             <div class="col-12">
-                <button type="submit" class="btn btn-primary rounded-pill w-100">Save</button>
+                <button type="submit" class="btn btn-primary rounded-pill w-100" id="save_server_btn">Save</button>
             </div>
         </div>
     </div>
@@ -152,6 +152,17 @@
         document.getElementById('form_add_provider').addEventListener('change', function(){
             fillDatalistConfiguration();
         });
+    });
+
+    document.getElementById("form_add_configuration").addEventListener('change', function(){
+        let datalist = document.getElementById('list_configuration');
+        let options = Array.from(datalist.options).map(option => option.value)
+        let submitButton = document.getElementById('save_server_btn');
+        if (options.includes(this.value)) {
+            submitButton.disabled = false;
+        } else {
+            submitButton.disabled = true;
+        }
     });
 </script>
 

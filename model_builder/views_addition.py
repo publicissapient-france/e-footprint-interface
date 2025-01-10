@@ -53,19 +53,20 @@ def open_create_server_panel(request):
                     {'input_type': 'datalist', 'id': 'configuration', 'name': 'Server configuration', 'required':True,
                      'disabled':True, 'options': instance_types_by_provider},
                     {'input_type': 'input', 'id': 'average_carbon_intensity', 'name': 'Average carbon intensity',
-                     'unit': 'g/KWh', 'default': '100'}
+                     'required':True, 'unit': 'g/KWh', 'default': '100'}
                 ]
             },
             {'category':'on_premise_creation_helper','header': 'Server creation helper','class': 'd-none','fields': [
                     {'input_type':'input', 'id': 'nb_of_cpu_units', 'name': 'Number of CPU units', 'unit': '',
-                     'default': '2'},
+                     'required':True, 'default': '2'},
                     {'input_type':'input', 'id': 'nb_of_cores_per_cpu_unit', 'name': 'Number of CPU Cores',
-                     'unit': 'core', 'default': '24'},
-                    {'input_type':'input', 'id': 'nb_of_ram_units', 'name': 'RAM unit', 'unit': 'GB', 'default': '12'},
+                     'required':True, 'unit': 'core', 'default': '24'},
+                    {'input_type':'input', 'id': 'nb_of_ram_units', 'name': 'RAM unit', 'unit': 'GB',
+                     'required':True, 'default': '12'},
                     {'input_type':'input', 'id': 'ram_quantity_per_unit_in_gb', 'name': 'RAM per unit', 'unit': '',
-                     'default': '32'},
+                     'required':True, 'default': '32'},
                     {'input_type': 'input', 'id': 'average_carbon_intensity', 'name': 'Average carbon intensity',
-                     'unit': 'g/KWh', 'default': '100'}]}]}
+                     'unit': 'g/KWh', 'required':True, 'default': '100'}]}]}
 
     http_response = render(request, f"model_builder/side_panels/server_add.html",
                   context={

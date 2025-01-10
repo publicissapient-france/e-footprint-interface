@@ -70,7 +70,7 @@ def add_new_efootprint_object_to_system(request, model_web: ModelWeb, efootprint
 def add_new_object_to_system_from_builder(request, model_web: ModelWeb, object_type: str):
     if object_type in ["Autoscaling", "Serverless"]:
         new_efootprint_obj = get_cloud_server(request.POST.get('form_add_provider'), request.POST.get(
-            'form_add_configuration'), SourceValue(100 * u.g / u.kWh))
+            'form_add_configuration'), SourceValue(int(request.POST['form_add_average_carbon_intensity'])* u.g / u.kWh))
     elif object_type == "OnPremise":
         new_efootprint_obj = on_premise_server_from_config(
             request.POST['form_add_name'],

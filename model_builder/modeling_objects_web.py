@@ -1,7 +1,5 @@
-import re
-
 from efootprint.abstract_modeling_classes.explainable_object_base_class import ExplainableObject
-from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity, ExplainableHourlyQuantities
+from efootprint.abstract_modeling_classes.explainable_objects import EmptyExplainableObject
 from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
 from efootprint.core.usage.usage_pattern import UsagePattern
 
@@ -14,6 +12,22 @@ def retrieve_attributes_by_type(
             output_list.append({'attr_name': attr_name, 'attr_value': attr_value})
 
     return output_list
+
+class EmptyExplainableObjectWeb:
+    def __init__(self, attr_name):
+        self.attr_name_in_mod_obj_container = attr_name
+
+    @property
+    def rounded_magnitude(self):
+        return 0
+
+    @property
+    def short_unit(self):
+        return ""
+
+    @property
+    def readable_attr_name(self):
+        return self.attr_name_in_mod_obj_container.replace("_", " ")
 
 
 class ExplainableObjectWeb:
@@ -50,6 +64,9 @@ class ModelingObjectWeb:
         if name == "id":
             raise ValueError("The id attribute shouldn’t be retrieved by ModelingObjectWrapper objects. "
                              "Use efootprint_id and web_id for clear disambiguation.")
+
+        if isinstance(attr, EmptyExplainableObject):
+            return EmptyExplainableObjectWeb(attr)
 
         if isinstance(attr, list) and len(attr) > 0 and isinstance(attr[0], ModelingObject):
             return [wrap_efootprint_object(item, self.model_web) for item in attr]
@@ -142,15 +159,12 @@ class ModelingObjectWeb:
             return self.all_accordion_parents[-1]
 
     @property
-    def explainable_quantities(self):
-        efootprint_explainable_quantities = retrieve_attributes_by_type(self._modeling_obj, ExplainableQuantity)
-        for explainable_quantity_dict in efootprint_explainable_quantities:
-            explainable_quantity_dict["attr_value"] = ExplainableObjectWeb(explainable_quantity_dict["attr_value"])
-        return efootprint_explainable_quantities
+    def numerical_attributes(self):
+        numerical_attributes_from_structure = self.structure.numerical_attributes
+        for numerical_attribute in numerical_attributes_from_structure:
+            numerical_attribute["attr_value"] = getattr(self, numerical_attribute["attr_name"])
 
-    @property
-    def explainable_hourly_quantities(self):
-        return retrieve_attributes_by_type(self, ExplainableHourlyQuantities)
+        return numerical_attributes_from_structure
 
     @property
     def mod_obj_attributes(self):
