@@ -191,11 +191,11 @@ def add_new_service(request, server_efootprint_id):
     else:
         raise ValueError("Service type not recognized")
 
-    if "interface_objects" not in request.session or "services" not in request.session["interface_objects"]:
+    if "interface_objects" not in request.session or "installed_services" not in request.session["interface_objects"]:
         request.session["interface_objects"] = {
-            "services": [{"server_id": server_efootprint_id,"services": [added_obj]}]}
+            "installed_services": [{"server_id": server_efootprint_id,"services": [added_obj]}]}
     else:
-        services_list = request.session["interface_objects"]["services"]
+        services_list = request.session["interface_objects"]["installed_services"]
         for server_services in services_list:
             if server_services["server_id"] == server_efootprint_id:
                 server_services["services"].append(added_obj)

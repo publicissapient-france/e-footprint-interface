@@ -1,4 +1,4 @@
-{% for service in interface_objects.services %}
+{% for service in interface_objects.installed_services %}
     {% if service.server_id == server.efootprint_id %}
         <p>Services</p>
         {% for service_link in service.services %}
