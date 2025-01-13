@@ -35,6 +35,18 @@
                         {% for job in user_journey_step.jobs %}
                             {% include 'model_builder/object_cards/job_card.html' with job=job hx_swap_oob=false %}
                         {% endfor %}
+                        <div class="col-12 p-2">
+                            <button class="btn btn-white dotted-border text-start p-2 fz-0-8"
+                                    hx-get="/model_builder/open_create_job_panel"
+                                    hx-target="#formPanel"
+                                    hx-trigger="click"
+                                    hx-swap="innerHTML"
+                                    hx-vals='{"efootprint_id_of_parent_to_link_to": "{{ user_journey_step.efootprint_id }}"}'
+                            >
+                                <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-3"  width="14px" height="14px" alt="add icon" />
+                                Add new job
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

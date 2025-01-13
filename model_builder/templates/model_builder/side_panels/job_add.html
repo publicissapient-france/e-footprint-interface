@@ -1,0 +1,208 @@
+
+<form class="container-fluid form_edit_panel text-start"
+        hx-post="/model_builder/add-new-job/{{ efootprint_id_of_parent_to_link_to }}/"
+        hx-swap="none"
+        script="on htmx:afterRequest closePanel()"
+>
+    <div class="text-end">
+        <button type="button" class="btn btn-white" aria-label="Close"
+                onclick="closePanel()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+              <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708 .708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+            </svg>
+        </button>
+    </div>
+    <div class="form-header p-1" id="panel-header">
+        <h5 id="formModalLabel" class="mt-4">
+            <b>Add a new job</b>
+        </h5>
+    </div>
+    <div class="form-body p-1" id="panel-body">
+        <div class="row text-start">
+            <div class="col-12 mt-3 mb-5">
+                <label for="form_add_name" class="form-label">Name</label>
+                <input type="text" class="form-control p-2" id="form_add_name" name="form_add_name" value="New job" required>
+            </div>
+            <div class="col-12">
+                <div class="accordion accordion-panel" id="accordionFormAdd">
+                    {%for item in structure_dict.items %}
+                    <div class="accordion-item {{ item.class }} {% if forloop.counter > 1 %}rounded-bottom-2{% endif %}" id="item-{{ item.category }}">
+                        <h2 class="accordion-header {% if forloop.counter > 1 %}rounded-bottom-2{% endif %}">
+                            <button class="accordion-button fz-1 {% if forloop.counter > 1 %}rounded-bottom-2{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ item.category }}" aria-expanded="true" aria-controls="collapse_{{ item.category }}">
+                                {{ item.header }}
+                            </button>
+                        </h2>
+                        <div id="collapse_{{ item.category }}"
+                             class="accordion-collapse show" data-bs-parent="accordionFormAdd">
+                            <div class="accordion-body">
+                                {% for field in item.fields %}
+                                <div class="mb-3">
+                                    {% if field.input_type == 'select' %}
+                                        <label for="form_add_{{ field.id }}" class="form-label">{{ field.name }}</label>
+                                        <select
+                                            class="form-control p-2"
+                                            id="form_add_{{ field.id }}"
+                                            name="form_add_{{ field.id }}"
+                                            {% if field.required %}required{% endif %}
+                                        >
+                                            {% for option in field.options %}
+                                                <option value="{{ option.value }}">{{ option.label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    {% elif field.input_type == 'datalist' %}
+                                        <label for="form_add_{{ field.id }}" class="form-label">{{ field.name }}</label>
+                                        <input
+                                                class="form-control p-2"
+                                                list="list_{{ field.id }}"
+                                                id="form_add_{{ field.id }}"
+                                                name="form_add_{{ field.id }}"
+                                               {% if field.required %}required{% endif %}
+                                               {% if field.disabled %}disabled{% endif %}>
+                                        <datalist id="list_{{ field.id }}">
+                                            <option selected value="select a provider">
+                                        </datalist>
+                                    {% elif field.input_type == 'p' %}
+                                        <p id="{{ field.id }}">{{ field.text }}</p>
+                                    {% elif field.input_type == 'list' %}
+                                        <ul class="list-group">
+                                            {% for option in field.options %}
+                                                <li class="list-group-item">{{ option }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <div class="input-group">
+                                            <label for="form_add_{{ field.id }}" class="form-label w-100">{{ field.name }}</label>
+                                            <input type="number"
+                                                class="form-control input_with_add_on"
+                                                id="form_add_{{ field.id }}"
+                                                name="form_add_{{ field.id }}"
+                                                value="{{ field.default }}"
+                                                {% if field.required %}required{% endif %}>
+                                            <span class="input-group-text" id="basic-addon2">
+                                                {{ field.unit }}
+                                            </span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-12">
+                <p class="mt-4">
+                    You will be able to edit all attributes about the job later in the dedicated panel.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="form-footer p-1" id="panel-footer">
+        <div class="row justify-content-between">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary rounded-pill w-100" id="save_server_btn">Save</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<script>
+    {% if structure_dict.switch_item %}
+    let switchElement = document.getElementById("form_add_" + "{{ structure_dict.switch_item}}");
+    let previousSwitchElementValue = switchElement.value;
+
+    document.getElementById("form_add_" + "{{ structure_dict.switch_item}}").addEventListener("change", function() {
+        let item_to_hide = document.getElementById("item-" + previousSwitchElementValue);
+        item_to_hide.classList.add('d-none');
+        let inputs_to_remove_required = item_to_hide.querySelectorAll('input, select');
+        inputs_to_remove_required.forEach(function(input_form){
+            input_form.required = false;
+        });
+        let items_to_show = document.getElementById("item-" + switchElement.value);
+        items_to_show.classList.remove('d-none');
+        let inputs_to_add_required = items_to_show.querySelectorAll('input, select');
+        inputs_to_add_required.forEach(function(input_form){
+            input_form.required = true;
+        });
+        previousSwitchElementValue = switchElement.value;
+    });
+    {% endif %}
+
+    {% if structure_dict.dynamic_lists %}
+    {% for dynamic_list in structure_dict.dynamic_lists %}
+    function fillDataList{{ dynamic_list.input }}(){
+        let elementForm = document.getElementById("form_add_{{ dynamic_list.input }}");
+        let filterKey = document.getElementById("form_add_{{ dynamic_list.filter_by }}").value;
+        let options = []
+        let listValue = {{ dynamic_list.list_value|safe }};
+        if (elementForm.tagName === "SELECT"){
+            elementForm.innerHTML = '';
+                listValue[filterKey].forEach(function(item){
+                let option = document.createElement('option');
+                option.value = item.value;
+                option.text = item.label;
+                options.push(option);
+                elementForm.appendChild(option);
+            });
+        } else {
+            let dataList = document.getElementById("list_{{ dynamic_list.input }}");
+            options = ['select a configuration'];
+            dataList.innerHTML = '';
+            listValue[filterKey].forEach(function(item){
+                let option = document.createElement('option');
+                option.value = item;
+                options.push(item);
+                dataList.appendChild(option);
+            });
+        }
+    }
+    {% endfor %}
+
+    document.body.addEventListener("initAddPanel", function() {
+        {% for dynamic_list in structure_dict.dynamic_lists %}
+        fillDataList{{ dynamic_list.input }}();
+        document.getElementById('form_add_{{ dynamic_list.filter_by }}').addEventListener('change', function(){
+            fillDataList{{ dynamic_list.input }}();
+        });
+        {% endfor %}
+    });
+    {% endif %}
+
+    document.getElementById("form_add_service").addEventListener('change', function(){
+        let serviceType = document.getElementById('form_add_job_type');
+        let service_id = this.value;
+        let url = '/model_builder/get-jobs-type-link-to-service-type/' + service_id + '/';
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            serviceType.innerHTML = '';
+            data.forEach(item => {
+                let option = document.createElement('option');
+                option.textContent = item.label;
+                option.value = item.value;
+                serviceType.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+        });
+    });
+
+</script>
+
+<script>
+
+</script>

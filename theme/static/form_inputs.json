@@ -427,18 +427,18 @@
                 ]
             },
             {
-                "category": "job_types_associated",
+                "category": "job_types_data_associated",
                 "header": "Job types associated",
                 "class": "d-none",
                 "fields": [
                     {
                         "input_type": "p",
-                        "id": "job_types_associated_p",
+                        "id": "job_types_data_associated_p",
                         "text": null
                     },
                     {
                         "input_type": "list",
-                        "id": "job_types_associated_list",
+                        "id": "job_types_data_associated_list",
                         "options": null
                     }
                 ]
@@ -449,6 +449,48 @@
             {
                 "input": "gen_ai_model",
                 "filter_by": "gen_ai_provider",
+                "list_value": null
+            }
+        ]
+    },
+    "Job":{
+        "str_attributes": [
+            "name"
+        ],
+        "items": [
+            {
+                "category": "job_creation_helper",
+                "header": "Job creation helper",
+                "class": "",
+                "fields": [
+                    {
+                        "input_type": "select",
+                        "id": "server",
+                        "name": "Server",
+                        "required": true,
+                        "options": null
+                    },
+                    {
+                        "input_type": "select",
+                        "id": "service",
+                        "name": "Service used",
+                        "required": true,
+                        "options": null
+                    },
+                    {
+                        "input_type": "select",
+                        "id": "job_type",
+                        "name": "Job type",
+                        "required": true,
+                        "options": null
+                    }
+                ]
+            }
+        ],
+        "dynamic_lists": [
+            {
+                "input": "service",
+                "filter_by": "server",
                 "list_value": null
             }
         ]

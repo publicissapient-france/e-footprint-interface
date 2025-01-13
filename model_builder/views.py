@@ -1,9 +1,11 @@
+from django.db.models.fields import return_None
+
 from model_builder.model_web import ModelWeb
 from utils import htmx_render
 
 import json
 import os
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import matplotlib
 
 matplotlib.use('Agg')
@@ -38,3 +40,46 @@ def download_json(request):
     response['Content-Disposition'] = f'attachment; filename="efootprint-model-system-data.json"'
 
     return response
+
+
+def get_jobs_type_link_to_service_type(request, service_id):
+    job_types_data={
+        'web_app': [
+            {
+                'label': 'Upload',
+                'value': 'upload',
+                'data_upload': '800',
+                'data_download': '0.01',
+                'data_stored': '100',
+                'request_duration': '5',
+                'ram_needed': '100',
+                'cpu_needed': '1'
+            },
+            {
+                'label': 'Download',
+                'value': 'download',
+                'data_upload': '5',
+                'data_download': '1',
+                'data_stored': '1',
+                'request_duration': '10',
+                'ram_needed': '200',
+                'cpu_needed': '2'},
+            {'label': 'Login', 'value': 'login'}
+        ],
+        'gen_ai': [
+            {'label': 'Chat', 'value': 'chat'},
+            {'label': 'Image generation', 'value': 'image_generation'}
+        ],
+        'streaming': [
+            {'label': 'Video', 'value': 'video'},
+            {'label': 'Audio', 'value': 'audio'}
+        ]
+    }
+
+    installed_services = request.session['interface_objects']['installed_services']
+    for server in installed_services:
+        for service in server['services']:
+            if service['id'] == service_id:
+                service_type =  service['service_type']
+
+    return JsonResponse(job_types_data.get(service_type, []), safe=False)
