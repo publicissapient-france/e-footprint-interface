@@ -174,20 +174,38 @@ def add_new_service(request, server_efootprint_id):
     added_obj = {
         "id": service_id,
         "name": request.POST["form_add_name"],
-        "server": server,
-        "service_type" : request.POST["form_add_server_available"],
-        "cpu_required": request.POST["form_add_cpu_required"],
-        "ram_required": request.POST["form_add_ram_required"],
-        "storage_required": request.POST["form_add_storage_required"]
+        "server": server.efootprint_id,
+        "service_type" : request.POST["form_add_type_service_available"],
+        "cpu_required": request.POST["form_add_base_cpu_consumption"],
+        "ram_required": request.POST["form_add_base_ram_consumption"],
+        "storage_required": request.POST["form_add_base_cpu_consumption"]
     }
-
-    if "interface_objects" not in request.session:
-        request.session["interface_objects"] = {"Service": {id: added_obj}}
+    if request.POST.get("form_add_type_service_available") == 'gen_ai':
+        added_obj['gen_ai_provider'] = request.POST["form_add_gen_ai_provider"]
+        added_obj['gen_ai_model'] = request.POST["form_add_gen_ai_model"]
+    elif request.POST.get("form_add_type_service_available") == 'web_app':
+        added_obj['technology'] = request.POST["form_add_technology"]
+        added_obj['implementation_details'] = request.POST["form_add_implementation_details"]
+    elif request.POST.get("form_add_type_service_available") == 'streaming':
+        added_obj['video_resolution'] = request.POST["form_add_video_resolution"]
     else:
-        if "Service" not in request.session["interface_objects"]:
-            request.session["interface_objects"]["Service"] = {service_id: added_obj}
-        else:
-            request.session["interface_objects"]["Service"][service_id] = added_obj
-        request.session.modified = True
+        raise ValueError("Service type not recognized")
 
-    return None
+    if "interface_objects" not in request.session or "services" not in request.session["interface_objects"]:
+        request.session["interface_objects"] = {
+            "services": [{"server_id": server_efootprint_id,"services": [added_obj]}]}
+    else:
+        services_list = request.session["interface_objects"]["services"]
+        for server_services in services_list:
+            if server_services["server_id"] == server_efootprint_id:
+                server_services["services"].append(added_obj)
+                break
+        else:
+            services_list.append({"server_id": server_efootprint_id,"services": [added_obj]})
+
+    request.session.modified = True
+
+    response = render(request, "model_builder/object_cards/service_card.html",
+                      context={"server": server, 'interface_objects': request.session["interface_objects"]})
+
+    return response

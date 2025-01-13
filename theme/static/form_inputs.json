@@ -422,7 +422,6 @@
                         "input_type": "datalist",
                         "id": "gen_ai_model",
                         "name": "Model",
-                        "required": true,
                         "options": null
                     }
                 ]
