@@ -1,0 +1,554 @@
+
+<form class="container-fluid form_edit_panel text-start"
+        hx-post="/model_builder/add-new-usage-pattern/"
+        hx-target="#server-list"
+        hx-swap="beforeend"
+        script="on htmx:afterRequest closePanel()"
+>
+    <div class="text-end">
+        <button type="button" class="btn btn-white" aria-label="Close"
+                onclick="closePanel()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+              <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708 .708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+            </svg>
+        </button>
+    </div>
+    <div class="form-header p-1" id="panel-header">
+        <h5 id="formModalLabel" class="mt-4">
+            <b>New usage pattern</b>
+        </h5>
+    </div>
+    <div class="form-body p-1" id="panel-body">
+        <div class="row text-start">
+            <div class="col-12 mt-3 mb-5">
+                <label for="form_add_name" class="form-label w-100 text-start">Name</label>
+                <input type="text" class="form-control p-2" id="form_add_name" name="form_add_name" value="New usage pattern" required>
+            </div>
+            <div class="col-12">
+                <p class="mt-4">
+                    Create a new usage pattern by defining its device mix, network mix, country mix, usage over time, and linking it to a usage journey.
+                </p>
+            </div>
+            <div class="col-8 offset-2 mt-4">
+                <div class="d-grid gap-2 mx-auto">
+                    <button class="btn rounded-pill bg-white border border-1 border-black">
+                        Device mix
+                    </button>
+                    <button class="btn rounded-pill bg-white border border-1 border-black">
+                        Country mix
+                    </button>
+                    <button class="btn rounded-pill bg-white border border-1 border-black">
+                        Network mix
+                    </button>
+                    <button type="button" class="btn rounded-pill bg-white border border-1 border-black" data-bs-toggle="modal" data-bs-target="#time-series-modal">
+                        Time series
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-footer p-1" id="panel-footer">
+        <div class="row justify-content-between">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary rounded-pill w-100" id="save_server_btn">Save</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<!-- Modal -->
+<div class="modal usage-pattern-modal-time-series fade" id="time-series-modal" tabindex="-1" aria-labelledby="time-series-modal" aria-hidden="true" data-bs-backdrop="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="row form-header">
+                    <div class="col-8 text-start">
+                       <h5 id="formModalLabel" class="mt-4">
+                            <b>Timeseries visualisation</b>
+                        </h5>
+                    </div>
+                    <div class="col-4 text-start">
+                        <h5 id="formModalLabel" class="mt-4">
+                            <b>Edit usage over time</b>
+                        </h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <div class="form-body rounded-2 px-1">
+                            <div class="accordion" id="accordionTimeSeries">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-time-series-chart" aria-expanded="true" aria-controls="collapse-time-series-chart">
+                                            Time series attributes
+                                        </button>
+                                    </h2>
+                                    <div id="collapse-time-series-chart" class="accordion-collapse collapse show">
+                                        <div class="accordion-body">
+                                            <div id="time-series-chart" style="width: 100%; height: 60vh;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-time-series-statistics" aria-expanded="true" aria-controls="collapse-time-series-statistics">
+                                            Statistics
+                                        </button>
+                                    </h2>
+                                    <div id="collapse-time-series-statistics" class="accordion-collapse collapse show">
+                                        <div class="accordion-body px-2">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 p-0">
+                        <div class="form-body rounded-2 px-1">
+                            <div class="accordion" id="accordionExample">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-help-build" aria-expanded="true" aria-controls="collapse-help-build">
+                                            Help me build my time series
+                                        </button>
+                                    </h2>
+                                    <div id="collapse-help-build" class="accordion-collapse collapse show">
+                                        <div class="accordion-body">
+                                            <div class="mb-3 mx-2">
+                                                <label for="form_add_timeframe_value" class="form-label w-100 text-start">TimeFrame</label>
+                                                <div class="input-group">
+                                                    <input type="number" class="form-control" id="form_add_timeframe_value" name="form_add_timeframe_value" aria-describedby="basic-addon3 basic-addon4" placeholder="5"
+                                                           script="on change update_time_series_chart()">
+                                                    <select class="input-group-text" id="form_add_timeframe_range"
+                                                        script="on change update_time_series_chart()">
+                                                    >
+                                                        <option value="day">Days</option>
+                                                        <option value="week">Weeks</option>
+                                                        <option value="month">Months</option>
+                                                        <option value="year" selected>Years</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-frequency-usage" aria-expanded="true" aria-controls="collapse-frequency-usage">
+                                            Frequency of usage
+                                        </button>
+                                    </h2>
+                                    <div id="collapse-frequency-usage" class="accordion-collapse collapse show">
+                                        <div class="accordion-body px-2">
+                                            <div class="row mb-3">
+                                                <div class="col-6">
+                                                    <label for="form_add_avg_nb_usage_journey_value" class="form-label w-100 text-start">Average number of usage journeys</label>
+                                                    <div class="input-group">
+                                                        <input type="number" class="form-control" id="form_add_avg_nb_usage_journey_value" name="form_add_avg_nb_usage_journey_value" aria-describedby="basic-addon3 basic-addon4" placeholder="1000">
+                                                        <select class="input-group-text" id="form_add_avg_nb_usage_journey_range">
+                                                            <option value="daily" selected>Daily</option>
+                                                            <option value="weekly">Weekly</option>
+                                                            <option value="monthly">Monthly</option>
+                                                            <option value="yearly">Yearly</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label for="form_add_next_growth_rate_value" class="form-label w-100 text-start">Next growth rate</label>
+                                                    <div class="input-group">
+                                                        <input type="number" class="form-control" id="form_add_next_growth_rate_value" name="form_add_next_growth_rate_value" aria-describedby="basic-addon3 basic-addon4" placeholder="5%">
+                                                        <select class="input-group-text" id="form_add_next_growth_rate_range">
+                                                            <option value="daily" selected>Daily</option>
+                                                            <option value="weekly">Weekly</option>
+                                                            <option value="monthly">Monthly</option>
+                                                            <option value="yearly">Yearly</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <div id="frequency-usage-chart" style="width: 100%;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-daily-variation" aria-expanded="true" aria-controls="collapse-daily-variation">
+                                            Daily variations
+                                        </button>
+                                    </h2>
+                                    <div id="collapse-daily-variation" class="accordion-collapse collapse show">
+                                        <div class="accordion-body px-2">
+                                            <div id="daily_variation_bloc">
+                                                <div class="row g-2 mb-2" id="daily_variation_1">
+                                                <div class="col-4">
+                                                    <label for="form_add_from_daily_variation_1" class="form-label w-100 text-start">From</label>
+                                                    <select class="form-select light-select" id="form_add_from_daily_variation_1" name=form_add_from_daily_variation_1">
+                                                        <option value="12" selected>12am</option>
+                                                        <option value="1">1am</option>
+                                                        <option value="2">2am</option>
+                                                        <option value="3">3am</option>
+                                                        <option value="4">4am</option>
+                                                        <option value="5">5am</option>
+                                                        <option value="6">6am</option>
+                                                        <option value="7">7am</option>
+                                                        <option value="8">8am</option>
+                                                        <option value="9">9am</option>
+                                                        <option value="10">10am</option>
+                                                        <option value="11">11am</option>
+                                                        <option value="12">12pm</option>
+                                                        <option value="13">1pm</option>
+                                                        <option value="14">2pm</option>
+                                                        <option value="15">3pm</option>
+                                                        <option value="16">4pm</option>
+                                                        <option value="17">5pm</option>
+                                                        <option value="18">6pm</option>
+                                                        <option value="19">7pm</option>
+                                                        <option value="20">8pm</option>
+                                                        <option value="21">9pm</option>
+                                                        <option value="22">10pm</option>
+                                                        <option value="23">11pm</option>
+                                                    </select>
+                                                </div>
+                                                 <div class="col-4">
+                                                    <label for="form_add_to_daily_variation_1" class="form-label w-100 text-start">To</label>
+                                                    <select class="form-select light-select" id="form_add_to_daily_variation_1" name=form_add_to_daily_variation_1">
+                                                        <option value="12" selected>12am</option>
+                                                        <option value="1">1am</option>
+                                                        <option value="2">2am</option>
+                                                        <option value="3">3am</option>
+                                                        <option value="4">4am</option>
+                                                        <option value="5">5am</option>
+                                                        <option value="6">6am</option>
+                                                        <option value="7">7am</option>
+                                                        <option value="8">8am</option>
+                                                        <option value="9">9am</option>
+                                                        <option value="10">10am</option>
+                                                        <option value="11">11am</option>
+                                                        <option value="12">12pm</option>
+                                                        <option value="13">1pm</option>
+                                                        <option value="14">2pm</option>
+                                                        <option value="15">3pm</option>
+                                                        <option value="16">4pm</option>
+                                                        <option value="17">5pm</option>
+                                                        <option value="18">6pm</option>
+                                                        <option value="19">7pm</option>
+                                                        <option value="20">8pm</option>
+                                                        <option value="21">9pm</option>
+                                                        <option value="22">10pm</option>
+                                                        <option value="23">11pm</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="form_add_multiplier_daily_variation_1" class="form-label w-100 text-start">Multiplier</label>
+                                                    <div class="input-group h-38">
+                                                        <span class="input-group-text" id="basic-addon1">x</span>
+                                                        <input type="number" class="form-control" id="form_add_multiplier_daily_variation_1" name=form_add_multiplier_daily_variation_1" placeholder="3" aria-describedby="basic-addon1">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </div>
+                                            <div class="d-grid gap-2 mt-3">
+                                                <button class="btn btn-white border border-1 border-body-tertiary rounded-pill" id="add_daily_slot"
+                                                    script="on click add_time_slot('daily')">
+                                                Add a time slot
+                                                </button>
+                                            </div>
+                                            <div class="mt-3" id="daily-variation-chart" style="width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-weekly-variation" aria-expanded="true" aria-controls="collapse-weekly-variation">
+                                            Weekly variations
+                                        </button>
+                                    </h2>
+                                    <div id="collapse-weekly-variation" class="accordion-collapse collapse show">
+                                        <div class="accordion-body px-2">
+                                            <div id="weekly_variation_bloc">
+                                                <div class="row g-2 mb-2" id="weekly_variation_1">
+                                                <div class="col-4">
+                                                    <label for="form_add_from_weekly_variation_1" class="form-label w-100 text-start">From</label>
+                                                    <select class="form-select light-select" id="form_add_from_weekly_variation_1" name=form_add_from_weekly_variation_1">
+                                                        <option value="monday" selected>Monday</option>
+                                                        <option value="tuesday">Tuesday</option>
+                                                        <option value="wednesday">Wednesday</option>
+                                                        <option value="thursday">Thursday</option>
+                                                        <option value="friday">Friday</option>
+                                                        <option value="saturday">Saturday</option>
+                                                        <option value="sunday">Sunday</option>
+                                                    </select>
+                                                </div>
+                                                 <div class="col-4">
+                                                    <label for="form_add_to_weekly_variation_1" class="form-label w-100 text-start">To</label>
+                                                    <select class="form-select light-select" id="form_add_to_weekly_variation_1" name=form_add_to_weekly_variation_1">
+                                                         <option value="monday" selected>Monday</option>
+                                                        <option value="tuesday">Tuesday</option>
+                                                        <option value="wednesday">Wednesday</option>
+                                                        <option value="thursday">Thursday</option>
+                                                        <option value="friday">Friday</option>
+                                                        <option value="saturday">Saturday</option>
+                                                        <option value="sunday">Sunday</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="form_add_multiplier_weekly_variation_1" class="form-label w-100 text-start">From</label>
+                                                    <div class="input-group h-38">
+                                                        <span class="input-group-text" id="basic-addon1">x</span>
+                                                        <input type="number" class="form-control" id="form_add_multiplier_weekly_variation_1" name=form_add_multiplier_weekly_variation_1" placeholder="3" aria-describedby="basic-addon1">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </div>
+                                            <div class="d-grid gap-2 mt-3">
+                                                <button class="btn btn-white border border-1 border-body-tertiary rounded-pill"  id="add_weekly_slot"
+                                                        script="on click add_time_slot('weekly')">
+                                                    Add a time slot
+                                                </button>
+                                            </div>
+                                            <div class="mt-3" id="weekly-variation-chart" style="width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-seasonal-variation" aria-expanded="true" aria-controls="collapse-seasonal-variation">
+                                            Seasonal variations
+                                        </button>
+                                    </h2>
+                                    <div id="collapse-seasonal-variation" class="accordion-collapse collapse show">
+                                        <div class="accordion-body px-2">
+                                            <div id="seasonal_variation_bloc">
+                                                <div class="row g-2 mb-2" id="seasonal_variation_1">
+                                                <div class="col-4">
+                                                    <label for="form_add_from_seasonal_variation_1" class="form-label w-100 text-start">From</label>
+                                                    <select class="form-select light-select" id="form_add_from_seasonal_variation_1" name=form_add_from_seasonal_variation_1">
+                                                        <option value="january" selected>January</option>
+                                                        <option value="february">February</option>
+                                                        <option value="march">March</option>
+                                                        <option value="april">April</option>
+                                                        <option value="may">May</option>
+                                                        <option value="june">June</option>
+                                                        <option value="july">July</option>
+                                                        <option value="august">August</option>
+                                                        <option value="september">September</option>
+                                                        <option value="october">October</option>
+                                                        <option value="november">November</option>
+                                                        <option value="december">December</option>
+                                                    </select>
+                                                </div>
+                                                 <div class="col-4">
+                                                    <label for="form_add_to_seasonal_variation_1" class="form-label w-100 text-start">To</label>
+                                                    <select class="form-select light-select" id="form_add_to_seasonal_variation_1" name=form_add_to_seasonal_variation_1">
+                                                        <option value="january" selected>January</option>
+                                                        <option value="february">February</option>
+                                                        <option value="march">March</option>
+                                                        <option value="april">April</option>
+                                                        <option value="may">May</option>
+                                                        <option value="june">June</option>
+                                                        <option value="july">July</option>
+                                                        <option value="august">August</option>
+                                                        <option value="september">September</option>
+                                                        <option value="october">October</option>
+                                                        <option value="november">November</option>
+                                                        <option value="december">December</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="form_add_multiplier_seasonal_variation_1" class="form-label w-100 text-start">From</label>
+                                                    <div class="input-group h-38">
+                                                        <span class="input-group-text" id="basic-addon1">x</span>
+                                                        <input type="number" class="form-control" id="form_add_multiplier_seasonal_variation_1" name=form_add_multiplier_seasonal_variation_1" placeholder="3" aria-describedby="basic-addon1">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </div>
+                                            <div class="d-grid gap-2 mt-3">
+                                                <button class="btn btn-white border border-1 border-body-tertiary rounded-pill"  id="add_seasonal_slot"
+                                                    script="on click add_time_slot('seasonal')">
+                                                    Add a time slot
+                                                </button>
+                                            </div>
+                                            <div class="mt-3" id="seasonal-variation-chart" style="width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-footer mt-5 px-3 d-grid gap-2">
+                            <!--
+                            <button class="btn btn-white border border-1 border-black rounded-pill">
+                                Show time series
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-fullscreen" viewBox="0 0 16 16">
+                                  <path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707m4.344 0a.5.5 0 0 1 .707 0l4.096 4.096V11.5a.5.5 0 1 1 1 0v3.975a.5.5 0 0 1-.5.5H11.5a.5.5 0 0 1 0-1h2.768l-4.096-4.096a.5.5 0 0 1 0-.707m0-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707m-4.344 0a.5.5 0 0 1-.707 0L1.025 1.732V4.5a.5.5 0 0 1-1 0V.525a.5.5 0 0 1 .5-.5H4.5a.5.5 0 0 1 0 1H1.732l4.096 4.096a.5.5 0 0 1 0 .707"/>
+                                </svg>
+                            </button>
+                            -->
+                            <button type="button" class="btn btn-primary rounded-pill w-100" id="save_time_series_btn">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let indexInput ={
+        'daily': {"value":1, "max":24},
+        'weekly': {"value":1, "max":7},
+        'seasonal': {"value":1, "max":12}
+    }
+
+    function draw_frequency_chart(){
+        let options = {
+            chart: {
+                type: 'line',
+                height: '200px'
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            series: [{
+                name: 'sales',
+                data: [30,40,45,50,49,60,70,91,125]
+            }],
+            xaxis: {
+                categories: [1991,1992,1993,1994,1995,1996,1997, 1998,1999]
+            }
+        }
+        let chart = new ApexCharts(document.querySelector("#frequency-usage-chart"), options);
+        chart.render();
+    }
+
+    function draw_daily_variation_chart(){
+        let options = {
+            chart: {
+                type: 'line',
+                height: '200px'
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            series: [{
+                name: 'sales',
+                data: [30,40,45,50,49,60,70,91,125]
+            }],
+            xaxis: {
+                categories: [1991,1992,1993,1994,1995,1996,1997, 1998,1999]
+            }
+        }
+        let chart = new ApexCharts(document.querySelector("#daily-variation-chart"), options);
+        chart.render();
+    }
+
+    function draw_weekly_variation_chart(){
+        let options = {
+            chart: {
+                type: 'line',
+                height: '200px'
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            series: [{
+                name: 'sales',
+                data: [30,40,45,50,49,60,70,91,125]
+            }],
+            xaxis: {
+                categories: [1991,1992,1993,1994,1995,1996,1997, 1998,1999]
+            }
+        }
+        let chart = new ApexCharts(document.querySelector("#weekly-variation-chart"), options);
+        chart.render();
+    }
+
+    function draw_seasonal_variation_chart(){
+        let options = {
+            chart: {
+                type: 'line',
+                height: '200px'
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            series: [{
+                name: 'sales',
+                data: [30,40,45,50,49,60,70,91,125]
+            }],
+            xaxis: {
+                categories: [1991,1992,1993,1994,1995,1996,1997, 1998,1999]
+            }
+        }
+        let chart = new ApexCharts(document.querySelector("#seasonal-variation-chart"), options);
+        chart.render();
+    }
+
+    function draw_time_series_chart(){
+        let options = {
+            chart: {
+                type: 'line'
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            series: [{
+                name: 'sales',
+                data: [30,40,45,50,49,60,70,91,125]
+            }],
+            xaxis: {
+                categories: [1991,1992,1993,1994,1995,1996,1997, 1998,1999]
+            }
+        }
+        let chart = new ApexCharts(document.querySelector("#time-series-chart"), options);
+        chart.render();
+    }
+
+    document.getElementById('time-series-modal').addEventListener('shown.bs.modal', load_chart);
+    function load_chart(){
+        draw_frequency_chart();
+        draw_daily_variation_chart();
+        draw_weekly_variation_chart();
+        draw_seasonal_variation_chart();
+        draw_time_series_chart();
+    }
+
+    function add_time_slot(period_selected){
+        let rowToCopy = document.getElementById(period_selected + '_variation_1');
+        let new_row = rowToCopy.cloneNode(true);
+        indexInput[period_selected]['value'] += 1;
+        let newId = parseInt(indexInput[period_selected]['value']);
+        new_row.id = period_selected + '_variation_' + newId;
+        let formElements = new_row.querySelectorAll('input, select');
+        formElements.forEach(function (formElement) {
+            let labelElement = new_row.querySelector('label[for="' + formElement.id + '"]');
+            let idToReplace = formElement.id.split('_');
+            idToReplace[idToReplace.length - 1] = newId;
+            idToReplace = idToReplace.join('_');
+            formElement.id = idToReplace;
+            formElement.name = idToReplace;
+            if (labelElement) {
+                labelElement.htmlFor = idToReplace;
+            }
+        });
+        document.getElementById(period_selected + '_variation_bloc').appendChild(new_row);
+        if (indexInput[period_selected]['value'] === indexInput[period_selected]['max']){
+            document.getElementById('add_' + period_selected + '_slot').classList.add('d-none');
+        }
+    }
+
+    function update_time_series_chart(){
+        let timeframe = document.getElementById('form_add_timeframe_value').value;
+        let range = document.getElementById('form_add_timeframe_range').value;
+
+        //reduce the range in hours
+    }
+
+</script>

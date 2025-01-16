@@ -175,6 +175,11 @@ def open_create_job_panel(request):
 
     return http_response
 
+def open_create_usage_pattern_panel(request):
+    http_response = render(
+        request, "model_builder/side_panels/usage_pattern_add.html")
+    return http_response
+
 
 def add_new_user_journey(request):
     model_web = ModelWeb(request.session)

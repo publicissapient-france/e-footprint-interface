@@ -43,8 +43,8 @@ body{
 }
 
 .shadow-custom {
--webkit-box-shadow: 0px 5px 8px 4px rgba(0,0,0,0.24);
-box-shadow: 0px 5px 8px 4px rgba(138, 138, 138, 0.24);
+    -webkit-box-shadow: 0px 5px 8px 4px rgba(0,0,0,0.24);
+    box-shadow: 0px 5px 8px 4px rgba(138, 138, 138, 0.24);
 }
 
 .reverse-shadow{
@@ -74,6 +74,7 @@ box-shadow: 0px 5px 8px 4px rgba(138, 138, 138, 0.24);
     padding-bottom: 12vh;
     background-color: white;
 }
+
 .panel-result-btn{
     position: absolute;
     bottom: 0;
@@ -83,14 +84,12 @@ box-shadow: 0px 5px 8px 4px rgba(138, 138, 138, 0.24);
     z-index: 100;
 }
 
-/* Applique les dimensions et la position de la modal */
 #formPanel {
     position : absolute;
     width: 25%;
     bottom: 0;
     right: 0;
     height: 95vh !important;
-    z-index: 100;
     border-radius: 0;
     border: none;
     overflow: auto;
@@ -107,27 +106,11 @@ box-shadow: 0px 5px 8px 4px rgba(138, 138, 138, 0.24);
     padding: 2em;
 }
 
-#resultModal .modal-dialog {
-    height: 94%;
-    width: 75%;
-    max-width: 75%;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    margin: 0;
-    transform: none;
-    background-color: #ffffff;
+.form-body-b{
+    height: 75vh !important;
+    overflow-y: auto;
 }
 
-#resultModal .modal-content {
-    height: 100%;
-    border: none;
-}
-
-
-.modal-backdrop.show {
-    display: none !important;
-}
 .chevron-rotate {
     transform: rotate(90deg);
 }
@@ -173,4 +156,43 @@ box-shadow: 0px 5px 8px 4px rgba(138, 138, 138, 0.24);
 
 .fz-1{
     font-size: 1em;
+}
+
+.h-38{
+    height: 38px;
+}
+
+
+.usage-pattern-modal-time-series,
+.usage-pattern-modal-time-series .modal-dialog{
+    border-radius: 0;
+    border: none;
+    position: fixed!important;
+    right: 0 !important;
+    bottom: 0 !important;
+    max-width: 100vw !important;
+    width: 75vw !important;
+    max-height: 95vw !important;
+    height: 95vh !important;
+    margin:0;
+
+}
+
+.usage-pattern-modal-time-series .modal-content{
+    height: 95vh !important;
+    border-radius: 0;
+    border: none;
+}
+
+#time-series-modal .accordion-button,
+#time-series-modal .accordion-header,
+#time-series-modal .accordion-button:not(.collapsed),
+#time-series-modal .accordion-button:not(.collapsed):after{
+    background-color: #F9FAFB;
+}
+
+.light-select{
+    background-color: #F9FAFB;
+    border-color: #D1D5DB;
+    color:#6B7280;
 }

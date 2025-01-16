@@ -15,6 +15,8 @@ urlpatterns = [
          model_builder.views_addition.open_create_service_panel, name="open-create-service-panel"),
     path("open_create_job_panel/",
          model_builder.views_addition.open_create_job_panel, name="open-create-job-panel"),
+    path('open-create-usage-pattern-panel/', model_builder.views_addition.open_create_usage_pattern_panel,
+         name='open-create-usage-pattern-panel'),
     path("add-new-user-journey-step/<user_journey_efootprint_id>/",
          model_builder.views_addition.add_new_user_journey_step, name="add-new-user-journey-step"),
     path('add-new-user-journey/', model_builder.views_addition.add_new_user_journey, name='add-new-user-journey'),
