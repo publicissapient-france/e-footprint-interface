@@ -87,7 +87,7 @@
                                     </h2>
                                     <div id="collapse-time-series-chart" class="accordion-collapse collapse show">
                                         <div class="accordion-body">
-                                            <div id="time-series-chart" style="width: 100%; height: 60vh;"></div>
+                                            <div id="timeSeriesChart" style="width: 100%; height: 60vh;"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -119,10 +119,10 @@
                                             <div class="mb-3 mx-2">
                                                 <label for="form_add_timeframe_value" class="form-label w-100 text-start">TimeFrame</label>
                                                 <div class="input-group">
-                                                    <input type="number" class="form-control" id="form_add_timeframe_value" name="form_add_timeframe_value" aria-describedby="basic-addon3 basic-addon4" placeholder="5"
-                                                           script="on change update_time_series_chart()">
+                                                    <input type="number" class="form-control" id="form_add_timeframe_value" name="form_add_timeframe_value" aria-describedby="basic-addon3 basic-addon4" value="5"
+                                                           script="on change timeSeriesChart()">
                                                     <select class="input-group-text" id="form_add_timeframe_range"
-                                                        script="on change update_time_series_chart()">
+                                                        script="on change timeSeriesChart()">
                                                     >
                                                         <option value="day">Days</option>
                                                         <option value="week">Weeks</option>
@@ -146,30 +146,43 @@
                                                 <div class="col-6">
                                                     <label for="form_add_avg_nb_usage_journey_value" class="form-label w-100 text-start">Average number of usage journeys</label>
                                                     <div class="input-group">
-                                                        <input type="number" class="form-control" id="form_add_avg_nb_usage_journey_value" name="form_add_avg_nb_usage_journey_value" aria-describedby="basic-addon3 basic-addon4" placeholder="1000">
-                                                        <select class="input-group-text" id="form_add_avg_nb_usage_journey_range">
-                                                            <option value="daily" selected>Daily</option>
-                                                            <option value="weekly">Weekly</option>
-                                                            <option value="monthly">Monthly</option>
-                                                            <option value="yearly">Yearly</option>
+                                                        <input type="number" class="form-control"
+                                                               id="form_add_avg_nb_usage_journey_value"
+                                                               name="form_add_avg_nb_usage_journey_value"
+                                                               aria-describedby="basic-addon3 basic-addon4"
+                                                               value=1000
+                                                               script="on change timeSeriesChart()">
+                                                        <select class="input-group-text" id="form_add_avg_nb_usage_journey_range"
+                                                                script="on change timeSeriesChart()">
+                                                            <option value="day" selected>Daily</option>
+                                                            <option value="week">Weekly</option>
+                                                            <option value="month">Monthly</option>
+                                                            <option value="year">Yearly</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-6">
                                                     <label for="form_add_next_growth_rate_value" class="form-label w-100 text-start">Next growth rate</label>
                                                     <div class="input-group">
-                                                        <input type="number" class="form-control" id="form_add_next_growth_rate_value" name="form_add_next_growth_rate_value" aria-describedby="basic-addon3 basic-addon4" placeholder="5%">
-                                                        <select class="input-group-text" id="form_add_next_growth_rate_range">
-                                                            <option value="daily" selected>Daily</option>
-                                                            <option value="weekly">Weekly</option>
-                                                            <option value="monthly">Monthly</option>
-                                                            <option value="yearly">Yearly</option>
+                                                        <input type="number"
+                                                               class="form-control"
+                                                               id="form_add_next_growth_rate_value"
+                                                               name="form_add_next_growth_rate_value"
+                                                               aria-describedby="basic-addon3 basic-addon4"
+                                                               value="5"
+                                                               script="on change timeSeriesChart()">
+                                                        <select class="input-group-text" id="form_add_next_growth_rate_range"
+                                                                script="on change timeSeriesChart()">
+                                                            <option value="day" selected>Daily</option>
+                                                            <option value="week">Weekly</option>
+                                                            <option value="month">Monthly</option>
+                                                            <option value="year">Yearly</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="mb-3">
-                                                <div id="frequency-usage-chart" style="width: 100%;"></div>
+                                                <div id="frequencyChart" style="width: 100%;"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -253,11 +266,11 @@
                                             </div>
                                             <div class="d-grid gap-2 mt-3">
                                                 <button class="btn btn-white border border-1 border-body-tertiary rounded-pill" id="add_daily_slot"
-                                                    script="on click add_time_slot('daily')">
+                                                    script="on click addTimeSlot('daily')">
                                                 Add a time slot
                                                 </button>
                                             </div>
-                                            <div class="mt-3" id="daily-variation-chart" style="width: 100%;"></div>
+                                            <div class="mt-3" id="dailyChart" style="width: 100%;"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -306,11 +319,11 @@
                                             </div>
                                             <div class="d-grid gap-2 mt-3">
                                                 <button class="btn btn-white border border-1 border-body-tertiary rounded-pill"  id="add_weekly_slot"
-                                                        script="on click add_time_slot('weekly')">
+                                                        script="on click addTimeSlot('weekly')">
                                                     Add a time slot
                                                 </button>
                                             </div>
-                                            <div class="mt-3" id="weekly-variation-chart" style="width: 100%;"></div>
+                                            <div class="mt-3" id="weeklyChart" style="width: 100%;"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -369,11 +382,11 @@
                                             </div>
                                             <div class="d-grid gap-2 mt-3">
                                                 <button class="btn btn-white border border-1 border-body-tertiary rounded-pill"  id="add_seasonal_slot"
-                                                    script="on click add_time_slot('seasonal')">
+                                                    script="on click addTimeSlot('seasonal')">
                                                     Add a time slot
                                                 </button>
                                             </div>
-                                            <div class="mt-3" id="seasonal-variation-chart" style="width: 100%;"></div>
+                                            <div class="mt-3" id="seasonalChart" style="width: 100%;"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -407,11 +420,85 @@
         'seasonal': {"value":1, "max":12}
     }
 
-    function draw_frequency_chart(){
-        let options = {
+    let timeframe = null;
+    let timeseries = {
+        'data':[],
+        'categories':[]
+    };
+    let nbUserJourneys = [];
+
+
+    let charts = {
+        'timeSeriesChart' : null,
+        'frequencyChart' : null
+    };
+
+    let options = {
+        'timeSeriesChart' : {
+                chart: {
+                    type: 'line',
+                    toolbar: {
+                        show: false
+                    },
+                    zoom: {
+                        enabled: false
+                    }
+                },
+                stroke: {
+                    curve: 'smooth'
+                },
+                series: [{
+                    name: 'User journeys',
+                    data: []
+                }],
+                xaxis: {
+                    categories: [],
+                    type: 'datetime',
+                    labels: {
+                        datetimeFormatter: {
+                            year: 'yyyy',
+                            month: 'MMM yyyy',
+                            day: 'dd MMM',
+                            hour: 'HH:mm'
+                        }
+                    }
+                }
+            },
+        'frequencyChart' : {
+                chart: {
+                    type: 'line',
+                    toolbar: {
+                        show: false
+                    },
+                    zoom: {
+                        enabled: false
+                    },
+                    height: '125px'
+                },
+                stroke: {
+                    curve: 'smooth'
+                },
+                series: [{
+                    name: 'User journeys',
+                    data: []
+                }],
+                xaxis: {
+                    categories: [],
+                    type: 'datetime',
+                    labels: {
+                        datetimeFormatter: {
+                            year: 'yyyy',
+                            month: 'MMM yyyy',
+                            day: 'dd MMM',
+                            hour: 'HH:mm'
+                        }
+                    }
+                }
+            },
+        'optionsSparkLine' : {
             chart: {
                 type: 'line',
-                height: '200px'
+                height: '100px'
             },
             stroke: {
                 curve: 'smooth'
@@ -424,103 +511,39 @@
                 categories: [1991,1992,1993,1994,1995,1996,1997, 1998,1999]
             }
         }
-        let chart = new ApexCharts(document.querySelector("#frequency-usage-chart"), options);
-        chart.render();
     }
 
     function draw_daily_variation_chart(){
-        let options = {
-            chart: {
-                type: 'line',
-                height: '200px'
-            },
-            stroke: {
-                curve: 'smooth'
-            },
-            series: [{
-                name: 'sales',
-                data: [30,40,45,50,49,60,70,91,125]
-            }],
-            xaxis: {
-                categories: [1991,1992,1993,1994,1995,1996,1997, 1998,1999]
-            }
-        }
-        let chart = new ApexCharts(document.querySelector("#daily-variation-chart"), options);
+        let chart = new ApexCharts(document.querySelector("#dailyChart"), options['optionsSparkLine']);
         chart.render();
     }
 
     function draw_weekly_variation_chart(){
-        let options = {
-            chart: {
-                type: 'line',
-                height: '200px'
-            },
-            stroke: {
-                curve: 'smooth'
-            },
-            series: [{
-                name: 'sales',
-                data: [30,40,45,50,49,60,70,91,125]
-            }],
-            xaxis: {
-                categories: [1991,1992,1993,1994,1995,1996,1997, 1998,1999]
-            }
-        }
-        let chart = new ApexCharts(document.querySelector("#weekly-variation-chart"), options);
+        let chart = new ApexCharts(document.querySelector("#weeklyChart"), options['optionsSparkLine']);
         chart.render();
     }
 
     function draw_seasonal_variation_chart(){
-        let options = {
-            chart: {
-                type: 'line',
-                height: '200px'
-            },
-            stroke: {
-                curve: 'smooth'
-            },
-            series: [{
-                name: 'sales',
-                data: [30,40,45,50,49,60,70,91,125]
-            }],
-            xaxis: {
-                categories: [1991,1992,1993,1994,1995,1996,1997, 1998,1999]
-            }
-        }
-        let chart = new ApexCharts(document.querySelector("#seasonal-variation-chart"), options);
+        let chart = new ApexCharts(document.querySelector("#seasonalChart"), options['optionsSparkLine']);
         chart.render();
     }
 
-    function draw_time_series_chart(){
-        let options = {
-            chart: {
-                type: 'line'
-            },
-            stroke: {
-                curve: 'smooth'
-            },
-            series: [{
-                name: 'sales',
-                data: [30,40,45,50,49,60,70,91,125]
-            }],
-            xaxis: {
-                categories: [1991,1992,1993,1994,1995,1996,1997, 1998,1999]
-            }
-        }
-        let chart = new ApexCharts(document.querySelector("#time-series-chart"), options);
-        chart.render();
-    }
+    document.getElementById('time-series-modal').addEventListener('shown.bs.modal', initChart);
 
-    document.getElementById('time-series-modal').addEventListener('shown.bs.modal', load_chart);
-    function load_chart(){
-        draw_frequency_chart();
+    function initChart(){
         draw_daily_variation_chart();
         draw_weekly_variation_chart();
         draw_seasonal_variation_chart();
-        draw_time_series_chart();
+        timeSeriesChart();
     }
 
-    function add_time_slot(period_selected){
+    function drawChart(nameChart, option){
+        let chart = new ApexCharts(document.querySelector("#" + nameChart), options[option] );
+        chart.render();
+        charts[nameChart] = chart;
+    }
+
+    function addTimeSlot(period_selected){
         let rowToCopy = document.getElementById(period_selected + '_variation_1');
         let new_row = rowToCopy.cloneNode(true);
         indexInput[period_selected]['value'] += 1;
@@ -544,11 +567,64 @@
         }
     }
 
-    function update_time_series_chart(){
-        let timeframe = document.getElementById('form_add_timeframe_value').value;
-        let range = document.getElementById('form_add_timeframe_range').value;
+    function timeSeriesChart(){
+        let timeframeValue = parseInt(document.getElementById('form_add_timeframe_value').value);
+        let timeframeRange = document.getElementById('form_add_timeframe_range').value;
+        let userJourneyValue = parseInt(document.getElementById('form_add_avg_nb_usage_journey_value').value);
+        let userJourneyRange = document.getElementById('form_add_avg_nb_usage_journey_range').value;
+        let growthRateValue = document.getElementById('form_add_next_growth_rate_value').value;
+        let growthRateRange = document.getElementById('form_add_next_growth_rate_range').value;
+        let startDate = luxon.DateTime.local().startOf('year');
+        let dateLooper = startDate;
+        let dateGrowth = startDate;
+        let results = [];
+        let index = [];
+        let periodStep=1;
+        let dailyUserJourneyValue = 0;
 
-        //reduce the range in hours
+        let timeframe = luxon.Duration.fromObject({[timeframeRange]: timeframeValue});
+        let userJourneyFrame = luxon.Duration.fromObject({[userJourneyRange]: 1});
+        let growthRateFrame = luxon.Duration.fromObject({[growthRateRange]: 1});
+        let convertTimeframe = timeframe.shiftTo(growthRateRange);
+
+        if (userJourneyRange !== 'day'){
+            dailyUserJourneyValue = Math.ceil(userJourneyValue / userJourneyFrame.shiftTo('days').values['days']);
+        }else{
+            dailyUserJourneyValue = userJourneyValue;
+        }
+
+        results.push(dailyUserJourneyValue);
+        index.push(dateLooper.toISODate());
+        while (periodStep < convertTimeframe[`${growthRateRange}s`]){
+            if(dateLooper.toISODate() === dateGrowth.plus(growthRateFrame).toISODate()  ){
+                dailyUserJourneyValue = Math.round(dailyUserJourneyValue * (1 + growthRateValue/100));
+                dateGrowth = dateGrowth.plus(growthRateFrame);
+            }
+            results.push(dailyUserJourneyValue);
+            dateLooper = dateLooper.plus(growthRateFrame)
+            index.push(dateLooper.toISODate());
+            periodStep += 1;
+        }
+        timeseries['data'] = results;
+        timeseries['categories'] = index;
+
+        options['timeSeriesChart']['series'][0]['data'] = timeseries['data'];
+        options['timeSeriesChart']['xaxis']['categories'] = timeseries['categories'];
+        options['frequencyChart']['series'][0]['data'] = timeseries['data'];
+        options['frequencyChart']['xaxis']['categories'] = timeseries['categories'];
+
+        if(!charts['timeSeriesChart']){
+            drawChart('timeSeriesChart', 'timeSeriesChart');
+        }else{
+            charts['timeSeriesChart'].updateOptions(options['timeSeriesChart'])
+        }
+
+        if(!charts['frequencyChart']){
+            drawChart('frequencyChart', 'frequencyChart');
+        }else{
+            charts['frequencyChart'].updateOptions(options['frequencyChart'])
+        }
+
     }
 
 </script>
