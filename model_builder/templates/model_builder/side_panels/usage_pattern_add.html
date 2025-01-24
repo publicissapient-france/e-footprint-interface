@@ -1,4 +1,4 @@
-
+{% load static %}
 <form class="container-fluid form_edit_panel text-start"
         hx-post="/model_builder/add-new-usage-pattern/"
         hx-target="#server-list"
@@ -87,7 +87,44 @@
                                     </h2>
                                     <div id="collapse-time-series-chart" class="accordion-collapse collapse show">
                                         <div class="accordion-body">
-                                            <div id="timeSeriesChart" style="width: 100%; height: 60vh;"></div>
+                                            <div class="row mb-3">
+                                                <div class="col-auto">
+                                                    <label for="form_add_timeseries_period_analysis" class="form-label w-100 text-start fz-0-8">Split by</label>
+                                                    <select class="form-select light-select fz-0-8 h-30"
+                                                            id="form_add_timeseries_period_analysis"
+                                                            name="form_add_timeseries_period_analysis"
+                                                        onchange="updateTimeseriesChart()">
+                                                    >
+                                                        <option value="day">Day</option>
+                                                        <option value="week">Week</option>
+                                                        <option value="month" selected>Month</option>
+                                                        <option value="year">Year</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <label for="form_add_timeseries_kpi_analysis" class="form-label w-100 text-start fz-0-8">Calculation</label>
+                                                    <select class="form-select light-select fz-0-8 h-30"
+                                                            id="form_add_timeseries_kpi_analysis"
+                                                            name="form_add_timeseries_kpi_analysis"
+                                                        onchange="updateTimeseriesChart()">
+                                                    >
+                                                        <option value="avg" selected>Average</option>
+                                                        <option value="sum">Sum</option>
+                                                        <option value="cumsum">Cumulative sum</option>
+
+                                                    </select>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <button class="btn btn-white border border-1 border-body-tertiary rounded-pill fz-0-8"
+                                                            id="reset_zoom"
+                                                        onclick="charts['timeSeriesChart'].resetZoom();">
+                                                        Reset zoom
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div style="width: 100%;">
+                                                <canvas id="timeSeriesChart"></canvas>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -119,8 +156,8 @@
                                             <div class="mb-3 mx-2">
                                                 <label for="form_add_timeframe_value" class="form-label w-100 text-start">TimeFrame</label>
                                                 <div class="input-group">
-                                                    <input type="number" class="form-control" id="form_add_timeframe_value" name="form_add_timeframe_value" aria-describedby="basic-addon3 basic-addon4" value="5" onchange="timeSeriesChart()">
-                                                    <select class="input-group-text" id="form_add_timeframe_range"  onchange="timeSeriesChart()">
+                                                    <input type="number" class="form-control" id="form_add_timeframe_value" name="form_add_timeframe_value" aria-describedby="basic-addon3 basic-addon4" value="5" onchange="frequencyChart(true)">
+                                                    <select class="input-group-text" id="form_add_timeframe_range"  onchange="frequencyChart(true)">
                                                         <option value="day">Days</option>
                                                         <option value="week">Weeks</option>
                                                         <option value="month">Months</option>
@@ -148,11 +185,11 @@
                                                                name="form_add_avg_nb_usage_journey_value"
                                                                aria-describedby="basic-addon3 basic-addon4"
                                                                value=1000
-                                                               script="on change timeSeriesChart()">
+                                                               oninput="frequencyChart(true)">
                                                         <select class="input-group-text fz-0-8"
                                                                 id="form_add_avg_nb_usage_journey_range"
                                                                 name="form_add_avg_nb_usage_journey_range"
-                                                                onchange="editFrequencyField()">
+                                                                onchange="editFrequencyField(true)">
                                                             <option value="day" selected>Daily</option>
                                                             <option value="week">Weekly</option>
                                                             <option value="month">Monthly</option>
@@ -168,10 +205,10 @@
                                                                id="form_add_net_growth_rate_value"
                                                                name="form_add_net_growth_rate_value"
                                                                aria-describedby="basic-addon3 basic-addon4"
-                                                               value="5"
-                                                               onchange="timeSeriesChart()">
-                                                        <select class="input-group-text fz-0-8" id="form_add_next_growth_rate_range"
-                                                                script="on change timeSeriesChart()">
+                                                               value=1
+                                                               oninput="frequencyChart(true)">
+                                                        <select class="input-group-text fz-0-8" id="form_add_net_growth_rate_range"
+                                                                onchange="frequencyChart(true)">
                                                             <option value="day">Daily</option>
                                                             <option value="week">Weekly</option>
                                                             <option value="month" selected>Monthly</option>
@@ -181,7 +218,9 @@
                                                 </div>
                                             </div>
                                             <div class="mb-3">
-                                                <div id="frequencyChart" style="width: 100%;"></div>
+                                                <div style="width: 100%;">
+                                                    <canvas id="frequencyChart" height="75"></canvas>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -201,7 +240,7 @@
                                                     <select class="form-select light-select fz-0-8 h-30"
                                                             id="form_add_from_daily_variation_1"
                                                             name="form_add_from_daily_variation_1"
-                                                        onchange="variationController('daily')">
+                                                        onchange="variationController('daily', true)">
                                                     >
                                                         <option value=0 selected>12am</option>
                                                         <option value=1>1am</option>
@@ -234,7 +273,7 @@
                                                     <select class="form-select light-select fz-0-8 h-30"
                                                             id="form_add_to_daily_variation_1"
                                                             name="form_add_to_daily_variation_1"
-                                                            onchange="variationController('daily')">
+                                                            onchange="variationController('daily', true)">
                                                         <option value=1 selected>1am</option>
                                                         <option value=2>2am</option>
                                                         <option value=3>3am</option>
@@ -270,7 +309,7 @@
                                                                id="form_add_multiplier_daily_variation_1"
                                                                name="form_add_multiplier_daily_variation_1" value="1"
                                                                aria-describedby="basic-addon1"
-                                                               oninput="variationChart('daily')">
+                                                               oninput="variationChart('daily', true)">
                                                     </div>
                                                 </div>
                                             </div>
@@ -282,7 +321,9 @@
                                                 Add a time slot
                                                 </button>
                                             </div>
-                                            <div class="mt-3" id="dailyVariationChart" style="width: 100%;"></div>
+                                            <div class="mt-3" style="width: 100%;">
+                                                <canvas id="dailyVariationChart" height="75"></canvas>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -301,7 +342,7 @@
                                                     <select class="form-select light-select fz-0-8 h-30"
                                                             id="form_add_from_weekly_variation_1"
                                                             name="form_add_from_weekly_variation_1"
-                                                            onchange="variationController('weekly')">
+                                                            onchange="variationController('weekly', true)">
                                                         <option value=0 selected>Monday</option>
                                                         <option value=1>Tuesday</option>
                                                         <option value=2>Wednesday</option>
@@ -316,7 +357,7 @@
                                                     <select class="form-select light-select fz-0-8 h-30"
                                                             id="form_add_to_weekly_variation_1"
                                                             name="form_add_to_weekly_variation_1"
-                                                            onchange="variationController('weekly')">
+                                                            onchange="variationController('weekly', true)">
                                                         <option value=1 selected>Tuesday</option>
                                                         <option value=2>Wednesday</option>
                                                         <option value=3>Thursday</option>
@@ -335,7 +376,7 @@
                                                                id="form_add_multiplier_weekly_variation_1"
                                                                name="form_add_multiplier_weekly_variation_1" value="1"
                                                                aria-describedby="basic-addon1"
-                                                               oninput="variationChart('weekly')">
+                                                               oninput="variationChart('weekly', true)">
                                                     </div>
                                                 </div>
                                             </div>
@@ -346,7 +387,9 @@
                                                     Add a time slot
                                                 </button>
                                             </div>
-                                            <div class="mt-3" id="weeklyVariationChart" style="width: 100%;"></div>
+                                            <div class="mt-3" style="width: 100%;">
+                                                <canvas id="weeklyVariationChart" height="75"></canvas>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -365,7 +408,7 @@
                                                     <select class="form-select light-select fz-0-8 h-30"
                                                             id="form_add_from_seasonal_variation_1"
                                                             name="form_add_from_seasonal_variation_1"
-                                                            onchange="variationController('seasonal')">
+                                                            onchange="variationController('seasonal', true)">
                                                         <option value=0 selected>January</option>
                                                         <option value=1>February</option>
                                                         <option value=2>March</option>
@@ -385,7 +428,7 @@
                                                     <select class="form-select light-select fz-0-8 h-30"
                                                             id="form_add_to_seasonal_variation_1"
                                                             name="form_add_to_seasonal_variation_1"
-                                                            onchange="variationController('seasonal')">
+                                                            onchange="variationController('seasonal', true)">
                                                         <option value=1 selected>February</option>
                                                         <option value=2>March</option>
                                                         <option value=3>April</option>
@@ -409,7 +452,7 @@
                                                                id="form_add_multiplier_seasonal_variation_1"
                                                                name="form_add_multiplier_seasonal_variation_1" value="1"
                                                                aria-describedby="basic-addon1"
-                                                               oninput="variationChart('seasonal')">
+                                                               oninput="variationChart('seasonal', true)">
                                                     </div>
                                                 </div>
                                             </div>
@@ -420,7 +463,9 @@
                                                     Add a time slot
                                                 </button>
                                             </div>
-                                            <div class="mt-3" id="seasonalVariationChart" style="width: 100%;"></div>
+                                            <div class="mt-3" style="width: 100%;">
+                                                <canvas id="seasonalVariationChart" height="75"></canvas>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -447,443 +492,4 @@
 </div>
 
 
-<script>
-    let indexInput ={
-        'daily': {"value":1, "max":24},
-        'weekly': {"value":1, "max":7},
-        'seasonal': {"value":1, "max":12}
-    }
-
-    let charts = {
-        'timeSeriesChart' : null,
-        'frequencyChart' : null,
-        'dailyVariationChart' : null,
-        'weeklyVariationChart': null,
-        'seasonalVariationChart': null
-    };
-
-    let options = {
-        'timeSeriesChart' : {
-                chart: {
-                    type: 'line',
-                    toolbar: {
-                        show: false
-                    },
-                    zoom: {
-                        enabled: false
-                    }
-                },
-                stroke: {
-                    curve: 'smooth'
-                },
-                series: [{
-                    name: 'User journeys',
-                    data: []
-                }],
-                xaxis: {
-                    categories: [],
-                    type: 'datetime',
-                    labels: {
-                        datetimeFormatter: {
-                            year: 'yyyy',
-                            month: 'MMM yyyy',
-                            day: 'dd MMM',
-                            hour: 'HH:mm'
-                        }
-                    }
-                }
-            },
-        'frequencyChart' : {
-                chart: {
-                    type: 'line',
-                    toolbar: {
-                        show: false
-                    },
-                    zoom: {
-                        enabled: false
-                    },
-                    height: '125px'
-                },
-                stroke: {
-                    curve: 'smooth'
-                },
-                series: [{
-                    name: 'User journeys',
-                    data: []
-                }],
-                xaxis: {
-                    categories: [],
-                    type: 'datetime',
-                    labels: {
-                        datetimeFormatter: {
-                            year: 'yyyy',
-                            month: 'MMM yyyy',
-                            day: 'dd MMM',
-                            hour: 'HH:mm'
-                        }
-                    }
-                }
-            },
-        'dailyVariationChart' : {
-                chart: {
-                    type: 'bar',
-                    toolbar: {
-                        show: false
-                    },
-                    zoom: {
-                        enabled: false
-                    },
-                    height: '125px'
-                },
-                stroke: {
-                    curve: 'smooth'
-                },
-                series: [{
-                    name: 'User journeys',
-                    data: Array(24).fill(
-                        Math.ceil(getTotalVolume('daily')/24)
-                    ).map(value => value.toFixed(2))
-                }],
-                xaxis: {
-                    categories: Array.from({ length: 24 }, (_, i) => `${i}`),
-                    type: 'category',
-                    labels: {
-                        formatter: function (value) {
-                            return value;
-                        }
-                    }
-                },
-                dataLabels: {
-                    enabled: false
-                }
-            },
-        'weeklyVariationChart' : {
-                chart: {
-                    type: 'bar',
-                    toolbar: {
-                        show: false
-                    },
-                    zoom: {
-                        enabled: false
-                    },
-                    height: '125px'
-                },
-                stroke: {
-                    curve: 'smooth'
-                },
-                series: [{
-                    name: 'User journeys',
-                    data: Array(7).fill(
-                        Math.ceil(getTotalVolume('daily'))
-                    ).map(value => value.toFixed(2))
-                }],
-                xaxis: {
-                    categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    type: 'category'
-                },
-                dataLabels: {
-                    enabled: false
-                }
-            },
-        'seasonalVariationChart' : {
-                chart: {
-                    type: 'bar',
-                    toolbar: {
-                        show: false
-                    },
-                    zoom: {
-                        enabled: false
-                    },
-                    height: '125px'
-                },
-                stroke: {
-                    curve: 'smooth'
-                },
-                series: [{
-                    name: 'User journeys',
-                    data: Array(12).fill(
-                        Math.ceil(getTotalVolume('monthly'))
-                    ).map(value => value.toFixed(2))
-                }],
-                xaxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    type: 'category'
-                },
-                dataLabels: {
-                    enabled: false
-                }
-            }
-    }
-
-    let variationFactor = {
-            'daily': Array(24).fill(1),
-            'weekly': Array(7).fill(1),
-            'seasonal': Array(12).fill(1)
-        }
-
-    let adjustedVolumes = {
-        'daily': Array(24).fill(1),
-        'weekly': Array(7).fill(1),
-        'seasonal': Array(12).fill(1)
-    }
-
-    document.getElementById('time-series-modal').addEventListener('shown.bs.modal', initChart);
-
-    function initChart(){
-        variationChart('daily');
-        variationChart('weekly');
-        variationChart('seasonal');
-        timeSeriesChart();
-    }
-
-    function drawChart(chartName){
-        let chart = new ApexCharts(document.querySelector("#" + chartName), options[chartName] );
-        chart.render();
-        charts[chartName] = chart;
-    }
-
-    function editFrequencyField(){
-        let userJourneyRange = document.getElementById('form_add_avg_nb_usage_journey_range');
-        let selectedValue = userJourneyRange.value;
-        let growthRateRange = document.getElementById('form_add_next_growth_rate_range');
-        let optionsToCopy = userJourneyRange.querySelectorAll('option');
-        let toCopy = false
-        growthRateRange.innerHTML = '';
-        optionsToCopy.forEach(function(option){
-            if(selectedValue === option.value){
-                toCopy = true;
-            }
-            if(toCopy){
-                let optionCopy = option.cloneNode(true);
-                growthRateRange.appendChild(optionCopy);
-            }
-        });
-        timeSeriesChart();
-    }
-
-    function variationController(periodVariation) {
-        const fromElements = Array.from(document.querySelectorAll(`[id^="form_add_from_${periodVariation}_variation_"]`));
-        const toElements = Array.from(document.querySelectorAll(`[id^="form_add_to_${periodVariation}_variation_"]`));
-
-        const intervals = fromElements.map((fromEl, i) => {
-            const fromVal = parseInt(fromEl.value, 10);
-            const toVal   = parseInt(toElements[i].value, 10);
-            return {
-                index: i,
-                from: !isNaN(fromVal) ? fromVal : -1,
-                to  : !isNaN(toVal)   ? toVal   : -1
-            };
-        });
-
-        intervals.sort((a, b) => a.from - b.from);
-
-        const usedHours = new Set();
-        intervals.forEach(interval => {
-            if (interval.from >= 0 && interval.to >= 0) {
-                const start = Math.min(interval.from, interval.to);
-                const end   = Math.max(interval.from, interval.to);
-                for (let h = start; h <= end; h++) {
-                    usedHours.add(h);
-                }
-            }
-        });
-
-        for (let i = 0; i < intervals.length; i++) {
-            const current = intervals[i];
-            const next    = intervals[i + 1];
-
-            const upperBound = next ? next.from : indexInput[periodVariation]['max'];
-
-            const fromEl = fromElements[current.index];
-            const toEl   = toElements[current.index];
-
-            const mySlotHours = new Set();
-            if (current.from >= 0 && current.to >= 0) {
-                const myStart = Math.min(current.from, current.to);
-                const myEnd   = Math.max(current.from, current.to);
-                for (let h = myStart; h <= myEnd; h++) {
-                    mySlotHours.add(h);
-                }
-            }
-
-            const fromOptions = fromEl.querySelectorAll('option');
-            fromOptions.forEach(option => {
-                const hour = parseInt(option.value, 10);
-                if (usedHours.has(hour) && !mySlotHours.has(hour)) {
-                    option.disabled = true;
-                } else {
-                    option.disabled = false;
-                }
-            });
-
-            const toOptions = toEl.querySelectorAll('option');
-            toOptions.forEach(option => {
-                const hour = parseInt(option.value, 10);
-                    if (hour <= current.from) {
-                        option.disabled = true;
-                    return;
-                }
-                if (hour > upperBound) {
-                    option.disabled = true;
-                    return;
-                }
-                if (usedHours.has(hour) && !mySlotHours.has(hour)) {
-                    option.disabled = true;
-                } else {
-                    option.disabled = false;
-                }
-            });
-        }
-        variationChart(periodVariation);
-    }
-
-    function addTimeSlot(periodVariation){
-        let optionsAlreadySelected =[]
-        let rowToCopy = document.getElementById(periodVariation + '_variation_1');
-        let elementVariations = document.querySelectorAll(`[id^="form_add_from_${periodVariation}_variation_"]`);
-
-        elementVariations.forEach(function (element) {
-            let from = document.getElementById(element.id).value;
-            let to = document.getElementById(element.id.replace('from', 'to')).value;
-            for (let i = parseInt(from); i < parseInt(to); i++){
-                optionsAlreadySelected.push(parseInt(i));
-            }
-        });
-
-        indexInput[periodVariation]['value'] += 1;
-        let newId = parseInt(indexInput[periodVariation]['value']);
-        let new_row = rowToCopy.cloneNode(true);
-        new_row.id = periodVariation + '_variation_' + newId;
-
-        let formElements = new_row.querySelectorAll('input, select');
-
-        formElements.forEach(function (formElement) {
-            let labelElement = new_row.querySelector('label[for="' + formElement.id + '"]');
-            let idToReplace = formElement.id.split('_');
-            let valueToSelected;
-            if (optionsAlreadySelected.length > 0) {
-                valueToSelected = Math.max(...optionsAlreadySelected) + 1;
-            } else {
-                valueToSelected = 0;
-            }
-            idToReplace[idToReplace.length - 1] = newId;
-
-            if (formElement.id.startsWith('form_add_from_')){
-                formElement.addEventListener('change', function () {
-                    variationController(periodVariation);
-                });
-            }
-
-            if(formElement.id.startsWith('form_add_from_') || formElement.id.startsWith('form_add_to_')){
-                let options = formElement.querySelectorAll('option');
-                options.forEach(function(option){
-                    if(!optionsAlreadySelected.includes(parseInt(option.value)) ){
-                        if(parseInt(option.value) === valueToSelected){
-                            option.selected = true;
-                        }
-                    }
-                });
-            }
-
-            idToReplace = idToReplace.join('_');
-            formElement.id = idToReplace;
-            formElement.name = idToReplace;
-            if (labelElement) {
-                labelElement.htmlFor = idToReplace;
-            }
-        });
-
-        document.getElementById(periodVariation + '_variation_bloc').appendChild(new_row);
-        if (indexInput[periodVariation]['value'] === indexInput[periodVariation]['max']){
-            document.getElementById('add_' + periodVariation + '_slot').classList.add('d-none');
-        }
-        variationController(periodVariation);
-    }
-
-    function timeSeriesChart(){
-        let userJourneyValue = parseInt(document.getElementById('form_add_avg_nb_usage_journey_value').value);
-        let userJourneyRange = document.getElementById('form_add_avg_nb_usage_journey_range').value;
-        let growthRateRange = document.getElementById('form_add_next_growth_rate_range').value;
-        let dateLooper = luxon.DateTime.local().startOf('year'), dateGrowth = luxon.DateTime.local().startOf('year');
-        let index = [], results = [];
-        let periodStep=1;
-        let dailyUserJourneyValue = 0;
-        let timeframe = luxon.Duration.fromObject({[document.getElementById('form_add_timeframe_range').value]: parseInt(document.getElementById('form_add_timeframe_value').value)});
-        let growthRateFrame = luxon.Duration.fromObject({[growthRateRange]: 1});
-
-        if (userJourneyRange !== 'day'){
-            dailyUserJourneyValue = Math.ceil(userJourneyValue / luxon.Duration.fromObject({[userJourneyRange]: 1}).shiftTo('days').values['days']);
-        }else{
-            dailyUserJourneyValue = userJourneyValue;
-        }
-        results.push(dailyUserJourneyValue);
-        index.push(dateLooper.toISODate());
-        while (periodStep <  timeframe.shiftTo(growthRateRange)[`${growthRateRange}s`]){
-            if(dateLooper.toISODate() === dateGrowth.plus(growthRateFrame).toISODate()  ){
-                dailyUserJourneyValue = Math.round(dailyUserJourneyValue * (1 + document.getElementById('form_add_net_growth_rate_value').value/100));
-                dateGrowth = dateGrowth.plus(growthRateFrame);
-            }
-            results.push(dailyUserJourneyValue);
-            dateLooper = dateLooper.plus(growthRateFrame)
-            index.push(dateLooper.toISODate());
-            periodStep += 1;
-        }
-
-        options['timeSeriesChart']['series'][0]['data'] = results;
-        options['timeSeriesChart']['xaxis']['categories'] = index;
-        options['frequencyChart']['series'][0]['data'] = results;
-        options['frequencyChart']['xaxis']['categories'] = index;
-
-        Object.keys(charts).forEach(function(chart){
-           if(!charts[chart]){
-                drawChart(chart);
-           }else{
-                charts[chart].updateOptions(options[chart]);
-           }
-        });
-    }
-
-    function variationChart(periodVariation){
-        console.log('variation chart', periodVariation);
-        adjustedVolumes[periodVariation] = Array(indexInput[periodVariation]['max']).fill(1);
-        variationFactor[periodVariation] = Array(indexInput[periodVariation]['max']).fill(1);
-        options[periodVariation+'VariationChart']['series'][0]['data'] =  adjustedVolumes[periodVariation];
-        let totalVolume = getTotalVolume(periodVariation);
-        let elementVariations = document.querySelectorAll('[id^="form_add_from_' + periodVariation + '_variation_"]');
-        elementVariations.forEach(function (element) {
-            let index = element.id.split('_')[element.id.split('_').length - 1];
-            let from = parseInt(document.getElementById('form_add_from_'+periodVariation+'_variation_' + index).value);
-            let to = parseInt(document.getElementById('form_add_to_'+periodVariation+'_variation_' + index).value);
-            let multiplier = parseInt(document.getElementById('form_add_multiplier_'+periodVariation+'_variation_' + index).value);
-            if (from !== to) {
-                for (let slotTime = from; slotTime < to; slotTime++) {
-                    variationFactor[periodVariation][slotTime] = multiplier;
-                }
-            }
-        });
-        let numberOfParts = variationFactor[periodVariation].reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-        let partValue = Math.ceil(totalVolume / numberOfParts);
-        for(let slotTime=0; slotTime < indexInput[periodVariation]['max'] ; slotTime++){
-            adjustedVolumes[periodVariation][slotTime] = partValue * variationFactor[periodVariation][slotTime];
-        }
-        options[periodVariation+'VariationChart']['series'][0]['data'] = adjustedVolumes[periodVariation].map(value => value.toFixed(2));
-        if (!charts[periodVariation+'VariationChart']) {
-            drawChart(periodVariation+'VariationChart');
-        } else {
-            charts[periodVariation+'VariationChart'].updateOptions(options[periodVariation+'VariationChart']);
-        }
-    }
-
-    function getTotalVolume(period_selected){
-        let conversionRules = {
-            'day': {'daily':1, 'weekly':7, 'seasonal':30 },
-            'week': {'daily':(1/7), 'weekly':1, 'seasonal':4 },
-            'month': {'daily':(1/30), 'weekly':(1/4), 'seasonal':1},
-            'year': {'daily':(1/365), 'weekly':(1/52), 'seasonal':(1/12)}
-        }
-        let totalVolume = document.getElementById('form_add_avg_nb_usage_journey_value').value;
-        let range = document.getElementById('form_add_avg_nb_usage_journey_range').value;
-        return (totalVolume * conversionRules[range][period_selected]);
-    }
-
-</script>
+<script src="{% static 'scripts/timeseries.js' %}"></script>
