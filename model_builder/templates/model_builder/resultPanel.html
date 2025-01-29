@@ -1,12 +1,25 @@
-<div class="modal fade reverse-shadow" id="resultModal" tabindex="-1" aria-labelledby="resultModal" aria-hidden="true">
+<div class="modal fade reverse-shadow result-modal" id="resultModal" tabindex="-1" aria-labelledby="resultModal" aria-hidden="true" data-bs-backdrop="false" data-bs-keyboard="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="resultModal">Modal title</h1>
+        <div class="modal-content p-2">
+            <div class="modal-header px-2  py-0">
+                <button class="bg-transparent bg-transparent header-btn-result result-active p-2 fz-1 me-2">
+                    <b>Results</b>
+                </button>
+                <button class="bg-transparent bg-transparent header-btn-result p-2 fz-1">
+                    <b>Computations</b>
+                </button>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Here this is the result modal
+                <p class="h5 mt-3">
+                    Total CO2 emissions over time
+                </p>
+                <div class="row">
+                    <div>
+                        <canvas id="stackedAreaChart"></canvas>
+                        <canvas id="barStackedChart"></canvas>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -15,3 +28,149 @@
         </div>
     </div>
 </div>
+
+<script>
+const area_data = {
+    labels: ["0", "y1", "y2", "y3", "y4", "y5"],
+    datasets: [
+        {
+            label: "Server usage",
+            data: [0, 0.02, 0.04, 0.06, 0.08, 0.1],
+            backgroundColor: "rgba(176, 228, 246, 0.8)",
+            borderWidth: 1,
+            fill: true,
+        },
+        {
+            label: "Devices usage",
+            data: [0, 0.03, 0.06, 0.09, 0.12, 0.15],
+            backgroundColor: "rgba(124, 205, 224, 0.8)",
+            borderWidth: 1,
+            fill: true,
+        },
+        {
+            label: "Network usage",
+            data: [0, 0.05, 0.1, 0.15, 0.2, 0.25],
+            backgroundColor: "rgba(100, 181, 192, 0.8)",
+            borderWidth: 1,
+            fill: true,
+        },
+        {
+            label: "Servers fabrication",
+            data: [0, 0.01, 0.02, 0.03, 0.04, 0.05],
+            backgroundColor: "rgba(162, 210, 255, 0.8)",
+            borderWidth: 1,
+            fill: true,
+        },
+        {
+            label: "Devices fabrication",
+            data: [0, 0.015, 0.03, 0.045, 0.06, 0.075],
+            backgroundColor: "rgba(220, 235, 255, 0.8)",
+            borderWidth: 1,
+            fill: true,
+        },
+    ],
+};
+
+    const bar_data = {
+        labels: ["y1", "y2", "y3", "y4", "y5"],
+        datasets: [
+            {
+                label: "Server usage",
+                data: [0.03, 0.04, 0.05, 0.06, 0.07],
+                backgroundColor: "rgba(176, 228, 246, 0.8)",
+            },
+            {
+                label: "Devices usage",
+                data: [0.04, 0.05, 0.06, 0.07, 0.05],
+                backgroundColor: "rgba(124, 205, 224, 0.8)",
+            },
+            {
+                label: "Network usage",
+                data: [0.05, 0.06, 0.07, 0.08, 0.06],
+                backgroundColor: "rgba(100, 181, 192, 0.8)",
+            },
+            {
+                label: "Servers fabrication",
+                data: [0.02, 0.03, 0.04, 0.05, 0.04],
+                backgroundColor: "rgba(162, 210, 255, 0.8)",
+            },
+            {
+                label: "Devices fabrication",
+                data: [0.01, 0.02, 0.03, 0.04, 0.03],
+                backgroundColor: "rgba(220, 235, 255, 0.8)",
+            },
+        ],
+    };
+
+    const area_config = {
+        type: "line",
+        data: area_data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: "bottom",
+                },
+                tooltip: {
+                    mode: "index",
+                    intersect: false,
+                },
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: "Years",
+                    },
+                },
+                y: {
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: "Total tons of CO2 emissions",
+                    },
+                },
+            },
+        },
+    };
+
+    const bar_config = {
+        type: "bar",
+        data: bar_data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: "bottom",
+                },
+                tooltip: {
+                    mode: "index",
+                    intersect: false,
+                },
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: "Years",
+                    },
+                },
+                y: {
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: "Total tons of CO2 emissions",
+                    },
+                },
+            },
+        },
+    };
+
+    const area_ctx = document.getElementById("stackedAreaChart").getContext("2d");
+    const bar_ctx = document.getElementById("barStackedChart").getContext("2d");
+    new Chart(area_ctx, area_config);
+    new Chart(bar_ctx, bar_config);
+
+  </script>
