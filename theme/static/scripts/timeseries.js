@@ -919,10 +919,10 @@ document.getElementById('time-series-modal').addEventListener('shown.bs.modal', 
 
 function checkAttributes(usagePatternAttribute){
     if(usagePatternAttribute === 'timeseries'){
-        document.getElementById('form_add_hidden_date_'+usagePatternAttribute).value= document.getElementById('form_add_timeframe_start_date').value;
-        document.getElementById('form_add_hidden_'+usagePatternAttribute).value = timeseriesToSave.toString();
+        document.getElementById('form_add_date_hourly_user_journey_starts').value= document.getElementById('form_add_timeframe_start_date').value;
+        document.getElementById('form_add_list_hourly_user_journey_starts').value = timeseriesToSave['variationsValues'].toString();
     }else{
-        document.getElementById('form_add_hidden_'+usagePatternAttribute).value = document.getElementById('form_add_'+usagePatternAttribute).value;
+        document.getElementById('form_add_'+usagePatternAttribute).value = document.getElementById('form_select_'+usagePatternAttribute).value;
     }
     if(document.getElementById(usagePatternAttribute+'_icon_check').classList.contains('d-none')){
         document.getElementById(usagePatternAttribute+'_icon_check').classList.remove('d-none');

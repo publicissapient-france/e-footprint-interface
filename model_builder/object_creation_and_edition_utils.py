@@ -1,5 +1,9 @@
 # Important to keep these imports because they constitute the globals() dict
+from datetime import datetime
+
+from efootprint.builders.hardware.devices_defaults import default_laptop
 from efootprint.builders.hardware.servers_boaviztapi import get_cloud_server, on_premise_server_from_config
+from efootprint.builders.time_builders import create_hourly_usage_df_from_list
 from efootprint.core.system import System
 from efootprint.core.hardware.storage import Storage
 from efootprint.core.hardware.servers.autoscaling import Autoscaling
@@ -11,7 +15,7 @@ from efootprint.core.usage.user_journey import UserJourney
 from efootprint.core.usage.user_journey import UserJourneyStep
 from efootprint.core.usage.job import Job
 from efootprint.core.hardware.network import Network
-from efootprint.constants.countries import Country
+from efootprint.constants.countries import Country, Countries
 from efootprint.abstract_modeling_classes.source_objects import SourceValue, Sources, SourceHourlyValues
 from efootprint.constants.units import u
 from efootprint.logger import logger
@@ -33,7 +37,16 @@ def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_ty
 
     for attr_dict in obj_structure.hourly_quantities_attributes:
         obj_creation_kwargs[attr_dict["attr_name"]] = SourceHourlyValues(
-            float(request.POST.getlist(f'form_add_{attr_dict["attr_name"]}')[0]) * u(attr_dict["unit"]))
+            #create hourly_user_journey_starts from request.POST with the startDate and index increment hourly and
+            # the list of value
+            create_hourly_usage_df_from_list(
+                [float(value) for value in request.POST.getlist(f'form_add_list_{attr_dict["attr_name"]}')],
+                start_date=datetime.strptime(request.POST[f'form_add_date_{attr_dict["attr_name"]}'], "%Y-%m-%d "
+                                                                                                    "%H:%M:%S"),
+                pint_unit=u.dimensionless
+            )
+            #float(request.POST.getlist(f'form_add_{attr_dict["attr_name"]}')[0]) * u(attr_dict["unit"])
+        )
 
     for mod_obj in obj_structure.modeling_obj_attributes:
         new_mod_obj_id = request.POST[f'form_add_{mod_obj["attr_name"]}']
@@ -50,6 +63,27 @@ def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_ty
 
     return new_efootprint_obj
 
+def create_new_usage_pattern_from_post_data(request, model_web: ModelWeb):
+    user_journey = model_web.get_efootprint_object_from_efootprint_id(request.POST["form_add_user-journey"],
+                                                                      "UserJourney", request.session)
+    default_devices = model_web.get_efootprint_object_from_efootprint_id(request.POST["form_add_devices"],
+                                                                         "Hardware", request.session)
+    network = model_web.get_efootprint_object_from_efootprint_id(request.POST["form_add_network"], "Network",
+                                                                 request.session)
+    country = model_web.get_efootprint_object_from_efootprint_id(request.POST["form_add_country"], "Country",
+                                                                    request.session)
+    time_serie = SourceHourlyValues(
+            create_hourly_usage_df_from_list(
+                [float(value) for value in request.POST['form_add_list_hourly_user_journey_starts'].split(',')],
+                start_date=datetime.strptime(
+                    request.POST['form_add_date_hourly_user_journey_starts'],
+                    "%Y-%m-%d"),
+                pint_unit=u.dimensionless
+            )
+        )
+    new_usage_pattern = UsagePattern(request.POST["form_add_name"], user_journey, [default_devices], network, country,
+                                     time_serie)
+    return new_usage_pattern
 
 def add_new_efootprint_object_to_system(request, model_web: ModelWeb, efootprint_object):
     object_type = efootprint_object.class_as_simple_str

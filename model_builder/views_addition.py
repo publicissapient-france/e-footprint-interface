@@ -8,7 +8,7 @@ from django.shortcuts import render
 
 from model_builder.model_web import ModelWeb
 from model_builder.object_creation_and_edition_utils import create_efootprint_obj_from_post_data, \
-    add_new_efootprint_object_to_system, add_new_object_to_system_from_builder
+    add_new_efootprint_object_to_system, add_new_object_to_system_from_builder, create_new_usage_pattern_from_post_data
 from model_builder.views import get_jobs_type_link_to_service_type
 from model_builder.views_edition import edit_object
 
@@ -176,8 +176,18 @@ def open_create_job_panel(request):
     return http_response
 
 def open_create_usage_pattern_panel(request):
+    model_web = ModelWeb(request.session)
+    usage_journeys = model_web.get_efootprint_objects_from_efootprint_type("UserJourney")
+    networks = model_web.get_web_objects_from_efootprint_type("Network")
+    countries = model_web.get_web_objects_from_efootprint_type("Country")
+    devices = model_web.get_web_objects_from_efootprint_type("Hardware")
     http_response = render(
-        request, "model_builder/side_panels/usage_pattern_add.html")
+        request, "model_builder/side_panels/usage_pattern_add.html", {
+            "usageJourneys": usage_journeys,
+            "networks": networks,
+            "countries": countries,
+            "devices": devices
+        })
     return http_response
 
 
@@ -367,3 +377,15 @@ def add_new_job(request, user_journey_step_efootprint_id):
     request.POST = mutable_post
     return edit_object(request, user_journey_step_efootprint_id, model_web)
 
+
+
+def add_new_usage_pattern(request):
+    model_web = ModelWeb(request.session)
+    new_efootprint_obj = create_new_usage_pattern_from_post_data(request, model_web)
+    added_obj = add_new_efootprint_object_to_system(request, model_web, new_efootprint_obj)
+    response = render(
+        request, "model_builder/object_cards/usage_pattern_card.html", {"usage_pattern": added_obj})
+    response["HX-Trigger-After-Swap"] = json.dumps({
+        "updateTopParentLines": {"topParentIds": [added_obj.web_id]},
+        "setAccordionListeners": {"accordionIds": [added_obj.web_id]}})
+    return response

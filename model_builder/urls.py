@@ -20,6 +20,7 @@ urlpatterns = [
     path("add-new-user-journey-step/<user_journey_efootprint_id>/",
          model_builder.views_addition.add_new_user_journey_step, name="add-new-user-journey-step"),
     path('add-new-user-journey/', model_builder.views_addition.add_new_user_journey, name='add-new-user-journey'),
+    path('add-new-usage-pattern/', model_builder.views_addition.add_new_usage_pattern, name='add-new-usage-pattern'),
     path('add-new-server/', model_builder.views_addition.add_new_server, name='add-new-server'),
     path('add-new-service/<server_efootprint_id>', model_builder.views_addition.add_new_service,
          name='add-add_new_service'),
