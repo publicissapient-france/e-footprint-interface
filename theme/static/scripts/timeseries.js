@@ -31,12 +31,14 @@ let optionsChartJs={
         options : {
             scales: {
                 x: {
-                    type: 'category',
+                    type: 'time',
                     time: {
-                        unit: 'day',
-                        displayFormats: {
-                            day: 'MMM dd',
-                        },
+                        tooltipFormat: 'dd MMM yyyy',
+                            displayFormats: {
+                            day: 'dd MMM yyyy',
+                            month: 'MMM yyyy',
+                            year: 'yyyy'
+                        }
                     },
                     ticks: {
                         autoSkip: true,
@@ -99,10 +101,6 @@ let optionsChartJs={
             scales: {
                 x: {
                     type: 'category',
-                    ticks: {
-                        display: false,
-                        autoSkip: true
-                    },
                     title: {
                         display: false,
                     },
@@ -493,7 +491,6 @@ function initChart(){
     variationChart('seasonal');
     frequencyChart();
     timeSeriesChart();
-    updateTimeseriesChart()
 }
 
 function editFrequencyField(launchTimeSeriesChart = false){
@@ -515,7 +512,7 @@ function editFrequencyField(launchTimeSeriesChart = false){
     frequencyChart(launchTimeSeriesChart);
 }
 
-function variationController(periodVariation,launchTimeSeriesChart = false){
+function variationController(periodVariation, launchTimeSeriesChart = false){
     const fromElements = Array.from(document.querySelectorAll(`[id^="form_add_from_${periodVariation}_variation_"]`));
     const toElements = Array.from(document.querySelectorAll(`[id^="form_add_to_${periodVariation}_variation_"]`));
 
@@ -542,9 +539,8 @@ function variationController(periodVariation,launchTimeSeriesChart = false){
         }
     });
 
-    for (let i = 0; i < intervals.length; i++) {
-        const current = intervals[i];
-        const next    = intervals[i + 1];
+    intervals.forEach((current, i) => {
+        const next = intervals[i + 1];
         const upperBound = next ? next.from : indexInput[periodVariation]['max'];
         const fromEl = fromElements[current.index];
         const toEl   = toElements[current.index];
@@ -558,8 +554,7 @@ function variationController(periodVariation,launchTimeSeriesChart = false){
             }
         }
 
-        const fromOptions = fromEl.querySelectorAll('option');
-        fromOptions.forEach(option => {
+        fromEl.querySelectorAll('option').forEach(option => {
             const hour = parseInt(option.value, 10);
             if (usedHours.has(hour) && !mySlotHours.has(hour)) {
                 option.disabled = true;
@@ -568,14 +563,9 @@ function variationController(periodVariation,launchTimeSeriesChart = false){
             }
         });
 
-        const toOptions = toEl.querySelectorAll('option');
-        toOptions.forEach(option => {
+        toEl.querySelectorAll('option').forEach(option => {
             const hour = parseInt(option.value, 10);
-            if (hour <= current.from) {
-                option.disabled = true;
-                return;
-            }
-            if (hour > upperBound) {
+            if (hour <= current.from || hour > upperBound) {
                 option.disabled = true;
                 return;
             }
@@ -585,7 +575,17 @@ function variationController(periodVariation,launchTimeSeriesChart = false){
                 option.disabled = false;
             }
         });
-    }
+
+        const selectedToOption = toEl.options[toEl.selectedIndex];
+        if (selectedToOption.disabled) {
+            const firstValidOption = Array.from(toEl.options).find(option => !option.disabled);
+            if (firstValidOption) {
+                toEl.value = firstValidOption.value;
+            } else {
+                toEl.value = '';
+            }
+        }
+    });
     variationChart(periodVariation, launchTimeSeriesChart);
 }
 
@@ -652,6 +652,55 @@ function addTimeSlot(periodVariation){
     variationController(periodVariation);
 }
 
+function createTimeSeriesChart(){
+    let startDate = document.getElementById('form_add_timeframe_start_date').value;
+    let netGrowRatePeriod = document.getElementById('form_add_net_growth_rate_range').value;
+    let netGrowRateValue = document.getElementById('form_add_net_growth_rate_value').value;
+    let avgNbUserJourneyPeriod = document.getElementById('form_add_avg_nb_usage_journey_range').value;
+    let avgNbUserJourneyValue = document.getElementById('form_add_avg_nb_usage_journey_value').value;
+    let timeframeValue = document.getElementById('form_add_timeframe_value').value;
+    let timeframeRange = document.getElementById('form_add_timeframe_range').value;
+
+    let timeseriesIndexWithVariations = [];
+    let timeseriesValueWithVariations = [];
+
+    let initDate = luxon.DateTime.local().startOf('year');
+    let dateGrowth = luxon.DateTime.local().startOf('year')
+
+    let growthRateDuration = luxon.Duration.fromObject({ [netGrowRatePeriod]: 1 });
+    let timeframeDuration = luxon.Duration.fromObject({ [timeframeRange]: timeframeValue });
+    let avgNbUserJourneyPeriodDuration = luxon.Duration.fromObject({ [avgNbUserJourneyPeriod]: 1 })
+
+    // on calcule le volume total et on s'arrange pour que le base soit le jour
+    let totalVolume = (avgNbUserJourneyValue / avgNbUserJourneyPeriodDuration.shiftTo('days').days) *
+        growthRateDuration.shiftTo('days').days
+    console.log(totalVolume);
+
+    //on va d'abord appliquer le taux de croissance
+    let volumeLooper = totalVolume
+    for(let timeFrameUnit = 0; timeFrameUnit < timeframeValue; timeFrameUnit++){
+        let dateLooper = initDate.plus({ [timeframeRange]: timeFrameUnit });
+        for(let timeGrowthRateUnit=0; timeGrowthRateUnit < Math.round(timeframeDuration.shiftTo(netGrowRatePeriod+'s')[netGrowRatePeriod+'s']/timeframeValue); timeGrowthRateUnit++) {
+            console.log(dateLooper.toISO(), volumeLooper);
+            timeseriesIndexWithVariations.push(dateLooper.toISO());
+            timeseriesValueWithVariations.push(volumeLooper);
+            volumeLooper = volumeLooper + Math.round( parseInt(netGrowRateValue)/100 * volumeLooper);
+            dateLooper = dateLooper.plus(growthRateDuration);
+        }
+    }
+
+    console.log(timeseriesIndexWithVariations, timeseriesValueWithVariations);
+
+    if(netGrowRatePeriod === 'year'){
+        //on applique la variation seosonal
+    }
+    if(netGrowRatePeriod !== 'day'){
+        //on applique la variation week
+    }
+    //on applique la variation daily
+
+}
+
 function applyVariation(timeseries, index, avgNbUserJourneyPeriod, netGrowRatePeriod, timeframe, timeframeValue){
     let periodToLuxonProp = {
         'hour':  'hours',
@@ -680,9 +729,9 @@ function applyVariation(timeseries, index, avgNbUserJourneyPeriod, netGrowRatePe
         const partValue = Math.round(timeseries[i] / numberOfParts);
 
         for (let j = 0; j < conversionRule; j++) {
-            variationsIndex.push(dateLooper.toISO()); // Date au format ISO pour Chart.js
-            variationsValues.push(partValue); // Valeur calculée
-            dateLooper = dateLooper.plus(avgNbUserJourneyPeriodTimeframe); // Ajout de l'intervalle
+            variationsIndex.push(dateLooper.toISO());
+            variationsValues.push(partValue);
+            dateLooper = dateLooper.plus(avgNbUserJourneyPeriodTimeframe);
         }
     }
 
@@ -719,7 +768,9 @@ function updateTimeseriesChart() {
     let currentGroup = [];
     let currentDate = luxon.DateTime.fromISO(variationsIndex[0]).startOf(periodAnalysis);
 
-    console.log(periodAnalysis, kpiAnalysis);
+    let normalizedIndex = variationsIndex.map(date =>
+        luxon.DateTime.fromISO(date).toUTC().toISO()
+    );
 
     function reduceData(){
         if (currentGroup.length > 0) {
@@ -732,34 +783,35 @@ function updateTimeseriesChart() {
                 );
             }
             else if (kpiAnalysis === 'cumsum') {
+                let lastCumulative = aggregatedValues.length
+                    ? aggregatedValues[aggregatedValues.length - 1]
+                    : 0;
                 aggregatedValues.push(
-                    aggregatedValues[aggregatedValues.length - 1] + currentGroup.reduce((a, b) => a + b, 0)
+                    lastCumulative + currentGroup.reduce((a, b) => a + b, 0)
                 );
             }
         }
         return aggregatedValues;
     }
 
-    for (let i = 0; i < variationsIndex.length; i++) {
-        let date = luxon.DateTime.fromISO(variationsIndex[i]);
-        let value = variationsValues[i];
-
-        if (date >= currentDate && date < currentDate.plus({ [periodAnalysis]: 1 })) {
-            currentGroup.push(value);
-        } else {
-            aggregatedValues = reduceData();
-            currentDate = date.startOf(periodAnalysis);
-            currentGroup = [value];
-        }
+    for (let i = 0; i < normalizedIndex.length; i++) {
+    let date = luxon.DateTime.fromISO(normalizedIndex[i]);
+    let value = variationsValues[i];
+    while (date >= currentDate.plus({ [periodAnalysis]: 1 })) {
+        reduceData();
+        currentDate = currentDate.plus({ [periodAnalysis]: 1 });
+        currentGroup = [];
     }
+    currentGroup.push(value);
+}
 
     aggregatedValues = reduceData();
+
     if (!charts['timeSeriesChart']) {
         drawChart('timeSeriesChart');
     }
+
     charts['timeSeriesChart'].data.datasets[0].label = `User journeys (${kpiAnalysis})`;
-    charts['timeSeriesChart'].options.scales.x.type = 'time';
-    charts['timeSeriesChart'].options.scales.x.type.time = {unit: periodAnalysis};
     charts['timeSeriesChart'].data.labels = aggregatedIndex;
     charts['timeSeriesChart'].data.datasets[0].data = aggregatedValues;
     charts['timeSeriesChart'].update();
@@ -791,11 +843,11 @@ function frequencyChart(launchTimeSeriesChart = false){
     }
 
     results.push(dailyUserJourneyValue.toFixed(2));
+    labels.push(dateLooper.toFormat('yyyy-MM-dd'));
 
     while (periodStep < timeframe.shiftTo(growthRateRange)[`${growthRateRange}s`]-1) {
-        dailyUserJourneyValue = Math.round(dailyUserJourneyValue * (1 + parseFloat(document.getElementById('form_add_net_growth_rate_value').value) / 100));
+        dailyUserJourneyValue = Math.ceil(dailyUserJourneyValue * (1 + parseFloat(document.getElementById('form_add_net_growth_rate_value').value) / 100));
         dateGrowth = dateGrowth.plus(growthRateFrame);
-
         dateLooper = dateLooper.plus(growthRateFrame);
         results.push(dailyUserJourneyValue.toFixed(2));
         labels.push(dateLooper.toFormat('yyyy-MM-dd'));
@@ -864,3 +916,15 @@ function variationChart(periodVariation, launchTimeSeriesChart = false){
 }
 
 document.getElementById('time-series-modal').addEventListener('shown.bs.modal', initChart);
+
+function checkAttributes(usagePatternAttribute){
+    if(usagePatternAttribute === 'timeseries'){
+        document.getElementById('form_add_hidden_date_'+usagePatternAttribute).value= document.getElementById('form_add_timeframe_start_date').value;
+        document.getElementById('form_add_hidden_'+usagePatternAttribute).value = timeseriesToSave.toString();
+    }else{
+        document.getElementById('form_add_hidden_'+usagePatternAttribute).value = document.getElementById('form_add_'+usagePatternAttribute).value;
+    }
+    if(document.getElementById(usagePatternAttribute+'_icon_check').classList.contains('d-none')){
+        document.getElementById(usagePatternAttribute+'_icon_check').classList.remove('d-none');
+    }
+}

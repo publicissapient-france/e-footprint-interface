@@ -5,6 +5,12 @@
         hx-swap="beforeend"
         script="on htmx:afterRequest closePanel()"
 >
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <input type="hidden" name="form_add_hidden_device" id="form_add_hidden_device" value="">
+    <input type="hidden" name="form_add_hidden_network" id="form_add_hidden_network" value="">
+    <input type="hidden" name="form_add_hidden_country" id="form_add_hidden_country" value="">
+    <input type="hidden" name="form_add_hidden_timeseries" id="form_add_hidden_timeseries" value="">
+    <input type="hidden" name="form_add_hidden_date_timeseries" id="form_add_hidden_date_timeseries" value="">
     <div class="text-end">
         <button type="button" class="btn btn-white" aria-label="Close"
                 onclick="closePanel()">
@@ -29,20 +35,91 @@
                     Create a new usage pattern by defining its device mix, network mix, country mix, usage over time, and linking it to a usage journey.
                 </p>
             </div>
-            <div class="col-8 offset-2 mt-4">
-                <div class="d-grid gap-2 mx-auto">
-                    <button class="btn rounded-pill bg-white border border-1 border-black">
-                        Device mix
-                    </button>
-                    <button class="btn rounded-pill bg-white border border-1 border-black">
-                        Country mix
-                    </button>
-                    <button class="btn rounded-pill bg-white border border-1 border-black">
-                        Network mix
-                    </button>
-                    <button type="button" class="btn rounded-pill bg-white border border-1 border-black" data-bs-toggle="modal" data-bs-target="#time-series-modal">
-                        Time series
-                    </button>
+            <div class="col-10 offset-1 mt-2">
+                <div class="accordion" id="accordionUsagePatternAttributes">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-usage-pattern-attributes" aria-expanded="true" aria-controls="collapse-usage-pattern-attributes">
+                                Usages pattern attributes
+                            </button>
+                        </h2>
+                        <div id="collapse-usage-pattern-attributes" class="accordion-collapse collapse show">
+                            <div class="accordion-body p-0">
+                                <div class="row p-2 g-0 align-items-center border border-end-0 border-start-0 border-top-0 border-bottom-1 border-body-tertiary">
+                                    <div class="col-2 text-center">
+                                        <div id="device_icon_check" class="d-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                              <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        Device
+                                    </div>
+                                    <div class="col-5 text-end">
+                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" data-bs-toggle="modal" data-bs-target="#usage-pattern-attributes-modal-device">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row p-2 g-0 align-items-center border border-end-0 border-start-0 border-top-0 border-bottom-1 border-body-tertiary">
+                                    <div class="col-2 text-center">
+                                        <div id="network_icon_check" class="d-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                              <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        Network
+                                    </div>
+                                    <div class="col-5 text-end">
+                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" data-bs-toggle="modal" data-bs-target="#usage-pattern-attributes-modal-network">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row p-2 g-0 align-items-center border border-end-0 border-start-0 border-top-0 border-bottom-1 border-body-tertiary">
+                                    <div class="col-2 text-center">
+                                        <div id="country_icon_check" class="d-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                              <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        Country
+                                    </div>
+                                    <div class="col-5 text-end">
+                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" data-bs-toggle="modal" data-bs-target="#usage-pattern-attributes-modal-country">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row p-2 g-0 align-items-center border-0">
+                                    <div class="col-2 text-center">
+                                        <div id="timeseries_icon_check" class="d-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                              <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        Time series
+                                    </div>
+                                    <div class="col-5 text-end">
+                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" data-bs-toggle="modal" data-bs-target="#time-series-modal">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -62,7 +139,6 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
-
                 <div class="row form-header">
                     <div class="col-8 text-start">
                        <h5 id="formModalLabel" class="mt-4">
@@ -154,6 +230,10 @@
                                     <div id="collapse-help-build" class="accordion-collapse collapse show">
                                         <div class="accordion-body">
                                             <div class="mb-3 mx-2">
+                                                <label for="form_add_timeframe_start_date" class="form-label w-100 text-start fz-0-8">When the service has started ?</label>
+                                                <input type="date" class="form-control" id="form_add_timeframe_start_date" name="form_add_timeframe_start_date ">
+                                            </div>
+                                            <div class="mb-3 mx-2">
                                                 <label for="form_add_timeframe_value" class="form-label w-100 text-start">TimeFrame</label>
                                                 <div class="input-group">
                                                     <input type="number" class="form-control" id="form_add_timeframe_value" name="form_add_timeframe_value" aria-describedby="basic-addon3 basic-addon4" value="5" onchange="frequencyChart(true)">
@@ -241,7 +321,6 @@
                                                             id="form_add_from_daily_variation_1"
                                                             name="form_add_from_daily_variation_1"
                                                         onchange="variationController('daily', true)">
-                                                    >
                                                         <option value=0 selected>12am</option>
                                                         <option value=1>1am</option>
                                                         <option value=2>2am</option>
@@ -480,7 +559,7 @@
                                 </svg>
                             </button>
                             -->
-                            <button type="button" class="btn btn-primary rounded-pill w-100" id="save_time_series_btn">
+                            <button type="button" class="btn btn-primary rounded-pill w-100" id="save_time_series_btn" data-bs-dismiss="modal" onclick="checkAttributes('timeseries')">
                                 Save
                             </button>
                         </div>
@@ -491,5 +570,97 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal usage-pattern-modal-attributes fade" id="usage-pattern-attributes-modal-country" tabindex="-1" aria-labelledby="usage-pattern-attributes-modal-country" aria-hidden="true" data-bs-backdrop="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header text-start">
+                    <h5 id="formModalLabel" class="mt-4">
+                        <b>Edit Country</b>
+                    </h5>
+                </div>
+                <div class="form-body">
+                    <div class="">
+                        <label for="form_add_country" class="form-label w-100 text-start fz-0-8">Country</label>
+                        <select class="form-select light-select fz-0-8 h-30"  id="form_add_country" name="form_add_country">
+                            <option value="France" selected>France</option>
+                            <option value="Germany">Germany</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            <option value="United States">United States</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-footer mt-5 px-3 d-grid gap-2">
+                    <button type="button" class="btn btn-primary rounded-pill w-100" id="save_time_series_btn" data-bs-dismiss="modal" onclick="checkAttributes('country')">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal usage-pattern-modal-attributes fade" id="usage-pattern-attributes-modal-device" tabindex="-1" aria-labelledby="usage-pattern-attributes-modal-device" aria-hidden="true" data-bs-backdrop="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header text-start">
+                    <h5 id="formModalLabel" class="mt-4">
+                        <b>Edit Devices</b>
+                    </h5>
+                </div>
+                <div class="form-body">
+                    <div class="">
+                        <label for="form_add_device" class="form-label w-100 text-start fz-0-8">Devices</label>
+                        <select class="form-select light-select fz-0-8 h-30"  id="form_add_device" name="form_add_device">
+                            <option value="Smartphone" selected>Smartphone</option>
+                            <option value="Tablet">Tablet</option>
+                            <option value="Desktop">Desktop</option>
+                            <option value="Smart TV">Smart TV</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-footer mt-5 px-3 d-grid gap-2">
+                    <button type="button" class="btn btn-primary rounded-pill w-100" id="save_time_series_btn" data-bs-dismiss="modal" onclick="checkAttributes('device')">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal usage-pattern-modal-attributes fade" id="usage-pattern-attributes-modal-network" tabindex="-1" aria-labelledby="usage-pattern-attributes-modal-network" aria-hidden="true" data-bs-backdrop="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-header text-start">
+                    <h5 id="formModalLabel" class="mt-4">
+                        <b>Edit Network</b>
+                    </h5>
+                </div>
+                <div class="form-body">
+                    <div class="">
+                        <label for="form_add_network" class="form-label w-100 text-start fz-0-8">Network</label>
+                        <select class="form-select light-select fz-0-8 h-30"  id="form_add_network" name="form_add_network">
+                            <option value="4G" selected>4G</option>
+                            <option value="5G">5G</option>
+                            <option value="Wifi">Wifi</option>
+                            <option value="Ethernet">Ethernet</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-footer mt-5 px-3 d-grid gap-2">
+                    <button type="button" class="btn btn-primary rounded-pill w-100" id="save_time_series_btn" data-bs-dismiss="modal" onclick="checkAttributes('network')">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="{% static 'scripts/timeseries.js' %}"></script>
