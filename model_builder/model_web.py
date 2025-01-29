@@ -1,11 +1,9 @@
-import json
-import os
 import re
 
 from django.contrib.sessions.backends.base import SessionBase
 from efootprint.api_utils.json_to_system import json_to_system
 
-from e_footprint_interface import settings
+from model_builder.class_structure import efootprint_class_structure
 from model_builder.modeling_objects_web import wrap_efootprint_object
 from utils import EFOOTPRINT_COUNTRIES
 
@@ -15,10 +13,6 @@ class ModelWeb:
         self.system_data = session_data["system_data"]
         self.response_objs, self.flat_efootprint_objs_dict = json_to_system(self.system_data)
         self.empty_objects = session_data.get("empty_objects", {})
-        with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'object_inputs_and_default_values.json'),
-                  "r") as object_inputs_file:
-            self.object_inputs_and_default_values = json.load(object_inputs_file)
-
         self.system = wrap_efootprint_object(list(self.response_objs["System"].values())[0], self)
 
     def get_efootprint_objects_from_efootprint_type(self, obj_type):
@@ -57,26 +51,22 @@ class ModelWeb:
     def servers(self):
         servers = []
 
-        for server_type in ["Autoscaling", "OnPremise", "Serverless"]:
+        for server_type in ["Server", "GPUServer"]:
             servers += self.get_web_objects_from_efootprint_type(server_type)
 
         return servers
 
     @property
-    def autoscaling_servers(self):
-        return self.get_web_objects_from_efootprint_type("Autoscaling")
+    def cpu_servers(self):
+        return self.get_web_objects_from_efootprint_type("Server")
 
     @property
-    def on_premise_servers(self):
-        return self.get_web_objects_from_efootprint_type("OnPremise")
+    def gpu_servers(self):
+        return self.get_web_objects_from_efootprint_type("GPUServer")
 
     @property
-    def serverless_servers(self):
-        return self.get_web_objects_from_efootprint_type("Serverless")
-
-    @property
-    def user_journeys(self):
-        return self.get_web_objects_from_efootprint_type("UserJourney")
+    def usage_journeys(self):
+        return self.get_web_objects_from_efootprint_type("UsageJourney")
 
     @property
     def countries(self):
@@ -99,9 +89,9 @@ class ModelWeb:
         return self.get_web_objects_from_efootprint_type("UsagePattern")
 
     @property
-    def empty_user_journeys(self):
-        if "UserJourney" in self.empty_objects.keys():
-            return self.empty_objects["UserJourney"].values()
+    def empty_usage_journeys(self):
+        if "UsageJourney" in self.empty_objects.keys():
+            return self.empty_objects["UsageJourney"].values()
         else:
             return []
 
@@ -111,7 +101,7 @@ class ObjectStructure:
         self.model_web = model_web
         self.object_type = object_type
         self.default_name = f"My new {object_type}"
-        self.structure_dict = model_web.object_inputs_and_default_values[object_type]
+        self.structure_dict = efootprint_class_structure(object_type)
 
     def __getattr__(self, name):
         attr = getattr(self.structure_dict, name)

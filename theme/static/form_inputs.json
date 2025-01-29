@@ -449,7 +449,7 @@
             {
                 "input": "gen_ai_model",
                 "filter_by": "gen_ai_provider",
-                "list_value": null
+                "list_value": {"open_ai": ["gpt3", "gpt4", "o1"], "google": ["Gemini", "Gemini Pro"]}
             }
         ]
     },

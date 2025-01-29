@@ -150,7 +150,7 @@ function updateOrCreateLines(element) {
             } else {
                 drawLines(element);
             }
-            // Handle user journey step circles
+            // Handle usage journey step circles
             const imgLeaderLineChildren = element.querySelectorAll('img.leader-line-object');
             imgLeaderLineChildren.forEach(child => drawLines(child));
         }

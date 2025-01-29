@@ -494,10 +494,10 @@ function initChart(){
 }
 
 function editFrequencyField(launchTimeSeriesChart = false){
-    let userJourneyRange = document.getElementById('form_add_avg_nb_usage_journey_range');
-    let selectedValue = userJourneyRange.value;
+    let UsageJourneyRange = document.getElementById('form_add_avg_nb_usage_journey_range');
+    let selectedValue = UsageJourneyRange.value;
     let growthRateRange = document.getElementById('form_add_net_growth_rate_range');
-    let optionsToCopy = userJourneyRange.querySelectorAll('option');
+    let optionsToCopy = UsageJourneyRange.querySelectorAll('option');
     let toCopy = false;
     growthRateRange.innerHTML = '';
     optionsToCopy.forEach(function(option){
@@ -656,8 +656,8 @@ function createTimeSeriesChart(){
     let startDate = document.getElementById('form_add_timeframe_start_date').value;
     let netGrowRatePeriod = document.getElementById('form_add_net_growth_rate_range').value;
     let netGrowRateValue = document.getElementById('form_add_net_growth_rate_value').value;
-    let avgNbUserJourneyPeriod = document.getElementById('form_add_avg_nb_usage_journey_range').value;
-    let avgNbUserJourneyValue = document.getElementById('form_add_avg_nb_usage_journey_value').value;
+    let avgNbUsageJourneyPeriod = document.getElementById('form_add_avg_nb_usage_journey_range').value;
+    let avgNbUsageJourneyValue = document.getElementById('form_add_avg_nb_usage_journey_value').value;
     let timeframeValue = document.getElementById('form_add_timeframe_value').value;
     let timeframeRange = document.getElementById('form_add_timeframe_range').value;
 
@@ -669,10 +669,10 @@ function createTimeSeriesChart(){
 
     let growthRateDuration = luxon.Duration.fromObject({ [netGrowRatePeriod]: 1 });
     let timeframeDuration = luxon.Duration.fromObject({ [timeframeRange]: timeframeValue });
-    let avgNbUserJourneyPeriodDuration = luxon.Duration.fromObject({ [avgNbUserJourneyPeriod]: 1 })
+    let avgNbUsageJourneyPeriodDuration = luxon.Duration.fromObject({ [avgNbUsageJourneyPeriod]: 1 })
 
     // on calcule le volume total et on s'arrange pour que le base soit le jour
-    let totalVolume = (avgNbUserJourneyValue / avgNbUserJourneyPeriodDuration.shiftTo('days').days) *
+    let totalVolume = (avgNbUsageJourneyValue / avgNbUsageJourneyPeriodDuration.shiftTo('days').days) *
         growthRateDuration.shiftTo('days').days
     console.log(totalVolume);
 
@@ -701,7 +701,7 @@ function createTimeSeriesChart(){
 
 }
 
-function applyVariation(timeseries, index, avgNbUserJourneyPeriod, netGrowRatePeriod, timeframe, timeframeValue){
+function applyVariation(timeseries, index, avgNbUsageJourneyPeriod, netGrowRatePeriod, timeframe, timeframeValue){
     let periodToLuxonProp = {
         'hour':  'hours',
         'day':   'days',
@@ -715,32 +715,32 @@ function applyVariation(timeseries, index, avgNbUserJourneyPeriod, netGrowRatePe
         'month': 'weekly',
         'year': 'seasonal',
     }
-    const luxonProp = periodToLuxonProp[avgNbUserJourneyPeriod];
-    const factorToApply = variationFactor[keyPeriod[avgNbUserJourneyPeriod]] || [];
+    const luxonProp = periodToLuxonProp[avgNbUsageJourneyPeriod];
+    const factorToApply = variationFactor[keyPeriod[avgNbUsageJourneyPeriod]] || [];
     const numberOfParts = factorToApply.reduce((acc, cur) => acc + cur, 0);
-    const avgNbUserJourneyPeriodTimeframe = luxon.Duration.fromObject({ [luxonProp]: 1 });
+    const avgNbUsageJourneyPeriodTimeframe = luxon.Duration.fromObject({ [luxonProp]: 1 });
 
     const variationsValues = [];
     const variationsIndex  = [];
 
     for (let i = 0; i < index.length; i++) {
         let dateLooper = luxon.DateTime.fromISO(index[i]);
-        const conversionRule = getConversionRule(dateLooper, avgNbUserJourneyPeriod, netGrowRatePeriod);
+        const conversionRule = getConversionRule(dateLooper, avgNbUsageJourneyPeriod, netGrowRatePeriod);
         const partValue = Math.round(timeseries[i] / numberOfParts);
 
         for (let j = 0; j < conversionRule; j++) {
             variationsIndex.push(dateLooper.toISO());
             variationsValues.push(partValue);
-            dateLooper = dateLooper.plus(avgNbUserJourneyPeriodTimeframe);
+            dateLooper = dateLooper.plus(avgNbUsageJourneyPeriodTimeframe);
         }
     }
 
-    if (avgNbUserJourneyPeriod === 'year') {
+    if (avgNbUsageJourneyPeriod === 'year') {
         return applyVariation(variationsValues, variationsIndex, 'month', netGrowRatePeriod, timeframe, timeframeValue);
-    } else if (avgNbUserJourneyPeriod === 'month' || avgNbUserJourneyPeriod === 'week') {
+    } else if (avgNbUsageJourneyPeriod === 'month' || avgNbUsageJourneyPeriod === 'week') {
         return applyVariation(variationsValues, variationsIndex, 'day', netGrowRatePeriod, timeframe, timeframeValue);
     }
-    else if(avgNbUserJourneyPeriod === 'day'){
+    else if(avgNbUsageJourneyPeriod === 'day'){
         timeseriesToSave = applyVariation(variationsValues, variationsIndex, 'hour', netGrowRatePeriod, timeframe, timeframeValue);
     }
 
@@ -752,9 +752,9 @@ function timeSeriesChart(){
     let timeRange = document.getElementById('form_add_timeframe_range').value;
     let frequency = optionsChartJs['frequencyChart']['data']['datasets'][0]['data']
     let index = optionsChartJs['frequencyChart']['data']['labels']
-    let avgNbUserJourneyPeriod = document.getElementById('form_add_avg_nb_usage_journey_range').value;
+    let avgNbUsageJourneyPeriod = document.getElementById('form_add_avg_nb_usage_journey_range').value;
     let netGrowRatePeriod = document.getElementById('form_add_net_growth_rate_range').value;
-    let timeSeries = applyVariation(frequency, index, avgNbUserJourneyPeriod, netGrowRatePeriod, timeRange, timeRangeValue);
+    let timeSeries = applyVariation(frequency, index, avgNbUsageJourneyPeriod, netGrowRatePeriod, timeRange, timeRangeValue);
     updateTimeseriesChart();
 }
 
@@ -818,8 +818,8 @@ function updateTimeseriesChart() {
 }
 
 function frequencyChart(launchTimeSeriesChart = false){
-    let userJourneyValue  = parseInt(document.getElementById('form_add_avg_nb_usage_journey_value').value);
-    let userJourneyRange  = document.getElementById('form_add_avg_nb_usage_journey_range').value;
+    let UsageJourneyValue  = parseInt(document.getElementById('form_add_avg_nb_usage_journey_value').value);
+    let UsageJourneyRange  = document.getElementById('form_add_avg_nb_usage_journey_range').value;
     let growthRateRange   = document.getElementById('form_add_net_growth_rate_range').value;
     let timeframeValue    = parseInt(document.getElementById('form_add_timeframe_value').value);
     let timeframeRange    = document.getElementById('form_add_timeframe_range').value;
@@ -832,24 +832,24 @@ function frequencyChart(launchTimeSeriesChart = false){
     let results = [];
     let labels = [];
 
-    let dailyUserJourneyValue = 0;
-    if (userJourneyRange !== 'day') {
-        dailyUserJourneyValue = Math.ceil(
-            userJourneyValue /
-            luxon.Duration.fromObject({ [userJourneyRange]: 1 }).shiftTo('days').days
+    let dailyUsageJourneyValue = 0;
+    if (UsageJourneyRange !== 'day') {
+        dailyUsageJourneyValue = Math.ceil(
+            UsageJourneyValue /
+            luxon.Duration.fromObject({ [UsageJourneyRange]: 1 }).shiftTo('days').days
         );
     } else {
-        dailyUserJourneyValue = userJourneyValue;
+        dailyUsageJourneyValue = UsageJourneyValue;
     }
 
-    results.push(dailyUserJourneyValue.toFixed(2));
+    results.push(dailyUsageJourneyValue.toFixed(2));
     labels.push(dateLooper.toFormat('yyyy-MM-dd'));
 
     while (periodStep < timeframe.shiftTo(growthRateRange)[`${growthRateRange}s`]-1) {
-        dailyUserJourneyValue = Math.ceil(dailyUserJourneyValue * (1 + parseFloat(document.getElementById('form_add_net_growth_rate_value').value) / 100));
+        dailyUsageJourneyValue = Math.ceil(dailyUsageJourneyValue * (1 + parseFloat(document.getElementById('form_add_net_growth_rate_value').value) / 100));
         dateGrowth = dateGrowth.plus(growthRateFrame);
         dateLooper = dateLooper.plus(growthRateFrame);
-        results.push(dailyUserJourneyValue.toFixed(2));
+        results.push(dailyUsageJourneyValue.toFixed(2));
         labels.push(dateLooper.toFormat('yyyy-MM-dd'));
         periodStep++;
     }

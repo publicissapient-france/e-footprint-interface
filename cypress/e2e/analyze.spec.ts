@@ -19,19 +19,19 @@ describe('Analyze tests', () => {
             cy.get(`.drawflow-node.UsagePattern`).should('have.length', 2);
         });
     });
-    it('Should create new user journey', () => {
+    it('Should create new usage journey', () => {
         cy.get('#object-creation-or-edition-form').should('not.exist');
-        cy.get(`.drawflow-node.UserJourney`).should('have.length', 1);
-        cy.get(`#add-new-UserJourney-button`).click();
+        cy.get(`.drawflow-node.UsageJourney`).should('have.length', 1);
+        cy.get(`#add-new-UsageJourney-button`).click();
         cy.get('#object-creation-or-edition-form').should('be.visible');
-        cy.get('#object-creation-or-edition-form h3').should('have.text', `New UserJourney`);
-        cy.get('#new-object-name').clear().type(`New UserJourney`);
+        cy.get('#object-creation-or-edition-form h3').should('have.text', `New UsageJourney`);
+        cy.get('#new-object-name').clear().type(`New UsageJourney`);
         cy.get('#uj_steps input').eq(0).click();
         cy.intercept('*/add-new-object').as('addNewObject');
         cy.get('#create-new-object-button').click();
         cy.wait('@addNewObject').then((response: Interception) => {
             expect(response.response.statusCode).to.eq(200)
-            cy.get(`.drawflow-node.UserJourney`).should('have.length', 2);
+            cy.get(`.drawflow-node.UsageJourney`).should('have.length', 2);
         });
     });
     it('Should create new service', () => {
@@ -106,19 +106,19 @@ describe('Analyze tests', () => {
     });
 
     it('Should edit an Usage pattern', () => {
-        cy.get(`.drawflow-node.UserJourney`).should('have.length', 1);
-        cy.get(`#add-new-UserJourney-button`).click();
-        cy.get('#new-object-name').clear().type(`New UserJourney`);
+        cy.get(`.drawflow-node.UsageJourney`).should('have.length', 1);
+        cy.get(`#add-new-UsageJourney-button`).click();
+        cy.get('#new-object-name').clear().type(`New UsageJourney`);
         cy.get('#uj_steps input').eq(0).click();
         cy.intercept('*/add-new-object').as('addNewObject');
         cy.get('#create-new-object-button').click();
         cy.wait('@addNewObject').then((response: Interception) => {
             expect(response.response.statusCode).to.eq(200)
-            cy.get(`.drawflow-node.UserJourney`).should('have.length', 2);
-            cy.get(`.drawflow-node.UserJourney`).eq(1).find('.object-name').should('have.text', 'New UserJourney');
+            cy.get(`.drawflow-node.UsageJourney`).should('have.length', 2);
+            cy.get(`.drawflow-node.UsageJourney`).eq(1).find('.object-name').should('have.text', 'New UsageJourney');
         });
         cy.get('.drawflow-node.UsagePattern').eq(0).find(".edit-object-button").click();
-        cy.get('#object-creation-or-edition-form #user_journey').select('New UserJourney');
+        cy.get('#object-creation-or-edition-form #usage_journey').select('New UsageJourney');
         cy.intercept('*/edit-object').as('editObject');
         cy.get('#create-new-object-button').click();
     });

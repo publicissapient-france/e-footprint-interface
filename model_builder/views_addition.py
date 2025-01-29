@@ -3,13 +3,15 @@ import os
 import uuid
 
 import requests
+from efootprint.core.all_classes_in_order import SERVER_CLASSES
+
 from e_footprint_interface import settings
 from django.shortcuts import render
 
+from model_builder.class_structure import efootprint_class_structure
 from model_builder.model_web import ModelWeb
 from model_builder.object_creation_and_edition_utils import create_efootprint_obj_from_post_data, \
-    add_new_efootprint_object_to_system, add_new_object_to_system_from_builder, create_new_usage_pattern_from_post_data
-from model_builder.views import get_jobs_type_link_to_service_type
+    add_new_efootprint_object_to_system, create_new_usage_pattern_from_post_data
 from model_builder.views_edition import edit_object
 
 def get_form_structure(form_type):
@@ -72,27 +74,88 @@ def open_create_server_panel(request):
 
     return http_response
 
+def generate_object_creation_structure(available_efootprint_classes: list, header: str):
+    efootprint_classes_dict = {"str_attributes": ["name"], "switch_item": "type_service_available"}
+    type_efootprint_classes_available = {
+        "category": "efootprint_classes_available",
+        "header": header,
+        "class": "",
+        "fields": [{
+            "input_type": "select",
+            "id": "type_service_available",
+            "name": "Service",
+            "required": True,
+            "options": [{"label": service.__name__, "value": service.__name__}
+                        for service in available_efootprint_classes]
+        }
+        ]
+    }
+
+    efootprint_classes_dict["items"] = [type_efootprint_classes_available]
+    efootprint_classes_dict["dynamic_lists"] = []
+
+    for index, efootprint_class in enumerate(available_efootprint_classes):
+        class_fields = []
+        class_structure = efootprint_class_structure(efootprint_class.__name__)
+        for str_attribute, str_attribute_values in class_structure["str_attributes"].items():
+            class_fields.append({
+                "input_type": "select",
+                "id": str_attribute,
+                "name": str_attribute,
+                "required": True,
+                "options": [{"label": attr_value, "value": attr_value} for attr_value in str_attribute_values]
+            })
+        for numerical_attribute in class_structure["numerical_attributes"]:
+            class_fields.append({
+                "input_type": "input",
+                "id": numerical_attribute["attr_name"],
+                "name": numerical_attribute["attr_name"],
+                "unit": numerical_attribute["unit"],
+                "required": True,
+                "default": numerical_attribute["default_value"]
+            })
+        for conditional_str_attribute, conditional_str_attribute_value \
+            in class_structure["conditional_str_attributes"].items():
+            class_fields.append({
+                "input_type": "datalist",
+                "id": conditional_str_attribute,
+                "name": conditional_str_attribute,
+                "options": None
+            })
+            efootprint_classes_dict["dynamic_lists"].append(
+                {
+                    "input": conditional_str_attribute,
+                    "filter_by": conditional_str_attribute_value["depends_on"],
+                    "list_value": conditional_str_attribute_value["conditional_list_values"]
+                })
+        service_class = "d-none"
+        if index == 0:
+            service_class = ""
+        efootprint_classes_dict["items"].append({
+            "category": efootprint_class.__name__,
+            "header": f"{efootprint_class.__name__} creation",
+            "class": service_class,
+            "fields": class_fields})
+
+    return efootprint_classes_dict
+
 
 def open_create_service_panel(request, server_efootprint_id):
-    gen_ai_providers = [{'label': 'Google', 'value': 'google'},{'label': 'Open AI', 'value': 'open_ai'}]
-    gen_ai_models = {'open_ai':['gpt3', 'gpt4', 'o1'], 'google':['Gemini', 'Gemini Pro']}
+    server_class = None
+    for efootprint_server_class in SERVER_CLASSES:
+        if server_efootprint_id in request.session["system_data"][efootprint_server_class.__name__].keys():
+            server_class = efootprint_server_class
+            break
 
-    structure_dict = get_form_structure('Service')
+    assert server_class is not None, f"Server with efootprint_id {server_efootprint_id} not found in system data"
 
-    for item in structure_dict['items']:
-        for field in item['fields']:
-            if field['id'] == 'gen_ai_provider':
-                field['options'] = gen_ai_providers
-            if field['id']=='gen_ai_model':
-                field['options'] = gen_ai_models
-    for item in structure_dict['dynamic_lists']:
-        if item['filter_by']=='gen_ai_provider':
-            item['list_value'] = gen_ai_models
+    installable_services = server_class.installable_services()
+    services_dict = generate_object_creation_structure(installable_services, "Services available for this server")
 
     http_response = render(
         request, "model_builder/side_panels/service_add.html", {
             "server_id": server_efootprint_id,
-            "structure_dict": structure_dict
+            "structure_dict": services_dict
         })
 
     http_response["HX-Trigger-After-Swap"] = "initAddPanel"
@@ -191,13 +254,13 @@ def open_create_usage_pattern_panel(request):
     return http_response
 
 
-def add_new_user_journey(request):
+def add_new_usage_journey(request):
     model_web = ModelWeb(request.session)
     if request.POST.getlist("form_add_uj_steps"):
-        new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, 'UserJourney')
+        new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, 'UsageJourney')
         added_obj = add_new_efootprint_object_to_system(request, model_web, new_efootprint_obj)
         response = render(
-            request, "model_builder/object_cards/user_journey_card.html", {"user_journey": added_obj})
+            request, "model_builder/object_cards/usage_journey_card.html", {"usage_journey": added_obj})
         response["HX-Trigger-After-Swap"] = json.dumps({
             "updateTopParentLines": {"topParentIds": [added_obj.web_id]},
             "setAccordionListeners": {"accordionIds": [added_obj.web_id]}})
@@ -217,43 +280,43 @@ def add_new_user_journey(request):
         }
 
         if "empty_objects" not in request.session:
-            request.session["empty_objects"] = {"UserJourney": {empty_uj_id: added_obj}}
+            request.session["empty_objects"] = {"UsageJourney": {empty_uj_id: added_obj}}
         else:
-            if "UserJourney" not in request.session["empty_objects"]:
-                request.session["empty_objects"]["UserJourney"] = {empty_uj_id: added_obj}
+            if "UsageJourney" not in request.session["empty_objects"]:
+                request.session["empty_objects"]["UsageJourney"] = {empty_uj_id: added_obj}
             else:
-                request.session["empty_objects"]["UserJourney"][empty_uj_id] = added_obj
+                request.session["empty_objects"]["UsageJourney"][empty_uj_id] = added_obj
             request.session.modified = True
 
-        response = render(request, "model_builder/object_cards/user_journey_empty.html",
-                  context={"user_journey": added_obj})
+        response = render(request, "model_builder/object_cards/usage_journey_empty.html",
+                  context={"usage_journey": added_obj})
 
     return response
 
 
-def add_new_user_journey_step(request, user_journey_efootprint_id):
+def add_new_usage_journey_step(request, usage_journey_efootprint_id):
     model_web = ModelWeb(request.session)
-    new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, 'UserJourneyStep')
+    new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, 'UsageJourneyStep')
     added_obj = add_new_efootprint_object_to_system(request, model_web, new_efootprint_obj)
-    user_journey_to_edit = model_web.get_web_object_from_efootprint_id(user_journey_efootprint_id)
+    usage_journey_to_edit = model_web.get_web_object_from_efootprint_id(usage_journey_efootprint_id)
     mutable_post = request.POST.copy()
     for key in list(mutable_post.keys()):
         if key.startswith('form_add'):
             del mutable_post[key]
-    mutable_post['form_edit_name'] = user_journey_to_edit.name
-    user_journey_step_ids = []
-    for uj_step in user_journey_to_edit.uj_steps:
-        user_journey_step_ids.append(uj_step.efootprint_id)
-    user_journey_step_ids.append(added_obj.efootprint_id)
-    mutable_post.setlist('form_edit_uj_steps', user_journey_step_ids)
+    mutable_post['form_edit_name'] = usage_journey_to_edit.name
+    usage_journey_step_ids = []
+    for uj_step in usage_journey_to_edit.uj_steps:
+        usage_journey_step_ids.append(uj_step.efootprint_id)
+    usage_journey_step_ids.append(added_obj.efootprint_id)
+    mutable_post.setlist('form_edit_uj_steps', usage_journey_step_ids)
     request.POST = mutable_post
-    return edit_object(request, user_journey_efootprint_id, model_web)
+    return edit_object(request, usage_journey_efootprint_id, model_web)
 
 
 def add_new_server(request):
     model_web = ModelWeb(request.session)
     server_type = request.POST.get('form_add_server_type')
-    server_added = add_new_object_to_system_from_builder(request, model_web, server_type)
+    server_added = add_new_efootprint_object_to_system(request, model_web, server_type)
     response = render(
         request, "model_builder/object_cards/server_card.html", {"server": server_added})
 
@@ -303,9 +366,9 @@ def add_new_service(request, server_efootprint_id):
 
     return response
 
-def add_new_job(request, user_journey_step_efootprint_id):
+def add_new_job(request, usage_journey_step_efootprint_id):
     model_web = ModelWeb(request.session)
-    user_journey_step_to_edit = model_web.get_web_object_from_efootprint_id(user_journey_step_efootprint_id)
+    usage_journey_step_to_edit = model_web.get_web_object_from_efootprint_id(usage_journey_step_efootprint_id)
     job_types_data = {
         'web_app': [
             {
@@ -367,15 +430,15 @@ def add_new_job(request, user_journey_step_efootprint_id):
     for key in list(mutable_post.keys()):
         if key.startswith('form_add'):
             del mutable_post[key]
-    mutable_post['form_edit_name'] = user_journey_step_to_edit.name
-    mutable_post['form_edit_user_time_spent'] = user_journey_step_to_edit.user_time_spent.rounded_magnitude
+    mutable_post['form_edit_name'] = usage_journey_step_to_edit.name
+    mutable_post['form_edit_user_time_spent'] = usage_journey_step_to_edit.user_time_spent.rounded_magnitude
     job_ids = []
-    for job in user_journey_step_to_edit.jobs:
+    for job in usage_journey_step_to_edit.jobs:
         job_ids.append(job.efootprint_id)
     job_ids.append(added_obj.efootprint_id)
     mutable_post.setlist('form_edit_jobs', job_ids)
     request.POST = mutable_post
-    return edit_object(request, user_journey_step_efootprint_id, model_web)
+    return edit_object(request, usage_journey_step_efootprint_id, model_web)
 
 
 

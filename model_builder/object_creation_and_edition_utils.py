@@ -1,30 +1,18 @@
-# Important to keep these imports because they constitute the globals() dict
 from datetime import datetime
 
-from efootprint.builders.hardware.devices_defaults import default_laptop
-from efootprint.builders.hardware.servers_boaviztapi import get_cloud_server, on_premise_server_from_config
 from efootprint.builders.time_builders import create_hourly_usage_df_from_list
-from efootprint.core.system import System
-from efootprint.core.hardware.storage import Storage
-from efootprint.core.hardware.servers.autoscaling import Autoscaling
-from efootprint.core.hardware.servers.serverless import Serverless
-from efootprint.core.hardware.servers.on_premise import OnPremise
-from efootprint.core.hardware.hardware_base_classes import Hardware
 from efootprint.core.usage.usage_pattern import UsagePattern
-from efootprint.core.usage.user_journey import UserJourney
-from efootprint.core.usage.user_journey import UserJourneyStep
-from efootprint.core.usage.job import Job
-from efootprint.core.hardware.network import Network
-from efootprint.constants.countries import Country, Countries
 from efootprint.abstract_modeling_classes.source_objects import SourceValue, Sources, SourceHourlyValues
 from efootprint.constants.units import u
 from efootprint.logger import logger
+
 from model_builder.modeling_objects_web import ModelingObjectWeb, wrap_efootprint_object
 from model_builder.model_web import ModelWeb
+from model_builder.class_structure import modeling_object_classes_dict
 
 
 def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_type: str):
-    new_efootprint_obj_class = globals()[object_type]
+    new_efootprint_obj_class = modeling_object_classes_dict[object_type]
     new_efootprint_obj = new_efootprint_obj_class.__new__(new_efootprint_obj_class)
 
     obj_creation_kwargs = {}
@@ -99,28 +87,6 @@ def add_new_efootprint_object_to_system(request, model_web: ModelWeb, efootprint
     model_web.flat_efootprint_objs_dict[efootprint_object.id] = efootprint_object
 
     return wrap_efootprint_object(efootprint_object, model_web)
-
-
-def add_new_object_to_system_from_builder(request, model_web: ModelWeb, object_type: str):
-    if object_type in ["Autoscaling", "Serverless"]:
-        new_efootprint_obj = get_cloud_server(request.POST.get('form_add_provider'), request.POST.get(
-            'form_add_configuration'), SourceValue(int(request.POST['form_add_average_carbon_intensity'])* u.g / u.kWh))
-    elif object_type == "OnPremise":
-        new_efootprint_obj = on_premise_server_from_config(
-            request.POST['form_add_name'],
-            request.POST['form_add_nb_of_cpu_units'],
-            request.POST['form_add_nb_of_cores_per_cpu_unit'],
-            request.POST['form_add_nb_of_ram_units'],
-            request.POST['form_add_ram_quantity_per_unit_in_gb'],
-            SourceValue(int(request.POST['form_add_average_carbon_intensity'])* u.g / u.kWh)
-        )
-    else:
-        raise PermissionError(f"Object type {object_type} not supported yet")
-    new_efootprint_obj.name = request.POST.get('form_add_name')
-
-    new_obj_wrapped = add_new_efootprint_object_to_system(request, model_web, new_efootprint_obj)
-
-    return new_obj_wrapped
 
 
 def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):

@@ -1,6 +1,7 @@
 from unittest import TestCase
+from unittest.mock import MagicMock
 
-from efootprint.builders.hardware.storage_defaults import default_ssd
+from efootprint.core.hardware.storage import Storage
 
 from model_builder.modeling_objects_web import ModelingObjectWeb
 
@@ -13,7 +14,8 @@ class StorageWeb(ModelingObjectWeb):
 
 class TestWebEfootprintWrappers(TestCase):
     def test_storage_web_id(self):
-        storage = default_ssd()
-        storage_web = StorageWeb(storage)
+        mock_model_web = MagicMock()
+        storage = Storage.ssd()
+        storage_web = StorageWeb(storage, mock_model_web)
 
         self.assertEqual(f"{storage.id}_modeling_obj", storage_web.id)

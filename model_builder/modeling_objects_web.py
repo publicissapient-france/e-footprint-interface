@@ -4,11 +4,11 @@ from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
 from efootprint.core.usage.usage_pattern import UsagePattern
 
 
-def retrieve_attributes_by_type(
-    modeling_obj, attribute_type, attrs_to_ignore=['modeling_obj_containers', "all_changes"]):
+def retrieve_attributes_by_type(modeling_obj, attribute_type):
     output_list = []
     for attr_name, attr_value in vars(modeling_obj).items():
-        if isinstance(attr_value, attribute_type) and attr_name not in attrs_to_ignore:
+        if (isinstance(attr_value, attribute_type)
+            and attr_name not in modeling_obj.attributes_that_shouldnt_trigger_update_logic):
             output_list.append({'attr_name': attr_name, 'attr_value': attr_value})
 
     return output_list
@@ -232,9 +232,9 @@ class JobWeb(ModelingObjectWeb):
     @property
     def duplicated_cards(self):
         duplicated_cards = []
-        for user_journey_step in self.user_journey_steps:
-            for duplicated_user_journey_card in user_journey_step.duplicated_cards:
-                duplicated_cards.append(DuplicatedJobWeb(self._modeling_obj, duplicated_user_journey_card))
+        for usage_journey_step in self.usage_journey_steps:
+            for duplicated_usage_journey_card in usage_journey_step.duplicated_cards:
+                duplicated_cards.append(DuplicatedJobWeb(self._modeling_obj, duplicated_usage_journey_card))
 
         return duplicated_cards
 
@@ -242,11 +242,11 @@ class JobWeb(ModelingObjectWeb):
 class DuplicatedJobWeb(ModelingObjectWeb):
     def __init__(self, modeling_obj: ModelingObject, uj_step):
         super().__init__(modeling_obj, uj_step.model_web)
-        self.user_journey_step = uj_step
+        self.usage_journey_step = uj_step
 
     @property
     def web_id(self):
-        return f"{self.user_journey_step.web_id}_{self.efootprint_id}"
+        return f"{self.usage_journey_step.web_id}_{self.efootprint_id}"
 
     @property
     def links_to(self):
@@ -254,7 +254,7 @@ class DuplicatedJobWeb(ModelingObjectWeb):
 
     @property
     def accordion_parent(self):
-        return self.user_journey_step
+        return self.usage_journey_step
 
     @property
     def accordion_children(self):
@@ -265,28 +265,28 @@ class DuplicatedJobWeb(ModelingObjectWeb):
         return "object-to-object-inside-card"
 
 
-class UserJourneyStepWeb(ModelingObjectWeb):
+class UsageJourneyStepWeb(ModelingObjectWeb):
     @property
     def web_id(self):
-        raise PermissionError(f"UserJourneyStepWeb objects don’t have a web_id attribute because their html "
-                             f"representation should be managed by the DuplicatedUserJourneyStepWeb object")
+        raise PermissionError(f"UsageJourneyStepWeb objects don’t have a web_id attribute because their html "
+                             f"representation should be managed by the DuplicatedUsageJourneyStepWeb object")
 
     @property
     def duplicated_cards(self):
         duplicated_cards = []
-        for user_journey in self.user_journeys:
-            duplicated_cards.append(DuplicatedUserJourneyStepWeb(self._modeling_obj, user_journey))
+        for usage_journey in self.usage_journeys:
+            duplicated_cards.append(DuplicatedUsageJourneyStepWeb(self._modeling_obj, usage_journey))
 
         return duplicated_cards
 
-class DuplicatedUserJourneyStepWeb(UserJourneyStepWeb):
-    def __init__(self, modeling_obj: ModelingObject, user_journey):
-        super().__init__(modeling_obj, user_journey.model_web)
-        self.user_journey = user_journey
+class DuplicatedUsageJourneyStepWeb(UsageJourneyStepWeb):
+    def __init__(self, modeling_obj: ModelingObject, usage_journey):
+        super().__init__(modeling_obj, usage_journey.model_web)
+        self.usage_journey = usage_journey
 
     @property
     def web_id(self):
-        return f"{self.user_journey.web_id}_{self.efootprint_id}"
+        return f"{self.usage_journey.web_id}_{self.efootprint_id}"
 
     @property
     def links_to(self):
@@ -295,7 +295,7 @@ class DuplicatedUserJourneyStepWeb(UserJourneyStepWeb):
 
     @property
     def accordion_parent(self):
-        return self.user_journey
+        return self.usage_journey
 
     @property
     def accordion_children(self):
@@ -311,20 +311,20 @@ class DuplicatedUserJourneyStepWeb(UserJourneyStepWeb):
 
     @property
     def icon_links_to(self):
-        user_journey_steps = self.user_journey.uj_steps
-        index = user_journey_steps.index(self)
-        if index < len(user_journey_steps) - 1:
-            link_to = f"icon-{user_journey_steps[index+1].web_id}"
+        usage_journey_steps = self.usage_journey.uj_steps
+        index = usage_journey_steps.index(self)
+        if index < len(usage_journey_steps) - 1:
+            link_to = f"icon-{usage_journey_steps[index+1].web_id}"
         else:
-            link_to = f'add-usage-pattern-{self.user_journey.web_id}'
+            link_to = f'add-usage-pattern-{self.usage_journey.web_id}'
 
         return link_to
 
     @property
     def icon_leaderline_style(self):
-        user_journey_steps = self.user_journey.uj_steps
-        index = user_journey_steps.index(self)
-        if index < len(user_journey_steps) - 1:
+        usage_journey_steps = self.usage_journey.uj_steps
+        index = usage_journey_steps.index(self)
+        if index < len(usage_journey_steps) - 1:
             class_name = "vertical-step-swimlane"
         else:
             class_name = 'step-dot-line'
@@ -344,7 +344,7 @@ class DuplicatedUserJourneyStepWeb(UserJourneyStepWeb):
 
         return data_attribute_updates
 
-class UserJourneyWeb(ModelingObjectWeb):
+class UsageJourneyWeb(ModelingObjectWeb):
     @property
     def links_to(self):
         linked_server_ids = set()
@@ -366,7 +366,7 @@ class UserJourneyWeb(ModelingObjectWeb):
     def uj_steps(self):
         web_uj_steps = []
         for uj_step in self._modeling_obj.uj_steps:
-            web_uj_steps.append(DuplicatedUserJourneyStepWeb(uj_step, self))
+            web_uj_steps.append(DuplicatedUsageJourneyStepWeb(uj_step, self))
 
         return web_uj_steps
 
@@ -374,7 +374,7 @@ class UserJourneyWeb(ModelingObjectWeb):
 class UsagePatternWeb(ModelingObjectWeb):
     @property
     def links_to(self):
-        return self.user_journey.web_id
+        return self.usage_journey.web_id
 
     @property
     def accordion_parent(self):
@@ -388,11 +388,10 @@ class UsagePatternWeb(ModelingObjectWeb):
 
 wrapper_mapping = {
     # TODO: create a mapping for all classes
-    "Autoscaling": ServerWeb,
-    "OnPremise": ServerWeb,
-    "Serverless": ServerWeb,
-    "UserJourneyStep": UserJourneyStepWeb,
-    "UserJourney": UserJourneyWeb,
+    "Server": ServerWeb,
+    "GPUServer": ServerWeb,
+    "UsageJourneyStep": UsageJourneyStepWeb,
+    "UsageJourney": UsageJourneyWeb,
     "UsagePattern": UsagePatternWeb,
     "Job": JobWeb
 }

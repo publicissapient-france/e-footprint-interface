@@ -14,7 +14,7 @@
                 </div>
                 <div class="col-10">
                     <p class="h3">
-                        <b>Set user journey(s)</b>
+                        <b>Set usage journey(s)</b>
                     </p>
                     <p>List the actions your users will take when interacting with your product, so we can make your estimation as complete as possible.</p>
                     <p><b>Tell me more about this</b></p>
@@ -45,8 +45,8 @@
             {% include "./components/uj-input.html" with number='2' %}
             <div class="row align-items-center mb-3" id="btn-add-step">
                 <div class="col-auto offset-1">
-                   <button class="btn border-2 border-black rounded-5 px-4 py-2 mt-5 mb-5" 
-                            type="button" 
+                   <button class="btn border-2 border-black rounded-5 px-4 py-2 mt-5 mb-5"
+                            type="button"
                             id="add-step"
                             hx-post="user-journeys/add-step"
                             hx-target="#btn-add-step"

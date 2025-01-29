@@ -14,7 +14,7 @@
         "numerical_attributes": [],
         "hourly_quantities_attributes": [
             {
-                "attr_name": "hourly_user_journey_starts",
+                "attr_name": "hourly_usage_journey_starts",
                 "unit": "",
                 "long_unit": "dimensionless",
                 "default_value": [
@@ -33,8 +33,8 @@
         ],
         "modeling_obj_attributes": [
             {
-                "attr_name": "user_journey",
-                "object_type": "UserJourney"
+                "attr_name": "usage_journey",
+                "object_type": "UsageJourney"
             },
             {
                 "attr_name": "network",
@@ -52,24 +52,24 @@
             }
         ]
     },
-    "UserJourney": {
+    "UsageJourney": {
         "numerical_attributes": [],
         "hourly_quantities_attributes": [],
         "modeling_obj_attributes": [],
         "list_attributes": [
             {
                 "attr_name": "uj_steps",
-                "object_type": "UserJourneyStep"
+                "object_type": "UsageJourneyStep"
             }
         ]
     },
-    "UserJourneyStep": {
+    "UsageJourneyStep": {
         "numerical_attributes": [
             {
                 "attr_name": "user_time_spent",
                 "unit": "min",
                 "long_unit": "minute",
-                "default_value": 20.0
+                "default_value": 1
             }
         ],
         "hourly_quantities_attributes": [],
@@ -84,40 +84,34 @@
     "Job": {
         "numerical_attributes": [
             {
-                "attr_name": "data_upload",
+                "attr_name": "data_transferred",
                 "unit": "kB",
                 "long_unit": "kilobyte",
-                "default_value": 50.0
-            },
-            {
-                "attr_name": "data_download",
-                "unit": "GB",
-                "long_unit": "gigabyte",
-                "default_value": 0.83
+                "default_value": 150.0
             },
             {
                 "attr_name": "data_stored",
                 "unit": "kB",
                 "long_unit": "kilobyte",
-                "default_value": 50.0
+                "default_value": 100.0
             },
             {
                 "attr_name": "request_duration",
                 "unit": "s",
                 "long_unit": "second",
-                "default_value": 240
+                "default_value": 1
             },
             {
                 "attr_name": "ram_needed",
                 "unit": "MB",
                 "long_unit": "megabyte",
-                "default_value": 100.0
+                "default_value": 50.0
             },
             {
-                "attr_name": "cpu_needed",
-                "unit": "core",
-                "long_unit": "core",
-                "default_value": 1.0
+                "attr_name": "compute_needed",
+                "unit": "cpu_core",
+                "long_unit": "cpu core",
+                "default_value": 0.1
             }
         ],
         "hourly_quantities_attributes": [],
