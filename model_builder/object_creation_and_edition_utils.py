@@ -13,15 +13,19 @@ from model_builder.class_structure import modeling_object_classes_dict
 
 def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_type: str):
     new_efootprint_obj_class = modeling_object_classes_dict[object_type]
-    new_efootprint_obj = new_efootprint_obj_class.__new__(new_efootprint_obj_class)
 
     obj_creation_kwargs = {}
     obj_structure = model_web.get_object_structure(object_type)
     obj_creation_kwargs["name"] = request.POST["form_add_name"]
 
     for attr_dict in obj_structure.numerical_attributes:
-        obj_creation_kwargs[attr_dict["attr_name"]] = SourceValue(
-            float(request.POST.getlist(f'form_add_{attr_dict["attr_name"]}')[0]) * u(attr_dict["unit"]))
+        attr_value_in_list = request.POST.getlist(f'form_add_{attr_dict["attr_name"]}')
+        if not attr_value_in_list:
+            logger.info(f"No value for {attr_dict['attr_name']} in {object_type} form. "
+                        f"Default value {new_efootprint_obj_class.default_value(attr_dict['attr_name'])} will be used.")
+        else:
+            obj_creation_kwargs[attr_dict["attr_name"]] = SourceValue(
+                float(attr_value_in_list[0]) * u(attr_dict["unit"]))
 
     for attr_dict in obj_structure.hourly_quantities_attributes:
         obj_creation_kwargs[attr_dict["attr_name"]] = SourceHourlyValues(
@@ -36,8 +40,12 @@ def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_ty
             #float(request.POST.getlist(f'form_add_{attr_dict["attr_name"]}')[0]) * u(attr_dict["unit"])
         )
 
-    for str_attr in obj_structure.str_attributes.keys():
-        obj_creation_kwargs[str_attr] = SourceObject(request.POST[f'form_add_{str_attr}'], source=Sources.USER_DATA)
+    for str_attr in list(obj_structure.str_attributes.keys()) + list(obj_structure.conditional_str_attributes.keys()):
+        if f'form_add_{str_attr}' not in request.POST.keys():
+            logger.info(f"No value for {str_attr} in {object_type} form. "
+                        f"Default value {new_efootprint_obj_class.default_value(str_attr)} will be used.")
+        else:
+            obj_creation_kwargs[str_attr] = SourceObject(request.POST[f'form_add_{str_attr}'], source=Sources.USER_DATA)
 
     for mod_obj in obj_structure.modeling_obj_attributes:
         new_mod_obj_id = request.POST[f'form_add_{mod_obj["attr_name"]}']
@@ -50,7 +58,7 @@ def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_ty
             model_web.flat_efootprint_objs_dict[obj_id]
             for obj_id in request.POST.getlist(f'form_add_{mod_obj["attr_name"]}')]
 
-    new_efootprint_obj.__init__(**obj_creation_kwargs)
+    new_efootprint_obj = new_efootprint_obj_class.from_defaults(**obj_creation_kwargs)
 
     return new_efootprint_obj
 

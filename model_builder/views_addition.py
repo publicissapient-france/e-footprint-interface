@@ -2,8 +2,8 @@ import json
 import os
 import uuid
 
-import requests
 from efootprint.core.all_classes_in_order import SERVER_CLASSES
+from efootprint.core.hardware.storage import Storage
 
 from e_footprint_interface import settings
 from django.shortcuts import render
@@ -37,12 +37,7 @@ def open_create_object_panel(request, object_type):
 
 
 def open_create_server_panel(request):
-    structure_dict = generate_object_creation_structure(SERVER_CLASSES, "Server type")
-    structure_dict["dynamic_lists"] = [elt for elt in structure_dict["dynamic_lists"]
-                                       if elt["input"] != "fixed_nb_of_instances"]
-    for item in structure_dict["items"]:
-        new_field_list = [elt for elt in item["fields"] if elt["id"] != "fixed_nb_of_instances"]
-        item["fields"] = new_field_list
+    structure_dict = generate_object_creation_structure(SERVER_CLASSES, "Server type", ["fixed_nb_of_instances"])
 
     http_response = render(request, f"model_builder/side_panels/server_add.html",
                   context={'structure_dict': structure_dict})
@@ -51,7 +46,10 @@ def open_create_server_panel(request):
 
     return http_response
 
-def generate_object_creation_structure(available_efootprint_classes: list, header: str):
+def generate_object_creation_structure(available_efootprint_classes: list, header: str, attributes_to_skip = None):
+    if attributes_to_skip is None:
+        attributes_to_skip = []
+
     efootprint_classes_dict = {"str_attributes": ["name"], "switch_item": "type_object_available"}
     type_efootprint_classes_available = {
         "category": "efootprint_classes_available",
@@ -75,6 +73,8 @@ def generate_object_creation_structure(available_efootprint_classes: list, heade
         class_fields = []
         class_structure = efootprint_class_structure(efootprint_class.__name__)
         for str_attribute, str_attribute_values in class_structure["str_attributes"].items():
+            if str_attribute in attributes_to_skip:
+                continue
             class_fields.append({
                 "input_type": "select",
                 "id": str_attribute,
@@ -82,17 +82,10 @@ def generate_object_creation_structure(available_efootprint_classes: list, heade
                 "required": True,
                 "options": [{"label": str(attr_value), "value": str(attr_value)} for attr_value in str_attribute_values]
             })
-        for numerical_attribute in class_structure["numerical_attributes"]:
-            class_fields.append({
-                "input_type": "input",
-                "id": numerical_attribute["attr_name"],
-                "name": numerical_attribute["attr_name"],
-                "unit": numerical_attribute["unit"],
-                "required": True,
-                "default": numerical_attribute["default_value"]
-            })
         for conditional_str_attribute, conditional_str_attribute_value \
             in class_structure["conditional_str_attributes"].items():
+            if conditional_str_attribute in attributes_to_skip:
+                continue
             class_fields.append({
                 "input_type": "datalist",
                 "id": conditional_str_attribute,
@@ -103,8 +96,24 @@ def generate_object_creation_structure(available_efootprint_classes: list, heade
                 {
                     "input": conditional_str_attribute,
                     "filter_by": conditional_str_attribute_value["depends_on"],
-                    "list_value": conditional_str_attribute_value["conditional_list_values"]
+                    "list_value": {
+                        str(conditional_value): [str(possible_value) for possible_value in possible_values]
+                        for conditional_value, possible_values
+                        in conditional_str_attribute_value["conditional_list_values"].items()
+                    }
                 })
+        for numerical_attribute in class_structure["numerical_attributes"]:
+            if numerical_attribute["attr_name"] in attributes_to_skip:
+                continue
+            class_fields.append({
+                "input_type": "input",
+                "id": numerical_attribute["attr_name"],
+                "name": numerical_attribute["attr_name"],
+                "unit": numerical_attribute["unit"],
+                "required": True,
+                "default": numerical_attribute["default_value"]
+            })
+
         service_class = "d-none"
         if index == 0:
             service_class = ""
@@ -127,7 +136,8 @@ def open_create_service_panel(request, server_efootprint_id):
     assert server_class is not None, f"Server with efootprint_id {server_efootprint_id} not found in system data"
 
     installable_services = server_class.installable_services()
-    services_dict = generate_object_creation_structure(installable_services, "Services available for this server")
+    services_dict = generate_object_creation_structure(
+        installable_services, "Services available for this server", ["gpu_latency_alpha", "gpu_latency_beta"])
 
     http_response = render(
         request, "model_builder/side_panels/service_add.html", {
@@ -291,6 +301,13 @@ def add_new_usage_journey_step(request, usage_journey_efootprint_id):
 def add_new_server(request):
     model_web = ModelWeb(request.session)
     server_type = request.POST.get('form_add_type_object_available')
+
+    default_ssd = Storage.ssd(f"{request.POST['form_add_name']} default ssd")
+    add_new_efootprint_object_to_system(request, model_web, default_ssd)
+    mutable_post = request.POST.copy()
+    mutable_post['form_add_storage'] = default_ssd.id
+    request.POST = mutable_post
+
     new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, server_type)
     added_obj = add_new_efootprint_object_to_system(request, model_web, new_efootprint_obj)
     response = render(
