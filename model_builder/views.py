@@ -21,8 +21,22 @@ def model_builder_main(request, reboot=False):
             request.session["system_data"] = system_data
 
     model_web = ModelWeb(request.session, launch_system_computations=False)
+    emissions = {}
+    for energy_row in model_web.system.total_energy_footprints:
+        emissions[f"{energy_row}_energy"] = model_web.system.total_energy_footprints[energy_row].to_json()
+    for fabrication_row in model_web.system.total_fabrication_footprints:
+        emissions[f"{fabrication_row}_fabrication"] =model_web.system.total_energy_footprints[fabrication_row].to_json()
+
+    context = {
+        "model_web": model_web,
+        'energyEmissions': model_web.system.total_energy_footprints,
+        'fabricationEmissions': model_web.system.total_fabrication_footprints,
+        'emissions': emissions
+    }
+
+
     http_response = htmx_render(
-        request, "model_builder/model-builder-main.html", context={"model_web": model_web})
+        request, "model_builder/model-builder-main.html", context=context)
 
     if request.headers.get("HX-Request") == "true":
         http_response["HX-Trigger-After-Swap"] = "initLeaderLines"

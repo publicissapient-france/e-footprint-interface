@@ -182,41 +182,7 @@
                                     </h2>
                                     <div id="collapse-time-series-chart" class="accordion-collapse collapse show">
                                         <div class="accordion-body">
-                                            <div class="row mb-3">
-                                                <div class="col-auto">
-                                                    <label for="form_add_timeseries_period_analysis" class="form-label w-100 text-start fz-0-8">Split by</label>
-                                                    <select class="form-select light-select fz-0-8 h-30"
-                                                            id="form_add_timeseries_period_analysis"
-                                                            name="form_add_timeseries_period_analysis"
-                                                        onchange="updateTimeseriesChart()">
-                                                    >
-                                                        <option value="day">Day</option>
-                                                        <option value="week">Week</option>
-                                                        <option value="month" selected>Month</option>
-                                                        <option value="year">Year</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <label for="form_add_timeseries_kpi_analysis" class="form-label w-100 text-start fz-0-8">Calculation</label>
-                                                    <select class="form-select light-select fz-0-8 h-30"
-                                                            id="form_add_timeseries_kpi_analysis"
-                                                            name="form_add_timeseries_kpi_analysis"
-                                                        onchange="updateTimeseriesChart()">
-                                                    >
-                                                        <option value="avg" selected>Average</option>
-                                                        <option value="sum">Sum</option>
-                                                        <option value="cumsum">Cumulative sum</option>
-
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <button class="btn btn-white border border-1 border-body-tertiary rounded-pill fz-0-8"
-                                                            id="reset_zoom"
-                                                        onclick="charts['timeSeriesChart'].resetZoom();">
-                                                        Reset zoom
-                                                    </button>
-                                                </div>
-                                            </div>
+                                            let dataNameKPI = ['Servers_energy', 'Devices_energy', 'Network_energy', 'Servers_fabrication', 'Devices_fabrication'];
                                             <div style="width: 100%;">
                                                 <canvas id="timeSeriesChart"></canvas>
                                             </div>
