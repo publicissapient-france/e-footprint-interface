@@ -2,7 +2,7 @@ import re
 
 from django.contrib.sessions.backends.base import SessionBase
 from efootprint.api_utils.json_to_system import json_to_system
-from efootprint.core.all_classes_in_order import SERVER_CLASSES
+from efootprint.core.all_classes_in_order import SERVER_CLASSES, SERVICE_CLASSES
 
 from model_builder.class_structure import efootprint_class_structure
 from model_builder.modeling_objects_web import wrap_efootprint_object
@@ -56,6 +56,11 @@ class ModelWeb:
             servers += self.get_web_objects_from_efootprint_type(server_type)
 
         return servers
+
+    @property
+    def services(self):
+        return sum(
+            [self.get_web_objects_from_efootprint_type(service.__name__) for service in SERVICE_CLASSES], start=[])
 
     @property
     def cpu_servers(self):

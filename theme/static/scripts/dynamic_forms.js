@@ -28,52 +28,77 @@ document.addEventListener("initAddPanel", function () {
   }
 
   /**
-   * 2) DYNAMIC LISTS LOGIC
+   * Reusable function that populates a target element (either <datalist> or <select>)
+   * depending on 'type' ('datalist' vs 'select').
+   * - listValue: an object keyed by filterKey, yielding an array of items
+   * - filterId: the ID of the filter element (e.g. "form_add_type_object_available")
+   * - targetId: the ID of the datalist/select to be populated
+   * - type: either 'datalist' or 'select'
    */
+  function fillData(type, listValue, filterId, targetId) {
+    const filterElem = document.getElementById(filterId);
+    const targetElem = document.getElementById(targetId);
 
-  // Define the reusable function *once*, outside the loop
-  // This function populates the datalist based on the provided arguments
-  function fillDataList(listValue, filterId, listId) {
-    const filterElement = document.getElementById(filterId);
-    const dataList = document.getElementById(listId);
+    if (!filterElem || !targetElem) return;
 
-    // Safety check if the elements exist
-    if (!filterElement || !dataList) return;
+    const filterKey = filterElem.value;
 
-    // Which key do we filter by?
-    const filterKey = filterElement.value;
+    targetElem.innerHTML = "";
 
-    // Clear old options
-    dataList.innerHTML = '';
+    const items = listValue[filterKey] || []; // fallback to empty array
 
-    // Create & append new options
-    // If you'd like a default "select a configuration", you can add an <option> here
-    if (listValue[filterKey]) {
-      listValue[filterKey].forEach(function(item) {
-        const option = document.createElement('option');
+    if (type === "datalist") {
+      // items are simple strings
+      items.forEach((item) => {
+        const option = document.createElement("option");
         option.value = item;
-        dataList.appendChild(option);
+        targetElem.appendChild(option);
       });
+    } else if (type === "select") {
+      // items are objects with {label, value}
+      items.forEach(({ label, value }) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = label;
+        targetElem.appendChild(option);
+      });
+
+      targetElem.dispatchEvent(new Event("change", { bubbles: true }));
     }
   }
 
-  // If dynamic_lists is present, iterate through them
+  /**
+   * 2) Handle DYNAMIC LISTS (for <datalist>)
+   */
   if (structureDict.dynamic_lists) {
-    structureDict.dynamic_lists.forEach(dynamicList => {
-      // Build the relevant IDs
+    structureDict.dynamic_lists.forEach((dynamicList) => {
       const filterId = "form_add_" + dynamicList.filter_by;
-      const listId   = "list_" + dynamicList.input;
+      const listId = "list_" + dynamicList.input;
 
-      // 1) Fill once on page load
-      fillDataList(dynamicList.list_value, filterId, listId);
+      // Fill once initially
+      fillData("datalist", dynamicList.list_value, filterId, listId);
 
-      // 2) Re-fill on change
-      const filterElement = document.getElementById(filterId);
-      if (filterElement) {
-        filterElement.addEventListener("change", function() {
-          fillDataList(dynamicList.list_value, filterId, listId);
-        });
-      }
+      document.getElementById(filterId)?.addEventListener("change", function () {
+        fillData("datalist", dynamicList.list_value, filterId, listId);
+      });
+    });
+  }
+
+  /**
+   * 3) Handle DYNAMIC SELECTS (for <select>)
+   */
+  if (structureDict.dynamic_selects) {
+    structureDict.dynamic_selects.forEach((dynamicSelect) => {
+      const filterId = "form_add_" + dynamicSelect.filter_by;
+      const selectId = "form_add_" + dynamicSelect.input;
+
+      // Fill once initially
+      fillData("select", dynamicSelect.list_value, filterId, selectId);
+
+      // Re-fill on change
+      document.getElementById(filterId)?.addEventListener("change", function () {
+        fillData("select", dynamicSelect.list_value, filterId, selectId);
+      });
     });
   }
 });

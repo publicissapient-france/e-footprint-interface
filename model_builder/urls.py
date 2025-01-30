@@ -30,5 +30,4 @@ urlpatterns = [
     path("edit-object/<object_id>/", model_builder.views_edition.edit_object, name="edit-object"),
     path("delete-object", model_builder.views_deletion.delete_object, name="delete-object"),
     path("download-json", views.download_json, name="download-json"),
-    path("get-jobs-type-link-to-service-type/<service_id>/", views.get_jobs_type_link_to_service_type, name="get-service-type")
 ]

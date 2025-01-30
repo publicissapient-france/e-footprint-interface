@@ -1,23 +1,17 @@
 import json
-import os
 import uuid
 
-from efootprint.core.all_classes_in_order import SERVER_CLASSES
+from efootprint.core.all_classes_in_order import SERVER_CLASSES, SERVICE_CLASSES
 from efootprint.core.hardware.storage import Storage
-
-from e_footprint_interface import settings
 from django.shortcuts import render
+from efootprint.core.usage.job import Job
 
-from model_builder.class_structure import efootprint_class_structure
+from model_builder.class_structure import generate_object_creation_structure
 from model_builder.model_web import ModelWeb
 from model_builder.object_creation_and_edition_utils import create_efootprint_obj_from_post_data, \
     add_new_efootprint_object_to_system, create_new_usage_pattern_from_post_data
 from model_builder.views_edition import edit_object
 
-def get_form_structure(form_type):
-    with open(os.path.join(settings.BASE_DIR, 'theme', 'static', 'form_inputs.json'), "r") as form_inputs_file:
-        form_inputs = json.load(form_inputs_file)
-    return form_inputs[form_type]
 
 def open_create_object_panel(request, object_type):
     model_web = ModelWeb(request.session)
@@ -46,85 +40,6 @@ def open_create_server_panel(request):
 
     return http_response
 
-def generate_object_creation_structure(available_efootprint_classes: list, header: str, attributes_to_skip = None):
-    if attributes_to_skip is None:
-        attributes_to_skip = []
-
-    efootprint_classes_dict = {"str_attributes": ["name"], "switch_item": "type_object_available"}
-    type_efootprint_classes_available = {
-        "category": "efootprint_classes_available",
-        "header": header,
-        "class": "",
-        "fields": [{
-            "input_type": "select",
-            "id": "type_object_available",
-            "name": "type_object_available",
-            "required": True,
-            "options": [{"label": service.__name__, "value": service.__name__}
-                        for service in available_efootprint_classes]
-        }
-        ]
-    }
-
-    efootprint_classes_dict["items"] = [type_efootprint_classes_available]
-    efootprint_classes_dict["dynamic_lists"] = []
-
-    for index, efootprint_class in enumerate(available_efootprint_classes):
-        class_fields = []
-        class_structure = efootprint_class_structure(efootprint_class.__name__)
-        for str_attribute, str_attribute_values in class_structure["str_attributes"].items():
-            if str_attribute in attributes_to_skip:
-                continue
-            class_fields.append({
-                "input_type": "select",
-                "id": str_attribute,
-                "name": str_attribute,
-                "required": True,
-                "options": [{"label": str(attr_value), "value": str(attr_value)} for attr_value in str_attribute_values]
-            })
-        for conditional_str_attribute, conditional_str_attribute_value \
-            in class_structure["conditional_str_attributes"].items():
-            if conditional_str_attribute in attributes_to_skip:
-                continue
-            class_fields.append({
-                "input_type": "datalist",
-                "id": conditional_str_attribute,
-                "name": conditional_str_attribute,
-                "options": None
-            })
-            efootprint_classes_dict["dynamic_lists"].append(
-                {
-                    "input": conditional_str_attribute,
-                    "filter_by": conditional_str_attribute_value["depends_on"],
-                    "list_value": {
-                        str(conditional_value): [str(possible_value) for possible_value in possible_values]
-                        for conditional_value, possible_values
-                        in conditional_str_attribute_value["conditional_list_values"].items()
-                    }
-                })
-        for numerical_attribute in class_structure["numerical_attributes"]:
-            if numerical_attribute["attr_name"] in attributes_to_skip:
-                continue
-            class_fields.append({
-                "input_type": "input",
-                "id": numerical_attribute["attr_name"],
-                "name": numerical_attribute["attr_name"],
-                "unit": numerical_attribute["unit"],
-                "required": True,
-                "default": numerical_attribute["default_value"]
-            })
-
-        service_class = "d-none"
-        if index == 0:
-            service_class = ""
-        efootprint_classes_dict["items"].append({
-            "category": efootprint_class.__name__,
-            "header": f"{efootprint_class.__name__} creation",
-            "class": service_class,
-            "fields": class_fields})
-
-    return efootprint_classes_dict
-
 
 def open_create_service_panel(request, server_efootprint_id):
     server_class = None
@@ -150,74 +65,66 @@ def open_create_service_panel(request, server_efootprint_id):
     return http_response
 
 def open_create_job_panel(request):
-    structure_dict = get_form_structure('Job')
     model_web = ModelWeb(request.session)
-
-    if request.GET.get('efootprint_id_of_parent_to_link_to'):
-        efootprint_id_of_parent_to_link_to= request.GET['efootprint_id_of_parent_to_link_to']
-    job_types_data = {
-        'web_app': [
-            {
-                'label': 'Upload',
-                'value': 'upload',
-                'predefined_value': [
-                    {'name': 'data_upload', 'value': '800'},
-                    {'name': 'data_download', 'value': '0.01'},
-                    {'name': 'data_stored', 'value': '100'},
-                    {'name': 'request_duration', 'value': '5'},
-                    {'name': 'ram_needed', 'value': '100'},
-                    {'name': 'cpu_needed', 'value': '1'}
-                ]
-            },
-            {
-                'label': 'Download',
-                'value': 'download',
-                'predefined_value': [
-                    {'name': 'data_upload', 'value': '5'},
-                    {'name': 'data_download', 'value': '1'},
-                    {'name': 'data_stored', 'value': '1'},
-                    {'name': 'request_duration', 'value': '10'},
-                    {'name': 'ram_needed', 'value': '200'},
-                    {'name': 'cpu_needed', 'value': '2'}
-
-                ]
-            },
-            {'label': 'Login', 'value': 'login'}
-        ],
-        'gen_ai': [
-            {'label': 'Chat', 'value': 'chat'},
-            {'label': 'Image generation', 'value': 'image_generation'}
-        ],
-        'streaming': [
-            {'label': 'Video', 'value': 'video'},
-            {'label': 'Audio', 'value': 'audio'}
-        ]
-    }
-
     servers = model_web.servers
-    server_options = [{'label': server.name, 'value': server.efootprint_id} for server in servers]
-    structure_dict['items'][0]['fields'][0]['options'] = server_options
 
-    installed_services = request.session.get("interface_objects", {}).get("installed_services", [])
-    services_options = []
-    list_services = {}
-    for server in installed_services:
-        server_services = []
-        for service in server["services"]:
-            server_services.append({'label': service["name"], 'value': service["id"]})
-            services_options.append({'label': service["name"], 'value': service["id"]})
-        list_services[server["server_id"]] = server_services
-    structure_dict['items'][0]['fields'][1]['options'] = services_options
-    structure_dict['dynamic_lists'][0]['list_value'] = list_services
+    available_job_classes = {Job}
+    for service in SERVICE_CLASSES:
+        if service.__name__ in request.session["system_data"].keys():
+            available_job_classes.update(service.compatible_jobs())
 
-    init_service_type = installed_services[0]["services"][0]["service_type"]
+    structure_dict = generate_object_creation_structure(list(available_job_classes), "Job type")
+    additional_item = {
+                "category": "job_creation_helper",
+                "header": "Job creation helper",
+                "class": "",
+                "fields": [
+                    {
+                        "input_type": "select",
+                        "id": "server",
+                        "name": "Server",
+                        "required": True,
+                        "options": [
+                            {'label': server.name, 'value': server.efootprint_id} for server in servers]
+                    },
+                    {
+                        "input_type": "select",
+                        "id": "service",
+                        "name": "Service used",
+                        "required": True,
+                        "options": None
+                    },
+                ]
+            }
+    structure_dict["items"] = [additional_item] + structure_dict["items"]
 
-    structure_dict['items'][0]['fields'][2]['options'] = job_types_data[init_service_type]
+    possible_job_types_per_service = {"direct_server_call": [{"label": "Manually defined job", "value": "Job"}]}
+    possible_job_types_per_service.update({
+        service.efootprint_id: [
+            {"label": job.__name__, "value": job.__name__} for job in service.compatible_jobs()]
+        for service in model_web.services}
+    )
+    structure_dict["dynamic_selects"] = [
+        {
+            "input": "service",
+            "filter_by": "server",
+            "list_value": {
+                server.efootprint_id:
+                    [{"label": "direct call to server", "value": "direct_server_call"}]
+                    + [{"label": service.name, "value": service.efootprint_id}
+                       for service in server.installed_services] for server in servers
+            }
+        },
+        {
+            "input": "type_object_available",
+            "filter_by": "service",
+            "list_value": possible_job_types_per_service
+        }]
 
     http_response = render(
         request, "model_builder/side_panels/job_add.html", {
             "structure_dict": structure_dict,
-            "efootprint_id_of_parent_to_link_to": efootprint_id_of_parent_to_link_to
+            "efootprint_id_of_parent_to_link_to": request.GET.get('efootprint_id_of_parent_to_link_to')
         })
     http_response["HX-Trigger-After-Swap"] = "initAddPanel"
 
