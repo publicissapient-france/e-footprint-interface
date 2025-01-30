@@ -37,53 +37,30 @@ def open_create_object_panel(request, object_type):
 
 
 def open_create_server_panel(request):
-    boavizta_cloud_providers_request_result = json.loads(
-        requests.get(
-            "https://api.boavizta.org/v1/cloud/instance/all_providers", headers={'accept': 'application/json'}
-        ).content.decode('utf-8')
-    )
-    all_boavizta_cloud_providers = []
-    for provider in boavizta_cloud_providers_request_result:
-        all_boavizta_cloud_providers.append({'label': provider, 'value': provider})
-    instance_types_by_provider = {}
-    for cloud_provider in boavizta_cloud_providers_request_result:
-        instance_types_by_provider[cloud_provider] = json.loads(
-            requests.get(
-                f"https://api.boavizta.org/v1/cloud/instance/all_instances",
-                headers={'accept': 'application/json'}, params = {"provider": cloud_provider}
-            ).content.decode('utf-8')
-        )
-
-    structure_dict = get_form_structure('Server')
-    for item in structure_dict['items']:
-        for field in item['fields']:
-            if field['id'].endswith('_provider'):
-                field['options'] = all_boavizta_cloud_providers
-            if field['id'].endswith('_configuration'):
-                field['options'] = all_boavizta_cloud_providers
-    for item in structure_dict['dynamic_lists']:
-        if item['filter_by'].endswith('_provider'):
-            item['list_value'] = instance_types_by_provider
+    structure_dict = generate_object_creation_structure(SERVER_CLASSES, "Server type")
+    structure_dict["dynamic_lists"] = [elt for elt in structure_dict["dynamic_lists"]
+                                       if elt["input"] != "fixed_nb_of_instances"]
+    for item in structure_dict["items"]:
+        new_field_list = [elt for elt in item["fields"] if elt["id"] != "fixed_nb_of_instances"]
+        item["fields"] = new_field_list
 
     http_response = render(request, f"model_builder/side_panels/server_add.html",
-                  context={
-                      'structure_dict': structure_dict
-                  })
+                  context={'structure_dict': structure_dict})
 
     http_response["HX-Trigger-After-Swap"] = "initAddPanel"
 
     return http_response
 
 def generate_object_creation_structure(available_efootprint_classes: list, header: str):
-    efootprint_classes_dict = {"str_attributes": ["name"], "switch_item": "type_service_available"}
+    efootprint_classes_dict = {"str_attributes": ["name"], "switch_item": "type_object_available"}
     type_efootprint_classes_available = {
         "category": "efootprint_classes_available",
         "header": header,
         "class": "",
         "fields": [{
             "input_type": "select",
-            "id": "type_service_available",
-            "name": "Service",
+            "id": "type_object_available",
+            "name": "type_object_available",
             "required": True,
             "options": [{"label": service.__name__, "value": service.__name__}
                         for service in available_efootprint_classes]
@@ -331,18 +308,18 @@ def add_new_service(request, server_efootprint_id):
         "id": service_id,
         "name": request.POST["form_add_name"],
         "server": server.efootprint_id,
-        "service_type" : request.POST["form_add_type_service_available"],
+        "service_type" : request.POST["form_add_type_object_available"],
         "cpu_required": request.POST["form_add_base_cpu_consumption"],
         "ram_required": request.POST["form_add_base_ram_consumption"],
         "storage_required": request.POST["form_add_base_cpu_consumption"]
     }
-    if request.POST.get("form_add_type_service_available") == 'gen_ai':
+    if request.POST.get("form_add_type_object_available") == 'gen_ai':
         added_obj['gen_ai_provider'] = request.POST["form_add_gen_ai_provider"]
         added_obj['gen_ai_model'] = request.POST["form_add_gen_ai_model"]
-    elif request.POST.get("form_add_type_service_available") == 'web_app':
+    elif request.POST.get("form_add_type_object_available") == 'web_app':
         added_obj['technology'] = request.POST["form_add_technology"]
         added_obj['implementation_details'] = request.POST["form_add_implementation_details"]
-    elif request.POST.get("form_add_type_service_available") == 'streaming':
+    elif request.POST.get("form_add_type_object_available") == 'streaming':
         added_obj['video_resolution'] = request.POST["form_add_video_resolution"]
     else:
         raise ValueError("Service type not recognized")
