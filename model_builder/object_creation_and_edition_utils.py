@@ -2,7 +2,7 @@ from datetime import datetime
 
 from efootprint.builders.time_builders import create_hourly_usage_df_from_list
 from efootprint.core.usage.usage_pattern import UsagePattern
-from efootprint.abstract_modeling_classes.source_objects import SourceValue, Sources, SourceHourlyValues
+from efootprint.abstract_modeling_classes.source_objects import SourceValue, Sources, SourceHourlyValues, SourceObject
 from efootprint.constants.units import u
 from efootprint.logger import logger
 
@@ -35,6 +35,9 @@ def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_ty
             )
             #float(request.POST.getlist(f'form_add_{attr_dict["attr_name"]}')[0]) * u(attr_dict["unit"])
         )
+
+    for str_attr in obj_structure.str_attributes.keys():
+        obj_creation_kwargs[str_attr] = SourceObject(request.POST[f'form_add_{str_attr}'], source=Sources.USER_DATA)
 
     for mod_obj in obj_structure.modeling_obj_attributes:
         new_mod_obj_id = request.POST[f'form_add_{mod_obj["attr_name"]}']

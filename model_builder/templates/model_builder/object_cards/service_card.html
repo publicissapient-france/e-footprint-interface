@@ -1,10 +1,3 @@
-{% for service in interface_objects.installed_services %}
-    {% if service.server_id == server.efootprint_id %}
-        <p>Services</p>
-        {% for service_link in service.services %}
-            <button class="btn btn-white text-start p-2 fz-0-8">
-                {{ service_link.name }}
-            </button>
-        {% endfor %}
-    {% endif %}
-{% endfor %}
+<button class="btn btn-white text-start p-2 fz-0-8">
+    {{ service.name }}
+</button>

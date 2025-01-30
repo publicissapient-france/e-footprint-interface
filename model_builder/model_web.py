@@ -2,6 +2,7 @@ import re
 
 from django.contrib.sessions.backends.base import SessionBase
 from efootprint.api_utils.json_to_system import json_to_system
+from efootprint.core.all_classes_in_order import SERVER_CLASSES
 
 from model_builder.class_structure import efootprint_class_structure
 from model_builder.modeling_objects_web import wrap_efootprint_object
@@ -51,7 +52,7 @@ class ModelWeb:
     def servers(self):
         servers = []
 
-        for server_type in ["Server", "GPUServer"]:
+        for server_type in [server_class.__name__ for server_class in SERVER_CLASSES]:
             servers += self.get_web_objects_from_efootprint_type(server_type)
 
         return servers
@@ -115,6 +116,14 @@ class ObjectStructure:
     @property
     def hourly_quantities_attributes(self):
         return self.structure_dict.get("hourly_quantities_attributes", [])
+
+    @property
+    def str_attributes(self):
+        return self.structure_dict.get("str_attributes", {})
+
+    @property
+    def conditional_str_attributes(self):
+        return self.structure_dict.get("conditional_str_attributes", {})
 
     @property
     def modeling_obj_attributes(self):

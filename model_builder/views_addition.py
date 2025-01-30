@@ -184,9 +184,7 @@ def open_create_job_panel(request):
         ]
     }
 
-    servers = model_web.get_web_objects_from_efootprint_type("Autoscaling") + \
-              model_web.get_web_objects_from_efootprint_type("Serverless") + \
-              model_web.get_web_objects_from_efootprint_type("OnPremise")
+    servers = model_web.servers
     server_options = [{'label': server.name, 'value': server.efootprint_id} for server in servers]
     structure_dict['items'][0]['fields'][0]['options'] = server_options
 
@@ -292,54 +290,26 @@ def add_new_usage_journey_step(request, usage_journey_efootprint_id):
 
 def add_new_server(request):
     model_web = ModelWeb(request.session)
-    server_type = request.POST.get('form_add_server_type')
-    server_added = add_new_efootprint_object_to_system(request, model_web, server_type)
+    server_type = request.POST.get('form_add_type_object_available')
+    new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, server_type)
+    added_obj = add_new_efootprint_object_to_system(request, model_web, new_efootprint_obj)
     response = render(
-        request, "model_builder/object_cards/server_card.html", {"server": server_added})
+        request, "model_builder/object_cards/server_card.html", {"server": added_obj})
 
     return response
 
 
 def add_new_service(request, server_efootprint_id):
     model_web = ModelWeb(request.session)
-    server = model_web.get_web_object_from_efootprint_id(server_efootprint_id)
-    service_id = str(uuid.uuid4())[:6]
-    added_obj = {
-        "id": service_id,
-        "name": request.POST["form_add_name"],
-        "server": server.efootprint_id,
-        "service_type" : request.POST["form_add_type_object_available"],
-        "cpu_required": request.POST["form_add_base_cpu_consumption"],
-        "ram_required": request.POST["form_add_base_ram_consumption"],
-        "storage_required": request.POST["form_add_base_cpu_consumption"]
-    }
-    if request.POST.get("form_add_type_object_available") == 'gen_ai':
-        added_obj['gen_ai_provider'] = request.POST["form_add_gen_ai_provider"]
-        added_obj['gen_ai_model'] = request.POST["form_add_gen_ai_model"]
-    elif request.POST.get("form_add_type_object_available") == 'web_app':
-        added_obj['technology'] = request.POST["form_add_technology"]
-        added_obj['implementation_details'] = request.POST["form_add_implementation_details"]
-    elif request.POST.get("form_add_type_object_available") == 'streaming':
-        added_obj['video_resolution'] = request.POST["form_add_video_resolution"]
-    else:
-        raise ValueError("Service type not recognized")
-
-    if "interface_objects" not in request.session or "installed_services" not in request.session["interface_objects"]:
-        request.session["interface_objects"] = {
-            "installed_services": [{"server_id": server_efootprint_id,"services": [added_obj]}]}
-    else:
-        services_list = request.session["interface_objects"]["installed_services"]
-        for server_services in services_list:
-            if server_services["server_id"] == server_efootprint_id:
-                server_services["services"].append(added_obj)
-                break
-        else:
-            services_list.append({"server_id": server_efootprint_id,"services": [added_obj]})
-
-    request.session.modified = True
+    mutable_post = request.POST.copy()
+    mutable_post['form_add_server'] = server_efootprint_id
+    request.POST = mutable_post
+    new_efootprint_obj = create_efootprint_obj_from_post_data(
+        request, model_web, request.POST.get('form_add_type_object_available'))
+    added_obj = add_new_efootprint_object_to_system(request, model_web, new_efootprint_obj)
 
     response = render(request, "model_builder/object_cards/service_card.html",
-                      context={"server": server, 'interface_objects': request.session["interface_objects"]})
+                      context={"service": added_obj})
 
     return response
 

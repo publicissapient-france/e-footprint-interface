@@ -33,7 +33,7 @@
                 <div id="flush-{{ usage_journey_step.web_id }}" class="accordion-collapse collapse" data-bs-parent="#{{ usage_journey_step.web_id }}">
                     <div class="accordion-body p-0 row m-0 text-start">
                         {% for job in usage_journey_step.jobs %}
-                            {% include 'model_builder/object_cards/job_card.html' with job=job hx_swap_oob=false %}
+                            {% include 'model_builder/object_cards/job_card.html' with job=job %}
                         {% endfor %}
                         <div class="col-12 p-2">
                             <button class="btn btn-white dotted-border text-start p-2 fz-0-8"

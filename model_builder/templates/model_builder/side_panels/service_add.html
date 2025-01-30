@@ -2,7 +2,7 @@
 <form class="container-fluid form_edit_panel text-start"
         hx-post="/model_builder/add-new-service/{{ server_id }}"
         hx-target="#{{ server_id }}-services"
-        hx-swap="innerHTML"
+        hx-swap="beforeend"
         script="on htmx:afterRequest closePanel()"
 >
     <div class="text-end">
