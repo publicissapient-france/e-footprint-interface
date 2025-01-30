@@ -80,7 +80,7 @@ def generate_object_creation_structure(available_efootprint_classes: list, heade
                 "id": str_attribute,
                 "name": str_attribute,
                 "required": True,
-                "options": [{"label": attr_value, "value": attr_value} for attr_value in str_attribute_values]
+                "options": [{"label": str(attr_value), "value": str(attr_value)} for attr_value in str_attribute_values]
             })
         for numerical_attribute in class_structure["numerical_attributes"]:
             class_fields.append({
