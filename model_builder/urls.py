@@ -7,6 +7,7 @@ from . import views
 
 urlpatterns = [
     path("", views.model_builder_main, name="model-builder"),
+    path("<reboot>", views.model_builder_main, name="model-builder"),
     path("open-create-object-panel/<object_type>/",
          model_builder.views_addition.open_create_object_panel, name="open-add-new-object-panel-with-object-structure-defined"),
     path("open-create-server-panel/",

@@ -12,20 +12,17 @@ matplotlib.use('Agg')
 DEFAULT_GRAPH_WIDTH = 700
 
 
-def model_builder_main(request):
-    if "system_data" not in request.session.keys():
+def model_builder_main(request, reboot=False):
+    if "system_data" not in request.session.keys() or reboot=="reboot":
+        if "empty_objects" in request.session.keys():
+            del request.session["empty_objects"]
         with open(os.path.join("model_builder", "default_system_data.json"), "r") as file:
             system_data = json.load(file)
             request.session["system_data"] = system_data
 
     model_web = ModelWeb(request.session)
-    context = {"model_web": model_web}
-
-    if request.session.get('interface_objects'):
-        context['interface_objects'] = request.session['interface_objects']
-
     http_response = htmx_render(
-        request, "model_builder/model-builder-main.html", context=context)
+        request, "model_builder/model-builder-main.html", context={"model_web": model_web})
 
     if request.headers.get("HX-Request") == "true":
         http_response["HX-Trigger-After-Swap"] = "initLeaderLines"
