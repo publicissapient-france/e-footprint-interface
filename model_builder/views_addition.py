@@ -240,75 +240,22 @@ def add_new_service(request, server_efootprint_id):
 def add_new_job(request, usage_journey_step_efootprint_id):
     model_web = ModelWeb(request.session)
     usage_journey_step_to_edit = model_web.get_web_object_from_efootprint_id(usage_journey_step_efootprint_id)
-    job_types_data = {
-        'web_app': [
-            {
-                'label': 'Upload',
-                'value': 'upload',
-                'predefined_value': [
-                    {'name':'data_upload', 'value': '800'},
-                    {'name':'data_download', 'value': '0.01'},
-                    {'name':'data_stored', 'value': '100'},
-                    {'name':'request_duration', 'value': '5'},
-                    {'name':'ram_needed', 'value': '100'},
-                    {'name':'cpu_needed', 'value':'1'}
-                ]
-            },
-            {
-                'label': 'Download',
-                'value': 'download',
-                'predefined_value': [
-                    {'name':'data_upload', 'value': '5'},
-                    {'name':'data_download', 'value': '1'},
-                    {'name':'data_stored', 'value': '1'},
-                    {'name':'request_duration', 'value': '10'},
-                    {'name':'ram_needed', 'value': '200'},
-                    {'name':'cpu_needed', 'value': '2'}
 
-                ]
-            },
-            {'label': 'Login', 'value': 'login'}
-        ],
-        'gen_ai': [
-            {'label': 'Chat', 'value': 'chat'},
-            {'label': 'Image generation', 'value': 'image_generation'}
-        ],
-        'streaming': [
-            {'label': 'Video', 'value': 'video'},
-            {'label': 'Audio', 'value': 'audio'}
-        ]
-    }
-    job_type = request.POST.get('form_add_job_type')
-
-    installed_services = request.session['interface_objects']['installed_services']
-    for server in installed_services:
-        for service in server['services']:
-            if service['id'] == request.POST.get('form_add_service'):
-                service_type = service['service_type']
-
-    for job_type_item in job_types_data[service_type]:
-        if job_type_item['value'] == job_type:
-            new_job = job_type_item
-            break
-
-    mutable_post = request.POST.copy()
-    for field in new_job['predefined_value']:
-        mutable_post[f'form_add_{field["name"]}'] = field['value']
-    request.POST = mutable_post
-    new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, 'Job')
+    new_efootprint_obj = create_efootprint_obj_from_post_data(
+        request, model_web, request.POST.get('form_add_type_object_available'))
     added_obj = add_new_efootprint_object_to_system(request, model_web, new_efootprint_obj)
 
+    mutable_post = request.POST.copy()
     for key in list(mutable_post.keys()):
         if key.startswith('form_add'):
             del mutable_post[key]
     mutable_post['form_edit_name'] = usage_journey_step_to_edit.name
     mutable_post['form_edit_user_time_spent'] = usage_journey_step_to_edit.user_time_spent.rounded_magnitude
-    job_ids = []
-    for job in usage_journey_step_to_edit.jobs:
-        job_ids.append(job.efootprint_id)
+    job_ids = [job.efootprint_id for job in usage_journey_step_to_edit.jobs]
     job_ids.append(added_obj.efootprint_id)
     mutable_post.setlist('form_edit_jobs', job_ids)
     request.POST = mutable_post
+
     return edit_object(request, usage_journey_step_efootprint_id, model_web)
 
 

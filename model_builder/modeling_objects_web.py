@@ -245,6 +245,10 @@ class DuplicatedJobWeb(ModelingObjectWeb):
         self.usage_journey_step = uj_step
 
     @property
+    def template_name(self):
+        return "job"
+
+    @property
     def web_id(self):
         return f"{self.usage_journey_step.web_id}_{self.efootprint_id}"
 
@@ -393,7 +397,10 @@ wrapper_mapping = {
     "UsageJourneyStep": UsageJourneyStepWeb,
     "UsageJourney": UsageJourneyWeb,
     "UsagePattern": UsagePatternWeb,
-    "Job": JobWeb
+    "Job": JobWeb,
+    "GenAIJob": JobWeb,
+    "VideoStreamingJob": JobWeb,
+    "WebApplicationJob": JobWeb,
 }
 
 def wrap_efootprint_object(modeling_obj, model_web):
