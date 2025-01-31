@@ -1,18 +1,18 @@
 from datetime import datetime
 
+from django.contrib.sessions.backends.base import SessionBase
 from efootprint.builders.time_builders import create_hourly_usage_df_from_list
-from efootprint.core.usage.usage_pattern import UsagePattern
 from efootprint.abstract_modeling_classes.source_objects import SourceValue, Sources, SourceHourlyValues, SourceObject
 from efootprint.constants.units import u
 from efootprint.logger import logger
 
 from model_builder.modeling_objects_web import ModelingObjectWeb, wrap_efootprint_object
 from model_builder.model_web import ModelWeb
-from model_builder.class_structure import modeling_object_classes_dict
+from model_builder.class_structure import MODELING_OBJECT_CLASSES_DICT
 
 
 def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_type: str):
-    new_efootprint_obj_class = modeling_object_classes_dict[object_type]
+    new_efootprint_obj_class = MODELING_OBJECT_CLASSES_DICT[object_type]
 
     obj_creation_kwargs = {}
     obj_structure = model_web.get_object_structure(object_type)
@@ -29,15 +29,14 @@ def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_ty
 
     for attr_dict in obj_structure.hourly_quantities_attributes:
         obj_creation_kwargs[attr_dict["attr_name"]] = SourceHourlyValues(
-            #create hourly_user_journey_starts from request.POST with the startDate and index increment hourly and
-            # the list of value
+            # Create hourly_usage_journey_starts from request.POST with the startDate and values
             create_hourly_usage_df_from_list(
-                [float(value) for value in request.POST.getlist(f'form_add_list_{attr_dict["attr_name"]}')],
-                start_date=datetime.strptime(request.POST[f'form_add_date_{attr_dict["attr_name"]}'], "%Y-%m-%d "
-                                                                                                    "%H:%M:%S"),
+                [float(value) for value
+                 in request.POST.getlist(f'form_add_list_{attr_dict["attr_name"]}')[0].split(",")],
+                start_date=datetime.strptime(
+                    request.POST[f'form_add_date_{attr_dict["attr_name"]}'], "%Y-%m-%d"),
                 pint_unit=u.dimensionless
             )
-            #float(request.POST.getlist(f'form_add_{attr_dict["attr_name"]}')[0]) * u(attr_dict["unit"])
         )
 
     for str_attr in list(obj_structure.str_attributes.keys()) + list(obj_structure.conditional_str_attributes.keys()):
@@ -55,44 +54,22 @@ def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_ty
 
     for mod_obj in obj_structure.list_attributes:
         obj_creation_kwargs[mod_obj["attr_name"]] = [
-            model_web.flat_efootprint_objs_dict[obj_id]
+            model_web.get_efootprint_object_from_efootprint_id(obj_id, mod_obj["object_type"], request.session)
             for obj_id in request.POST.getlist(f'form_add_{mod_obj["attr_name"]}')]
 
     new_efootprint_obj = new_efootprint_obj_class.from_defaults(**obj_creation_kwargs)
 
     return new_efootprint_obj
 
-def create_new_usage_pattern_from_post_data(request, model_web: ModelWeb):
-    user_journey = model_web.get_efootprint_object_from_efootprint_id(request.POST["form_add_user-journey"],
-                                                                      "UserJourney", request.session)
-    default_devices = model_web.get_efootprint_object_from_efootprint_id(request.POST["form_add_devices"],
-                                                                         "Hardware", request.session)
-    network = model_web.get_efootprint_object_from_efootprint_id(request.POST["form_add_network"], "Network",
-                                                                 request.session)
-    country = model_web.get_efootprint_object_from_efootprint_id(request.POST["form_add_country"], "Country",
-                                                                    request.session)
-    time_serie = SourceHourlyValues(
-            create_hourly_usage_df_from_list(
-                [float(value) for value in request.POST['form_add_list_hourly_user_journey_starts'].split(',')],
-                start_date=datetime.strptime(
-                    request.POST['form_add_date_hourly_user_journey_starts'],
-                    "%Y-%m-%d"),
-                pint_unit=u.dimensionless
-            )
-        )
-    new_usage_pattern = UsagePattern(request.POST["form_add_name"], user_journey, [default_devices], network, country,
-                                     time_serie)
-    return new_usage_pattern
-
-def add_new_efootprint_object_to_system(request, model_web: ModelWeb, efootprint_object):
+def add_new_efootprint_object_to_system(request_session: SessionBase, model_web: ModelWeb, efootprint_object):
     object_type = efootprint_object.class_as_simple_str
 
-    if object_type not in request.session["system_data"]:
-        request.session["system_data"][object_type] = {}
+    if object_type not in request_session["system_data"]:
+        request_session["system_data"][object_type] = {}
         model_web.response_objs[object_type] = {}
-    request.session["system_data"][object_type][efootprint_object.id] = efootprint_object.to_json()
+    request_session["system_data"][object_type][efootprint_object.id] = efootprint_object.to_json()
     # Here we updated a sub dict of request.session so we have to explicitly tell Django that it has been updated
-    request.session.modified = True
+    request_session.modified = True
 
     model_web.response_objs[object_type][efootprint_object.id] = efootprint_object
     model_web.flat_efootprint_objs_dict[efootprint_object.id] = efootprint_object

@@ -127,17 +127,17 @@ body{
 .fixed-height{
 }
 
-#user-journey-container,
+#usage-journey-container,
 #usage-pattern-container,
 #server-container {
 }
 
-#user-journey-container .fixed-height,
+#usage-journey-container .fixed-height,
 #usage-pattern-container .fixed-height,
 #server-container .fixed-height{
 }
 
-#user-journey-container,
+#usage-journey-container,
 #usage-pattern-container{
     background-color: rgba(230, 250, 252, 0.5);
 }

@@ -1,6 +1,6 @@
 
 <form class="form_add_panel p-4 text-start"
-        hx-post="/model_builder/add-new-user-journey/"
+        hx-post="/model_builder/add-new-usage-journey/"
         {% if efootprint_id_of_empty_object_origin %}
             hx-vals='{"efootprint_id_of_empty_object_origin": "{{ efootprint_id_of_empty_object_origin }}"}'
             hx-target="#{{ efootprint_id_of_empty_object_origin }}"

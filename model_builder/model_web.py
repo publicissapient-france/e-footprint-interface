@@ -1,12 +1,24 @@
 import re
 
 from django.contrib.sessions.backends.base import SessionBase
-from efootprint.api_utils.json_to_system import json_to_system
+from efootprint.api_utils.json_to_system import json_to_system, json_to_explainable_object
 from efootprint.core.all_classes_in_order import SERVER_CLASSES, SERVICE_CLASSES
+from efootprint.core.hardware.hardware import Hardware
+from efootprint.core.hardware.network import Network
+from efootprint.logger import logger
 
-from model_builder.class_structure import efootprint_class_structure
+from model_builder.class_structure import efootprint_class_structure, MODELING_OBJECT_CLASSES_DICT
 from model_builder.modeling_objects_web import wrap_efootprint_object
 from utils import EFOOTPRINT_COUNTRIES
+
+default_efootprint_networks = [network_archetype() for network_archetype in Network.archetypes()]
+default_efootprint_hardwares = [Hardware.laptop(), Hardware.smartphone()]
+
+DEFAULT_NETWORKS = {network.id: network.to_json() for network in default_efootprint_networks}
+DEFAULT_HARDWARES = {hardware.id: hardware.to_json() for hardware in default_efootprint_hardwares}
+DEFAULT_COUNTRIES = {country.id: country.to_json() for country in EFOOTPRINT_COUNTRIES}
+DEFAULT_OBJECTS_CLASS_MAPPING = {
+    "Network": DEFAULT_NETWORKS, "Hardware": DEFAULT_HARDWARES, "Country": DEFAULT_COUNTRIES}
 
 
 class ModelWeb:
@@ -30,16 +42,26 @@ class ModelWeb:
         return wrap_efootprint_object(efootprint_object, self)
 
     def get_efootprint_object_from_efootprint_id(
-        self, new_mod_obj_id: str, object_type: str, request_session: SessionBase):
-        # TODO for DEVICES, HARDWARE and NETWORK, STORAGE ?
-        if object_type == "Country" and new_mod_obj_id not in self.flat_efootprint_objs_dict.keys():
-            obj_to_add = [country for country in EFOOTPRINT_COUNTRIES if country.id == new_mod_obj_id][0]
-            request_session["system_data"]["Country"][new_mod_obj_id] = obj_to_add.to_json()
-            request_session.modified = True
+        self, efootprint_id: str, object_type: str, request_session: SessionBase):
+        if efootprint_id in self.flat_efootprint_objs_dict.keys():
+            efootprint_object = self.flat_efootprint_objs_dict[efootprint_id]
         else:
-            obj_to_add = self.flat_efootprint_objs_dict[new_mod_obj_id]
+            from model_builder.object_creation_and_edition_utils import add_new_efootprint_object_to_system
+            web_object_json = DEFAULT_OBJECTS_CLASS_MAPPING[object_type][efootprint_id]
+            efootprint_class = MODELING_OBJECT_CLASSES_DICT[object_type]
+            efootprint_object = efootprint_class.__new__(efootprint_class)
+            efootprint_object.__dict__["contextual_modeling_obj_containers"] = []
+            efootprint_object.trigger_modeling_updates = False
+            for attr_key, attr_value in web_object_json.items():
+                if type(attr_value) == dict:
+                    efootprint_object.__setattr__(attr_key, json_to_explainable_object(attr_value))
+                else:
+                    efootprint_object.__dict__[attr_key] = attr_value
+            efootprint_object.after_init()
+            web_object = add_new_efootprint_object_to_system(request_session, self, efootprint_object)
+            logger.info(f"Object {web_object.name} created from default object and added to system data.")
 
-        return obj_to_add
+        return efootprint_object
 
     def get_object_structure(self, object_type):
         return ObjectStructure(self, object_type)

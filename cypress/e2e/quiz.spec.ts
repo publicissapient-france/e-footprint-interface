@@ -6,8 +6,8 @@ describe('Quiz tests', () => {
         cy.title().should('eq', 'e-footprint');
         cy.get('#quiz-link').click();
         cy.get('#main-content-block h1').should('have.text', 'Start mapping your service');
-        cy.get('#go-to-user-journeys-button').click();
-        cy.url().should('eq', `${Cypress.config('baseUrl')}quiz/user-journeys`);
+        cy.get('#go-to-usage-journeys-button').click();
+        cy.url().should('eq', `${Cypress.config('baseUrl')}quiz/usage-journeys`);
 
 
         cy.get("input[type=text]").eq(0).type("Do a search");
@@ -17,7 +17,7 @@ describe('Quiz tests', () => {
         cy.get('#add-step').click();
         cy.get("input[type=text]").eq(2).type("Write a comment");
         cy.get("input[type=number]").eq(2).type(2);
-        cy.get('#validate-user-journeys-form-button').click();
+        cy.get('#validate-usage-journeys-form-button').click();
         cy.url().should('eq', `${Cypress.config('baseUrl')}quiz/services`);
 
         cy.get("select").eq(0).select("Web Application");

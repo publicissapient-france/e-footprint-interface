@@ -9,9 +9,9 @@
     <input type="hidden" name="form_add_devices" id="form_add_devices" value="">
     <input type="hidden" name="form_add_network" id="form_add_network" value="">
     <input type="hidden" name="form_add_country" id="form_add_country" value="">
-    <input type="hidden" name="form_add_user-journey" id="form_add_user-journey" value="">
-    <input type="hidden" name="form_add_date_hourly_user_journey_starts" id="form_add_date_hourly_user_journey_starts" value="">
-    <input type="hidden" name="form_add_list_hourly_user_journey_starts" id="form_add_list_hourly_user_journey_starts" value="">
+    <input type="hidden" name="form_add_usage_journey" id="form_add_usage_journey" value="">
+    <input type="hidden" name="form_add_date_hourly_usage_journey_starts" id="form_add_date_hourly_usage_journey_starts" value="">
+    <input type="hidden" name="form_add_list_hourly_usage_journey_starts" id="form_add_list_hourly_usage_journey_starts" value="">
     <div class="text-end">
         <button type="button" class="btn btn-white" aria-label="Close"
                 onclick="closePanel()">
@@ -102,7 +102,7 @@
                                 </div>
                                 <div class="row p-2 g-0 align-items-center border border-end-0 border-start-0 border-top-0 border-bottom-1 border-body-tertiary">
                                     <div class="col-2 text-center">
-                                        <div id="user-journey_icon_check" class="d-none">
+                                        <div id="usage_journey_icon_check" class="d-none">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
                                               <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
                                               <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
@@ -113,7 +113,7 @@
                                         User Journey
                                     </div>
                                     <div class="col-5 text-end">
-                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" data-bs-toggle="modal" data-bs-target="#usage-pattern-attributes-modal-user-journey">
+                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" data-bs-toggle="modal" data-bs-target="#usage-pattern-attributes-modal-usage-journey">
                                             Add
                                         </button>
                                     </div>
@@ -681,7 +681,7 @@
 
 
 <!-- Modal -->
-<div class="modal usage-pattern-modal-attributes fade" id="usage-pattern-attributes-modal-user-journey" tabindex="-1" aria-labelledby="usage-pattern-attributes-modal-user-journey" aria-hidden="true" data-bs-backdrop="true">
+<div class="modal usage-pattern-modal-attributes fade" id="usage-pattern-attributes-modal-usage-journey" tabindex="-1" aria-labelledby="usage-pattern-attributes-modal-usage-journey" aria-hidden="true" data-bs-backdrop="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
@@ -692,16 +692,16 @@
                 </div>
                 <div class="form-body">
                     <div class="">
-                        <label for="form_select_user-journey" class="form-label w-100 text-start fz-0-8">Network</label>
-                        <select class="form-select light-select fz-0-8 h-30"  id="form_select_user-journey"  name="form_select_user-journey" >
+                        <label for="form_select_usage_journey" class="form-label w-100 text-start fz-0-8">User Journey</label>
+                        <select class="form-select light-select fz-0-8 h-30"  id="form_select_usage_journey"  name="form_select_usage_journey" >
                             {% for usageJourney in usageJourneys %}
-                                <option value="{{ usageJourney.id }}" {% if forloop.counter0 == 0 %}selected{% endif %}>{{ usageJourney.name }}</option>
+                                <option value="{{ usageJourney.efootprint_id }}" {% if forloop.counter0 == 0 %}selected{% endif %}>{{ usageJourney.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
                 <div class="form-footer mt-5 px-3 d-grid gap-2">
-                    <button type="button" class="btn btn-primary rounded-pill w-100" id="save_time_series_btn" data-bs-dismiss="modal" onclick="checkAttributes('user-journey')">
+                    <button type="button" class="btn btn-primary rounded-pill w-100" id="save_time_series_btn" data-bs-dismiss="modal" onclick="checkAttributes('usage_journey')">
                         Save
                     </button>
                 </div>

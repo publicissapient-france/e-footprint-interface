@@ -14,7 +14,7 @@ def onboarding(request):
 def usage_journeys(request, error=None):
     usage_journeys_steps = [""]
 
-    return htmx_render(request, "quiz/user-journeys.html",
+    return htmx_render(request, "quiz/usage-journeys.html",
                        context={"usage_journeys_steps": usage_journeys_steps, "error": error})
 
 

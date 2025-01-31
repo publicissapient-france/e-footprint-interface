@@ -12,7 +12,7 @@
             <div class="row align-items-center">
                 <div class="col">
                     <div class="bg-primary p-2 rounded-circle align-content-center" style="width: 125px; height: 125px;">
-                        <img src="/static/icons/user-journey-icon.svg" class="mx-auto" alt="User journey"/>
+                        <img src="/static/icons/usage-journey-icon.svg" class="mx-auto" alt="User journey"/>
                     </div>
                 </div>
                 <div class="col-8">
@@ -25,9 +25,9 @@
                     </p>
                 </div>
                 <div class="col">
-                    <button id="go-to-user-journeys-button"
+                    <button id="go-to-usage-journeys-button"
                             class="btn btn-primary rounded-pill p-4 w-75"
-                            hx-post="user-journeys" hx-target="#main-content-block" hx-swap="innerHTML" hx-push-url="user-journeys"
+                            hx-post="usage-journeys" hx-target="#main-content-block" hx-swap="innerHTML" hx-push-url="usage-journeys"
                             hx-indicator="#global_loader" hx-disabled-elt="button"
                             script="on click get #main-content-block then set its innerHTML to ''">Start
                     </button>
