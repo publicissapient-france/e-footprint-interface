@@ -1,23 +1,25 @@
+import json
+import os
 import re
 from time import time
 
 from django.contrib.sessions.backends.base import SessionBase
 from efootprint.api_utils.json_to_system import json_to_system, json_to_explainable_object
 from efootprint.core.all_classes_in_order import SERVER_CLASSES, SERVICE_CLASSES
-from efootprint.core.hardware.hardware import Hardware
-from efootprint.core.hardware.network import Network
 from efootprint.logger import logger
 
 from model_builder.class_structure import efootprint_class_structure, MODELING_OBJECT_CLASSES_DICT
 from model_builder.modeling_objects_web import wrap_efootprint_object
 from utils import EFOOTPRINT_COUNTRIES
 
-default_efootprint_networks = [network_archetype() for network_archetype in Network.archetypes()]
-default_efootprint_hardwares = [Hardware.laptop(), Hardware.smartphone()]
+with open(os.path.join("model_builder", "default_networks.json"), "r") as f:
+    DEFAULT_NETWORKS = json.load(f)
+with open(os.path.join("model_builder", "default_hardwares.json"), "r") as f:
+    DEFAULT_HARDWARES = json.load(f)
+with open(os.path.join("model_builder", "default_countries.json"), "r") as f:
+    DEFAULT_COUNTRIES = json.load(f)
 
-DEFAULT_NETWORKS = {network.id: network.to_json() for network in default_efootprint_networks}
-DEFAULT_HARDWARES = {hardware.id: hardware.to_json() for hardware in default_efootprint_hardwares}
-DEFAULT_COUNTRIES = {country.id: country.to_json() for country in EFOOTPRINT_COUNTRIES}
+
 DEFAULT_OBJECTS_CLASS_MAPPING = {
     "Network": DEFAULT_NETWORKS, "Hardware": DEFAULT_HARDWARES, "Country": DEFAULT_COUNTRIES}
 
