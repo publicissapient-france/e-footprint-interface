@@ -452,13 +452,13 @@ openai = ["openai (>=1.12.0,<2.0.0)"]
 
 [[package]]
 name = "efootprint"
-version = "9.0.3"
+version = "9.1.0"
 description = "Digital service environmental footprint model"
 optional = false
 python-versions = "<4.0,>=3.12"
 files = [
-    {file = "efootprint-9.0.3-py3-none-any.whl", hash = "sha256:cbb01fc3c115cb77715fb9962fe4c3221bed80010cc4fddeff1a5bf3504c93ff"},
-    {file = "efootprint-9.0.3.tar.gz", hash = "sha256:c1911d2683afa6750273e279725cea13d789fe229da4aac705a7c74e4611f989"},
+    {file = "efootprint-9.1.0-py3-none-any.whl", hash = "sha256:aa3bda66f3eb55ff313b0322e098a02d755a104231f6cade6794489145fb8e75"},
+    {file = "efootprint-9.1.0.tar.gz", hash = "sha256:a3053e074e3c19fb68527bd140baa01f278b700db5a9a1992705aaadb9f75c5c"},
 ]
 
 [package.dependencies]
@@ -829,13 +829,13 @@ all = ["flake8 (>=7.1.1)", "mypy (>=1.11.2)", "pytest (>=8.3.2)", "ruff (>=0.6.2
 
 [[package]]
 name = "ipython"
-version = "8.31.0"
+version = "8.32.0"
 description = "IPython: Productive Interactive Computing"
 optional = false
 python-versions = ">=3.10"
 files = [
-    {file = "ipython-8.31.0-py3-none-any.whl", hash = "sha256:46ec58f8d3d076a61d128fe517a51eb730e3aaf0c184ea8c17d16e366660c6a6"},
-    {file = "ipython-8.31.0.tar.gz", hash = "sha256:b6a2274606bec6166405ff05e54932ed6e5cfecaca1fc05f2cacde7bb074d70b"},
+    {file = "ipython-8.32.0-py3-none-any.whl", hash = "sha256:cae85b0c61eff1fc48b0a8002de5958b6528fa9c8defb1894da63f42613708aa"},
+    {file = "ipython-8.32.0.tar.gz", hash = "sha256:be2c91895b0b9ea7ba49d33b23e2040c352b33eb6a519cca7ce6e0c743444251"},
 ]
 
 [package.dependencies]
@@ -2276,4 +2276,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "e44fe456ab16917a19df94bfbe10fcfe60b95b001a1524fd6a51ace0451436ff"
+content-hash = "4efd657c11bad712199d9b83c0784b6cfa0024c34d1075813c3dccfcf80512c2"

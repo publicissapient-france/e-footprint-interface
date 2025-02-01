@@ -1,4 +1,4 @@
-runtime: python310
+runtime: python312
 
 env_variables:
   APPENGINE_URL: https://e-footprint-interface.nw.r.appspot.com
