@@ -20,7 +20,7 @@ def model_builder_main(request, reboot=False):
             system_data = json.load(file)
             request.session["system_data"] = system_data
 
-    model_web = ModelWeb(request.session)
+    model_web = ModelWeb(request.session, launch_system_computations=False)
     http_response = htmx_render(
         request, "model_builder/model-builder-main.html", context={"model_web": model_web})
 

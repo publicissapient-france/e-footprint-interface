@@ -20,6 +20,7 @@ def efootprint_class_structure(efootprint_class_str: str):
         "str_attributes": efootprint_class.list_values(),
         "conditional_str_attributes": efootprint_class.conditional_list_values()
     }
+    efootprint_class_default_values = efootprint_class.default_values()
     init_sig_params = signature(efootprint_class.__init__).parameters
     for attr_name in init_sig_params.keys():
         annotation = init_sig_params[attr_name].annotation
@@ -28,7 +29,7 @@ def efootprint_class_structure(efootprint_class_str: str):
                 object_type = get_args(annotation)[0]
                 structure["list_attributes"].append({"attr_name": attr_name, "object_type": object_type.__name__})
         elif issubclass(annotation, ExplainableQuantity):
-            default_value = efootprint_class.default_value(attr_name).value
+            default_value = efootprint_class_default_values[attr_name].value
             structure["numerical_attributes"].append(
                 {"attr_name": attr_name, "unit": f"{default_value.units:~P}",
                  "long_unit": str(default_value.units),

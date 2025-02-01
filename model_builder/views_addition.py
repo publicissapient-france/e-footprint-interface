@@ -14,7 +14,7 @@ from model_builder.views_edition import edit_object
 
 
 def open_create_object_panel(request, object_type):
-    model_web = ModelWeb(request.session)
+    model_web = ModelWeb(request.session, launch_system_computations=False)
     new_object_structure = model_web.get_object_structure(object_type)
     template_name = f'{new_object_structure.template_name}_add.html'
     context_data = {"object_structure": new_object_structure,
@@ -65,7 +65,7 @@ def open_create_service_panel(request, server_efootprint_id):
     return http_response
 
 def open_create_job_panel(request):
-    model_web = ModelWeb(request.session)
+    model_web = ModelWeb(request.session, launch_system_computations=False)
     servers = model_web.servers
 
     available_job_classes = {Job}
@@ -131,7 +131,7 @@ def open_create_job_panel(request):
     return http_response
 
 def open_create_usage_pattern_panel(request):
-    model_web = ModelWeb(request.session)
+    model_web = ModelWeb(request.session, launch_system_computations=False)
     networks = [{"efootprint_id": network["id"], "name": network["name"]} for network in DEFAULT_NETWORKS.values()]
     countries = [{"efootprint_id": country["id"], "name": country["name"]} for country in DEFAULT_COUNTRIES.values()]
     devices = [{"efootprint_id": device["id"], "name": device["name"]} for device in DEFAULT_HARDWARES.values()]

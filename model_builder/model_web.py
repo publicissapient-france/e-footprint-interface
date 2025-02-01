@@ -1,4 +1,5 @@
 import re
+from time import time
 
 from django.contrib.sessions.backends.base import SessionBase
 from efootprint.api_utils.json_to_system import json_to_system, json_to_explainable_object
@@ -22,11 +23,14 @@ DEFAULT_OBJECTS_CLASS_MAPPING = {
 
 
 class ModelWeb:
-    def __init__(self, session_data: SessionBase):
+    def __init__(self, session_data: SessionBase, launch_system_computations=True):
+        start = time()
         self.system_data = session_data["system_data"]
-        self.response_objs, self.flat_efootprint_objs_dict = json_to_system(self.system_data)
+        self.response_objs, self.flat_efootprint_objs_dict = json_to_system(
+            self.system_data, launch_system_computations)
         self.empty_objects = session_data.get("empty_objects", {})
         self.system = wrap_efootprint_object(list(self.response_objs["System"].values())[0], self)
+        logger.info(f"ModelWeb object created in {time() - start:.3f} seconds.")
 
     def get_efootprint_objects_from_efootprint_type(self, obj_type):
         if obj_type in self.response_objs.keys():

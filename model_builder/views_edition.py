@@ -10,7 +10,7 @@ from model_builder.object_creation_and_edition_utils import edit_object_in_syste
 
 
 def open_edit_object_panel(request, object_id):
-    model_web = ModelWeb(request.session)
+    model_web = ModelWeb(request.session, launch_system_computations=False)
     obj_to_edit = model_web.get_web_object_from_efootprint_id(object_id)
 
     return render(request, "model_builder/side_panels/edit_object_panel.html", context={"object_to_edit": obj_to_edit})

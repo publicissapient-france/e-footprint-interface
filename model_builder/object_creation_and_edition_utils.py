@@ -22,7 +22,8 @@ def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_ty
         attr_value_in_list = request.POST.getlist(f'form_add_{attr_dict["attr_name"]}')
         if not attr_value_in_list:
             logger.info(f"No value for {attr_dict['attr_name']} in {object_type} form. "
-                        f"Default value {new_efootprint_obj_class.default_value(attr_dict['attr_name'])} will be used.")
+                        f"Default value {new_efootprint_obj_class.default_values()[attr_dict['attr_name']]} "
+                        f"will be used.")
         else:
             obj_creation_kwargs[attr_dict["attr_name"]] = SourceValue(
                 float(attr_value_in_list[0]) * u(attr_dict["unit"]))
@@ -42,7 +43,7 @@ def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_ty
     for str_attr in list(obj_structure.str_attributes.keys()) + list(obj_structure.conditional_str_attributes.keys()):
         if f'form_add_{str_attr}' not in request.POST.keys():
             logger.info(f"No value for {str_attr} in {object_type} form. "
-                        f"Default value {new_efootprint_obj_class.default_value(str_attr)} will be used.")
+                        f"Default value {new_efootprint_obj_class.default_values()[str_attr]} will be used.")
         else:
             obj_creation_kwargs[str_attr] = SourceObject(request.POST[f'form_add_{str_attr}'], source=Sources.USER_DATA)
 
