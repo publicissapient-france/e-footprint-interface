@@ -4,6 +4,7 @@ from efootprint.api_utils.system_to_json import system_to_json
 
 from model_builder.model_web import ModelWeb
 from model_builder.modeling_objects_web import JobWeb, UsageJourneyStepWeb, UsagePatternWeb
+from utils import htmx_render
 
 
 def ask_delete_object(request, object_id):
@@ -14,8 +15,8 @@ def ask_delete_object(request, object_id):
 
     if (not (isinstance(obj_type, UsagePatternWeb) or isinstance(web_obj, JobWeb)
              or isinstance(web_obj, UsageJourneyStepWeb)) and web_obj.modeling_obj_containers):
-        return render(
-            request, "model_builder/modals/cant-delete-modal.html",
+
+        http_response = htmx_render(request, "model_builder/modals/cant-delete-modal.html",
             context={"msg":f"Can’t delete {web_obj.name} because it is referenced by "
                            f"{[obj.efootprint_id for obj in web_obj.modeling_obj_containers]}"})
     else:
@@ -27,9 +28,12 @@ def ask_delete_object(request, object_id):
                        f"this action will delete all mirrored {web_obj.class_as_simple_str}s.")
             sub_message = f"To delete only one {web_obj.class_as_simple_str}, break the mirroring link first."
 
-        return render(
+        http_response = htmx_render(
             request, "model_builder/modals/delete-card-modal.html",
             context={"obj": web_obj, "message": message, "sub_message": sub_message})
+
+    http_response["HX-Trigger-After-Swap"] = "openModalDialog"
+    return http_response
 
 
 def delete_object(request, object_id):

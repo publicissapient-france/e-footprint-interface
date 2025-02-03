@@ -111,6 +111,22 @@
 </div>
 
 <script>
+    document.addEventListener('show.bs.modal', function(event) {
+        document.querySelectorAll('.modal-backdrop').forEach(function(el) {
+            el.remove();
+        });
+    });
+    document.body.addEventListener('htmx:beforeSwap', function(event) {
+        document.querySelectorAll('.modal-backdrop').forEach(function(el) {
+            el.remove();
+        });
+    });
+    document.addEventListener('hidden.bs.modal', function(event) {
+        document.querySelectorAll('.modal-backdrop').forEach(function(el) {
+            el.remove();
+        });
+    });
+
     document.body.addEventListener("computeResultChart", function(event) {
         let modalElement = document.getElementById("resultModal");
         let modal = new bootstrap.Modal(modalElement);
