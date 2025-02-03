@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.contrib.sessions.backends.base import SessionBase
+from django.shortcuts import render
 from efootprint.builders.time_builders import create_hourly_usage_df_from_list
 from efootprint.abstract_modeling_classes.source_objects import SourceValue, Sources, SourceHourlyValues, SourceObject
 from efootprint.constants.units import u
@@ -125,3 +126,12 @@ def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
     request.session.modified = True
 
     return obj_to_edit
+
+
+def render_exception_modal(request, exception):
+    http_response = render(request, "model_builder/modals/exception-modal.html", {
+        "msg": exception})
+
+    http_response["HX-Trigger-After-Swap"] = "openModalDialog"
+
+    return http_response

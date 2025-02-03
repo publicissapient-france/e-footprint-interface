@@ -1,6 +1,7 @@
 from django.shortcuts import redirect
 
 from model_builder.model_web import ModelWeb
+from model_builder.object_creation_and_edition_utils import render_exception_modal
 from utils import htmx_render
 
 import json
@@ -46,7 +47,10 @@ def download_json(request):
 
 
 def result_chart(request):
-    model_web = ModelWeb(request.session, launch_system_computations=True)
+    try:
+        model_web = ModelWeb(request.session, launch_system_computations=True)
+    except Exception as e:
+        return render_exception_modal(request, e)
 
     http_response = htmx_render(
         request, "model_builder/resultPanel.html", context={'model_web': model_web})

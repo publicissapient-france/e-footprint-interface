@@ -9,7 +9,7 @@ from efootprint.core.usage.job import Job
 from model_builder.class_structure import generate_object_creation_structure
 from model_builder.model_web import ModelWeb, DEFAULT_NETWORKS, DEFAULT_COUNTRIES, DEFAULT_HARDWARES
 from model_builder.object_creation_and_edition_utils import create_efootprint_obj_from_post_data, \
-    add_new_efootprint_object_to_system
+    add_new_efootprint_object_to_system, render_exception_modal
 from model_builder.views_edition import edit_object
 
 
@@ -202,6 +202,7 @@ def add_new_usage_journey_step(request, usage_journey_efootprint_id):
     usage_journey_step_ids.append(added_obj.efootprint_id)
     mutable_post.setlist('form_edit_uj_steps', usage_journey_step_ids)
     request.POST = mutable_post
+
     return edit_object(request, usage_journey_efootprint_id, model_web)
 
 
@@ -228,21 +229,31 @@ def add_new_service(request, server_efootprint_id):
     mutable_post = request.POST.copy()
     mutable_post['form_add_server'] = server_efootprint_id
     request.POST = mutable_post
-    new_efootprint_obj = create_efootprint_obj_from_post_data(
-        request, model_web, request.POST.get('form_add_type_object_available'))
-    added_obj = add_new_efootprint_object_to_system(request.session, model_web, new_efootprint_obj)
+    try:
+        new_efootprint_obj = create_efootprint_obj_from_post_data(
+            request, model_web, request.POST.get('form_add_type_object_available'))
 
-    response = render(request, "model_builder/object_cards/service_card.html",
-                      context={"service": added_obj})
+        added_obj = add_new_efootprint_object_to_system(request.session, model_web, new_efootprint_obj)
 
-    return response
+        response = render(request, "model_builder/object_cards/service_card.html",
+                          context={"service": added_obj})
+
+        return response
+
+    except Exception as e:
+        return render_exception_modal(request, e)
+
 
 def add_new_job(request, usage_journey_step_efootprint_id):
     model_web = ModelWeb(request.session)
     usage_journey_step_to_edit = model_web.get_web_object_from_efootprint_id(usage_journey_step_efootprint_id)
 
-    new_efootprint_obj = create_efootprint_obj_from_post_data(
-        request, model_web, request.POST.get('form_add_type_object_available'))
+    try:
+        new_efootprint_obj = create_efootprint_obj_from_post_data(
+            request, model_web, request.POST.get('form_add_type_object_available'))
+    except Exception as e:
+        return render_exception_modal(request, e)
+
     added_obj = add_new_efootprint_object_to_system(request.session, model_web, new_efootprint_obj)
 
     mutable_post = request.POST.copy()

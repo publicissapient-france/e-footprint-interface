@@ -310,3 +310,10 @@ window.addEventListener("load", function () {
         initLeaderLines();
     }, 100);
 });
+
+// MODAL
+document.body.addEventListener("openModalDialog", function(event) {
+        let modalElement = document.getElementById("model-builder-modal");
+        let modal = new bootstrap.Modal(modalElement);
+        modal.show();
+    });

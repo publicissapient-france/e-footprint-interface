@@ -254,15 +254,15 @@ body{
     border-bottom: 2px solid #2D4675;
 }
 
-#modal-confirmation .modal-header{
+#model-builder-modal .modal-header{
     border-bottom: none;
 }
 
-#modal-confirmation .modal-footer{
+#model-builder-modal .modal-footer{
     border-top: none;
 }
 
-#modal-confirmation p {
+#model-builder-modal p {
     font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
