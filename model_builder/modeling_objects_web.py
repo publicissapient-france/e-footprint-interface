@@ -389,7 +389,6 @@ class UsagePatternWeb(ModelingObjectWeb):
         # TODO: Add Device mix Network mix and Country mix
         return []
 
-
 wrapper_mapping = {
     # TODO: create a mapping for all classes
     "Server": ServerWeb,

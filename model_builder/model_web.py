@@ -129,6 +129,17 @@ class ModelWeb:
         else:
             return []
 
+    @property
+    def get_system_emissions(self):
+        emissions = {}
+        for energy_row in self.system.total_energy_footprints:
+            emissions[f"{energy_row}_energy"] = self.system.total_energy_footprints[energy_row].to_json()
+
+        for fabrication_row in self.system.total_fabrication_footprints:
+            emissions[f"{fabrication_row}_fabrication"] = self.system.total_energy_footprints[
+                fabrication_row].to_json()
+        return emissions
+
 
 class ObjectStructure:
     def __init__(self, model_web: ModelWeb, object_type: str):

@@ -1,10 +1,10 @@
-let indexInput ={
+window.indexInput ={
     'daily': {"value":1, "max":24},
     'weekly': {"value":1, "max":7},
     'seasonal': {"value":1, "max":12}
 }
 
-let charts = {
+window.charts = {
     'timeSeriesChart' : null,
     'frequencyChart' : null,
     'dailyVariationChart' : null,
@@ -12,9 +12,9 @@ let charts = {
     'seasonalVariationChart': null
 };
 
-let timeseriesToSave = [];
+window.timeseriesToSave = [];
 
-let optionsChartJs={
+window.optionsChartJs={
     'timeSeriesChart' : {
         type: 'line',
         data : {
@@ -252,7 +252,8 @@ let optionsChartJs={
     },
 }
 
-let options = {
+/*
+window.options = {
     'timeSeriesChart' : {
         chart: {
             type: 'line'
@@ -408,17 +409,20 @@ let options = {
     }
 }
 
-let variationFactor = {
+ */
+
+window.variationFactor = {
     'daily': Array(24).fill(1),
     'weekly': Array(7).fill(1),
     'seasonal': Array(12).fill(1)
 }
 
-let adjustedVolumes = {
+window.adjustedVolumes = {
     'daily': Array(24).fill(1),
     'weekly': Array(7).fill(1),
     'seasonal': Array(12).fill(1)
 }
+
 
 function getTotalVolume(period_selected){
     let conversionRules = {
@@ -478,10 +482,10 @@ function getConversionRule(dateToCheck, periodTarget, periodToConvert){
 
 function drawChart(chartName){
     let ctx = document.getElementById(chartName).getContext('2d');
-    charts[chartName] = new Chart(ctx, {
-        type: optionsChartJs[chartName].type,
-        data: optionsChartJs[chartName].data,
-        options: optionsChartJs[chartName].options
+    window.charts[chartName] = new Chart(ctx, {
+        type: window.optionsChartJs[chartName].type,
+        data: window.optionsChartJs[chartName].data,
+        options: window.optionsChartJs[chartName].options
     });
 }
 
@@ -541,7 +545,7 @@ function variationController(periodVariation, launchTimeSeriesChart = false){
 
     intervals.forEach((current, i) => {
         const next = intervals[i + 1];
-        const upperBound = next ? next.from : indexInput[periodVariation]['max'];
+        const upperBound = next ? next.from : window.indexInput[periodVariation]['max'];
         const fromEl = fromElements[current.index];
         const toEl   = toElements[current.index];
 
@@ -602,8 +606,8 @@ function addTimeSlot(periodVariation){
         }
     });
 
-    indexInput[periodVariation]['value'] += 1;
-    let newId = parseInt(indexInput[periodVariation]['value']);
+    window.indexInput[periodVariation]['value'] += 1;
+    let newId = parseInt(window.indexInput[periodVariation]['value']);
     let new_row = rowToCopy.cloneNode(true);
     new_row.id = periodVariation + '_variation_' + newId;
 
@@ -646,7 +650,7 @@ function addTimeSlot(periodVariation){
     });
 
     document.getElementById(periodVariation + '_variation_bloc').appendChild(new_row);
-    if (indexInput[periodVariation]['value'] === indexInput[periodVariation]['max']){
+    if (window.indexInput[periodVariation]['value'] === window.indexInput[periodVariation]['max']){
         document.getElementById('add_' + periodVariation + '_slot').classList.add('d-none');
     }
     variationController(periodVariation);
@@ -716,7 +720,7 @@ function applyVariation(timeseries, index, avgNbUsageJourneyPeriod, netGrowRateP
         'year': 'seasonal',
     }
     const luxonProp = periodToLuxonProp[avgNbUsageJourneyPeriod];
-    const factorToApply = variationFactor[keyPeriod[avgNbUsageJourneyPeriod]] || [];
+    const factorToApply = window.variationFactor[keyPeriod[avgNbUsageJourneyPeriod]] || [];
     const numberOfParts = factorToApply.reduce((acc, cur) => acc + cur, 0);
     const avgNbUsageJourneyPeriodTimeframe = luxon.Duration.fromObject({ [luxonProp]: 1 });
 
@@ -741,7 +745,7 @@ function applyVariation(timeseries, index, avgNbUsageJourneyPeriod, netGrowRateP
         return applyVariation(variationsValues, variationsIndex, 'day', netGrowRatePeriod, timeframe, timeframeValue);
     }
     else if(avgNbUsageJourneyPeriod === 'day'){
-        timeseriesToSave = applyVariation(variationsValues, variationsIndex, 'hour', netGrowRatePeriod, timeframe, timeframeValue);
+        window.timeseriesToSave = applyVariation(variationsValues, variationsIndex, 'hour', netGrowRatePeriod, timeframe, timeframeValue);
     }
 
     return { variationsIndex, variationsValues };
@@ -750,8 +754,8 @@ function applyVariation(timeseries, index, avgNbUsageJourneyPeriod, netGrowRateP
 function timeSeriesChart(){
     let timeRangeValue = parseInt(document.getElementById('form_add_timeframe_value').value);
     let timeRange = document.getElementById('form_add_timeframe_range').value;
-    let frequency = optionsChartJs['frequencyChart']['data']['datasets'][0]['data']
-    let index = optionsChartJs['frequencyChart']['data']['labels']
+    let frequency = window.optionsChartJs['frequencyChart']['data']['datasets'][0]['data']
+    let index = window.optionsChartJs['frequencyChart']['data']['labels']
     let avgNbUsageJourneyPeriod = document.getElementById('form_add_avg_nb_usage_journey_range').value;
     let netGrowRatePeriod = document.getElementById('form_add_net_growth_rate_range').value;
     let timeSeries = applyVariation(frequency, index, avgNbUsageJourneyPeriod, netGrowRatePeriod, timeRange, timeRangeValue);
@@ -761,8 +765,8 @@ function timeSeriesChart(){
 function updateTimeseriesChart() {
     let periodAnalysis = document.getElementById('form_add_timeseries_period_analysis').value;
     let kpiAnalysis = document.getElementById('form_add_timeseries_kpi_analysis').value;
-    let variationsIndex = timeseriesToSave.variationsIndex;
-    let variationsValues = timeseriesToSave.variationsValues;
+    let variationsIndex = window.timeseriesToSave.variationsIndex;
+    let variationsValues = window.timeseriesToSave.variationsValues;
     let aggregatedIndex = [];
     let aggregatedValues = [];
     let currentGroup = [];
@@ -807,14 +811,14 @@ function updateTimeseriesChart() {
 
     aggregatedValues = reduceData();
 
-    if (!charts['timeSeriesChart']) {
+    if (!window.charts['timeSeriesChart']) {
         drawChart('timeSeriesChart');
     }
 
-    charts['timeSeriesChart'].data.datasets[0].label = `User journeys (${kpiAnalysis})`;
-    charts['timeSeriesChart'].data.labels = aggregatedIndex;
-    charts['timeSeriesChart'].data.datasets[0].data = aggregatedValues;
-    charts['timeSeriesChart'].update();
+    window.charts['timeSeriesChart'].data.datasets[0].label = `User journeys (${kpiAnalysis})`;
+    window.charts['timeSeriesChart'].data.labels = aggregatedIndex;
+    window.charts['timeSeriesChart'].data.datasets[0].data = aggregatedValues;
+    window.charts['timeSeriesChart'].update();
 }
 
 function frequencyChart(launchTimeSeriesChart = false){
@@ -854,16 +858,16 @@ function frequencyChart(launchTimeSeriesChart = false){
         periodStep++;
     }
 
-    optionsChartJs['frequencyChart'].data.labels = labels;
-    optionsChartJs['frequencyChart'].data.datasets[0].data = results;
-    optionsChartJs['frequencyChart'].options.scales.x.ticks.maxTicksLimit = timeframeValue;
+    window.optionsChartJs['frequencyChart'].data.labels = labels;
+    window.optionsChartJs['frequencyChart'].data.datasets[0].data = results;
+    window.optionsChartJs['frequencyChart'].options.scales.x.ticks.maxTicksLimit = timeframeValue;
 
-    if (!charts['frequencyChart']) {
+    if (!window.charts['frequencyChart']) {
         drawChart('frequencyChart');
     } else {
-        charts['frequencyChart'].data.labels = optionsChartJs['frequencyChart'].data.labels;
-        charts['frequencyChart'].data.datasets[0].data = optionsChartJs['frequencyChart'].data.datasets[0].data;
-        charts['frequencyChart'].update();
+        window.charts['frequencyChart'].data.labels = window.optionsChartJs['frequencyChart'].data.labels;
+        window.charts['frequencyChart'].data.datasets[0].data = window.optionsChartJs['frequencyChart'].data.datasets[0].data;
+        window.charts['frequencyChart'].update();
     }
 
     variationChart('daily');
@@ -875,8 +879,8 @@ function frequencyChart(launchTimeSeriesChart = false){
 }
 
 function variationChart(periodVariation, launchTimeSeriesChart = false){
-    adjustedVolumes[periodVariation] = Array(indexInput[periodVariation]['max']).fill(1);
-    variationFactor[periodVariation] = Array(indexInput[periodVariation]['max']).fill(1);
+    window.adjustedVolumes[periodVariation] = Array(window.indexInput[periodVariation]['max']).fill(1);
+    window.variationFactor[periodVariation] = Array(window.indexInput[periodVariation]['max']).fill(1);
 
     let totalVolume = getTotalVolume(periodVariation);
     let elementVariations = document.querySelectorAll('[id^="form_add_from_' + periodVariation + '_variation_"]');
@@ -887,27 +891,27 @@ function variationChart(periodVariation, launchTimeSeriesChart = false){
         let multiplier = parseInt(document.getElementById('form_add_multiplier_'+periodVariation+'_variation_' + idx).value);
         if (from !== to) {
             for (let slotTime = from; slotTime < to; slotTime++) {
-                variationFactor[periodVariation][slotTime] = multiplier;
+                window.variationFactor[periodVariation][slotTime] = multiplier;
             }
         }
     });
 
-    let numberOfParts = variationFactor[periodVariation].reduce((acc, cur) => acc + cur, 0);
+    let numberOfParts = window.variationFactor[periodVariation].reduce((acc, cur) => acc + cur, 0);
     let partValue = Math.ceil(totalVolume / numberOfParts);
 
-    for(let slotTime=0; slotTime < indexInput[periodVariation]['max'] ; slotTime++){
-        adjustedVolumes[periodVariation][slotTime] = partValue * variationFactor[periodVariation][slotTime];
+    for(let slotTime=0; slotTime < window.indexInput[periodVariation]['max'] ; slotTime++){
+        window.adjustedVolumes[periodVariation][slotTime] = partValue * window.variationFactor[periodVariation][slotTime];
     }
 
-    optionsChartJs[periodVariation+'VariationChart'].data.datasets[0].data =
-    adjustedVolumes[periodVariation].map(value => value.toFixed(2));
+    window.optionsChartJs[periodVariation+'VariationChart'].data.datasets[0].data =
+    window.adjustedVolumes[periodVariation].map(value => value.toFixed(2));
 
-    if (!charts[periodVariation+'VariationChart']) {
+    if (!window.charts[periodVariation+'VariationChart']) {
         drawChart(periodVariation+'VariationChart');
     } else {
-        charts[periodVariation+'VariationChart'].data.datasets[0].data =
-        optionsChartJs[periodVariation+'VariationChart'].data.datasets[0].data;
-        charts[periodVariation+'VariationChart'].update();
+        window.charts[periodVariation+'VariationChart'].data.datasets[0].data =
+        window.optionsChartJs[periodVariation+'VariationChart'].data.datasets[0].data;
+        window.charts[periodVariation+'VariationChart'].update();
     }
 
     if (launchTimeSeriesChart) {
@@ -920,7 +924,7 @@ document.getElementById('time-series-modal').addEventListener('shown.bs.modal', 
 function checkAttributes(usagePatternAttribute){
     if(usagePatternAttribute === 'timeseries'){
         document.getElementById('form_add_date_hourly_usage_journey_starts').value= document.getElementById('form_add_timeframe_start_date').value;
-        document.getElementById('form_add_list_hourly_usage_journey_starts').value = timeseriesToSave['variationsValues'].toString();
+        document.getElementById('form_add_list_hourly_usage_journey_starts').value = window.timeseriesToSave['variationsValues'].toString();
     }else{
         document.getElementById('form_add_'+usagePatternAttribute).value = document.getElementById('form_select_'+usagePatternAttribute).value;
     }

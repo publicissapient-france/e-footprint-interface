@@ -90,7 +90,12 @@
 </div>
 
 <div class="panel-result-btn position-fixed bottom-0" style="z-index: 1000;">
-    <button class="row bg-white rounded-top-2 reverse-shadow w-100 border border-0" data-bs-toggle="modal" data-bs-target="#resultModal">
+    <button class="row bg-white rounded-top-2 reverse-shadow w-100 border border-0"
+            hx-get="/model_builder/result-chart/"
+            hx-target="#modal-container"
+            hx-swap="innerHTML"
+            hx-trigger="click"
+    >
         <div class="col-12 text-center text-secondary">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="40" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
               <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
@@ -102,20 +107,17 @@
     </button>
 </div>
 
-<!--
-<div id="formPanel"></div>
-    <div class="panel-result-btn position-fixed bottom-0" style="z-index: 1000;">
-        <button class="row bg-white rounded-top-2 reverse-shadow w-100 border border-0" data-bs-toggle="modal" data-bs-target="#resultModal">
-            <div class="col-12 text-center text-secondary">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
-                  <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
-                </svg>
-            </div>
-                <div class="col-12 text-start px-4 mb-5">
-                    <h5><b>Results</b></h5>
-            </div>
-        </button>
-    </div>
--->
+<div id="modal-container">
+</div>
 
-{% include 'model_builder/resultPanel.html' %}
+<script>
+    document.body.addEventListener("computeResultChart", function(event) {
+        let modalElement = document.getElementById("resultModal");
+        let modal = new bootstrap.Modal(modalElement); // Création de l'instance Bootstrap
+        modal.show();
+        drawAreaResultChart()
+        updateAreaResultChart('stackedBarChart', 'year', 'sum');
+    });
+</script>
+
+<script src="{% static 'scripts/resultChart.js' %}"></script>

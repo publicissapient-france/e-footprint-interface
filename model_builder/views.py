@@ -21,17 +21,9 @@ def model_builder_main(request, reboot=False):
             request.session["system_data"] = system_data
 
     model_web = ModelWeb(request.session, launch_system_computations=False)
-    emissions = {}
-    for energy_row in model_web.system.total_energy_footprints:
-        emissions[f"{energy_row}_energy"] = model_web.system.total_energy_footprints[energy_row].to_json()
-    for fabrication_row in model_web.system.total_fabrication_footprints:
-        emissions[f"{fabrication_row}_fabrication"] =model_web.system.total_energy_footprints[fabrication_row].to_json()
 
     context = {
-        "model_web": model_web,
-        'energyEmissions': model_web.system.total_energy_footprints,
-        'fabricationEmissions': model_web.system.total_fabrication_footprints,
-        'emissions': emissions
+        "model_web": model_web
     }
 
 
@@ -51,3 +43,17 @@ def download_json(request):
     response['Content-Disposition'] = f'attachment; filename="efootprint-model-system-data.json"'
 
     return response
+
+
+def result_chart(request):
+    model_web = ModelWeb(request.session, launch_system_computations=True)
+    emissions_json = json.dumps(model_web.get_system_emissions)
+    http_response = htmx_render(
+        request, "model_builder/resultPanel.html", context={
+            'modelWeb': model_web,
+            'emissions_json': emissions_json,
+        })
+
+    http_response["HX-Trigger-After-Swap"] = "computeResultChart"
+
+    return http_response

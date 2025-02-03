@@ -1,6 +1,6 @@
 // LEADERLINE
 
-const dictLeaderLineOption = {
+window.dictLeaderLineOption = {
     'object-to-object': {
         color: "#9CA3AF",
         size: 1,
@@ -50,15 +50,15 @@ const dictLeaderLineOption = {
     }
 };
 
-let allLines=[];
+window.allLines=[];
 
-let oneRemValue = parseFloat(getComputedStyle(document.documentElement).fontSize);
-let startElementWidth = 1
-let startElementHeight = 1
+window.oneRemValue = parseFloat(getComputedStyle(document.documentElement).fontSize);
+window.startElementWidth = 1
+window.startElementHeight = 1
 
 
 function updateLines() {
-    Object.values(allLines).forEach(lineArray => {
+    Object.values(window.allLines).forEach(lineArray => {
         lineArray.forEach(line => {
             line.position();
         });
@@ -66,15 +66,15 @@ function updateLines() {
 }
 
 function removeAllLinesDepartingFromElement(elementId) {
-    if (allLines[elementId]) {
-        allLines[elementId].forEach( line => line.remove());
-        delete allLines[elementId];
+    if (window.allLines[elementId]) {
+        window.allLines[elementId].forEach( line => line.remove());
+        delete window.allLines[elementId];
     }
 }
 
 function removeAllLinesArrivingAtElement(elementId) {
-    Object.keys(allLines).forEach(key => {
-        allLines[key] = allLines[key].filter(line => {
+    Object.keys(window.allLines).forEach(key => {
+        window.allLines[key] = window.allLines[key].filter(line => {
             if (line.end.id === elementId) {
                 line.remove();
                 return false; // Remove this line from the array
@@ -85,10 +85,10 @@ function removeAllLinesArrivingAtElement(elementId) {
 }
 
 function removeAllLines() {
-    Object.values(allLines).forEach(lineArray => {
+    Object.values(window.allLines).forEach(lineArray => {
         lineArray.forEach(line => line.remove());
     });
-    allLines = [];
+    window.allLines = [];
 }
 
 function updateOrCreateLines(element) {
@@ -96,38 +96,38 @@ function updateOrCreateLines(element) {
     function drawLines(fromElement) {
         const linkedIds = fromElement.dataset.linkTo?.split('|') || [];
         linkedIds.forEach(toElementId => {
-            if (!allLines[fromElement.id]) {
-                allLines[fromElement.id] = [];
+            if (!window.allLines[fromElement.id]) {
+                window.allLines[fromElement.id] = [];
             }
-            const existingLine = allLines[fromElement.id].find(line => line.end.id === toElementId);
+            const existingLine = window.allLines[fromElement.id].find(line => line.end.id === toElementId);
             if (!existingLine) {
                 const toElement = document.getElementById(toElementId);
                 if (toElement) {
                     let optLine = fromElement.getAttribute('data-line-opt');
                     let line = null
                     if(optLine ==='object-to-object-inside-card'){
-                        startElementWidth = fromElement.offsetWidth;
-                        startElementHeight = fromElement.offsetHeight;
+                        window.startElementWidth = fromElement.offsetWidth;
+                        window.startElementHeight = fromElement.offsetHeight;
                         line = new LeaderLine(
                             LeaderLine.pointAnchor(
-                                fromElement, {x: (startElementWidth + oneRemValue), y: (startElementHeight/2)}),
-                            toElement, dictLeaderLineOption[optLine]
+                                fromElement, {x: (window.startElementWidth + window.oneRemValue), y: (window.startElementHeight/2)}),
+                            toElement, window.dictLeaderLineOption[optLine]
                         );
                     } else if (optLine ==='step-dot-line'){
-                        startElementWidth = toElement.offsetWidth;
-                        startElementHeight = toElement.offsetHeight;
+                        window.startElementWidth = toElement.offsetWidth;
+                        window.startElementHeight = toElement.offsetHeight;
                         line = new LeaderLine(
                             fromElement,
                             LeaderLine.pointAnchor(
-                                toElement, {x: (startElementWidth/2), y: (-oneRemValue/2)}
+                                toElement, {x: (window.startElementWidth/2), y: (-window.oneRemValue/2)}
                             ),
-                            dictLeaderLineOption[optLine]
+                            window.dictLeaderLineOption[optLine]
                         );
                     }
                     else{
-                        line = new LeaderLine(fromElement, toElement, dictLeaderLineOption[optLine]);
+                        line = new LeaderLine(fromElement, toElement, window.dictLeaderLineOption[optLine]);
                     }
-                    allLines[fromElement.id].push(line);
+                    window.allLines[fromElement.id].push(line);
                 }
             }
         });
@@ -283,11 +283,11 @@ function reverseIconAccordion(objectId){
     updateLines();
 }
 
-let resizeTimeout;
+window.resizeTimeout = null;
 
 window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
+    clearTimeout(window.resizeTimeout);
+    window.resizeTimeout = setTimeout(() => {
         removeAllLines();
         initLeaderLines();
     }, 100);

@@ -79,7 +79,7 @@ body{
     position: absolute;
     bottom: 0;
     width: 75vw;
-    height: 6vh;
+    height: 10vh;
     cursor: pointer;
     z-index: 100;
 }
