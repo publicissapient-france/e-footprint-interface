@@ -197,9 +197,7 @@ def add_new_usage_journey_step(request, usage_journey_efootprint_id):
         if key.startswith('form_add'):
             del mutable_post[key]
     mutable_post['form_edit_name'] = usage_journey_to_edit.name
-    usage_journey_step_ids = []
-    for uj_step in usage_journey_to_edit.uj_steps:
-        usage_journey_step_ids.append(uj_step.efootprint_id)
+    usage_journey_step_ids = [uj_step.efootprint_id for uj_step in usage_journey_to_edit.uj_steps]
     usage_journey_step_ids.append(added_obj.efootprint_id)
     mutable_post.setlist('form_edit_uj_steps', usage_journey_step_ids)
     request.POST = mutable_post
@@ -260,11 +258,12 @@ def add_new_job(request, usage_journey_step_efootprint_id):
     return edit_object(request, usage_journey_step_efootprint_id, model_web)
 
 
-
 def add_new_usage_pattern(request):
-    model_web = ModelWeb(request.session)
+    model_web = ModelWeb(request.session, launch_system_computations=False)
     new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, 'UsagePattern')
     added_obj = add_new_efootprint_object_to_system(request.session, model_web, new_efootprint_obj)
+    request.session["system_data"]["System"]["uuid-system-1"]["usage_patterns"].append(new_efootprint_obj.id)
+    request.session.modified = True
 
     response = render(
         request, "model_builder/object_cards/usage_pattern_card.html", {"usage_pattern": added_obj})
