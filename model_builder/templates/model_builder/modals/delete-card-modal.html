@@ -17,7 +17,7 @@
                         script="on htmx:afterRequest
                                 {% if remove_card_with_hyperscript %}remove #{{ obj.efootprint_id }} then updateLines() then {% endif %}
                                 closePanel()"
-                >Yes, delette all</button>
+                >Yes, delete</button>
                 <button type="button" class="btn btn-white border border-1 border-body-tertiary rounded-2 px-4 py-3 mb-3" data-bs-dismiss="modal">No, go back</button>
             </div>
         </div>

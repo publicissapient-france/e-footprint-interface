@@ -21,7 +21,7 @@ def ask_delete_object(request, object_id):
 
         http_response = render(request, "model_builder/modals/cant-delete-modal.html",
             context={"msg":f"Can’t delete {web_obj.name} because it is referenced by "
-                           f"{[obj.efootprint_id for obj in web_obj.modeling_obj_containers]}"})
+                           f"{",".join([obj.name for obj in web_obj.modeling_obj_containers])}"})
     else:
         message = f"Are you sure you want to delete this {web_obj.class_as_simple_str} ?"
         sub_message = ""
@@ -39,6 +39,7 @@ def ask_delete_object(request, object_id):
                      "remove_card_with_hyperscript": remove_card_with_hyperscript})
 
     http_response["HX-Trigger-After-Swap"] = "openModalDialog"
+
     return http_response
 
 

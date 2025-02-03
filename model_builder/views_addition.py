@@ -1,7 +1,7 @@
 import json
 import uuid
 
-from efootprint.core.all_classes_in_order import SERVER_CLASSES, SERVICE_CLASSES
+from efootprint.core.all_classes_in_order import SERVER_CLASSES, SERVICE_CLASSES, SERVER_BUILDER_CLASSES
 from efootprint.core.hardware.storage import Storage
 from django.shortcuts import render
 from efootprint.core.usage.job import Job
@@ -31,7 +31,8 @@ def open_create_object_panel(request, object_type):
 
 
 def open_create_server_panel(request):
-    structure_dict = generate_object_creation_structure(SERVER_CLASSES, "Server type", ["fixed_nb_of_instances"])
+    structure_dict = generate_object_creation_structure(
+        SERVER_CLASSES + SERVER_BUILDER_CLASSES, "Server type", ["fixed_nb_of_instances"])
 
     http_response = render(request, f"model_builder/side_panels/server_add.html",
                   context={'structure_dict': structure_dict})
