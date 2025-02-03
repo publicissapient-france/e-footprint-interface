@@ -16,7 +16,7 @@ def open_edit_object_panel(request, object_id):
     return render(request, "model_builder/side_panels/edit_object_panel.html", context={"object_to_edit": obj_to_edit})
 
 
-def edit_object(request, object_id, model_web=None):
+def compute_edit_object_html_and_event_response(request, object_id, model_web=None):
     if model_web is None:
         model_web = ModelWeb(request.session)
     data_attribute_updates = []
@@ -80,6 +80,13 @@ def edit_object(request, object_id, model_web=None):
 
     top_parent_ids = list(set([duplicated_card.top_parent.web_id for duplicated_card in
                                    edited_obj.duplicated_cards]))
+
+    return http_response, ids_of_web_elements_with_lines_to_remove, data_attribute_updates, top_parent_ids
+
+
+def edit_object(request, object_id, model_web=None):
+    http_response, ids_of_web_elements_with_lines_to_remove, data_attribute_updates, top_parent_ids = (
+        compute_edit_object_html_and_event_response(request, object_id, model_web))
 
     http_response["HX-Trigger"] = json.dumps({
         "removeLinesAndUpdateDataAttributes": {

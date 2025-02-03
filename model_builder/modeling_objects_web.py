@@ -1,7 +1,7 @@
 from efootprint.abstract_modeling_classes.explainable_object_base_class import ExplainableObject
 from efootprint.abstract_modeling_classes.explainable_objects import EmptyExplainableObject
 from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
-from efootprint.core.usage.usage_pattern import UsagePattern
+from efootprint.logger import logger
 
 
 def retrieve_attributes_by_type(modeling_obj, attribute_type):
@@ -109,6 +109,9 @@ class ModelingObjectWeb:
 
         self._modeling_obj.__setattr__(key, value)
 
+    def get_efootprint_value(self, key):
+        return getattr(self._modeling_obj, key, None)
+
     @property
     def modeling_obj(self):
         return self._modeling_obj
@@ -199,15 +202,23 @@ class ModelingObjectWeb:
 
         return list_efootprint_mod_obj_attributes
 
-    @property
-    def is_deletable(self):
-        is_deletable = False
-        if not self._modeling_obj.modeling_obj_containers:
-            is_deletable = True
-        if isinstance(self._modeling_obj, UsagePattern) and len(self.model_web.system.usage_patterns) > 1:
-            is_deletable = True
-
-        return is_deletable
+    def self_delete(self):
+        obj_type = self.class_as_simple_str
+        object_id = self.efootprint_id
+        objects_to_delete_afterwards = []
+        for modeling_obj_dict in self.mod_obj_attributes:
+            if len(modeling_obj_dict["attr_value"].modeling_obj_containers) == 1:
+                objects_to_delete_afterwards.append(modeling_obj_dict["attr_value"])
+        for list_attribute_dict in self.list_attributes:
+            for mod_obj_in_list_attribute in list_attribute_dict["attr_value"]:
+                if len(mod_obj_in_list_attribute.modeling_obj_containers) == 1:
+                    objects_to_delete_afterwards.append(mod_obj_in_list_attribute)
+        logger.info(f"Deleting {self.name}")
+        self._modeling_obj.self_delete()
+        self.model_web.response_objs[obj_type].pop(object_id, None)
+        self.model_web.flat_efootprint_objs_dict.pop(object_id, None)
+        for mod_obj in objects_to_delete_afterwards:
+            mod_obj.self_delete()
 
 class ServerWeb(ModelingObjectWeb):
     @property

@@ -72,7 +72,7 @@
         'stackedBarChart' : null
     };
 
-    window.emissions = {{ emissions_json|safe }}
+    window.emissions = {{ model_web.system_emissions|safe }}
     document.getElementById('resultModal').addEventListener('hidden.bs.modal', function () {
         document.getElementById('panel-result-btn').focus();
         document.getElementById('modal-container').innerHTML = '';

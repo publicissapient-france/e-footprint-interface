@@ -29,7 +29,8 @@ urlpatterns = [
     path("open-edit-object-panel/<object_id>/", model_builder.views_edition.open_edit_object_panel,
          name="open-edit-object-panel"),
     path("edit-object/<object_id>/", model_builder.views_edition.edit_object, name="edit-object"),
-    path("delete-object", model_builder.views_deletion.delete_object, name="delete-object"),
+    path("delete-object/<object_id>/", model_builder.views_deletion.delete_object, name="delete-object"),
+    path("ask-delete-object/<object_id>/", model_builder.views_deletion.ask_delete_object, name="ask-delete-object"),
     path("download-json/", views.download_json, name="download-json"),
     path("result-chart/", views.result_chart, name="result-chart"),
 ]

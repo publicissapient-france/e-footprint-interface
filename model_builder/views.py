@@ -13,6 +13,8 @@ DEFAULT_GRAPH_WIDTH = 700
 
 
 def model_builder_main(request, reboot=False):
+    if reboot and reboot != "reboot":
+        raise ValueError("reboot must be False or 'reboot'")
     if reboot == "reboot":
         if "empty_objects" in request.session.keys():
             del request.session["empty_objects"]
@@ -25,13 +27,8 @@ def model_builder_main(request, reboot=False):
 
     model_web = ModelWeb(request.session, launch_system_computations=False)
 
-    context = {
-        "model_web": model_web
-    }
-
-
     http_response = htmx_render(
-        request, "model_builder/model-builder-main.html", context=context)
+        request, "model_builder/model-builder-main.html", context={"model_web": model_web})
 
     if request.headers.get("HX-Request") == "true":
         http_response["HX-Trigger-After-Swap"] = "initLeaderLines"
@@ -50,12 +47,9 @@ def download_json(request):
 
 def result_chart(request):
     model_web = ModelWeb(request.session, launch_system_computations=True)
-    emissions_json = json.dumps(model_web.get_system_emissions)
+
     http_response = htmx_render(
-        request, "model_builder/resultPanel.html", context={
-            'modelWeb': model_web,
-            'emissions_json': emissions_json,
-        })
+        request, "model_builder/resultPanel.html", context={'model_web': model_web})
 
     http_response["HX-Trigger-After-Swap"] = "computeResultChart"
 

@@ -2,7 +2,7 @@
 <form class="container-fluid form_edit_panel text-start"
       hx-post="/model_builder/edit-object/{{ object_to_edit.efootprint_id }}/"
       hx-swap="none"
-      script="on htmx:afterRequest closePanel()"
+      script="on submit closePanel()"
 >
 
     <div class="text-end">
@@ -70,6 +70,12 @@
         <div class="row justify-content-between">
             <div class="col-12">
                 <button type="submit" class="btn btn-primary rounded-pill w-100">Save</button>
+            </div>
+            <div class="col-12">
+                <button type="button"
+                        hx-get="/model_builder/ask-delete-object/{{ object_to_edit.efootprint_id }}"
+                        hx-swap="afterend"
+                        class="btn btn-primary rounded-pill w-100">Ask to delete</button>
             </div>
         </div>
     </div>

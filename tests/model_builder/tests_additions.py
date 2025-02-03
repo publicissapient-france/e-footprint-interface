@@ -40,10 +40,12 @@ class AddNewUsagePatternTestCase(TestCase):
 
         request = self.factory.post('/add_new_usage_pattern/', data=post_data)
         self._add_session_to_request(request)  # Attach a valid session
+        len_system_up = len(request.session["system_data"]["System"]["uuid-system-1"]["usage_patterns"])
 
         response = add_new_usage_pattern(request)
 
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(request.session["system_data"]["UsagePattern"]), len_system_up + 1)
 
     def test_add_web_service_then_web_job(self):
         post_data = QueryDict(mutable=True)

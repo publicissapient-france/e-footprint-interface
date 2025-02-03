@@ -1,0 +1,8 @@
+<button type="button"
+        hx-get="/model_builder/delete-object/{{ obj.efootprint_id }}" class="btn btn-primary rounded-pill w-100"
+        script="on htmx:afterRequest
+        removeAllLinesDepartingFromElement('{{ obj.efootprint_id }}')
+        then remove #{{ obj.efootprint_id }}
+        then updateLines()
+        then closePanel()">
+    Delete</button>

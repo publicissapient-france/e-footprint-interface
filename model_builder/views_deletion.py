@@ -1,55 +1,46 @@
-import json
-
-from django.http import HttpResponse
-from django.template.loader import render_to_string
+from django.http import HttpResponse, QueryDict
+from django.shortcuts import render
 from efootprint.api_utils.system_to_json import system_to_json
 
 from model_builder.model_web import ModelWeb
-from model_builder.views import DEFAULT_GRAPH_WIDTH
+from model_builder.modeling_objects_web import JobWeb, UsageJourneyStepWeb
 
 
-def delete_object(request):
-    model_web = ModelWeb(request.session)
+def ask_delete_object(request, object_id):
+    model_web = ModelWeb(request.session, launch_system_computations=False)
+    model_web.set_all_trigger_modeling_updates_to_false()
+    web_obj = model_web.get_web_object_from_efootprint_id(object_id)
+    obj_type = web_obj.class_as_simple_str
 
-    obj_id = request.POST["object-id"]
-    obj_type = request.POST["object-type"]
-
-    system = model_web.system
-    if obj_type == "UsagePattern":
-        system.usage_patterns = [up for up in system.usage_patterns if up.id != obj_id]
-
-    model_web.flat_efootprint_objs_dict[obj_id].self_delete()
-    model_web.response_objs[obj_type].pop(obj_id, None)
-    model_web.flat_efootprint_objs_dict.pop(obj_id, None)
-
-    request.session["system_data"] = system_to_json(system, save_calculated_attributes=False)
-
-    if obj_type != "UsagePattern":
-        http_response = HttpResponse(status=204)
+    if obj_type != "UsagePattern" and web_obj.modeling_obj_containers:
+        return render(
+            request, "model_builder/modals/cant-delete-modal.html",
+            context={"msg":f"Can’t delete {web_obj.name} because it is referenced by "
+                           f"{[obj.efootprint_id for obj in web_obj.modeling_obj_containers]}"})
     else:
-        system_footprint_html = system.plot_footprints_by_category_and_object(
-            height=400, width=DEFAULT_GRAPH_WIDTH, return_only_html=True)
+        if isinstance(web_obj, JobWeb):
+            request.POST = QueryDict()
+        else:
+            return render(
+                request, "model_builder/modals/delete-card-modal.html", context={"obj": web_obj})
 
-        graph_container_html = render_to_string(
-            "model_builder/graph-container.html",
-            context={"systemFootprint": system_footprint_html, "hx_swap_oob": True})
 
-        model_comparison_buttons_html = render_to_string(
-            "model_builder/model-comparison-buttons.html",
-            {"is_different_from_ref_model": request.session["system_data"] != request.session["reference_system_data"],
-             "hx_swap_oob": True})
+def delete_object(request, object_id):
+    model_web = ModelWeb(request.session, launch_system_computations=False)
+    model_web.set_all_trigger_modeling_updates_to_false()
 
-        return_html = graph_container_html + model_comparison_buttons_html
-        request.session["img_base64"] = None
+    web_obj = model_web.get_web_object_from_efootprint_id(object_id)
+    obj_type = web_obj.class_as_simple_str
+    system = model_web.system
 
-        for up in system.usage_patterns:
-            return_html += render_to_string(
-                "model_builder/object-card.html",
-                {"object": up, "hx_swap_oob": True})
+    if obj_type == "UsagePattern":
+        system.set_efootprint_value("usage_patterns",
+                                    [up for up in system.get_efootprint_value("usage_patterns") if up.id != object_id])
 
-        http_response = HttpResponse(return_html)
+    web_obj.self_delete()
 
-    # TODO: Update below logic
-    http_response["HX-Trigger"] = json.dumps({"deleteObject": {"ObjectId": obj_id}})
+    request.session["system_data"] = system_to_json(system.modeling_obj, save_calculated_attributes=False)
+
+    http_response = HttpResponse(status=204)
 
     return http_response

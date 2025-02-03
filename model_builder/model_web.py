@@ -36,6 +36,11 @@ class ModelWeb:
         self.system = wrap_efootprint_object(list(self.response_objs["System"].values())[0], self)
         logger.info(f"ModelWeb object created in {time() - start:.3f} seconds.")
 
+    def set_all_trigger_modeling_updates_to_false(self):
+        self.system.set_efootprint_value("trigger_modeling_updates", False)
+        for web_obj in self.system.all_linked_objects:
+            web_obj.set_efootprint_value("trigger_modeling_updates", False)
+
     def get_efootprint_objects_from_efootprint_type(self, obj_type):
         if obj_type in self.response_objs.keys():
             return list(self.response_objs[obj_type].values())
@@ -132,7 +137,7 @@ class ModelWeb:
             return []
 
     @property
-    def get_system_emissions(self):
+    def system_emissions(self):
         emissions = {}
         for energy_row in self.system.total_energy_footprints:
             emissions[f"{energy_row}_energy"] = self.system.total_energy_footprints[energy_row].to_json()
@@ -140,6 +145,7 @@ class ModelWeb:
         for fabrication_row in self.system.total_fabrication_footprints:
             emissions[f"{fabrication_row}_fabrication"] = self.system.total_energy_footprints[
                 fabrication_row].to_json()
+
         return emissions
 
 
