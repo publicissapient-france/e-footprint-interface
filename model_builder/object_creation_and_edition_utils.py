@@ -40,12 +40,14 @@ def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_ty
             )
         )
 
-    for str_attr in list(obj_structure.str_attributes.keys()) + list(obj_structure.conditional_str_attributes.keys()):
-        if f'form_add_{str_attr}' not in request.POST.keys():
-            logger.info(f"No value for {str_attr} in {object_type} form. "
-                        f"Default value {new_efootprint_obj_class.default_values()[str_attr]} will be used.")
+    for str_attr in obj_structure.str_attributes + obj_structure.conditional_str_attributes:
+        str_attr_name = str_attr["attr_name"]
+        if f'form_add_{str_attr_name}' not in request.POST.keys():
+            logger.info(f"No value for {str_attr_name} in {object_type} form. "
+                        f"Default value {new_efootprint_obj_class.default_values()[str_attr_name]} will be used.")
         else:
-            obj_creation_kwargs[str_attr] = SourceObject(request.POST[f'form_add_{str_attr}'], source=Sources.USER_DATA)
+            obj_creation_kwargs[str_attr_name] = SourceObject(
+                request.POST[f'form_add_{str_attr_name}'], source=Sources.USER_DATA)
 
     for mod_obj in obj_structure.modeling_obj_attributes:
         new_mod_obj_id = request.POST[f'form_add_{mod_obj["attr_name"]}']

@@ -12,11 +12,13 @@ from model_builder.class_structure import efootprint_class_structure, MODELING_O
 from model_builder.modeling_objects_web import wrap_efootprint_object
 from utils import EFOOTPRINT_COUNTRIES
 
-with open(os.path.join("model_builder", "default_networks.json"), "r") as f:
+model_web_root = os.path.dirname(os.path.abspath(__file__))
+
+with open(os.path.join(model_web_root, "default_networks.json"), "r") as f:
     DEFAULT_NETWORKS = json.load(f)
-with open(os.path.join("model_builder", "default_hardwares.json"), "r") as f:
+with open(os.path.join(model_web_root, "default_hardwares.json"), "r") as f:
     DEFAULT_HARDWARES = json.load(f)
-with open(os.path.join("model_builder", "default_countries.json"), "r") as f:
+with open(os.path.join(model_web_root, "default_countries.json"), "r") as f:
     DEFAULT_COUNTRIES = json.load(f)
 
 

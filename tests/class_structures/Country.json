@@ -1,0 +1,15 @@
+{
+    "numerical_attributes": [
+        {
+            "attr_name": "average_carbon_intensity",
+            "unit": "kg/kWh",
+            "long_unit": "kilogram / kilowatt_hour",
+            "default_value": 50.0
+        }
+    ],
+    "hourly_quantities_attributes": [],
+    "modeling_obj_attributes": [],
+    "list_attributes": [],
+    "str_attributes": [],
+    "conditional_str_attributes": []
+}

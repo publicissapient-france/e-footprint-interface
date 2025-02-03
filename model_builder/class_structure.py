@@ -17,8 +17,18 @@ def efootprint_class_structure(efootprint_class_str: str):
         "hourly_quantities_attributes": [],
         "modeling_obj_attributes": [],
         "list_attributes": [],
-        "str_attributes": efootprint_class.list_values(),
-        "conditional_str_attributes": efootprint_class.conditional_list_values()
+        "str_attributes": [{"attr_name": key, "list_values": [str(value) for value in values]}
+                           for key, values in efootprint_class.list_values().items()],
+        "conditional_str_attributes": [
+            {
+                "attr_name": key,
+                "depends_on": value["depends_on"],
+                "conditional_list_values": {
+                    str(conditional_value): [str(possible_value) for possible_value in possible_values]
+                    for conditional_value, possible_values in value["conditional_list_values"].items()
+                }
+            }
+            for key, value in efootprint_class.conditional_list_values().items()]
     }
     efootprint_class_default_values = efootprint_class.default_values()
     init_sig_params = signature(efootprint_class.__init__).parameters
@@ -56,8 +66,8 @@ def generate_object_creation_structure(available_efootprint_classes: list, heade
             "id": "type_object_available",
             "name": "type_object_available",
             "required": True,
-            "options": [{"label": service.__name__, "value": service.__name__}
-                        for service in available_efootprint_classes]
+            "options": [{"label": available_class.__name__, "value": available_class.__name__}
+                        for available_class in available_efootprint_classes]
         }
         ]
     }
@@ -68,35 +78,31 @@ def generate_object_creation_structure(available_efootprint_classes: list, heade
     for index, efootprint_class in enumerate(available_efootprint_classes):
         class_fields = []
         class_structure = efootprint_class_structure(efootprint_class.__name__)
-        for str_attribute, str_attribute_values in class_structure["str_attributes"].items():
-            if str_attribute in attributes_to_skip:
+        for str_attribute_dict in class_structure["str_attributes"]:
+            if str_attribute_dict["attr_name"] in attributes_to_skip:
                 continue
             class_fields.append({
                 "input_type": "select",
-                "id": str_attribute,
-                "name": str_attribute,
+                "id": str_attribute_dict["attr_name"],
+                "name": str_attribute_dict["attr_name"],
                 "required": True,
-                "options": [{"label": str(attr_value), "value": str(attr_value)} for attr_value in str_attribute_values]
+                "options": [
+                    {"label": attr_value, "value": attr_value} for attr_value in str_attribute_dict["list_values"]]
             })
-        for conditional_str_attribute, conditional_str_attribute_value \
-            in class_structure["conditional_str_attributes"].items():
-            if conditional_str_attribute in attributes_to_skip:
+        for conditional_str_attribute_dict in class_structure["conditional_str_attributes"]:
+            if conditional_str_attribute_dict["attr_name"] in attributes_to_skip:
                 continue
             class_fields.append({
                 "input_type": "datalist",
-                "id": conditional_str_attribute,
-                "name": conditional_str_attribute,
+                "id": conditional_str_attribute_dict["attr_name"],
+                "name": conditional_str_attribute_dict["attr_name"],
                 "options": None
             })
             efootprint_classes_dict["dynamic_lists"].append(
                 {
-                    "input": conditional_str_attribute,
-                    "filter_by": conditional_str_attribute_value["depends_on"],
-                    "list_value": {
-                        str(conditional_value): [str(possible_value) for possible_value in possible_values]
-                        for conditional_value, possible_values
-                        in conditional_str_attribute_value["conditional_list_values"].items()
-                    }
+                    "input": conditional_str_attribute_dict["attr_name"],
+                    "filter_by": conditional_str_attribute_dict["depends_on"],
+                    "list_value": conditional_str_attribute_dict["conditional_list_values"]
                 })
         for numerical_attribute in class_structure["numerical_attributes"]:
             if numerical_attribute["attr_name"] in attributes_to_skip:
@@ -110,13 +116,13 @@ def generate_object_creation_structure(available_efootprint_classes: list, heade
                 "default": numerical_attribute["default_value"]
             })
 
-        service_class = "d-none"
+        styling_class = "d-none"
         if index == 0:
-            service_class = ""
+            styling_class = ""
         efootprint_classes_dict["items"].append({
             "category": efootprint_class.__name__,
             "header": f"{efootprint_class.__name__} creation",
-            "class": service_class,
+            "class": styling_class,
             "fields": class_fields})
 
     return efootprint_classes_dict

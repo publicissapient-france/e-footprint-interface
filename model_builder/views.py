@@ -1,11 +1,9 @@
-from django.db.models.fields import return_None
-
 from model_builder.model_web import ModelWeb
 from utils import htmx_render
 
 import json
 import os
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 import matplotlib
 
 matplotlib.use('Agg')
