@@ -1,3 +1,5 @@
+from django.shortcuts import redirect
+
 from model_builder.model_web import ModelWeb
 from utils import htmx_render
 
@@ -11,12 +13,15 @@ DEFAULT_GRAPH_WIDTH = 700
 
 
 def model_builder_main(request, reboot=False):
-    if "system_data" not in request.session.keys() or reboot=="reboot":
+    if reboot == "reboot":
         if "empty_objects" in request.session.keys():
             del request.session["empty_objects"]
         with open(os.path.join("model_builder", "default_system_data.json"), "r") as file:
             system_data = json.load(file)
             request.session["system_data"] = system_data
+        return redirect("model-builder")
+    if "system_data" not in request.session.keys():
+        return redirect("model-builder", reboot="reboot")
 
     model_web = ModelWeb(request.session, launch_system_computations=False)
 
