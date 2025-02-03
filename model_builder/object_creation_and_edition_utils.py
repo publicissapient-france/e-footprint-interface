@@ -87,34 +87,37 @@ def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
     obj_to_edit.set_efootprint_value("name", request.POST["form_edit_name"])
 
     for attr_dict in obj_structure.numerical_attributes:
-        request_unit = attr_dict["unit"]
-        request_value = request.POST.getlist("form_edit_" + attr_dict["attr_name"])[0]
-        new_value = SourceValue(float(request_value) * u(request_unit), Sources.USER_DATA)
-        current_value = getattr(obj_to_edit, attr_dict["attr_name"])
-        if new_value.value != current_value.value:
-            logger.debug(f"{attr_dict['attr_name']} has changed in {obj_to_edit.efootprint_id}")
-            new_value.set_label(current_value.label)
-            obj_to_edit.set_efootprint_value(attr_dict["attr_name"], new_value)
+        if "form_edit_" + attr_dict["attr_name"] in request.POST.keys():
+            request_unit = attr_dict["unit"]
+            request_value = request.POST.getlist("form_edit_" + attr_dict["attr_name"])[0]
+            new_value = SourceValue(float(request_value) * u(request_unit), Sources.USER_DATA)
+            current_value = getattr(obj_to_edit, attr_dict["attr_name"])
+            if new_value.value != current_value.value:
+                logger.debug(f"{attr_dict['attr_name']} has changed in {obj_to_edit.efootprint_id}")
+                new_value.set_label(current_value.label)
+                obj_to_edit.set_efootprint_value(attr_dict["attr_name"], new_value)
     for mod_obj in obj_structure.modeling_obj_attributes:
-        new_mod_obj_id = request.POST["form_edit_" + mod_obj["attr_name"]]
-        current_mod_obj_id = getattr(obj_to_edit, mod_obj["attr_name"]).efootprint_id
-        if new_mod_obj_id != current_mod_obj_id:
-            logger.debug(f"{mod_obj['attr_name']} has changed in {obj_to_edit.efootprint_id}")
-            obj_to_add = model_web.get_efootprint_object_from_efootprint_id(
-                new_mod_obj_id, mod_obj["object_type"], request.session)
-            obj_to_edit.set_efootprint_value(mod_obj["attr_name"], obj_to_add)
+        if "form_edit_" + mod_obj["attr_name"] in request.POST.keys():
+            new_mod_obj_id = request.POST["form_edit_" + mod_obj["attr_name"]]
+            current_mod_obj_id = getattr(obj_to_edit, mod_obj["attr_name"]).efootprint_id
+            if new_mod_obj_id != current_mod_obj_id:
+                logger.debug(f"{mod_obj['attr_name']} has changed in {obj_to_edit.efootprint_id}")
+                obj_to_add = model_web.get_efootprint_object_from_efootprint_id(
+                    new_mod_obj_id, mod_obj["object_type"], request.session)
+                obj_to_edit.set_efootprint_value(mod_obj["attr_name"], obj_to_add)
     for mod_obj in obj_structure.list_attributes:
-        new_mod_obj_ids = request.POST.getlist("form_edit_" +mod_obj["attr_name"])
-        current_mod_obj_ids = [mod_obj.efootprint_id for mod_obj in getattr(obj_to_edit, mod_obj["attr_name"])]
-        added_mod_obj_ids = [obj_id for obj_id in new_mod_obj_ids if obj_id not in current_mod_obj_ids]
-        removed_mod_obj_ids = [obj_id for obj_id in current_mod_obj_ids if obj_id not in new_mod_obj_ids]
-        logger.debug(f"{mod_obj['attr_name']} has changed in {obj_to_edit.efootprint_id}")
-        unchanged_mod_obj_ids = [obj_id for obj_id in current_mod_obj_ids if obj_id not in removed_mod_obj_ids]
-        if new_mod_obj_ids != current_mod_obj_ids:
-            obj_to_edit.set_efootprint_value(
-                mod_obj["attr_name"],
-                [model_web.get_web_object_from_efootprint_id(obj_id).modeling_obj
-                 for obj_id in unchanged_mod_obj_ids + added_mod_obj_ids])
+        if "form_edit_" + mod_obj["attr_name"] in request.POST.keys():
+            new_mod_obj_ids = request.POST.getlist("form_edit_" +mod_obj["attr_name"])
+            current_mod_obj_ids = [mod_obj.efootprint_id for mod_obj in getattr(obj_to_edit, mod_obj["attr_name"])]
+            added_mod_obj_ids = [obj_id for obj_id in new_mod_obj_ids if obj_id not in current_mod_obj_ids]
+            removed_mod_obj_ids = [obj_id for obj_id in current_mod_obj_ids if obj_id not in new_mod_obj_ids]
+            logger.debug(f"{mod_obj['attr_name']} has changed in {obj_to_edit.efootprint_id}")
+            unchanged_mod_obj_ids = [obj_id for obj_id in current_mod_obj_ids if obj_id not in removed_mod_obj_ids]
+            if new_mod_obj_ids != current_mod_obj_ids:
+                obj_to_edit.set_efootprint_value(
+                    mod_obj["attr_name"],
+                    [model_web.get_web_object_from_efootprint_id(obj_id).modeling_obj
+                     for obj_id in unchanged_mod_obj_ids + added_mod_obj_ids])
 
     # Update session data
     request.session["system_data"][obj_to_edit.class_as_simple_str][obj_to_edit.efootprint_id] = obj_to_edit.to_json()

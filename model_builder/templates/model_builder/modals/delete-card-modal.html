@@ -15,10 +15,8 @@
                         data-bs-dismiss="modal"
                         hx-get="/model_builder/delete-object/{{ obj.efootprint_id }}"
                         script="on htmx:afterRequest
-                            removeAllLinesDepartingFromElement('{{ obj.efootprint_id }}')
-                            then remove #{{ obj.efootprint_id }}
-                            then updateLines()
-                            then closePanel()"
+                                {% if remove_card_with_hyperscript %}remove #{{ obj.efootprint_id }} then updateLines() then {% endif %}
+                                closePanel()"
                 >Yes, delette all</button>
                 <button type="button" class="btn btn-white border border-1 border-body-tertiary rounded-2 px-4 py-3 mb-3" data-bs-dismiss="modal">No, go back</button>
             </div>

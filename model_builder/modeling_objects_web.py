@@ -1,7 +1,10 @@
+from django.contrib.sessions.backends.base import SessionBase
 from efootprint.abstract_modeling_classes.explainable_object_base_class import ExplainableObject
 from efootprint.abstract_modeling_classes.explainable_objects import EmptyExplainableObject
 from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
 from efootprint.logger import logger
+from efootprint.builders.services.service_base_class import Service
+from efootprint.core.hardware.server_base import ServerBase
 
 
 def retrieve_attributes_by_type(modeling_obj, attribute_type):
@@ -202,23 +205,27 @@ class ModelingObjectWeb:
 
         return list_efootprint_mod_obj_attributes
 
-    def self_delete(self):
+    def self_delete(self, request_session: SessionBase):
         obj_type = self.class_as_simple_str
         object_id = self.efootprint_id
         objects_to_delete_afterwards = []
-        for modeling_obj_dict in self.mod_obj_attributes:
-            if len(modeling_obj_dict["attr_value"].modeling_obj_containers) == 1:
-                objects_to_delete_afterwards.append(modeling_obj_dict["attr_value"])
-        for list_attribute_dict in self.list_attributes:
-            for mod_obj_in_list_attribute in list_attribute_dict["attr_value"]:
-                if len(mod_obj_in_list_attribute.modeling_obj_containers) == 1:
-                    objects_to_delete_afterwards.append(mod_obj_in_list_attribute)
+        for modeling_obj in (
+            [mod_obj_dict["attr_value"] for mod_obj_dict in self.mod_obj_attributes]
+            + sum([list_attribute["attr_value"] for list_attribute in self.list_attributes], [])):
+            if (not (isinstance(modeling_obj.modeling_obj, Service)
+                     or isinstance(modeling_obj.modeling_obj, ServerBase))
+                and len(modeling_obj.modeling_obj_containers) == 1):
+                objects_to_delete_afterwards.append(modeling_obj)
         logger.info(f"Deleting {self.name}")
+        request_session["system_data"][obj_type].pop(object_id, None)
+        if len(request_session["system_data"][obj_type]) == 0:
+            del request_session["system_data"][obj_type]
+        request_session.modified = True
         self._modeling_obj.self_delete()
         self.model_web.response_objs[obj_type].pop(object_id, None)
         self.model_web.flat_efootprint_objs_dict.pop(object_id, None)
         for mod_obj in objects_to_delete_afterwards:
-            mod_obj.self_delete()
+            mod_obj.self_delete(request_session)
 
 class ServerWeb(ModelingObjectWeb):
     @property
