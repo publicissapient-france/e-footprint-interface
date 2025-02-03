@@ -89,7 +89,7 @@
     </div>
 </div>
 
-<div class="panel-result-btn position-fixed bottom-0" style="z-index: 1000;">
+<div id="panel-result-btn" class="panel-result-btn position-fixed bottom-0" style="z-index: 1000;">
     <button class="row bg-white rounded-top-2 reverse-shadow w-100 border border-0"
             hx-get="/model_builder/result-chart/"
             hx-target="#modal-container"
@@ -113,10 +113,11 @@
 <script>
     document.body.addEventListener("computeResultChart", function(event) {
         let modalElement = document.getElementById("resultModal");
-        let modal = new bootstrap.Modal(modalElement); // Création de l'instance Bootstrap
+        let modal = new bootstrap.Modal(modalElement);
         modal.show();
         drawAreaResultChart()
         updateAreaResultChart('stackedBarChart', 'year', 'sum');
+        console.log('computeResultChart')
     });
 </script>
 

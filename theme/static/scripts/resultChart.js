@@ -1,8 +1,3 @@
-window.charts = {
-    'stackedAreaChart' : null,
-    'stackedBarChart' : null
-};
-
 function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
 
     let data = {
