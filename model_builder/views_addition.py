@@ -157,7 +157,9 @@ def add_new_usage_journey(request):
             request, "model_builder/object_cards/usage_journey_card.html", {"usage_journey": added_obj})
         response["HX-Trigger-After-Swap"] = json.dumps({
             "updateTopParentLines": {"topParentIds": [added_obj.web_id]},
-            "setAccordionListeners": {"accordionIds": [added_obj.web_id]}})
+            "setAccordionListeners": {"accordionIds": [added_obj.web_id]},
+            "closePanelAfterSwap": True
+        })
     else:
         if not request.POST.get("efootprint_id_of_empty_object_origin"):
             empty_uj_id = f"new-uj-{str(uuid.uuid4())[:6]}"
@@ -285,6 +287,8 @@ def add_new_usage_pattern(request):
 
     response["HX-Trigger-After-Swap"] = json.dumps({
         "updateTopParentLines": {"topParentIds": [added_obj.web_id]},
-        "setAccordionListeners": {"accordionIds": [added_obj.web_id]}})
+        "setAccordionListeners": {"accordionIds": [added_obj.web_id]},
+        "closePanelAfterSwap": True
+    })
 
     return response

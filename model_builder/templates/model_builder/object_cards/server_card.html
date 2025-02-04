@@ -31,23 +31,17 @@
                             {%  include 'model_builder/object_cards/service_card.html' with service=service %}
                         {% endfor %}
                     </div>
-                    <div class="row mx-0 my-0 dotted-border align-items-center rounded-2" style="z-index: 1000 !important; background-color: #ffffff !important;">
-                        <div class="col-2 p-0 justify-content-center bg-white my-2" id="add-service-{{ server.web_id }}">
-                            <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white"  width="16px" height="16px" alt="add icon" />
-                        </div>
-                        <div class="col-10 p-0 text-start">
-                            <button class="btn btn-white text-start p-0 fz-0-8"
-                                    hx-get="/model_builder/open-create-service-panel/{{ server.efootprint_id }}/"
-                                    hx-target="#formPanel"
-                                    hx-trigger="click"
-                                    hx-swap="innerHTML"
-                                    hx-on::after-request="closeLoader()"
-                                    onclick="openLoader()"
-                            >
-                                Install service
-                            </button>
-                        </div>
-                    </div>
+                    <button class="btn btn-white text-start p-0 fz-0-8 dotted-border h-100 w-100 rounded-2 p-2"
+                            hx-get="/model_builder/open-create-service-panel/{{ server.efootprint_id }}/"
+                            hx-target="#formPanel"
+                            hx-trigger="click"
+                            hx-swap="innerHTML"
+                            hx-on::after-request="closeLoader()"
+                            onclick="openLoader()"
+                    >
+                        <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-2"  width="16px" height="16px" alt="add icon" />
+                        Install service
+                    </button>
                 </div>
             </div>
         </div>

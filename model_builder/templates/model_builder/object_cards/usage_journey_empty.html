@@ -11,7 +11,7 @@
                         </svg>
                 </button>
                 <button id="button-{{ usage_journey.web_id }}"
-                        class="btn btn-white ms-1"
+                        class="btn btn-white ms-1 fz-0-8"
                         type="button"
                         hx-get="/model_builder/open-create-object-panel/UsageJourney/"
                         hx-target="#formPanel"
@@ -21,7 +21,9 @@
                         hx-on::after-request="closeLoader()"
                         onclick="openLoader()"
                 >
-                    {{ usage_journey.name }} ⚠️
+                    {{ usage_journey.name }} - <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+  <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+</svg>
                 </button>
             </h6>
             <div id="flush-{{ usage_journey.web_id }}" class="accordion-collapse show accordion-all" data-bs-parent="#{{ usage_journey.web_id }}">
@@ -34,7 +36,7 @@
                             <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white"  width="16px" height="16px" alt="add icon" />
                         </div>
                         <div class="col-10 p-0 text-start">
-                            <button class="btn btn-white text-start p-0"
+                            <button class="btn btn-white text-start p-0 fz-0-8"
                                     hx-get="/model_builder/open-create-object-panel/UsageJourney/"
                                     hx-target="#formPanel"
                                     hx-trigger="click"

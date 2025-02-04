@@ -226,13 +226,19 @@ document.body.addEventListener('removeLinesAndUpdateDataAttributes', function (e
             removeAllLinesDepartingFromElement(dataAttributeUpdate['id']);
         }
     });
-}, true);
+});
 
 document.body.addEventListener('updateTopParentLines', function (event) {
     event.detail['topParentIds'].forEach(topParentId => {
+        let card = document.getElementById(topParentId);
+        card.addEventListener("mouseover", function () {
+            updateLines();
+        });
+        card.addEventListener("mouseout", function () {
+            updateLines();
+        });
         updateOrCreateLines(document.getElementById(topParentId));
     });
-    closePanel();
     updateLines();
 });
 
@@ -240,6 +246,10 @@ document.body.addEventListener('setAccordionListeners', function (event) {
     event.detail['accordionIds'].forEach(accordionId => {
         addAccordionListener(document.getElementById(accordionId));
     });
+});
+
+document.body.addEventListener('closePanelAfterSwap', function (event) {
+    closePanel();
 });
 
 document.body.addEventListener('initLeaderLines', function (event) {
@@ -320,14 +330,12 @@ document.body.addEventListener("openModalDialog", function(event) {
 });
 
 function openLoader() {
-    console.log("openLoader");
     let modalElement = document.getElementById("loader-modal");
     let modal = new bootstrap.Modal(modalElement);
     modal.show();
 }
 
 function closeLoader() {
-    console.log("closeLoader");
     let modalElement = document.getElementById("loader-modal");
     let modal = bootstrap.Modal.getInstance(modalElement);
     if (modal) {
