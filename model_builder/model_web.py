@@ -45,10 +45,12 @@ class ModelWeb:
             web_obj.set_efootprint_value("trigger_modeling_updates", False)
 
     def get_efootprint_objects_from_efootprint_type(self, obj_type):
-        if obj_type in self.response_objs.keys():
-            return list(self.response_objs[obj_type].values())
-        else:
-            return []
+        output_list = []
+        for existing_obj_type in self.response_objs.keys():
+            if issubclass(MODELING_OBJECT_CLASSES_DICT[existing_obj_type], MODELING_OBJECT_CLASSES_DICT[obj_type]):
+                output_list += list(self.response_objs[existing_obj_type].values())
+
+        return output_list
 
     def get_web_objects_from_efootprint_type(self, obj_type):
         if obj_type in DEFAULT_OBJECTS_CLASS_MAPPING.keys():
