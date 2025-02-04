@@ -33,7 +33,6 @@ class ModelWeb:
         self.system_data = session_data["system_data"]
         self.response_objs, self.flat_efootprint_objs_dict = json_to_system(
             self.system_data, launch_system_computations)
-        self.empty_objects = session_data.get("empty_objects", {})
         self.system = wrap_efootprint_object(list(self.response_objs["System"].values())[0], self)
         if set_trigger_modeling_updates_to_false:
             self.set_all_trigger_modeling_updates_to_false()
@@ -138,13 +137,6 @@ class ModelWeb:
     @property
     def usage_patterns(self):
         return self.get_web_objects_from_efootprint_type("UsagePattern")
-
-    @property
-    def empty_usage_journeys(self):
-        if "UsageJourney" in self.empty_objects.keys():
-            return self.empty_objects["UsageJourney"].values()
-        else:
-            return []
 
     @property
     def system_emissions(self):

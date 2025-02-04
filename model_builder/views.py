@@ -17,8 +17,6 @@ def model_builder_main(request, reboot=False):
     if reboot and reboot != "reboot":
         raise ValueError("reboot must be False or 'reboot'")
     if reboot == "reboot":
-        if "empty_objects" in request.session.keys():
-            request.session["empty_objects"] = {}
         with open(os.path.join("model_builder", "default_system_data.json"), "r") as file:
             system_data = json.load(file)
             request.session["system_data"] = system_data
