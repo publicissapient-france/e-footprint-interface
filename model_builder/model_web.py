@@ -54,7 +54,12 @@ class ModelWeb:
 
     def get_web_objects_from_efootprint_type(self, obj_type):
         if obj_type in DEFAULT_OBJECTS_CLASS_MAPPING.keys():
-            return DEFAULT_OBJECTS_CLASS_MAPPING[obj_type]
+            default_objects_dicts = DEFAULT_OBJECTS_CLASS_MAPPING[obj_type].values()
+
+            for default_dict in default_objects_dicts:
+                default_dict["efootprint_id"] = default_dict["id"]
+
+            return default_objects_dicts
 
         return [wrap_efootprint_object(obj, self) for obj in self.get_efootprint_objects_from_efootprint_type(obj_type)]
 

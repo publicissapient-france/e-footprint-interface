@@ -170,26 +170,20 @@ class ModelingObjectWeb:
             return self.all_accordion_parents[-1]
 
     def generate_structure(self):
-        from time import time
-        start = time()
-        class_structure = efootprint_class_structure(self.class_as_simple_str)
+        structure = efootprint_class_structure(self.class_as_simple_str, self.model_web)
 
-        for attribute_type in class_structure.keys():
-            for attribute in class_structure[attribute_type]:
+        for attribute_type in structure.keys():
+            for attribute in structure[attribute_type]:
                 attribute["attr_value"] = getattr(self, attribute["attr_name"])
-                if "object_type" in attribute.keys():
-                    attribute["existing_objects"] = self.model_web.get_web_objects_from_efootprint_type(
-                        attribute["object_type"])
 
         all_attribute_names = []
-        for attribute_type in class_structure.keys():
-            for attribute in class_structure[attribute_type]:
+        for attribute_type in structure.keys():
+            for attribute in structure[attribute_type]:
                 all_attribute_names.append(attribute["attr_name"])
 
-        class_structure["all_attribute_names"] = all_attribute_names
-        logger.info(f"Structure for {self.name} created in {time() - start:.3f} seconds.")
+        structure["all_attribute_names"] = all_attribute_names
 
-        return class_structure
+        return structure
 
     def self_delete(self, request_session: SessionBase):
         obj_type = self.class_as_simple_str

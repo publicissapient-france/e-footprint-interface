@@ -12,7 +12,7 @@ MODELING_OBJECT_CLASSES_DICT = {modeling_object_class.__name__: modeling_object_
 MODELING_OBJECT_CLASSES_DICT.update({"JobBase": JobBase, "ServerBase": ServerBase})
 
 
-def efootprint_class_structure(efootprint_class_str: str):
+def efootprint_class_structure(efootprint_class_str: str, model_web=None):
     efootprint_class = MODELING_OBJECT_CLASSES_DICT[efootprint_class_str]
     structure = {
         "numerical_attributes": [],
@@ -50,6 +50,13 @@ def efootprint_class_structure(efootprint_class_str: str):
             structure["hourly_quantities_attributes"].append({"attr_name": attr_name})
         elif issubclass(annotation, ModelingObject):
             structure["modeling_obj_attributes"].append({"attr_name": attr_name, "object_type": annotation.__name__})
+
+        if model_web is not None:
+            for attribute_type in structure.keys():
+                for attribute in structure[attribute_type]:
+                    if "object_type" in attribute.keys():
+                        attribute["existing_objects"] = model_web.get_web_objects_from_efootprint_type(
+                            attribute["object_type"])
 
     return structure
 

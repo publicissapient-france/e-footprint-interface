@@ -14,7 +14,7 @@ from model_builder.views_edition import edit_object
 
 
 def open_create_object_panel(request, object_type):
-    new_object_structure = efootprint_class_structure(object_type)
+    new_object_structure = efootprint_class_structure(object_type, ModelWeb(request.session))
     assert object_type in ["UsageJourney", "UsageJourneyStep"]
     template_name_mapping = {
         "UsageJourney": "usage_journey_add.html", "UsageJourneyStep": "usage_journey_step_add.html"}
