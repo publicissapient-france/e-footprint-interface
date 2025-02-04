@@ -330,15 +330,20 @@ document.body.addEventListener("openModalDialog", function(event) {
 });
 
 function openLoader() {
+    /*
     let modalElement = document.getElementById("loader-modal");
     let modal = new bootstrap.Modal(modalElement);
     modal.show();
+     */
 }
 
 function closeLoader() {
+    /*
     let modalElement = document.getElementById("loader-modal");
     let modal = bootstrap.Modal.getInstance(modalElement);
     if (modal) {
         modal.hide();
     }
+
+     */
 }
