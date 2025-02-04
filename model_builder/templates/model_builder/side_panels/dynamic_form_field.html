@@ -19,11 +19,11 @@
                 list="list_{{ field.id }}"
                 id="{{ field.id }}"
                 name="{{ field.id }}"
-
+                value="{{ field.selected }}"
                 required
         >
         <datalist id="list_{{ field.id }}">
-            <option selected value={{ field.default }}>
+            <option selected value="select a provider">
         </datalist>
     {% elif field.input_type == 'list' %}
         <ul class="list-group">

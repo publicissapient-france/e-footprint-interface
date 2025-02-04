@@ -1,9 +1,12 @@
 import json
 
+from efootprint.abstract_modeling_classes.source_objects import SourceValue
+from efootprint.constants.units import u
 from efootprint.core.all_classes_in_order import SERVER_CLASSES, SERVICE_CLASSES, SERVER_BUILDER_CLASSES
 from efootprint.core.hardware.storage import Storage
 from django.shortcuts import render
 from efootprint.core.usage.job import Job
+from efootprint.core.usage.usage_journey_step import UsageJourneyStep
 
 from model_builder.class_structure import generate_object_creation_structure, efootprint_class_structure
 from model_builder.model_web import ModelWeb, DEFAULT_NETWORKS, DEFAULT_COUNTRIES, DEFAULT_HARDWARES
@@ -16,7 +19,7 @@ def open_create_object_panel(request, object_type):
     new_object_structure = efootprint_class_structure(object_type, ModelWeb(request.session))
     assert object_type in ["UsageJourney", "UsageJourneyStep"]
     template_name_mapping = {
-        "UsageJourney": "usage_journey_add.html", "UsageJourneyStep": "usage_journey_step_add.html"}
+        "UsageJourney": "usage_journey", "UsageJourneyStep": "usage_journey_step"}
     template_name = template_name_mapping[object_type]
     context_data = {"object_structure": new_object_structure,
                     "header_name": "Create " +  template_name.replace("_", " "),
@@ -26,7 +29,7 @@ def open_create_object_panel(request, object_type):
     if request.GET.get("name"):
         context_data["new_object_name"] = request.GET["name"]
 
-    return render(request, f"model_builder/side_panels/{template_name}", context=context_data)
+    return render(request, f"model_builder/side_panels/{template_name}_add.html", context=context_data)
 
 
 def open_create_server_panel(request):
@@ -142,6 +145,13 @@ def open_create_usage_pattern_panel(request):
 
 def add_new_usage_journey(request):
     model_web = ModelWeb(request.session)
+
+    if not request.POST.getlist("uj_steps"):
+        mutable_post = request.POST.copy()
+        new_uj_step = UsageJourneyStep("Default usage journey step", SourceValue(1 * u.min), jobs=[])
+        add_new_efootprint_object_to_system(request.session, model_web, new_uj_step)
+        mutable_post.setlist('uj_steps', [new_uj_step.id])
+        request.POST = mutable_post
 
     new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, 'UsageJourney')
     added_obj = add_new_efootprint_object_to_system(request.session, model_web, new_efootprint_obj)

@@ -1,5 +1,5 @@
 document.addEventListener("initAddPanel", function () {
-    const structureDict = JSON.parse(document.getElementById('dynamic-form-data').textContent);
+    const dynamicFormData = JSON.parse(document.getElementById('dynamic-form-data').textContent);
   /**
    * 1) SWITCH ELEMENT LOGIC
    */
@@ -25,10 +25,10 @@ document.addEventListener("initAddPanel", function () {
       });
     }
 
-  if (structureDict.switch_item) {
-      const switchElementId = structureDict.switch_item;
+  if (dynamicFormData.switch_item) {
+      const switchElementId = dynamicFormData.switch_item;
       const switchElement = document.getElementById(switchElementId);
-      const switchValues = structureDict.switch_values;
+      const switchValues = dynamicFormData.switch_values;
       switchForms(switchValues, switchElement);
 
       switchElement.addEventListener("change", function () {
@@ -79,8 +79,8 @@ document.addEventListener("initAddPanel", function () {
   /**
    * 2) Handle DYNAMIC LISTS (for <datalist>)
    */
-  if (structureDict.dynamic_lists) {
-    structureDict.dynamic_lists.forEach((dynamicList) => {
+  if (dynamicFormData.dynamic_lists) {
+    dynamicFormData.dynamic_lists.forEach((dynamicList) => {
       const filterId = dynamicList.filter_by;
       const listId = "list_" + dynamicList.input;
 
@@ -96,8 +96,8 @@ document.addEventListener("initAddPanel", function () {
   /**
    * 3) Handle DYNAMIC SELECTS (for <select>)
    */
-  if (structureDict.dynamic_selects) {
-    structureDict.dynamic_selects.forEach((dynamicSelect) => {
+  if (dynamicFormData.dynamic_selects) {
+    dynamicFormData.dynamic_selects.forEach((dynamicSelect) => {
       const filterId = dynamicSelect.filter_by;
       const selectId = dynamicSelect.input;
 

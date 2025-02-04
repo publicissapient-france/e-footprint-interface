@@ -397,6 +397,7 @@ wrapper_mapping = {
     # TODO: create a mapping for all classes
     "Server": ServerWeb,
     "GPUServer": ServerWeb,
+    "BoaviztaCloudServer": ServerWeb,
     "UsageJourneyStep": UsageJourneyStepWeb,
     "UsageJourney": UsageJourneyWeb,
     "UsagePattern": UsagePatternWeb,

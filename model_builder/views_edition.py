@@ -20,10 +20,14 @@ def open_edit_object_panel(request, object_id):
         # TODO: remove when developing the storage edition feature
         structure_dict["modeling_obj_attributes"] = []
 
-    return render(
+    http_response = render(
         request, "model_builder/side_panels/edit_object_panel.html",
         context={"object_to_edit": obj_to_edit, "structure_dict": structure_dict,
                  "dynamic_form_data": dynamic_form_data})
+
+    http_response["HX-Trigger-After-Swap"] = "initAddPanel"
+
+    return http_response
 
 
 def compute_edit_object_html_and_event_response(request, object_id, model_web=None):
