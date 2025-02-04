@@ -122,13 +122,9 @@ def generate_object_creation_structure(available_efootprint_classes: list, heade
                 "default": numerical_attribute["default_value"]
             })
 
-        styling_class = "d-none"
-        if index == 0:
-            styling_class = ""
         efootprint_classes_dict["items"].append({
             "category": efootprint_class.__name__,
             "header": f"{efootprint_class.__name__} creation",
-            "class": styling_class,
             "fields": class_fields})
 
     return efootprint_classes_dict
