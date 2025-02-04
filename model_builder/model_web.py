@@ -1,6 +1,5 @@
 import json
 import os
-import re
 from time import time
 
 from django.contrib.sessions.backends.base import SessionBase
@@ -24,6 +23,7 @@ with open(os.path.join(model_web_root, "default_countries.json"), "r") as f:
 
 DEFAULT_OBJECTS_CLASS_MAPPING = {
     "Network": DEFAULT_NETWORKS, "Hardware": DEFAULT_HARDWARES, "Country": DEFAULT_COUNTRIES}
+ATTRIBUTES_TO_SKIP_IN_FORMS = ["gpu_latency_alpha", "gpu_latency_beta", "fixed_nb_of_instances"]
 
 
 class ModelWeb:

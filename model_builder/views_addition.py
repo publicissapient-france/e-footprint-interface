@@ -15,10 +15,13 @@ from model_builder.views_edition import edit_object
 
 def open_create_object_panel(request, object_type):
     new_object_structure = efootprint_class_structure(object_type)
-    template_name = f'{new_object_structure.template_name}_add.html'
+    assert object_type in ["UsageJourney", "UsageJourneyStep"]
+    template_name_mapping = {
+        "UsageJourney": "usage_journey_add.html", "UsageJourneyStep": "usage_journey_step_add.html"}
+    template_name = template_name_mapping[object_type]
     context_data = {"object_structure": new_object_structure,
-                    "header_name": "Create " +  new_object_structure.template_name.replace("_", " "),
-                    "new_object_name": "New " + new_object_structure.template_name.replace("_", " ")}
+                    "header_name": "Create " +  template_name.replace("_", " "),
+                    "new_object_name": "New " + template_name.replace("_", " ")}
     if request.GET.get('efootprint_id_of_parent_to_link_to'):
         context_data['efootprint_id_of_parent_to_link_to'] = request.GET['efootprint_id_of_parent_to_link_to']
     if request.GET.get("name"):
