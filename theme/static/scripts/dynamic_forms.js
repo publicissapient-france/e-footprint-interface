@@ -3,28 +3,37 @@ document.addEventListener("initAddPanel", function () {
   /**
    * 1) SWITCH ELEMENT LOGIC
    */
-  if (structureDict.switch_item) {
-    const switchElementId = "form_add_" + structureDict.switch_item;
-    const switchElement = document.getElementById(switchElementId);
-    let previousSwitchValue = switchElement.value;
-
-    switchElement.addEventListener("change", function() {
-      // Hide the previous group
-      const itemToHide = document.getElementById("item-" + previousSwitchValue);
-      itemToHide.classList.add('d-none');
-      itemToHide.querySelectorAll('input, select').forEach(function(input) {
-        input.required = false;
-      });
+  function switchForms(switchValues, switchElement){
+      // Hide the other groups
+        switchValues.forEach(function(switchValue) {
+            if (switchValue !== switchElement.value) {
+                const itemToHide = document.getElementById("item-" + switchValue);
+                itemToHide.classList.add('d-none');
+                itemToHide.querySelectorAll('input, select').forEach(function(input) {
+                    input.required = false;
+                    input.disabled = true;
+                });
+            }
+          });
 
       // Show the newly selected group
       const itemToShow = document.getElementById("item-" + switchElement.value);
       itemToShow.classList.remove('d-none');
       itemToShow.querySelectorAll('input, select').forEach(function(input) {
         input.required = true;
+        input.disabled = false;
       });
+    }
 
-      previousSwitchValue = switchElement.value;
-    });
+  if (structureDict.switch_item) {
+      const switchElementId = "form_add_" + structureDict.switch_item;
+      const switchElement = document.getElementById(switchElementId);
+      const switchValues = structureDict.switch_values;
+      switchForms(switchValues, switchElement);
+
+      switchElement.addEventListener("change", function () {
+          switchForms(switchValues, switchElement);
+      });
   }
 
   /**

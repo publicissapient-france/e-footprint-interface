@@ -3,6 +3,11 @@
         "name"
     ],
     "switch_item": "type_object_available",
+    "switch_values": [
+        "WebApplication",
+        "VideoStreaming",
+        "GenAIModel"
+    ],
     "items": [
         {
             "category": "efootprint_classes_available",

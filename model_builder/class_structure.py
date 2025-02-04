@@ -56,7 +56,11 @@ def generate_object_creation_structure(available_efootprint_classes: list, heade
     if attributes_to_skip is None:
         attributes_to_skip = []
 
-    efootprint_classes_dict = {"str_attributes": ["name"], "switch_item": "type_object_available"}
+    efootprint_classes_dict = {
+        "str_attributes": ["name"],
+        "switch_item": "type_object_available",
+        "switch_values": [available_class.__name__ for available_class in available_efootprint_classes]}
+
     type_efootprint_classes_available = {
         "category": "efootprint_classes_available",
         "header": header,
@@ -98,12 +102,14 @@ def generate_object_creation_structure(available_efootprint_classes: list, heade
                 "name": conditional_str_attribute_dict["attr_name"],
                 "options": None
             })
-            efootprint_classes_dict["dynamic_lists"].append(
-                {
-                    "input": conditional_str_attribute_dict["attr_name"],
-                    "filter_by": conditional_str_attribute_dict["depends_on"],
-                    "list_value": conditional_str_attribute_dict["conditional_list_values"]
-                })
+            if (conditional_str_attribute_dict["attr_name"] not in
+                [dynamic_list["input"] for dynamic_list in efootprint_classes_dict["dynamic_lists"]]):
+                efootprint_classes_dict["dynamic_lists"].append(
+                    {
+                        "input": conditional_str_attribute_dict["attr_name"],
+                        "filter_by": conditional_str_attribute_dict["depends_on"],
+                        "list_value": conditional_str_attribute_dict["conditional_list_values"]
+                    })
         for numerical_attribute in class_structure["numerical_attributes"]:
             if numerical_attribute["attr_name"] in attributes_to_skip:
                 continue

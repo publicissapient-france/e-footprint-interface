@@ -5,7 +5,8 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 from efootprint.api_utils.json_to_system import modeling_object_classes_dict
-from efootprint.core.all_classes_in_order import SERVICE_CLASSES, SERVER_CLASSES, SERVICE_JOB_CLASSES
+from efootprint.core.all_classes_in_order import SERVICE_CLASSES, SERVER_CLASSES, SERVICE_JOB_CLASSES, \
+    SERVER_BUILDER_CLASSES
 from efootprint.core.hardware.hardware import Hardware
 from efootprint.core.hardware.network import Network
 from efootprint.core.usage.job import Job
@@ -16,7 +17,8 @@ from utils import EFOOTPRINT_COUNTRIES
 
 
 obj_creation_structure_dict = {
-        "Service": SERVICE_CLASSES, "Server": SERVER_CLASSES, "Job": [Job] + SERVICE_JOB_CLASSES}
+        "Service": SERVICE_CLASSES, "Server": SERVER_CLASSES + SERVER_BUILDER_CLASSES,
+        "Job": [Job] + SERVICE_JOB_CLASSES}
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
 

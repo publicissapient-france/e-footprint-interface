@@ -3,6 +3,12 @@
         "name"
     ],
     "switch_item": "type_object_available",
+    "switch_values": [
+        "Job",
+        "WebApplicationJob",
+        "VideoStreamingJob",
+        "GenAIJob"
+    ],
     "items": [
         {
             "category": "efootprint_classes_available",
