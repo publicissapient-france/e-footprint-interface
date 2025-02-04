@@ -16,6 +16,8 @@
                                     hx-target="#formPanel"
                                     hx-trigger="click"
                                     hx-swap="innerHTML"
+                                    hx-on::after-request="closeLoader()"
+                                    onclick="openLoader()"
                                 >
                                     <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-3"  width="14px" height="14px" alt="add icon" />
                                     Add usage pattern
@@ -37,10 +39,12 @@
                             </div>
                             <div class="col-12 mt-2 justify-content-start text-start">
                                 <button class="w-75 btn btn-white dotted-border text-start fz-0-9"
-                                    hx-get="/model_builder/open-create-object-panel/UsageJourney/"
-                                    hx-target="#formPanel"
-                                    hx-trigger="click"
-                                    hx-swap="innerHTML"
+                                        hx-get="/model_builder/open-create-object-panel/UsageJourney/"
+                                        hx-target="#formPanel"
+                                        hx-trigger="click"
+                                        hx-swap="innerHTML"
+                                        hx-on::after-request="closeLoader()"
+                                        onclick="openLoader()"
                                 >
                                     <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-3"  width="14px" height="14px" alt="add icon" />
                                     Add usage journey
@@ -65,10 +69,12 @@
                             </div>
                             <div class="col-12 mt-2 justify-content-start text-start" id="add_server">
                                 <button class="w-75 btn btn-white dotted-border text-start fz-0-9"
-                                    hx-get="/model_builder/open-create-server-panel/"
-                                    hx-target="#formPanel"
-                                    hx-trigger="click"
-                                    hx-swap="innerHTML"
+                                        hx-get="/model_builder/open-create-server-panel/"
+                                        hx-target="#formPanel"
+                                        hx-trigger="click"
+                                        hx-swap="innerHTML"
+                                        hx-on::after-request="closeLoader()"
+                                        onclick="openLoader()"
                                 >
                                     <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-3"  width="14px" height="14px" alt="add icon" />
                                     Add server
@@ -95,6 +101,8 @@
             hx-target="#modal-container"
             hx-swap="innerHTML"
             hx-trigger="click"
+            hx-on::after-request="closeLoader()"
+            onclick="openLoader()"
     >
         <div class="col-12 text-center text-secondary">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="40" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
@@ -108,6 +116,22 @@
 </div>
 
 <div id="modal-container">
+</div>
+
+<div id="loader-container">
+</div>
+
+<div class="modal fade" id="loader-modal" tabindex="-1" aria-labelledby="loader-modal-Label" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="spinner-border mt-3" role="status" style="width: 100px; height: 100px;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p>loading</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -133,7 +157,6 @@
         modal.show();
         drawAreaResultChart()
         updateAreaResultChart('stackedBarChart', 'year', 'sum');
-        console.log('computeResultChart')
     });
 </script>
 

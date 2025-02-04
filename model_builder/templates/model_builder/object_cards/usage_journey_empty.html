@@ -18,6 +18,8 @@
                         hx-trigger="click"
                         hx-swap="innerHTML"
                         hx-vals='{"name": "{{ usage_journey.name }}", "efootprint_id_of_empty_object_origin": "{{ usage_journey.efootprint_id }}"}'
+                        hx-on::after-request="closeLoader()"
+                        onclick="openLoader()"
                 >
                     {{ usage_journey.name }} ⚠️
                 </button>
@@ -37,7 +39,10 @@
                                     hx-target="#formPanel"
                                     hx-trigger="click"
                                     hx-swap="innerHTML"
-                                    hx-vals='{"name": "{{ usage_journey.name }}", "efootprint_id_of_empty_object_origin": "{{ usage_journey.efootprint_id }}"}'>
+                                    hx-vals='{"name": "{{ usage_journey.name }}", "efootprint_id_of_empty_object_origin": "{{ usage_journey.efootprint_id }}"}'
+                                    hx-on::after-request="closeLoader()"
+                                    onclick="openLoader()"
+                            >
                                 Add usage journey step
                             </button>
                         </div>

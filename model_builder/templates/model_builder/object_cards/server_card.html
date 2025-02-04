@@ -17,6 +17,8 @@
                         hx-target="#formPanel"
                         hx-trigger="click"
                         hx-swap="innerHTML"
+                        hx-on::after-request="closeLoader()"
+                        onclick="openLoader()"
                 >
                     {{ server.name}}
                 </button>
@@ -39,6 +41,8 @@
                                     hx-target="#formPanel"
                                     hx-trigger="click"
                                     hx-swap="innerHTML"
+                                    hx-on::after-request="closeLoader()"
+                                    onclick="openLoader()"
                             >
                                 Install service
                             </button>

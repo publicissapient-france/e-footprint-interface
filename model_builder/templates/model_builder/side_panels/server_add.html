@@ -3,7 +3,8 @@
         hx-post="/model_builder/add-new-server/"
         hx-target="#server-list"
         hx-swap="beforeend"
-        script="on htmx:afterRequest closePanel()"
+        onsubmit="openLoader()"
+        hx-on::after-request="closeLoader()"
 >
     <div class="text-end">
         <button type="button" class="btn btn-white" aria-label="Close"

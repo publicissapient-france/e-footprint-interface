@@ -226,12 +226,13 @@ document.body.addEventListener('removeLinesAndUpdateDataAttributes', function (e
             removeAllLinesDepartingFromElement(dataAttributeUpdate['id']);
         }
     });
-});
+}, true);
 
 document.body.addEventListener('updateTopParentLines', function (event) {
     event.detail['topParentIds'].forEach(topParentId => {
         updateOrCreateLines(document.getElementById(topParentId));
     });
+    closePanel();
     updateLines();
 });
 
@@ -313,7 +314,23 @@ window.addEventListener("load", function () {
 
 // MODAL
 document.body.addEventListener("openModalDialog", function(event) {
-        let modalElement = document.getElementById("model-builder-modal");
-        let modal = new bootstrap.Modal(modalElement);
-        modal.show();
-    });
+    let modalElement = document.getElementById("model-builder-modal");
+    let modal = new bootstrap.Modal(modalElement);
+    modal.show();
+});
+
+function openLoader() {
+    console.log("openLoader");
+    let modalElement = document.getElementById("loader-modal");
+    let modal = new bootstrap.Modal(modalElement);
+    modal.show();
+}
+
+function closeLoader() {
+    console.log("closeLoader");
+    let modalElement = document.getElementById("loader-modal");
+    let modal = bootstrap.Modal.getInstance(modalElement);
+    if (modal) {
+        modal.hide();
+    }
+}

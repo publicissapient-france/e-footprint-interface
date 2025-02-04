@@ -2,7 +2,8 @@
 <form class="container-fluid form_edit_panel text-start"
       hx-post="/model_builder/edit-object/{{ object_to_edit.efootprint_id }}/"
       hx-swap="none"
-      script="on submit closePanel()"
+      onsubmit="openLoader()"
+      hx-on::after-request="closeLoader()"
 >
 
     <div class="text-end">
