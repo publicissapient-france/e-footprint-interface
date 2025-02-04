@@ -1,5 +1,4 @@
 import json
-import uuid
 
 from efootprint.core.all_classes_in_order import SERVER_CLASSES, SERVICE_CLASSES, SERVER_BUILDER_CLASSES
 from efootprint.core.hardware.storage import Storage
@@ -26,8 +25,6 @@ def open_create_object_panel(request, object_type):
         context_data['efootprint_id_of_parent_to_link_to'] = request.GET['efootprint_id_of_parent_to_link_to']
     if request.GET.get("name"):
         context_data["new_object_name"] = request.GET["name"]
-    if request.GET.get("efootprint_id_of_empty_object_origin"):
-        context_data["efootprint_id_of_empty_object_origin"] = request.GET["efootprint_id_of_empty_object_origin"]
 
     return render(request, f"model_builder/side_panels/{template_name}", context=context_data)
 
@@ -145,42 +142,16 @@ def open_create_usage_pattern_panel(request):
 
 def add_new_usage_journey(request):
     model_web = ModelWeb(request.session)
-    if request.POST.getlist("uj_steps"):
-        new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, 'UsageJourney')
-        added_obj = add_new_efootprint_object_to_system(request.session, model_web, new_efootprint_obj)
-        response = render(
-            request, "model_builder/object_cards/usage_journey_card.html", {"usage_journey": added_obj})
-        response["HX-Trigger-After-Swap"] = json.dumps({
-            "updateTopParentLines": {"topParentIds": [added_obj.web_id]},
-            "setAccordionListeners": {"accordionIds": [added_obj.web_id]},
-            "closePanelAfterSwap": True
-        })
-    else:
-        if not request.POST.get("efootprint_id_of_empty_object_origin"):
-            empty_uj_id = f"new-uj-{str(uuid.uuid4())[:6]}"
-        else:
-            empty_uj_id = request.POST["efootprint_id_of_empty_object_origin"]
-        added_obj = {
-            "name": request.POST["name"],
-            "web_id": empty_uj_id,
-            "efootprint_id": empty_uj_id,
-            "links_to": "",
-            "data_line_opt": "",
-            "uj_steps": [],
-            "list_attributes": [{"attr_name": "uj_steps", "existing_objects": []}]
-        }
 
-        if "empty_objects" not in request.session:
-            request.session["empty_objects"] = {"UsageJourney": {empty_uj_id: added_obj}}
-        else:
-            if "UsageJourney" not in request.session["empty_objects"]:
-                request.session["empty_objects"]["UsageJourney"] = {empty_uj_id: added_obj}
-            else:
-                request.session["empty_objects"]["UsageJourney"][empty_uj_id] = added_obj
-            request.session.modified = True
-
-        response = render(request, "model_builder/object_cards/usage_journey_empty.html",
-                  context={"usage_journey": added_obj})
+    new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, 'UsageJourney')
+    added_obj = add_new_efootprint_object_to_system(request.session, model_web, new_efootprint_obj)
+    response = render(
+        request, "model_builder/object_cards/usage_journey_card.html", {"usage_journey": added_obj})
+    response["HX-Trigger-After-Swap"] = json.dumps({
+        "updateTopParentLines": {"topParentIds": [added_obj.web_id]},
+        "setAccordionListeners": {"accordionIds": [added_obj.web_id]},
+        "closePanelAfterSwap": True
+    })
 
     return response
 

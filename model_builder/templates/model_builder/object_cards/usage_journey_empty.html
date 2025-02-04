@@ -17,7 +17,7 @@
                         hx-target="#formPanel"
                         hx-trigger="click"
                         hx-swap="innerHTML"
-                        hx-vals='{"name": "{{ usage_journey.name }}", "efootprint_id_of_empty_object_origin": "{{ usage_journey.efootprint_id }}"}'
+                        hx-vals='{"name": "{{ usage_journey.name }}", "efootprint_id_of_parent_to_link_to": "{{ usage_journey.efootprint_id }}"}'
                         hx-on::after-request="closeLoader()"
                         onclick="openLoader()"
                 >
@@ -37,11 +37,11 @@
                         </div>
                         <div class="col-10 p-0 text-start">
                             <button class="btn btn-white text-start p-0 fz-0-8"
-                                    hx-get="/model_builder/open-create-object-panel/UsageJourney/"
+                                    hx-get="/model_builder/open-create-object-panel/UsageJourneyStep/"
                                     hx-target="#formPanel"
                                     hx-trigger="click"
                                     hx-swap="innerHTML"
-                                    hx-vals='{"name": "{{ usage_journey.name }}", "efootprint_id_of_empty_object_origin": "{{ usage_journey.efootprint_id }}"}'
+                                    hx-vals='{"name": "{{ usage_journey.name }}", "efootprint_id_of_parent_to_link_to": "{{ usage_journey.efootprint_id }}"}'
                                     hx-on::after-request="closeLoader()"
                                     onclick="openLoader()"
                             >

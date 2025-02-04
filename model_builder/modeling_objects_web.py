@@ -137,7 +137,7 @@ class ModelingObjectWeb:
 
     @property
     def template_name(self):
-        snake_case_class_name = re.sub(r'(?<!^)(?=[A-Z])', '_', self.object_type).lower()
+        snake_case_class_name = re.sub(r'(?<!^)(?=[A-Z])', '_', self.class_as_simple_str).lower()
         return f"{snake_case_class_name}"
 
     @property
