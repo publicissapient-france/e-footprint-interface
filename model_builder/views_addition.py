@@ -233,6 +233,9 @@ def add_new_service(request, server_efootprint_id):
         new_efootprint_obj = create_efootprint_obj_from_post_data(
             request, model_web, request.POST.get('form_add_type_object_available'))
 
+        efootprint_server = model_web.get_web_object_from_efootprint_id(server_efootprint_id).modeling_obj
+        efootprint_server.compute_calculated_attributes()
+
         added_obj = add_new_efootprint_object_to_system(request.session, model_web, new_efootprint_obj)
 
         response = render(request, "model_builder/object_cards/service_card.html",
