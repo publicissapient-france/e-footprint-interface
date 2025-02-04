@@ -26,7 +26,7 @@ def model_builder_main(request, reboot=False):
     if "system_data" not in request.session.keys():
         return redirect("model-builder", reboot="reboot")
 
-    model_web = ModelWeb(request.session, launch_system_computations=False)
+    model_web = ModelWeb(request.session)
 
     http_response = htmx_render(
         request, "model_builder/model-builder-main.html", context={"model_web": model_web})

@@ -27,13 +27,16 @@ DEFAULT_OBJECTS_CLASS_MAPPING = {
 
 
 class ModelWeb:
-    def __init__(self, session_data: SessionBase, launch_system_computations=True):
+    def __init__(
+        self, session_data: SessionBase, launch_system_computations=False, set_trigger_modeling_updates_to_false=True):
         start = time()
         self.system_data = session_data["system_data"]
         self.response_objs, self.flat_efootprint_objs_dict = json_to_system(
             self.system_data, launch_system_computations)
         self.empty_objects = session_data.get("empty_objects", {})
         self.system = wrap_efootprint_object(list(self.response_objs["System"].values())[0], self)
+        if set_trigger_modeling_updates_to_false:
+            self.set_all_trigger_modeling_updates_to_false()
         logger.info(f"ModelWeb object created in {time() - start:.3f} seconds.")
 
     def set_all_trigger_modeling_updates_to_false(self):

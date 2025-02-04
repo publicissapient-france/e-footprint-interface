@@ -12,8 +12,7 @@ from model_builder.views_edition import compute_edit_object_html_and_event_respo
 
 
 def ask_delete_object(request, object_id):
-    model_web = ModelWeb(request.session, launch_system_computations=False)
-    model_web.set_all_trigger_modeling_updates_to_false()
+    model_web = ModelWeb(request.session)
     web_obj = model_web.get_web_object_from_efootprint_id(object_id)
 
     if (not (isinstance(web_obj, UsagePatternWeb) or isinstance(web_obj, JobWeb)
@@ -44,8 +43,7 @@ def ask_delete_object(request, object_id):
 
 
 def delete_object(request, object_id):
-    model_web = ModelWeb(request.session, launch_system_computations=False)
-    model_web.set_all_trigger_modeling_updates_to_false()
+    model_web = ModelWeb(request.session)
 
     web_obj = model_web.get_web_object_from_efootprint_id(object_id)
     obj_type = web_obj.class_as_simple_str

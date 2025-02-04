@@ -6,11 +6,11 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 
 from model_builder.model_web import ModelWeb
-from model_builder.object_creation_and_edition_utils import edit_object_in_system
+from model_builder.object_creation_and_edition_utils import edit_object_in_system, render_exception_modal
 
 
 def open_edit_object_panel(request, object_id):
-    model_web = ModelWeb(request.session, launch_system_computations=False)
+    model_web = ModelWeb(request.session)
     obj_to_edit = model_web.get_web_object_from_efootprint_id(object_id)
 
     return render(request, "model_builder/side_panels/edit_object_panel.html", context={"object_to_edit": obj_to_edit})
@@ -105,8 +105,11 @@ def generate_http_response_from_edit_html_and_events(
 
 
 def edit_object(request, object_id, model_web=None):
-    response_html, ids_of_web_elements_with_lines_to_remove, data_attribute_updates, top_parent_ids = (
-        compute_edit_object_html_and_event_response(request, object_id, model_web))
+    try:
+        response_html, ids_of_web_elements_with_lines_to_remove, data_attribute_updates, top_parent_ids = (
+            compute_edit_object_html_and_event_response(request, object_id, model_web))
+    except Exception as e:
+        return render_exception_modal(request, e)
 
     return generate_http_response_from_edit_html_and_events(
         response_html, ids_of_web_elements_with_lines_to_remove, data_attribute_updates, top_parent_ids)
