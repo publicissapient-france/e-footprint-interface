@@ -19,7 +19,7 @@
                 list="list_{{ field.id }}"
                 id="{{ field.id }}"
                 name="{{ field.id }}"
-                value="{{ field.selected }}"
+                {% if field.selected %}value="{{ field.selected }}"{% endif %}
                 required
         >
         <datalist id="list_{{ field.id }}">
