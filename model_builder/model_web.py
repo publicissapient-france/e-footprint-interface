@@ -8,7 +8,7 @@ from efootprint.api_utils.json_to_system import json_to_system, json_to_explaina
 from efootprint.core.all_classes_in_order import SERVER_CLASSES, SERVICE_CLASSES
 from efootprint.logger import logger
 
-from model_builder.class_structure import efootprint_class_structure, MODELING_OBJECT_CLASSES_DICT
+from model_builder.class_structure import MODELING_OBJECT_CLASSES_DICT
 from model_builder.modeling_objects_web import wrap_efootprint_object
 from utils import EFOOTPRINT_COUNTRIES
 
@@ -51,6 +51,9 @@ class ModelWeb:
             return []
 
     def get_web_objects_from_efootprint_type(self, obj_type):
+        if obj_type in DEFAULT_OBJECTS_CLASS_MAPPING.keys():
+            return DEFAULT_OBJECTS_CLASS_MAPPING[obj_type]
+
         return [wrap_efootprint_object(obj, self) for obj in self.get_efootprint_objects_from_efootprint_type(obj_type)]
 
     def get_web_object_from_efootprint_id(self, object_id):
@@ -78,9 +81,6 @@ class ModelWeb:
             logger.info(f"Object {web_object.name} created from default object and added to system data.")
 
         return efootprint_object
-
-    def get_object_structure(self, object_type):
-        return ObjectStructure(self, object_type)
 
     @property
     def storage(self):
@@ -150,73 +150,3 @@ class ModelWeb:
                 fabrication_row].to_json()
 
         return emissions
-
-
-class ObjectStructure:
-    def __init__(self, model_web: ModelWeb, object_type: str):
-        self.model_web = model_web
-        self.object_type = object_type
-        self.default_name = f"My new {object_type}"
-        self.structure_dict = efootprint_class_structure(object_type)
-
-    def __getattr__(self, name):
-        attr = getattr(self.structure_dict, name)
-
-        return attr
-
-    @property
-    def numerical_attributes(self):
-        return self.structure_dict.get("numerical_attributes", [])
-
-    @property
-    def hourly_quantities_attributes(self):
-        return self.structure_dict.get("hourly_quantities_attributes", [])
-
-    @property
-    def str_attributes(self):
-        return self.structure_dict.get("str_attributes", {})
-
-    @property
-    def conditional_str_attributes(self):
-        return self.structure_dict.get("conditional_str_attributes", {})
-
-    @property
-    def modeling_obj_attributes(self):
-        modeling_obj_attributes = self.structure_dict.get("modeling_obj_attributes", [])
-
-        for mod_obj_attribute_desc in modeling_obj_attributes:
-            if mod_obj_attribute_desc["object_type"] == "Country":
-                mod_obj_attribute_desc["existing_objects"] = [
-                    country.to_json() for country in EFOOTPRINT_COUNTRIES]
-            else:
-                mod_obj_attribute_desc["existing_objects"] = self.model_web.get_web_objects_from_efootprint_type(
-                    mod_obj_attribute_desc["object_type"])
-
-        return modeling_obj_attributes
-
-    @property
-    def list_attributes(self):
-        list_attributes = self.structure_dict.get("list_attributes", [])
-
-        for list_attribute_desc in list_attributes:
-            if list_attribute_desc["object_type"] == "Country":
-                list_attribute_desc["existing_objects"] = [
-                    country.to_json() for country in EFOOTPRINT_COUNTRIES]
-            else:
-                list_attribute_desc["existing_objects"] = self.model_web.get_web_objects_from_efootprint_type(list_attribute_desc["object_type"])
-
-        return list_attributes
-
-    @property
-    def all_attribute_names(self):
-        all_attribute_names = []
-        for attribute_type in self.structure_dict.keys():
-            for attribute in self.structure_dict[attribute_type]:
-                all_attribute_names.append(attribute["attr_name"])
-
-        return all_attribute_names
-
-    @property
-    def template_name(self):
-        snake_case_class_name = re.sub(r'(?<!^)(?=[A-Z])', '_', self.object_type).lower()
-        return f"{snake_case_class_name}"

@@ -40,21 +40,8 @@
                 <input type="text" class="form-control p-2" id="form_edit_name" name="form_edit_name" value="{{ object_to_edit.name }}">
             </div>
 
-            {% for attr in object_to_edit.numerical_attributes %}
-                <div class="col-8 mb-3">
-                    <div class="input-group">
-                        <label for="form_edit_{{ attr.attr_name }}" class="form-label w-100">{{ attr.attr_name }}</label>
-                        <input type="text"
-                               class="form-control input_with_add_on"
-                               id="form_edit_{{ attr.attr_name }}"
-                               name="form_edit_{{ attr.attr_name }}"
-                               value="{{ attr.attr_value.rounded_magnitude }}"
-                               placeholder="Enter value">
-                        <span class="input-group-text" id="basic-addon2">
-                            {{ attr.attr_value.short_unit }}
-                        </span>
-                    </div>
-                </div>
+            {% for field in structure_dict.fields %}
+                {% include "model_builder/side_panels/dynamic_form_field.html" %}
             {% endfor %}
 
             {% for attr in object_to_edit.mod_obj_attributes %}
@@ -88,4 +75,5 @@
             </div>
         </div>
     </div>
+{{ dynamic_form_data|json_script:"dynamic-form-data" }}
 </form>

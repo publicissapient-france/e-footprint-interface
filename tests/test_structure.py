@@ -2,7 +2,6 @@ import os
 import re
 import json
 from unittest import TestCase
-from unittest.mock import Mock
 
 from efootprint.api_utils.json_to_system import modeling_object_classes_dict
 from efootprint.core.all_classes_in_order import SERVICE_CLASSES, SERVER_CLASSES, SERVICE_JOB_CLASSES, \
@@ -12,7 +11,7 @@ from efootprint.core.hardware.network import Network
 from efootprint.core.usage.job import Job
 
 from model_builder.class_structure import efootprint_class_structure, generate_object_creation_structure
-from model_builder.model_web import ModelWeb, ObjectStructure, model_web_root
+from model_builder.model_web import model_web_root
 from utils import EFOOTPRINT_COUNTRIES
 
 
@@ -23,17 +22,24 @@ root_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 class TestsClassStructure(TestCase):
+    def _test_dict_equal_to_ref(self, dict_to_test, tmp_filepath):
+        with open(tmp_filepath, "w") as f:
+            json.dump(dict_to_test, f, indent=4)
+
+        with open(tmp_filepath, "r") as tmp_file, open(tmp_filepath.replace("_tmp", ""), "r") as ref_file:
+            self.assertEqual(tmp_file.read(), ref_file.read())
+            os.remove(tmp_filepath)
+
     def test_class_creation_structures(self):
         for class_category_name, class_list in obj_creation_structure_dict.items():
             print(class_category_name)
-            tmp_filepath = os.path.join(
+            tmp_structure_filepath = os.path.join(
                 root_dir, "class_structures", f"{class_category_name}_creation_structure_tmp.json")
-            with open(tmp_filepath, "w") as f:
-                json.dump(generate_object_creation_structure(class_list, header=class_category_name), f, indent=4)
-
-            with open(tmp_filepath, "r") as tmp_file, open(tmp_filepath.replace("_tmp", ""), "r") as ref_file:
-                self.assertEqual(tmp_file.read(), ref_file.read())
-                os.remove(tmp_filepath)
+            structure, dynamic_data = generate_object_creation_structure(class_list, header=class_category_name)
+            self._test_dict_equal_to_ref(structure, tmp_structure_filepath)
+            tmp_dynamic_data_filepath = os.path.join(
+                root_dir, "class_structures", f"{class_category_name}_creation_dynamic_data_tmp.json")
+            self._test_dict_equal_to_ref(dynamic_data, tmp_dynamic_data_filepath)
 
     def test_object_structures(self):
         for class_name in modeling_object_classes_dict.keys():
@@ -41,13 +47,6 @@ class TestsClassStructure(TestCase):
             with open(os.path.join(root_dir, "class_structures", f"{class_name}.json"), "r") as f:
                 ref_structure = json.load(f)
             self.assertEqual(obj_structure, ref_structure)
-
-    def test_all_attribute_names(self):
-        model_web = Mock(spec=ModelWeb)
-        for class_name in modeling_object_classes_dict.keys():
-            print(class_name)
-            obj_structure = ObjectStructure(model_web, class_name)
-            all_attribute_names = obj_structure.all_attribute_names
 
     def test_default_objects(self):
         default_efootprint_networks = [network_archetype() for network_archetype in Network.archetypes()]
@@ -78,9 +77,14 @@ class TestsClassStructure(TestCase):
 if __name__ == "__main__":
     for class_category_name, class_list in obj_creation_structure_dict.items():
         print(class_category_name)
+        structure, dynamic_data = generate_object_creation_structure(class_list, header=class_category_name)
         with open(
             os.path.join(root_dir, "class_structures", f"{class_category_name}_creation_structure.json"), "w") as f:
-            json.dump(generate_object_creation_structure(class_list, header=class_category_name), f, indent=4)
+            json.dump(structure, f, indent=4)
+        with open(
+            os.path.join(root_dir, "class_structures", f"{class_category_name}_creation_dynamic_data.json"),
+            "w") as f:
+            json.dump(dynamic_data, f, indent=4)
 
     for class_name in modeling_object_classes_dict.keys():
         print(class_name)

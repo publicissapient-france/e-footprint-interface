@@ -191,9 +191,9 @@ django==5.1.5 ; python_version >= "3.12" and python_version < "4.0" \
 ecologits==0.5.2 ; python_version >= "3.12" and python_version < "4" \
     --hash=sha256:33e9ec145c733306dae86a78a875064fc040f94dcd6b3b7e5dd7de8bfe94ab65 \
     --hash=sha256:d228aba35e56ee22080ea205a0955d914384dd4be82a26ed31e9017aa503ea58
-efootprint==9.1.0 ; python_version >= "3.12" and python_version < "4.0" \
-    --hash=sha256:a3053e074e3c19fb68527bd140baa01f278b700db5a9a1992705aaadb9f75c5c \
-    --hash=sha256:aa3bda66f3eb55ff313b0322e098a02d755a104231f6cade6794489145fb8e75
+efootprint==9.1.4 ; python_version >= "3.12" and python_version < "4.0" \
+    --hash=sha256:16ed28cd71ab3780165888d3d202d98ae788c33a283bd2a5c099d56916e2de30 \
+    --hash=sha256:f46b631e4f9f639b398691a273a8f5d95f57730d8305e6182969113bc2aaae37
 executing==2.2.0 ; python_version >= "3.12" and python_version < "4.0" \
     --hash=sha256:11387150cad388d62750327a53d3339fad4888b39a6fe233c3afbb54ecffd3aa \
     --hash=sha256:5d108c028108fe2551d1a7b2e8b713341e2cb4fc0aa7dcf966fa4327a5226755

@@ -56,10 +56,10 @@ def generate_object_creation_structure(available_efootprint_classes: list, heade
     if attributes_to_skip is None:
         attributes_to_skip = []
 
-    efootprint_classes_dict = {
-        "str_attributes": ["name"],
+    dynamic_form_dict = {
         "switch_item": "type_object_available",
-        "switch_values": [available_class.__name__ for available_class in available_efootprint_classes]}
+        "switch_values": [available_class.__name__ for available_class in available_efootprint_classes],
+        "dynamic_lists": []}
 
     type_efootprint_classes_available = {
         "category": "efootprint_classes_available",
@@ -69,62 +69,82 @@ def generate_object_creation_structure(available_efootprint_classes: list, heade
             "input_type": "select",
             "id": "type_object_available",
             "name": "type_object_available",
-            "required": True,
             "options": [{"label": available_class.__name__, "value": available_class.__name__}
                         for available_class in available_efootprint_classes]
         }
         ]
     }
 
-    efootprint_classes_dict["items"] = [type_efootprint_classes_available]
-    efootprint_classes_dict["dynamic_lists"] = []
+    structure_dict = {"items": [type_efootprint_classes_available]}
 
     for index, efootprint_class in enumerate(available_efootprint_classes):
-        class_fields = []
         class_structure = efootprint_class_structure(efootprint_class.__name__)
-        for str_attribute_dict in class_structure["str_attributes"]:
-            if str_attribute_dict["attr_name"] in attributes_to_skip:
-                continue
-            class_fields.append({
-                "input_type": "select",
-                "id": str_attribute_dict["attr_name"],
-                "name": str_attribute_dict["attr_name"],
-                "required": True,
-                "options": [
-                    {"label": attr_value, "value": attr_value} for attr_value in str_attribute_dict["list_values"]]
-            })
-        for conditional_str_attribute_dict in class_structure["conditional_str_attributes"]:
-            if conditional_str_attribute_dict["attr_name"] in attributes_to_skip:
-                continue
-            class_fields.append({
-                "input_type": "datalist",
-                "id": conditional_str_attribute_dict["attr_name"],
-                "name": conditional_str_attribute_dict["attr_name"],
-                "options": None
-            })
-            if (conditional_str_attribute_dict["attr_name"] not in
-                [dynamic_list["input"] for dynamic_list in efootprint_classes_dict["dynamic_lists"]]):
-                efootprint_classes_dict["dynamic_lists"].append(
-                    {
-                        "input": conditional_str_attribute_dict["attr_name"],
-                        "filter_by": conditional_str_attribute_dict["depends_on"],
-                        "list_value": conditional_str_attribute_dict["conditional_list_values"]
-                    })
-        for numerical_attribute in class_structure["numerical_attributes"]:
-            if numerical_attribute["attr_name"] in attributes_to_skip:
-                continue
-            class_fields.append({
-                "input_type": "input",
-                "id": numerical_attribute["attr_name"],
-                "name": numerical_attribute["attr_name"],
-                "unit": numerical_attribute["unit"],
-                "required": True,
-                "default": numerical_attribute["default_value"]
-            })
+        class_fields, dynamic_lists = format_structure_for_dynamic_form(class_structure, attributes_to_skip)
 
-        efootprint_classes_dict["items"].append({
+        if dynamic_lists:
+            dynamic_form_dict["dynamic_lists"].extend(
+                [elt for elt in dynamic_lists
+                 if elt["input"] not in [elt["input"] for elt in dynamic_form_dict["dynamic_lists"]]])
+
+
+        structure_dict["items"].append({
             "category": efootprint_class.__name__,
             "header": f"{efootprint_class.__name__} creation",
             "fields": class_fields})
 
-    return efootprint_classes_dict
+    return structure_dict, dynamic_form_dict
+
+
+def generate_object_edition_structure(web_object, attributes_to_skip=None):
+    if attributes_to_skip is None:
+        attributes_to_skip = []
+
+    object_fields, dynamic_lists = format_structure_for_dynamic_form(
+        web_object.generate_structure(), attributes_to_skip)
+
+    return {"fields": object_fields}, {"dynamic_lists": dynamic_lists}
+
+
+def format_structure_for_dynamic_form(input_structure, attributes_to_skip):
+    structure_fields = []
+    dynamic_lists = []
+
+    for str_attribute_dict in input_structure["str_attributes"]:
+        if str_attribute_dict["attr_name"] in attributes_to_skip:
+            continue
+        structure_fields.append({
+            "input_type": "select",
+            "id": str_attribute_dict["attr_name"],
+            "name": str_attribute_dict["attr_name"],
+            "selected": str_attribute_dict.get("attr_value", None),
+            "options": [
+                {"label": attr_value, "value": attr_value} for attr_value in str_attribute_dict["list_values"]]
+        })
+    for conditional_str_attribute_dict in input_structure["conditional_str_attributes"]:
+        if conditional_str_attribute_dict["attr_name"] in attributes_to_skip:
+            continue
+        structure_fields.append({
+            "input_type": "datalist",
+            "id": conditional_str_attribute_dict["attr_name"],
+            "name": conditional_str_attribute_dict["attr_name"],
+            "selected": conditional_str_attribute_dict.get("attr_value", None),
+            "options": None
+        })
+        dynamic_lists.append(
+                {
+                    "input": conditional_str_attribute_dict["attr_name"],
+                    "filter_by": conditional_str_attribute_dict["depends_on"],
+                    "list_value": conditional_str_attribute_dict["conditional_list_values"]
+                })
+    for numerical_attribute in input_structure["numerical_attributes"]:
+        if numerical_attribute["attr_name"] in attributes_to_skip:
+            continue
+        structure_fields.append({
+            "input_type": "input",
+            "id": numerical_attribute["attr_name"],
+            "name": numerical_attribute["attr_name"],
+            "unit": numerical_attribute["unit"],
+            "default": numerical_attribute.get("attr_value", numerical_attribute["default_value"])
+        })
+
+    return structure_fields, dynamic_lists

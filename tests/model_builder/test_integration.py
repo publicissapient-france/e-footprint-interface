@@ -82,11 +82,11 @@ class AddNewUsagePatternTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         new_job_id = next(iter(job_request.session["system_data"]["WebApplicationJob"].keys()))
 
-        logger.info(f"Deleting usage pattern")
+        logger.info(f"Manually deleting usage pattern")
         delete_object(job_request, new_up_id)
-        logger.info(f"Deleting job")
+        logger.info(f"Manually deleting job")
         delete_object(job_request, new_job_id)
-        logger.info(f"Deleting service")
+        logger.info(f"Manually deleting service")
         delete_object(job_request, service_id)
 
         self.assertEqual(job_request.session["system_data"], self.system_data)

@@ -6,7 +6,7 @@ from efootprint.core.hardware.storage import Storage
 from django.shortcuts import render
 from efootprint.core.usage.job import Job
 
-from model_builder.class_structure import generate_object_creation_structure
+from model_builder.class_structure import generate_object_creation_structure, efootprint_class_structure
 from model_builder.model_web import ModelWeb, DEFAULT_NETWORKS, DEFAULT_COUNTRIES, DEFAULT_HARDWARES
 from model_builder.object_creation_and_edition_utils import create_efootprint_obj_from_post_data, \
     add_new_efootprint_object_to_system, render_exception_modal
@@ -14,8 +14,7 @@ from model_builder.views_edition import edit_object
 
 
 def open_create_object_panel(request, object_type):
-    model_web = ModelWeb(request.session)
-    new_object_structure = model_web.get_object_structure(object_type)
+    new_object_structure = efootprint_class_structure(object_type)
     template_name = f'{new_object_structure.template_name}_add.html'
     context_data = {"object_structure": new_object_structure,
                     "header_name": "Create " +  new_object_structure.template_name.replace("_", " "),
@@ -31,11 +30,12 @@ def open_create_object_panel(request, object_type):
 
 
 def open_create_server_panel(request):
-    structure_dict = generate_object_creation_structure(
+    structure_dict, dynamic_form_data = generate_object_creation_structure(
         SERVER_CLASSES + SERVER_BUILDER_CLASSES, "Server type", ["fixed_nb_of_instances"])
 
     http_response = render(request, f"model_builder/side_panels/server_add.html",
-                  context={'structure_dict': structure_dict})
+                  context={'structure_dict': structure_dict, "dynamic_form_data": dynamic_form_data,
+                           "obj_type": "server"})
 
     http_response["HX-Trigger-After-Swap"] = "initAddPanel"
 
@@ -43,23 +43,17 @@ def open_create_server_panel(request):
 
 
 def open_create_service_panel(request, server_efootprint_id):
-    server_class = None
-    for efootprint_server_class in SERVER_CLASSES:
-        if server_efootprint_id in request.session["system_data"][efootprint_server_class.__name__].keys():
-            server_class = efootprint_server_class
-            break
+    model_web = ModelWeb(request.session)
+    server = model_web.get_web_object_from_efootprint_id(server_efootprint_id)
 
-    assert server_class is not None, f"Server with efootprint_id {server_efootprint_id} not found in system data"
-
-    installable_services = server_class.installable_services()
-    services_dict = generate_object_creation_structure(
+    installable_services = server.installable_services()
+    services_dict, dynamic_form_data = generate_object_creation_structure(
         installable_services, "Services available for this server", ["gpu_latency_alpha", "gpu_latency_beta"])
 
     http_response = render(
         request, "model_builder/side_panels/service_add.html", {
-            "server_id": server_efootprint_id,
-            "structure_dict": services_dict
-        })
+            "server_id": server_efootprint_id, "structure_dict": services_dict, "dynamic_form_data": dynamic_form_data,
+            "obj_type": "service"})
 
     http_response["HX-Trigger-After-Swap"] = "initAddPanel"
 
@@ -74,7 +68,7 @@ def open_create_job_panel(request):
         if service.__name__ in request.session["system_data"].keys():
             available_job_classes.update(service.compatible_jobs())
 
-    structure_dict = generate_object_creation_structure(list(available_job_classes), "Job type")
+    structure_dict, dynamic_form_data = generate_object_creation_structure(list(available_job_classes), "Job type")
     additional_item = {
                 "category": "job_creation_helper",
                 "header": "Job creation helper",
@@ -84,7 +78,6 @@ def open_create_job_panel(request):
                         "input_type": "select",
                         "id": "server",
                         "name": "Server",
-                        "required": True,
                         "options": [
                             {'label': server.name, 'value': server.efootprint_id} for server in servers]
                     },
@@ -92,7 +85,6 @@ def open_create_job_panel(request):
                         "input_type": "select",
                         "id": "service",
                         "name": "Service used",
-                        "required": True,
                         "options": None
                     },
                 ]
@@ -105,7 +97,7 @@ def open_create_job_panel(request):
             {"label": job.__name__, "value": job.__name__} for job in service.compatible_jobs()]
         for service in model_web.services}
     )
-    structure_dict["dynamic_selects"] = [
+    dynamic_form_data["dynamic_selects"] = [
         {
             "input": "service",
             "filter_by": "server",
@@ -124,7 +116,7 @@ def open_create_job_panel(request):
 
     http_response = render(
         request, "model_builder/side_panels/job_add.html", {
-            "structure_dict": structure_dict,
+            "structure_dict": structure_dict, "dynamic_form_data": dynamic_form_data, "obj_type": "job",
             "efootprint_id_of_parent_to_link_to": request.GET.get('efootprint_id_of_parent_to_link_to')
         })
     http_response["HX-Trigger-After-Swap"] = "initAddPanel"

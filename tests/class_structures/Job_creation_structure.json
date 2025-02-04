@@ -1,14 +1,4 @@
 {
-    "str_attributes": [
-        "name"
-    ],
-    "switch_item": "type_object_available",
-    "switch_values": [
-        "Job",
-        "WebApplicationJob",
-        "VideoStreamingJob",
-        "GenAIJob"
-    ],
     "items": [
         {
             "category": "efootprint_classes_available",
@@ -19,7 +9,6 @@
                     "input_type": "select",
                     "id": "type_object_available",
                     "name": "type_object_available",
-                    "required": true,
                     "options": [
                         {
                             "label": "Job",
@@ -44,14 +33,12 @@
         {
             "category": "Job",
             "header": "Job creation",
-            "class": "",
             "fields": [
                 {
                     "input_type": "input",
                     "id": "data_transferred",
                     "name": "data_transferred",
                     "unit": "kB",
-                    "required": true,
                     "default": 150
                 },
                 {
@@ -59,7 +46,6 @@
                     "id": "data_stored",
                     "name": "data_stored",
                     "unit": "kB",
-                    "required": true,
                     "default": 100
                 },
                 {
@@ -67,7 +53,6 @@
                     "id": "request_duration",
                     "name": "request_duration",
                     "unit": "s",
-                    "required": true,
                     "default": 1
                 },
                 {
@@ -75,7 +60,6 @@
                     "id": "compute_needed",
                     "name": "compute_needed",
                     "unit": "cpu_core",
-                    "required": true,
                     "default": 0.1
                 },
                 {
@@ -83,7 +67,6 @@
                     "id": "ram_needed",
                     "name": "ram_needed",
                     "unit": "MB",
-                    "required": true,
                     "default": 50
                 }
             ]
@@ -91,13 +74,12 @@
         {
             "category": "WebApplicationJob",
             "header": "WebApplicationJob creation",
-            "class": "d-none",
             "fields": [
                 {
                     "input_type": "select",
                     "id": "implementation_details",
                     "name": "implementation_details",
-                    "required": true,
+                    "selected": null,
                     "options": [
                         {
                             "label": "aggregation-code-side",
@@ -130,7 +112,6 @@
                     "id": "data_transferred",
                     "name": "data_transferred",
                     "unit": "MB",
-                    "required": true,
                     "default": 2.2
                 },
                 {
@@ -138,7 +119,6 @@
                     "id": "data_stored",
                     "name": "data_stored",
                     "unit": "kB",
-                    "required": true,
                     "default": 100
                 }
             ]
@@ -146,13 +126,12 @@
         {
             "category": "VideoStreamingJob",
             "header": "VideoStreamingJob creation",
-            "class": "d-none",
             "fields": [
                 {
                     "input_type": "select",
                     "id": "resolution",
                     "name": "resolution",
-                    "required": true,
+                    "selected": null,
                     "options": [
                         {
                             "label": "480p (640 x 480)",
@@ -189,7 +168,6 @@
                     "id": "video_duration",
                     "name": "video_duration",
                     "unit": "h",
-                    "required": true,
                     "default": 1
                 },
                 {
@@ -197,7 +175,6 @@
                     "id": "refresh_rate",
                     "name": "refresh_rate",
                     "unit": "1/s",
-                    "required": true,
                     "default": 30.0
                 },
                 {
@@ -205,7 +182,6 @@
                     "id": "data_stored",
                     "name": "data_stored",
                     "unit": "MB",
-                    "required": true,
                     "default": 0
                 }
             ]
@@ -213,18 +189,15 @@
         {
             "category": "GenAIJob",
             "header": "GenAIJob creation",
-            "class": "d-none",
             "fields": [
                 {
                     "input_type": "input",
                     "id": "output_token_count",
                     "name": "output_token_count",
                     "unit": "",
-                    "required": true,
                     "default": 1000
                 }
             ]
         }
-    ],
-    "dynamic_lists": []
+    ]
 }

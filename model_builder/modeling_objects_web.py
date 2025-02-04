@@ -1,3 +1,5 @@
+import re
+
 from django.contrib.sessions.backends.base import SessionBase
 from efootprint.abstract_modeling_classes.explainable_object_base_class import ExplainableObject
 from efootprint.abstract_modeling_classes.explainable_objects import EmptyExplainableObject
@@ -5,6 +7,8 @@ from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
 from efootprint.logger import logger
 from efootprint.builders.services.service_base_class import Service
 from efootprint.core.hardware.server_base import ServerBase
+
+from model_builder.class_structure import efootprint_class_structure
 
 
 def retrieve_attributes_by_type(modeling_obj, attribute_type):
@@ -59,7 +63,10 @@ class ModelingObjectWeb:
     def __init__(self, modeling_obj: ModelingObject, model_web):
         self._modeling_obj = modeling_obj
         self.model_web = model_web
-        self.structure = self.model_web.get_object_structure(self.class_as_simple_str)
+
+    @property
+    def settable_attributes(self):
+        return ["_modeling_obj", "model_web"]
 
     def __getattr__(self, name):
         attr = getattr(self._modeling_obj, name)
@@ -83,13 +90,10 @@ class ModelingObjectWeb:
         return attr
 
     def __setattr__(self, key, value):
-        if key in ["_modeling_obj", "model_web", "structure"]:
+        if key in self.settable_attributes:
             super.__setattr__(self, key, value)
-        elif key in self.structure.all_attribute_names + ["name", "id"]:
-            raise PermissionError(f"{self} is trying to set the {key} attribute that is also an attribute of its "
-                                  f"underlying e-footprint object.")
         else:
-            super.__setattr__(self, key, value)
+            raise PermissionError(f"{self} is trying to set the {key} attribute with value {value}.")
 
     def __hash__(self):
         return hash(self.web_id)
@@ -133,7 +137,8 @@ class ModelingObjectWeb:
 
     @property
     def template_name(self):
-        return self.structure.template_name
+        snake_case_class_name = re.sub(r'(?<!^)(?=[A-Z])', '_', self.object_type).lower()
+        return f"{snake_case_class_name}"
 
     @property
     def links_to(self):
@@ -164,54 +169,33 @@ class ModelingObjectWeb:
         else:
             return self.all_accordion_parents[-1]
 
-    @property
-    def numerical_attributes(self):
-        numerical_attributes_from_structure = self.structure.numerical_attributes
-        for numerical_attribute in numerical_attributes_from_structure:
-            numerical_attribute["attr_value"] = getattr(self, numerical_attribute["attr_name"])
+    def generate_structure(self):
+        from time import time
+        start = time()
+        class_structure = efootprint_class_structure(self.class_as_simple_str)
 
-        return numerical_attributes_from_structure
+        for attribute_type in class_structure.keys():
+            for attribute in class_structure[attribute_type]:
+                attribute["attr_value"] = getattr(self, attribute["attr_name"])
+                if "object_type" in attribute.keys():
+                    attribute["existing_objects"] = self.model_web.get_web_objects_from_efootprint_type(
+                        attribute["object_type"])
 
-    @property
-    def mod_obj_attributes(self):
-        efootprint_mod_obj_attributes = retrieve_attributes_by_type(self._modeling_obj, ModelingObject)
-        for mod_obj_dict in efootprint_mod_obj_attributes:
-            mod_obj_dict["existing_objects"] = self.model_web.get_web_objects_from_efootprint_type(
-                mod_obj_dict["attr_value"].class_as_simple_str)
-            mod_obj_dict["attr_value"] = wrap_efootprint_object(mod_obj_dict["attr_value"], self.model_web)
+        all_attribute_names = []
+        for attribute_type in class_structure.keys():
+            for attribute in class_structure[attribute_type]:
+                all_attribute_names.append(attribute["attr_name"])
 
-        return efootprint_mod_obj_attributes
+        class_structure["all_attribute_names"] = all_attribute_names
+        logger.info(f"Structure for {self.name} created in {time() - start:.3f} seconds.")
 
-    @property
-    def list_attributes(self):
-        attributes_from_structure = self.structure.list_attributes
-        list_efootprint_mod_obj_attributes = retrieve_attributes_by_type(self._modeling_obj, list)
-        for efootprint_mod_obj_attribute_dict in list_efootprint_mod_obj_attributes:
-            # TODO: test that logic works in case e-footprint object has empty list attribute
-            efootprint_mod_obj_attribute_dict["attr_value"] = [
-                self.model_web.get_web_object_from_efootprint_id(efootprint_mod_obj.id)
-                for efootprint_mod_obj in efootprint_mod_obj_attribute_dict["attr_value"]]
-            list_attribute_object_type = [
-                attribute["object_type"] for attribute in attributes_from_structure
-                if attribute["attr_name"] == efootprint_mod_obj_attribute_dict["attr_name"]][0]
-            efootprint_attribute_ids = [
-                obj.efootprint_id for obj in efootprint_mod_obj_attribute_dict["attr_value"]]
-            existing_web_objects_of_same_type_that_are_not_attributes = [
-                obj for obj in self.model_web.get_web_objects_from_efootprint_type(list_attribute_object_type)
-                if obj.efootprint_id not in efootprint_attribute_ids]
-            efootprint_mod_obj_attribute_dict["existing_objects"] = (
-                efootprint_mod_obj_attribute_dict["attr_value"]
-                + existing_web_objects_of_same_type_that_are_not_attributes)
-
-        return list_efootprint_mod_obj_attributes
+        return class_structure
 
     def self_delete(self, request_session: SessionBase):
         obj_type = self.class_as_simple_str
         object_id = self.efootprint_id
         objects_to_delete_afterwards = []
-        for modeling_obj in (
-            [mod_obj_dict["attr_value"] for mod_obj_dict in self.mod_obj_attributes]
-            + sum([list_attribute["attr_value"] for list_attribute in self.list_attributes], [])):
+        for modeling_obj in self.mod_obj_attributes:
             if (not (isinstance(modeling_obj.modeling_obj, Service)
                      or isinstance(modeling_obj.modeling_obj, ServerBase))
                 and len(modeling_obj.modeling_obj_containers) == 1):
@@ -263,6 +247,10 @@ class DuplicatedJobWeb(ModelingObjectWeb):
         self.usage_journey_step = uj_step
 
     @property
+    def settable_attributes(self):
+        return super().settable_attributes + ["usage_journey_step"]
+
+    @property
     def template_name(self):
         return "job"
 
@@ -305,6 +293,10 @@ class DuplicatedUsageJourneyStepWeb(UsageJourneyStepWeb):
     def __init__(self, modeling_obj: ModelingObject, usage_journey):
         super().__init__(modeling_obj, usage_journey.model_web)
         self.usage_journey = usage_journey
+
+    @property
+    def settable_attributes(self):
+        return super().settable_attributes + ["usage_journey"]
 
     @property
     def web_id(self):

@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from django.contrib.sessions.backends.base import SessionBase
@@ -9,17 +10,17 @@ from efootprint.logger import logger
 
 from model_builder.modeling_objects_web import ModelingObjectWeb, wrap_efootprint_object
 from model_builder.model_web import ModelWeb
-from model_builder.class_structure import MODELING_OBJECT_CLASSES_DICT
+from model_builder.class_structure import MODELING_OBJECT_CLASSES_DICT, efootprint_class_structure
 
 
 def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_type: str):
     new_efootprint_obj_class = MODELING_OBJECT_CLASSES_DICT[object_type]
 
     obj_creation_kwargs = {}
-    obj_structure = model_web.get_object_structure(object_type)
+    obj_structure = efootprint_class_structure(object_type)
     obj_creation_kwargs["name"] = request.POST["form_add_name"]
 
-    for attr_dict in obj_structure.numerical_attributes:
+    for attr_dict in obj_structure["numerical_attributes"]:
         attr_value_in_list = request.POST.getlist(f'form_add_{attr_dict["attr_name"]}')
         if not attr_value_in_list:
             logger.info(f"No value for {attr_dict['attr_name']} in {object_type} form. "
@@ -29,7 +30,7 @@ def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_ty
             obj_creation_kwargs[attr_dict["attr_name"]] = SourceValue(
                 float(attr_value_in_list[0]) * u(attr_dict["unit"]))
 
-    for attr_dict in obj_structure.hourly_quantities_attributes:
+    for attr_dict in obj_structure["hourly_quantities_attributes"]:
         obj_creation_kwargs[attr_dict["attr_name"]] = SourceHourlyValues(
             # Create hourly_usage_journey_starts from request.POST with the startDate and values
             create_hourly_usage_df_from_list(
@@ -41,7 +42,7 @@ def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_ty
             )
         )
 
-    for str_attr in obj_structure.str_attributes + obj_structure.conditional_str_attributes:
+    for str_attr in obj_structure["str_attributes"] + obj_structure["conditional_str_attributes"]:
         str_attr_name = str_attr["attr_name"]
         if f'form_add_{str_attr_name}' not in request.POST.keys():
             logger.info(f"No value for {str_attr_name} in {object_type} form. "
@@ -50,13 +51,13 @@ def create_efootprint_obj_from_post_data(request, model_web: ModelWeb, object_ty
             obj_creation_kwargs[str_attr_name] = SourceObject(
                 request.POST[f'form_add_{str_attr_name}'], source=Sources.USER_DATA)
 
-    for mod_obj in obj_structure.modeling_obj_attributes:
+    for mod_obj in obj_structure["modeling_obj_attributes"]:
         new_mod_obj_id = request.POST[f'form_add_{mod_obj["attr_name"]}']
         obj_to_add = model_web.get_efootprint_object_from_efootprint_id(
             new_mod_obj_id, mod_obj["object_type"], request.session)
         obj_creation_kwargs[mod_obj["attr_name"]] = obj_to_add
 
-    for mod_obj in obj_structure.list_attributes:
+    for mod_obj in obj_structure["list_attributes"]:
         obj_creation_kwargs[mod_obj["attr_name"]] = [
             model_web.get_efootprint_object_from_efootprint_id(obj_id, mod_obj["object_type"], request.session)
             for obj_id in request.POST.getlist(f'form_add_{mod_obj["attr_name"]}')]
@@ -83,21 +84,29 @@ def add_new_efootprint_object_to_system(request_session: SessionBase, model_web:
 
 def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
     model_web = obj_to_edit.model_web
-    obj_structure = obj_to_edit.structure
+    obj_structure = obj_to_edit.generate_structure()
 
     obj_to_edit.set_efootprint_value("name", request.POST["form_edit_name"])
 
-    for attr_dict in obj_structure.numerical_attributes:
+    for attr_dict in obj_structure["numerical_attributes"]:
         if "form_edit_" + attr_dict["attr_name"] in request.POST.keys():
             request_unit = attr_dict["unit"]
-            request_value = request.POST.getlist("form_edit_" + attr_dict["attr_name"])[0]
+            request_value = request.POST["form_edit_" + attr_dict["attr_name"]]
             new_value = SourceValue(float(request_value) * u(request_unit), Sources.USER_DATA)
             current_value = getattr(obj_to_edit, attr_dict["attr_name"])
             if new_value.value != current_value.value:
                 logger.debug(f"{attr_dict['attr_name']} has changed in {obj_to_edit.efootprint_id}")
                 new_value.set_label(current_value.label)
                 obj_to_edit.set_efootprint_value(attr_dict["attr_name"], new_value)
-    for mod_obj in obj_structure.modeling_obj_attributes:
+    for attr_dict in obj_structure["str_attributes"] + obj_structure["conditional_str_attributes"]:
+        if "form_edit_" + attr_dict["attr_name"] in request.POST.keys():
+            new_value = SourceObject(request.POST["form_edit_" + attr_dict["attr_name"]], source=Sources.USER_DATA)
+            current_value = getattr(obj_to_edit, attr_dict["attr_name"])
+            if new_value.value != current_value.value:
+                logger.debug(f"{attr_dict['attr_name']} has changed in {obj_to_edit.efootprint_id}")
+                new_value.set_label(current_value.label)
+                obj_to_edit.set_efootprint_value(attr_dict["attr_name"], new_value)
+    for mod_obj in obj_structure["modeling_obj_attributes"]:
         if "form_edit_" + mod_obj["attr_name"] in request.POST.keys():
             new_mod_obj_id = request.POST["form_edit_" + mod_obj["attr_name"]]
             current_mod_obj_id = getattr(obj_to_edit, mod_obj["attr_name"]).efootprint_id
@@ -106,7 +115,7 @@ def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
                 obj_to_add = model_web.get_efootprint_object_from_efootprint_id(
                     new_mod_obj_id, mod_obj["object_type"], request.session)
                 obj_to_edit.set_efootprint_value(mod_obj["attr_name"], obj_to_add)
-    for mod_obj in obj_structure.list_attributes:
+    for mod_obj in obj_structure["list_attributes"]:
         if "form_edit_" + mod_obj["attr_name"] in request.POST.keys():
             new_mod_obj_ids = request.POST.getlist("form_edit_" +mod_obj["attr_name"])
             current_mod_obj_ids = [mod_obj.efootprint_id for mod_obj in getattr(obj_to_edit, mod_obj["attr_name"])]
@@ -129,6 +138,8 @@ def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
 
 
 def render_exception_modal(request, exception):
+    if os.environ.get("RAISE_EXCEPTIONS"):
+        raise exception
     http_response = render(request, "model_builder/modals/exception-modal.html", {
         "msg": exception})
 

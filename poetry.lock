@@ -452,13 +452,13 @@ openai = ["openai (>=1.12.0,<2.0.0)"]
 
 [[package]]
 name = "efootprint"
-version = "9.1.3"
+version = "9.1.4"
 description = "Digital service environmental footprint model"
 optional = false
 python-versions = "<4.0,>=3.12"
 files = [
-    {file = "efootprint-9.1.3-py3-none-any.whl", hash = "sha256:f099bde32ea2354c31cdebdb824699f6faf85be5459d01b940e0bd7fd7098a96"},
-    {file = "efootprint-9.1.3.tar.gz", hash = "sha256:3a474572817861163d90ff20d9b2e5c3c68eb2fea0537b544020db426e53aeb6"},
+    {file = "efootprint-9.1.4-py3-none-any.whl", hash = "sha256:16ed28cd71ab3780165888d3d202d98ae788c33a283bd2a5c099d56916e2de30"},
+    {file = "efootprint-9.1.4.tar.gz", hash = "sha256:f46b631e4f9f639b398691a273a8f5d95f57730d8305e6182969113bc2aaae37"},
 ]
 
 [package.dependencies]
@@ -2276,4 +2276,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "288ccd768a8bcea98b570219e2bb1bf73528cc56599b3500c570078faddace64"
+content-hash = "5234d01fb0d06150b02ed8425d8886cfd73f83c061ce13e4b46c239345cc9efe"
