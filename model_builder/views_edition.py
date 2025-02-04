@@ -4,6 +4,7 @@ from copy import copy
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
+from efootprint.builders.services.service_base_class import Service
 from efootprint.core.hardware.server_base import ServerBase
 
 from model_builder.class_structure import generate_object_edition_structure
@@ -18,6 +19,8 @@ def open_edit_object_panel(request, object_id):
         obj_to_edit, attributes_to_skip=ATTRIBUTES_TO_SKIP_IN_FORMS)
     if isinstance(obj_to_edit.modeling_obj, ServerBase):
         # TODO: remove when developing the storage edition feature
+        structure_dict["modeling_obj_attributes"] = []
+    if isinstance(obj_to_edit.modeling_obj, Service):
         structure_dict["modeling_obj_attributes"] = []
 
     http_response = render(

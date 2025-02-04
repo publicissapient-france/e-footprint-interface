@@ -153,6 +153,14 @@ class ModelingObjectWeb:
         return [{'id': f'{self.web_id}', 'data-link-to': self.links_to, 'data-line-opt': self.data_line_opt}]
 
     @property
+    def accordion_parent(self):
+        return None
+
+    @property
+    def accordion_children(self):
+        return []
+
+    @property
     def all_accordion_parents(self):
         list_parents = []
         parent = self.accordion_parent
