@@ -44,7 +44,7 @@
                 {% include "model_builder/side_panels/dynamic_form_field.html" %}
             {% endfor %}
 
-            {% for attr in object_to_edit.mod_obj_attributes %}
+            {% for attr in structure_dict.modeling_obj_attributes %}
                 <div class="col-12 mb-3">
                     <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
                     <select class="form-control p-2" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}">
@@ -55,7 +55,7 @@
                 </div>
             {% endfor %}
 
-            {% for attr in object_to_edit.list_attributes %}
+            {% for attr in structure_dict.list_attributes %}
                 <div class="col-12 mb-3">
                     <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
                     <select class="form-control p-2" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}" multiple>

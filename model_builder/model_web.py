@@ -5,7 +5,7 @@ from time import time
 
 from django.contrib.sessions.backends.base import SessionBase
 from efootprint.api_utils.json_to_system import json_to_system, json_to_explainable_object
-from efootprint.core.all_classes_in_order import SERVER_CLASSES, SERVICE_CLASSES
+from efootprint.core.all_classes_in_order import SERVER_CLASSES, SERVICE_CLASSES, SERVER_BUILDER_CLASSES
 from efootprint.logger import logger
 
 from model_builder.class_structure import MODELING_OBJECT_CLASSES_DICT
@@ -90,7 +90,7 @@ class ModelWeb:
     def servers(self):
         servers = []
 
-        for server_type in [server_class.__name__ for server_class in SERVER_CLASSES]:
+        for server_type in [server_class.__name__ for server_class in SERVER_CLASSES + SERVER_BUILDER_CLASSES]:
             servers += self.get_web_objects_from_efootprint_type(server_type)
 
         return servers

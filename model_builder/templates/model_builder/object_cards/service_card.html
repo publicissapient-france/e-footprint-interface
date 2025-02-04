@@ -1,3 +1,9 @@
-<button class="btn btn-white text-start p-2 fz-0-8">
+<button
+    id="button-{{ service.web_id }}"
+    class="btn btn-white text-start fz-0-8"
+    hx-get="/model_builder/open-edit-object-panel/{{ service.efootprint_id }}/"
+    hx-target="#formPanel"
+    hx-trigger="click"
+    hx-swap="innerHTML">
     {{ service.name }}
 </button>

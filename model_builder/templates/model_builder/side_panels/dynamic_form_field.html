@@ -8,7 +8,8 @@
             required
         >
             {% for option in field.options %}
-                <option value="{{ option.value }}">{{ option.label }}</option>
+                <option value="{{ option.value }}" {% if option.label == field.selected %}selected{% endif %}>
+                    {{ option.label }}</option>
             {% endfor %}
         </select>
     {% elif field.input_type == 'datalist' %}
@@ -18,10 +19,11 @@
                 list="list_{{ field.id }}"
                 id="{{ field.id }}"
                 name="{{ field.id }}"
+
                 required
         >
         <datalist id="list_{{ field.id }}">
-            <option selected value="select a provider">
+            <option selected value={{ field.default }}>
         </datalist>
     {% elif field.input_type == 'list' %}
         <ul class="list-group">

@@ -99,10 +99,12 @@ def generate_object_edition_structure(web_object, attributes_to_skip=None):
     if attributes_to_skip is None:
         attributes_to_skip = []
 
+    web_object_structure = web_object.generate_structure()
     object_fields, dynamic_lists = format_structure_for_dynamic_form(
-        web_object.generate_structure(), attributes_to_skip)
+        web_object_structure, attributes_to_skip)
 
-    return {"fields": object_fields}, {"dynamic_lists": dynamic_lists}
+    return {"fields": object_fields, "modeling_obj_attributes": web_object_structure["modeling_obj_attributes"],
+            "list_attributes": web_object_structure["list_attributes"]}, {"dynamic_lists": dynamic_lists}
 
 
 def format_structure_for_dynamic_form(input_structure, attributes_to_skip):
@@ -112,22 +114,28 @@ def format_structure_for_dynamic_form(input_structure, attributes_to_skip):
     for str_attribute_dict in input_structure["str_attributes"]:
         if str_attribute_dict["attr_name"] in attributes_to_skip:
             continue
+        selected = None
+        if "attr_value" in str_attribute_dict.keys():
+            selected = str_attribute_dict["attr_value"].value
         structure_fields.append({
             "input_type": "select",
             "id": str_attribute_dict["attr_name"],
             "name": str_attribute_dict["attr_name"],
-            "selected": str_attribute_dict.get("attr_value", None),
+            "selected": selected,
             "options": [
                 {"label": attr_value, "value": attr_value} for attr_value in str_attribute_dict["list_values"]]
         })
     for conditional_str_attribute_dict in input_structure["conditional_str_attributes"]:
         if conditional_str_attribute_dict["attr_name"] in attributes_to_skip:
             continue
+        selected = None
+        if "attr_value" in conditional_str_attribute_dict.keys():
+            selected = conditional_str_attribute_dict["attr_value"].value
         structure_fields.append({
             "input_type": "datalist",
             "id": conditional_str_attribute_dict["attr_name"],
             "name": conditional_str_attribute_dict["attr_name"],
-            "selected": conditional_str_attribute_dict.get("attr_value", None),
+            "selected": selected,
             "options": None
         })
         dynamic_lists.append(
@@ -139,12 +147,15 @@ def format_structure_for_dynamic_form(input_structure, attributes_to_skip):
     for numerical_attribute in input_structure["numerical_attributes"]:
         if numerical_attribute["attr_name"] in attributes_to_skip:
             continue
+        default_value = numerical_attribute["default_value"]
+        if "attr_value" in numerical_attribute.keys():
+            default_value = numerical_attribute["attr_value"].rounded_magnitude
         structure_fields.append({
             "input_type": "input",
             "id": numerical_attribute["attr_name"],
             "name": numerical_attribute["attr_name"],
             "unit": numerical_attribute["unit"],
-            "default": numerical_attribute.get("attr_value", numerical_attribute["default_value"])
+            "default": default_value
         })
 
     return structure_fields, dynamic_lists
