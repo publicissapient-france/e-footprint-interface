@@ -212,6 +212,10 @@ def add_new_server(request):
     response = render(
         request, "model_builder/object_cards/server_card.html", {"server": added_obj})
 
+    response["HX-Trigger-After-Swap"] = json.dumps({
+        "closePanelAfterSwap": True
+    })
+
     return response
 
 
@@ -231,6 +235,10 @@ def add_new_service(request, server_efootprint_id):
 
         response = render(request, "model_builder/object_cards/service_card.html",
                           context={"service": added_obj})
+
+        response["HX-Trigger-After-Swap"] = json.dumps({
+            "closePanelAfterSwap": True
+        })
 
         return response
 
