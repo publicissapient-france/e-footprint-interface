@@ -5,7 +5,7 @@
         hx-swap="beforeend"
         onsubmit="openLoader()"
         hx-on::after-request="closeLoader()"
-      hx-disabled-elt="find button[type=submit]"
+      hx-disabled-elt="button"
 >
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <input type="hidden" name="devices" id="devices" value="">

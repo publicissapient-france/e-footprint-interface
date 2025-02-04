@@ -19,7 +19,7 @@
                         hx-swap="innerHTML"
                         hx-on::after-request="closeLoader()"
                         onclick="openLoader()"
-                        hx-disabled-elt="this"
+                        hx-disabled-elt="button"
                 >
                     {{ usage_journey.name }}
                 </button>
@@ -42,7 +42,7 @@
                                     hx-vals='{"efootprint_id_of_parent_to_link_to": "{{ usage_journey.efootprint_id }}"}'
                                     hx-on::after-request="closeLoader()"
                                     onclick="openLoader()"
-                                    hx-disabled-elt="this"
+                                    hx-disabled-elt="button"
                             >
                                 Add usage journey step
                             </button>
