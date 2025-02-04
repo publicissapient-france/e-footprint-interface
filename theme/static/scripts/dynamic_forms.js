@@ -26,7 +26,7 @@ document.addEventListener("initAddPanel", function () {
     }
 
   if (structureDict.switch_item) {
-      const switchElementId = "form_add_" + structureDict.switch_item;
+      const switchElementId = structureDict.switch_item;
       const switchElement = document.getElementById(switchElementId);
       const switchValues = structureDict.switch_values;
       switchForms(switchValues, switchElement);
@@ -40,7 +40,7 @@ document.addEventListener("initAddPanel", function () {
    * Reusable function that populates a target element (either <datalist> or <select>)
    * depending on 'type' ('datalist' vs 'select').
    * - listValue: an object keyed by filterKey, yielding an array of items
-   * - filterId: the ID of the filter element (e.g. "form_add_type_object_available")
+   * - filterId: the ID of the filter element (e.g. "type_object_available")
    * - targetId: the ID of the datalist/select to be populated
    * - type: either 'datalist' or 'select'
    */
@@ -81,7 +81,7 @@ document.addEventListener("initAddPanel", function () {
    */
   if (structureDict.dynamic_lists) {
     structureDict.dynamic_lists.forEach((dynamicList) => {
-      const filterId = "form_add_" + dynamicList.filter_by;
+      const filterId = dynamicList.filter_by;
       const listId = "list_" + dynamicList.input;
 
       // Fill once initially
@@ -98,8 +98,8 @@ document.addEventListener("initAddPanel", function () {
    */
   if (structureDict.dynamic_selects) {
     structureDict.dynamic_selects.forEach((dynamicSelect) => {
-      const filterId = "form_add_" + dynamicSelect.filter_by;
-      const selectId = "form_add_" + dynamicSelect.input;
+      const filterId = dynamicSelect.filter_by;
+      const selectId = dynamicSelect.input;
 
       // Fill once initially
       fillData("select", dynamicSelect.list_value, filterId, selectId);

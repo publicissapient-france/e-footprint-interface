@@ -1,5 +1,5 @@
 
-<form class="container-fluid form_edit_panel text-start"
+<form class="container-fluid panel text-start"
       hx-post="/model_builder/edit-object/{{ object_to_edit.efootprint_id }}/"
       hx-swap="none"
       onsubmit="openLoader()"
@@ -36,8 +36,8 @@
     <div class="form-body p-1" id="panel-body">
         <div class="row text-start">
             <div class="col-12 mb-3">
-                <label for="form_edit_name" class="form-label">Name</label>
-                <input type="text" class="form-control p-2" id="form_edit_name" name="form_edit_name" value="{{ object_to_edit.name }}">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control p-2" id="name" name="name" value="{{ object_to_edit.name }}">
             </div>
 
             {% for field in structure_dict.fields %}
@@ -46,8 +46,8 @@
 
             {% for attr in object_to_edit.mod_obj_attributes %}
                 <div class="col-12 mb-3">
-                    <label for="form_edit_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
-                    <select class="form-control p-2" id="form_edit_{{ attr.attr_name }}" name="form_edit_{{ attr.attr_name }}">
+                    <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
+                    <select class="form-control p-2" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}">
                         {% for obj in attr.existing_objects %}
                              <option value="{{ obj.efootprint_id }}" {% if attr.attr_value.efootprint_id == obj.efootprint_id %}selected{% endif %}>{{ obj.name }}</option>
                         {% endfor %}
@@ -57,8 +57,8 @@
 
             {% for attr in object_to_edit.list_attributes %}
                 <div class="col-12 mb-3">
-                    <label for="form_edit_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
-                    <select class="form-control p-2" id="form_edit_{{ attr.attr_name }}" name="form_edit_{{ attr.attr_name }}" multiple>
+                    <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
+                    <select class="form-control p-2" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}" multiple>
                         {% for obj in attr.existing_objects %}
                              <option value="{{ obj.efootprint_id }}" {% for obj_selected in attr.attr_value %}{% if obj_selected.efootprint_id == obj.efootprint_id %}selected{% endif %}{% endfor %} >{{ obj.name }}</option>
                         {% endfor %}

@@ -1,5 +1,5 @@
 
-<form class="form_add_panel p-4 text-start"
+<form class="panel p-4 text-start"
         hx-post="/model_builder/add-new-usage-journey-step/{{ efootprint_id_of_parent_to_link_to }}/"
         hx-swap="none"
         onsubmit="openLoader()"
@@ -22,17 +22,17 @@
         <div class="row text-start">
 
             <div class="col-12 mb-3">
-                <label for="form_add_name" class="form-label">Name</label>
-                <input type="text" class="form-control p-2" id="form_add_name" name="form_add_name" required>
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control p-2" id="name" name="name" required>
             </div>
             {% for attr in object_structure.structure_dict.numerical_attributes %}
                 <div class="col-8 mb-3">
                     <div class="input-group">
-                        <label for="form_add_{{ attr.attr_name }}" class="form-label w-100">{{ attr.attr_name }}</label>
+                        <label for="{{ attr.attr_name }}" class="form-label w-100">{{ attr.attr_name }}</label>
                         <input type="text"
                                class="form-control input_with_add_on"
-                               id="form_add_{{ attr.attr_name }}"
-                               name="form_add_{{ attr.attr_name }}"
+                               id="{{ attr.attr_name }}"
+                               name="{{ attr.attr_name }}"
                                placeholder="Enter value" required>
                         <span class="input-group-text" id="basic-addon2">
                             {{ attr.unit }}
@@ -43,8 +43,8 @@
 
             {% for attr in object_structure.structure_dict.mod_obj_attributes %}
                 <div class="col-12 mb-3">
-                    <label for="form_add_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
-                    <select class="form-control p-2" id="form_add_{{ attr.attr_name }}" name="form_add_{{ attr.attr_name }}">
+                    <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
+                    <select class="form-control p-2" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}">
                         {% for obj in attr.existing_objects %}
                              <option value="{{ obj.efootprint_id }}">{{ obj.name }}</option>
                         {% endfor %}
@@ -54,8 +54,8 @@
 
             {% for attr in object_structure.list_attributes %}
                 <div class="col-12 mb-3">
-                    <label for="form_add_{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
-                    <select class="form-control p-2" id="form_add_{{ attr.attr_name }}" name="form_add_{{ attr.attr_name }}" multiple>
+                    <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
+                    <select class="form-control p-2" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}" multiple>
                         {% for obj in attr.existing_objects %}
                              <option value="{{ obj.efootprint_id }}">{{ obj.name }}</option>
                         {% endfor %}

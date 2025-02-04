@@ -67,17 +67,14 @@ def delete_object(request, object_id):
         ids_of_web_elements_with_lines_to_remove, data_attribute_updates, top_parent_ids = [], [], []
         for duplicated_card in web_obj.duplicated_cards:
             mutable_post = request.POST.copy()
-            for key in list(mutable_post.keys()):
-                if key.startswith('form_add'):
-                    del mutable_post[key]
             parent = duplicated_card.accordion_parent
             logger.info(f"Removing {duplicated_card.name} from {parent.name}")
-            mutable_post['form_edit_name'] = parent.name
+            mutable_post['name'] = parent.name
             new_list_attribute_ids = [list_attribute.efootprint_id for list_attribute in parent.accordion_children
                                       if list_attribute.efootprint_id != duplicated_card.efootprint_id]
             list_attribute_name = efootprint_class_structure(
                 parent.class_as_simple_str)["list_attributes"][0]["attr_name"]
-            mutable_post.setlist(f'form_edit_{list_attribute_name}', new_list_attribute_ids)
+            mutable_post.setlist(f'{list_attribute_name}', new_list_attribute_ids)
             request.POST = mutable_post
             (partial_response_html, partial_ids_of_web_elements_with_lines_to_remove,
              partial_data_attribute_updates, partial_top_parent_ids) = compute_edit_object_html_and_event_response(

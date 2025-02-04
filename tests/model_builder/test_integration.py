@@ -32,13 +32,13 @@ class AddNewUsagePatternTestCase(TestCase):
         post_data = QueryDict(mutable=True)
         post_data.update({
             'csrfmiddlewaretoken': ['ruwwTrYareoTugkh9MF7b5lhY3DF70xEwgHKAE6gHAYDvYZFDyr1YiXsV5VDJHKv'],
-            'form_add_devices': [list(DEFAULT_HARDWARES.keys())[0]],
-            'form_add_network': [list(DEFAULT_NETWORKS.keys())[0]],
-            'form_add_country': [list(DEFAULT_COUNTRIES.keys())[0]],
-            'form_add_usage_journey': ['uuid-Daily-video-usage'],
-            'form_add_date_hourly_usage_journey_starts': ['2025-02-01'],
-            'form_add_list_hourly_usage_journey_starts': ['6,6,6,6,6,6,69,9,9,9,9,9,10,10,10,10,10,10,10,10,10'],
-            'form_add_name': ['2New usage pattern'],
+            'devices': [list(DEFAULT_HARDWARES.keys())[0]],
+            'network': [list(DEFAULT_NETWORKS.keys())[0]],
+            'country': [list(DEFAULT_COUNTRIES.keys())[0]],
+            'usage_journey': ['uuid-Daily-video-usage'],
+            'date_hourly_usage_journey_starts': ['2025-02-01'],
+            'list_hourly_usage_journey_starts': ['6,6,6,6,6,6,69,9,9,9,9,9,10,10,10,10,10,10,10,10,10'],
+            'name': ['2New usage pattern'],
         })
 
         up_request = self.factory.post('/add_new_usage_pattern/', data=post_data)
@@ -53,11 +53,11 @@ class AddNewUsagePatternTestCase(TestCase):
 
         logger.info(f"Creating service")
         post_data = QueryDict(mutable=True)
-        post_data.update({'form_add_name': ['New service'],
-                          'form_add_type_object_available': ['WebApplication'],
-                          'form_add_technology': ['php-symfony'], 'form_add_base_ram_consumption': ['2'],
-                          'form_add_bits_per_pixel': ['0.1'], 'form_add_static_delivery_cpu_cost': ['4.0'],
-                          'form_add_ram_buffer_per_user': ['50']}
+        post_data.update({'name': ['New service'],
+                          'type_object_available': ['WebApplication'],
+                          'technology': ['php-symfony'], 'base_ram_consumption': ['2'],
+                          'bits_per_pixel': ['0.1'], 'static_delivery_cpu_cost': ['4.0'],
+                          'ram_buffer_per_user': ['50']}
         )
 
         service_request = self.factory.post('/add_new_service/uuid-Server-1', data=post_data)
@@ -69,11 +69,11 @@ class AddNewUsagePatternTestCase(TestCase):
         logger.info(f"Creating job")
         post_data = QueryDict(mutable=True)
         post_data.update(
-        {'form_add_name': ['New job'], 'form_add_server': ['uuid-Server-1'],
-         'form_add_service': [service_id],
-         'form_add_type_object_available': ['WebApplicationJob'],
-         'form_add_implementation_details': ['aggregation-code-side'],
-         'form_add_data_transferred': ['150'], 'form_add_data_stored': ['100']}
+        {'name': ['New job'], 'server': ['uuid-Server-1'],
+         'service': [service_id],
+         'type_object_available': ['WebApplicationJob'],
+         'implementation_details': ['aggregation-code-side'],
+         'data_transferred': ['150'], 'data_stored': ['100']}
         )
 
         job_request = self.factory.post('/model_builder/add-new-job/uuid-20-min-streaming-on-Youtube/', data=post_data)

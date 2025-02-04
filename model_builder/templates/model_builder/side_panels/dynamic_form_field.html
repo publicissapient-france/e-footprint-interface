@@ -1,10 +1,10 @@
 <div class="mb-3">
     {% if field.input_type == 'select' %}
-        <label for="form_add_{{ field.id }}" class="form-label">{{ field.name }}</label>
+        <label for="{{ field.id }}" class="form-label">{{ field.name }}</label>
         <select
             class="form-control p-2"
-            id="form_add_{{ field.id }}"
-            name="form_add_{{ field.id }}"
+            id="{{ field.id }}"
+            name="{{ field.id }}"
             required
         >
             {% for option in field.options %}
@@ -12,12 +12,12 @@
             {% endfor %}
         </select>
     {% elif field.input_type == 'datalist' %}
-        <label for="form_add_{{ field.id }}" class="form-label">{{ field.name }}</label>
+        <label for="{{ field.id }}" class="form-label">{{ field.name }}</label>
         <input
                 class="form-control p-2"
                 list="list_{{ field.id }}"
-                id="form_add_{{ field.id }}"
-                name="form_add_{{ field.id }}"
+                id="{{ field.id }}"
+                name="{{ field.id }}"
                 required
         >
         <datalist id="list_{{ field.id }}">
@@ -31,11 +31,11 @@
         </ul>
     {% else %}
         <div class="input-group">
-            <label for="form_add_{{ field.id }}" class="form-label w-100">{{ field.name }}</label>
+            <label for="{{ field.id }}" class="form-label w-100">{{ field.name }}</label>
             <input type="number"
                 class="form-control input_with_add_on"
-                id="form_add_{{ field.id }}"
-                name="form_add_{{ field.id }}"
+                id="{{ field.id }}"
+                name="{{ field.id }}"
                 value="{{ field.default }}"
                    placeholder="Enter value"
                    required

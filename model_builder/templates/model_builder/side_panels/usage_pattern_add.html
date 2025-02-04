@@ -1,5 +1,5 @@
 {% load static %}
-<form class="container-fluid form_edit_panel text-start"
+<form class="container-fluid panel text-start"
         hx-post="/model_builder/add-new-usage-pattern/"
         hx-target="#up-list"
         hx-swap="beforeend"
@@ -7,12 +7,12 @@
         hx-on::after-request="closeLoader()"
 >
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <input type="hidden" name="form_add_devices" id="form_add_devices" value="">
-    <input type="hidden" name="form_add_network" id="form_add_network" value="">
-    <input type="hidden" name="form_add_country" id="form_add_country" value="">
-    <input type="hidden" name="form_add_usage_journey" id="form_add_usage_journey" value="">
-    <input type="hidden" name="form_add_date_hourly_usage_journey_starts" id="form_add_date_hourly_usage_journey_starts" value="">
-    <input type="hidden" name="form_add_list_hourly_usage_journey_starts" id="form_add_list_hourly_usage_journey_starts" value="">
+    <input type="hidden" name="devices" id="devices" value="">
+    <input type="hidden" name="network" id="network" value="">
+    <input type="hidden" name="country" id="country" value="">
+    <input type="hidden" name="usage_journey" id="usage_journey" value="">
+    <input type="hidden" name="date_hourly_usage_journey_starts" id="date_hourly_usage_journey_starts" value="">
+    <input type="hidden" name="list_hourly_usage_journey_starts" id="list_hourly_usage_journey_starts" value="">
     <div class="text-end">
         <button type="button" class="btn btn-white" aria-label="Close"
                 onclick="closePanel()">
@@ -29,8 +29,8 @@
     <div class="form-body p-1" id="panel-body">
         <div class="row text-start">
             <div class="col-12 mt-3 mb-5">
-                <label for="form_add_name" class="form-label w-100 text-start">Name</label>
-                <input type="text" class="form-control p-2" id="form_add_name" name="form_add_name" value="New usage pattern" required>
+                <label for="name" class="form-label w-100 text-start">Name</label>
+                <input type="text" class="form-control p-2" id="name" name="name" value="New usage pattern" required>
             </div>
             <div class="col-12">
                 <p class="mt-4">
@@ -185,10 +185,10 @@
                                         <div class="accordion-body">
                                             <div class="row mb-3">
                                                 <div class="col-auto">
-                                                    <label for="form_add_timeseries_period_analysis" class="form-label w-100 text-start fz-0-8">Split by</label>
+                                                    <label for="timeseries_period_analysis" class="form-label w-100 text-start fz-0-8">Split by</label>
                                                     <select class="form-select light-select fz-0-8 h-30"
-                                                            id="form_add_timeseries_period_analysis"
-                                                            name="form_add_timeseries_period_analysis"
+                                                            id="timeseries_period_analysis"
+                                                            name="timeseries_period_analysis"
                                                         onchange="updateTimeseriesChart()">
                                                     >
                                                         <option value="day">Day</option>
@@ -198,10 +198,10 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-auto">
-                                                    <label for="form_add_timeseries_kpi_analysis" class="form-label w-100 text-start fz-0-8">Calculation</label>
+                                                    <label for="timeseries_kpi_analysis" class="form-label w-100 text-start fz-0-8">Calculation</label>
                                                     <select class="form-select light-select fz-0-8 h-30"
-                                                            id="form_add_timeseries_kpi_analysis"
-                                                            name="form_add_timeseries_kpi_analysis"
+                                                            id="timeseries_kpi_analysis"
+                                                            name="timeseries_kpi_analysis"
                                                         onchange="updateTimeseriesChart()">
                                                     >
                                                         <option value="avg" selected>Average</option>
@@ -250,14 +250,14 @@
                                     <div id="collapse-help-build" class="accordion-collapse collapse show">
                                         <div class="accordion-body">
                                             <div class="mb-3 mx-2">
-                                                <label for="form_add_timeframe_start_date" class="form-label w-100 text-start fz-0-8">When the service has started ?</label>
-                                                <input type="date" class="form-control" id="form_add_timeframe_start_date" name="form_add_timeframe_start_date" value="2025-01-01">
+                                                <label for="timeframe_start_date" class="form-label w-100 text-start fz-0-8">When the service has started ?</label>
+                                                <input type="date" class="form-control" id="timeframe_start_date" name="timeframe_start_date" value="2025-01-01">
                                             </div>
                                             <div class="mb-3 mx-2">
-                                                <label for="form_add_timeframe_value" class="form-label w-100 text-start">TimeFrame</label>
+                                                <label for="timeframe_value" class="form-label w-100 text-start">TimeFrame</label>
                                                 <div class="input-group">
-                                                    <input type="number" class="form-control" id="form_add_timeframe_value" name="form_add_timeframe_value" aria-describedby="basic-addon3 basic-addon4" value="5" onchange="frequencyChart(true)">
-                                                    <select class="input-group-text" id="form_add_timeframe_range"  onchange="frequencyChart(true)">
+                                                    <input type="number" class="form-control" id="timeframe_value" name="timeframe_value" aria-describedby="basic-addon3 basic-addon4" value="5" onchange="frequencyChart(true)">
+                                                    <select class="input-group-text" id="timeframe_range"  onchange="frequencyChart(true)">
                                                         <option value="day">Days</option>
                                                         <option value="week">Weeks</option>
                                                         <option value="month">Months</option>
@@ -278,17 +278,17 @@
                                         <div class="accordion-body px-2">
                                             <div class="row mb-3 align-items-end">
                                                 <div class="col-6">
-                                                    <label for="form_add_avg_nb_usage_journey_value" class="form-label w-100 text-start fz-0-8">Average number of usage journeys</label>
+                                                    <label for="avg_nb_usage_journey_value" class="form-label w-100 text-start fz-0-8">Average number of usage journeys</label>
                                                     <div class="input-group">
                                                         <input type="number" class="form-control fz-0-8"
-                                                               id="form_add_avg_nb_usage_journey_value"
-                                                               name="form_add_avg_nb_usage_journey_value"
+                                                               id="avg_nb_usage_journey_value"
+                                                               name="avg_nb_usage_journey_value"
                                                                aria-describedby="basic-addon3 basic-addon4"
                                                                value=1000
                                                                oninput="frequencyChart(true)">
                                                         <select class="input-group-text fz-0-8"
-                                                                id="form_add_avg_nb_usage_journey_range"
-                                                                name="form_add_avg_nb_usage_journey_range"
+                                                                id="avg_nb_usage_journey_range"
+                                                                name="avg_nb_usage_journey_range"
                                                                 onchange="editFrequencyField(true)">
                                                             <option value="day" selected>Daily</option>
                                                             <option value="week">Weekly</option>
@@ -298,16 +298,16 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-6">
-                                                    <label for="form_add_net_growth_rate_value" class="form-label w-100 text-start fz-0-8">Net growth rate</label>
+                                                    <label for="net_growth_rate_value" class="form-label w-100 text-start fz-0-8">Net growth rate</label>
                                                     <div class="input-group">
                                                         <input type="number"
                                                                class="form-control fz-0-8"
-                                                               id="form_add_net_growth_rate_value"
-                                                               name="form_add_net_growth_rate_value"
+                                                               id="net_growth_rate_value"
+                                                               name="net_growth_rate_value"
                                                                aria-describedby="basic-addon3 basic-addon4"
                                                                value=1
                                                                oninput="frequencyChart(true)">
-                                                        <select class="input-group-text fz-0-8" id="form_add_net_growth_rate_range"
+                                                        <select class="input-group-text fz-0-8" id="net_growth_rate_range"
                                                                 onchange="frequencyChart(true)">
                                                             <option value="day">Daily</option>
                                                             <option value="week">Weekly</option>
@@ -336,10 +336,10 @@
                                             <div id="daily_variation_bloc">
                                                 <div class="row g-2 mb-2" id="daily_variation_1">
                                                 <div class="col-4">
-                                                    <label for="form_add_from_daily_variation_1" class="form-label w-100 text-start fz-0-8">From</label>
+                                                    <label for="from_daily_variation_1" class="form-label w-100 text-start fz-0-8">From</label>
                                                     <select class="form-select light-select fz-0-8 h-30"
-                                                            id="form_add_from_daily_variation_1"
-                                                            name="form_add_from_daily_variation_1"
+                                                            id="from_daily_variation_1"
+                                                            name="from_daily_variation_1"
                                                         onchange="variationController('daily', true)">
                                                         <option value=0 selected>12am</option>
                                                         <option value=1>1am</option>
@@ -368,10 +368,10 @@
                                                     </select>
                                                 </div>
                                                  <div class="col-4">
-                                                    <label for="form_add_to_daily_variation_1" class="form-label w-100 text-start fz-0-8">To</label>
+                                                    <label for="to_daily_variation_1" class="form-label w-100 text-start fz-0-8">To</label>
                                                     <select class="form-select light-select fz-0-8 h-30"
-                                                            id="form_add_to_daily_variation_1"
-                                                            name="form_add_to_daily_variation_1"
+                                                            id="to_daily_variation_1"
+                                                            name="to_daily_variation_1"
                                                             onchange="variationController('daily', true)">
                                                         <option value=1 selected>1am</option>
                                                         <option value=2>2am</option>
@@ -400,13 +400,13 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <label for="form_add_multiplier_daily_variation_1" class="form-label w-100 text-start">Multiplier</label>
+                                                    <label for="multiplier_daily_variation_1" class="form-label w-100 text-start">Multiplier</label>
                                                     <div class="input-group h-30">
                                                         <span class="input-group-text h-30" id="basic-addon1">x</span>
                                                         <input type="number"
                                                                class="form-control fz-0-8 py-0 h-30"
-                                                               id="form_add_multiplier_daily_variation_1"
-                                                               name="form_add_multiplier_daily_variation_1" value="1"
+                                                               id="multiplier_daily_variation_1"
+                                                               name="multiplier_daily_variation_1" value="1"
                                                                aria-describedby="basic-addon1"
                                                                oninput="variationChart('daily', true)">
                                                     </div>
@@ -437,10 +437,10 @@
                                             <div id="weekly_variation_bloc">
                                                 <div class="row g-2 mb-2" id="weekly_variation_1">
                                                 <div class="col-4">
-                                                    <label for="form_add_from_weekly_variation_1 fz-0-8" class="form-label w-100 text-start">From</label>
+                                                    <label for="from_weekly_variation_1 fz-0-8" class="form-label w-100 text-start">From</label>
                                                     <select class="form-select light-select fz-0-8 h-30"
-                                                            id="form_add_from_weekly_variation_1"
-                                                            name="form_add_from_weekly_variation_1"
+                                                            id="from_weekly_variation_1"
+                                                            name="from_weekly_variation_1"
                                                             onchange="variationController('weekly', true)">
                                                         <option value=0 selected>Monday</option>
                                                         <option value=1>Tuesday</option>
@@ -452,10 +452,10 @@
                                                     </select>
                                                 </div>
                                                  <div class="col-4">
-                                                    <label for="form_add_to_weekly_variation_1 fz-0-8" class="form-label w-100 text-start">To</label>
+                                                    <label for="to_weekly_variation_1 fz-0-8" class="form-label w-100 text-start">To</label>
                                                     <select class="form-select light-select fz-0-8 h-30"
-                                                            id="form_add_to_weekly_variation_1"
-                                                            name="form_add_to_weekly_variation_1"
+                                                            id="to_weekly_variation_1"
+                                                            name="to_weekly_variation_1"
                                                             onchange="variationController('weekly', true)">
                                                         <option value=1 selected>Tuesday</option>
                                                         <option value=2>Wednesday</option>
@@ -467,13 +467,13 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <label for="form_add_multiplier_weekly_variation_1" class="form-label w-100 text-start">Multiplier</label>
+                                                    <label for="multiplier_weekly_variation_1" class="form-label w-100 text-start">Multiplier</label>
                                                     <div class="input-group h-30">
                                                         <span class="input-group-text h-30" id="basic-addon1">x</span>
                                                         <input type="number"
                                                                class="form-control fz-0-8 py-0 h-30"
-                                                               id="form_add_multiplier_weekly_variation_1"
-                                                               name="form_add_multiplier_weekly_variation_1" value="1"
+                                                               id="multiplier_weekly_variation_1"
+                                                               name="multiplier_weekly_variation_1" value="1"
                                                                aria-describedby="basic-addon1"
                                                                oninput="variationChart('weekly', true)">
                                                     </div>
@@ -503,10 +503,10 @@
                                             <div id="seasonal_variation_bloc">
                                                 <div class="row g-2 mb-2" id="seasonal_variation_1">
                                                 <div class="col-4">
-                                                    <label for="form_add_from_seasonal_variation_1" class="form-label w-100 text-start fz-0-8">From</label>
+                                                    <label for="from_seasonal_variation_1" class="form-label w-100 text-start fz-0-8">From</label>
                                                     <select class="form-select light-select fz-0-8 h-30"
-                                                            id="form_add_from_seasonal_variation_1"
-                                                            name="form_add_from_seasonal_variation_1"
+                                                            id="from_seasonal_variation_1"
+                                                            name="from_seasonal_variation_1"
                                                             onchange="variationController('seasonal', true)">
                                                         <option value=0 selected>January</option>
                                                         <option value=1>February</option>
@@ -523,10 +523,10 @@
                                                     </select>
                                                 </div>
                                                  <div class="col-4">
-                                                    <label for="form_add_to_seasonal_variation_1"class="form-label w-100 text-start fz-0-8">To</label>
+                                                    <label for="to_seasonal_variation_1"class="form-label w-100 text-start fz-0-8">To</label>
                                                     <select class="form-select light-select fz-0-8 h-30"
-                                                            id="form_add_to_seasonal_variation_1"
-                                                            name="form_add_to_seasonal_variation_1"
+                                                            id="to_seasonal_variation_1"
+                                                            name="to_seasonal_variation_1"
                                                             onchange="variationController('seasonal', true)">
                                                         <option value=1 selected>February</option>
                                                         <option value=2>March</option>
@@ -543,13 +543,13 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <label for="form_add_multiplier_seasonal_variation_1" class="form-label w-100 text-start">Multiplier</label>
+                                                    <label for="multiplier_seasonal_variation_1" class="form-label w-100 text-start">Multiplier</label>
                                                     <div class="input-group h-30">
                                                         <span class="input-group-text h-30" id="basic-addon1">x</span>
                                                         <input type="number"
                                                                class="form-control fz-0-8 py-0 h-30"
-                                                               id="form_add_multiplier_seasonal_variation_1"
-                                                               name="form_add_multiplier_seasonal_variation_1" value="1"
+                                                               id="multiplier_seasonal_variation_1"
+                                                               name="multiplier_seasonal_variation_1" value="1"
                                                                aria-describedby="basic-addon1"
                                                                oninput="variationChart('seasonal', true)">
                                                     </div>

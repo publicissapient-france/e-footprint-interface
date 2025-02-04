@@ -431,8 +431,8 @@ function getTotalVolume(period_selected){
         'month': {'daily':(1/30), 'weekly':(1/4), 'seasonal':1, 'yearly':12},
         'year': {'daily':(1/365), 'weekly':(1/52), 'seasonal':(1/12), 'yearly':1}
     }
-    let totalVolume = document.getElementById('form_add_avg_nb_usage_journey_value').value;
-    let range = document.getElementById('form_add_avg_nb_usage_journey_range').value;
+    let totalVolume = document.getElementById('avg_nb_usage_journey_value').value;
+    let range = document.getElementById('avg_nb_usage_journey_range').value;
     return (totalVolume * conversionRules[range][period_selected]);
 }
 
@@ -498,9 +498,9 @@ function initChart(){
 }
 
 function editFrequencyField(launchTimeSeriesChart = false){
-    let UsageJourneyRange = document.getElementById('form_add_avg_nb_usage_journey_range');
+    let UsageJourneyRange = document.getElementById('avg_nb_usage_journey_range');
     let selectedValue = UsageJourneyRange.value;
-    let growthRateRange = document.getElementById('form_add_net_growth_rate_range');
+    let growthRateRange = document.getElementById('net_growth_rate_range');
     let optionsToCopy = UsageJourneyRange.querySelectorAll('option');
     let toCopy = false;
     growthRateRange.innerHTML = '';
@@ -517,8 +517,8 @@ function editFrequencyField(launchTimeSeriesChart = false){
 }
 
 function variationController(periodVariation, launchTimeSeriesChart = false){
-    const fromElements = Array.from(document.querySelectorAll(`[id^="form_add_from_${periodVariation}_variation_"]`));
-    const toElements = Array.from(document.querySelectorAll(`[id^="form_add_to_${periodVariation}_variation_"]`));
+    const fromElements = Array.from(document.querySelectorAll(`[id^="from_${periodVariation}_variation_"]`));
+    const toElements = Array.from(document.querySelectorAll(`[id^="to_${periodVariation}_variation_"]`));
 
     const intervals = fromElements.map((fromEl, i) => {
         const fromVal = parseInt(fromEl.value, 10);
@@ -596,7 +596,7 @@ function variationController(periodVariation, launchTimeSeriesChart = false){
 function addTimeSlot(periodVariation){
     let optionsAlreadySelected =[];
     let rowToCopy = document.getElementById(periodVariation + '_variation_1');
-    let elementVariations = document.querySelectorAll(`[id^="form_add_from_${periodVariation}_variation_"]`);
+    let elementVariations = document.querySelectorAll(`[id^="from_${periodVariation}_variation_"]`);
 
     elementVariations.forEach(function (element) {
         let from = document.getElementById(element.id).value;
@@ -624,13 +624,13 @@ function addTimeSlot(periodVariation){
         }
         idToReplace[idToReplace.length - 1] = newId;
 
-        if (formElement.id.startsWith('form_add_from_')){
+        if (formElement.id.startsWith('from_')){
             formElement.addEventListener('change', function () {
                 variationController(periodVariation);
             });
         }
 
-        if(formElement.id.startsWith('form_add_from_') || formElement.id.startsWith('form_add_to_')){
+        if(formElement.id.startsWith('from_') || formElement.id.startsWith('to_')){
             let options = formElement.querySelectorAll('option');
             options.forEach(function(option){
                 if(!optionsAlreadySelected.includes(parseInt(option.value)) ){
@@ -657,13 +657,13 @@ function addTimeSlot(periodVariation){
 }
 
 function createTimeSeriesChart(){
-    let startDate = document.getElementById('form_add_timeframe_start_date').value;
-    let netGrowRatePeriod = document.getElementById('form_add_net_growth_rate_range').value;
-    let netGrowRateValue = document.getElementById('form_add_net_growth_rate_value').value;
-    let avgNbUsageJourneyPeriod = document.getElementById('form_add_avg_nb_usage_journey_range').value;
-    let avgNbUsageJourneyValue = document.getElementById('form_add_avg_nb_usage_journey_value').value;
-    let timeframeValue = document.getElementById('form_add_timeframe_value').value;
-    let timeframeRange = document.getElementById('form_add_timeframe_range').value;
+    let startDate = document.getElementById('timeframe_start_date').value;
+    let netGrowRatePeriod = document.getElementById('net_growth_rate_range').value;
+    let netGrowRateValue = document.getElementById('net_growth_rate_value').value;
+    let avgNbUsageJourneyPeriod = document.getElementById('avg_nb_usage_journey_range').value;
+    let avgNbUsageJourneyValue = document.getElementById('avg_nb_usage_journey_value').value;
+    let timeframeValue = document.getElementById('timeframe_value').value;
+    let timeframeRange = document.getElementById('timeframe_range').value;
 
     let timeseriesIndexWithVariations = [];
     let timeseriesValueWithVariations = [];
@@ -752,19 +752,19 @@ function applyVariation(timeseries, index, avgNbUsageJourneyPeriod, netGrowRateP
 }
 
 function timeSeriesChart(){
-    let timeRangeValue = parseInt(document.getElementById('form_add_timeframe_value').value);
-    let timeRange = document.getElementById('form_add_timeframe_range').value;
+    let timeRangeValue = parseInt(document.getElementById('timeframe_value').value);
+    let timeRange = document.getElementById('timeframe_range').value;
     let frequency = window.optionsChartJs['frequencyChart']['data']['datasets'][0]['data']
     let index = window.optionsChartJs['frequencyChart']['data']['labels']
-    let avgNbUsageJourneyPeriod = document.getElementById('form_add_avg_nb_usage_journey_range').value;
-    let netGrowRatePeriod = document.getElementById('form_add_net_growth_rate_range').value;
+    let avgNbUsageJourneyPeriod = document.getElementById('avg_nb_usage_journey_range').value;
+    let netGrowRatePeriod = document.getElementById('net_growth_rate_range').value;
     let timeSeries = applyVariation(frequency, index, avgNbUsageJourneyPeriod, netGrowRatePeriod, timeRange, timeRangeValue);
     updateTimeseriesChart();
 }
 
 function updateTimeseriesChart() {
-    let periodAnalysis = document.getElementById('form_add_timeseries_period_analysis').value;
-    let kpiAnalysis = document.getElementById('form_add_timeseries_kpi_analysis').value;
+    let periodAnalysis = document.getElementById('timeseries_period_analysis').value;
+    let kpiAnalysis = document.getElementById('timeseries_kpi_analysis').value;
     let variationsIndex = window.timeseriesToSave.variationsIndex;
     let variationsValues = window.timeseriesToSave.variationsValues;
     let aggregatedIndex = [];
@@ -822,11 +822,11 @@ function updateTimeseriesChart() {
 }
 
 function frequencyChart(launchTimeSeriesChart = false){
-    let UsageJourneyValue  = parseInt(document.getElementById('form_add_avg_nb_usage_journey_value').value);
-    let UsageJourneyRange  = document.getElementById('form_add_avg_nb_usage_journey_range').value;
-    let growthRateRange   = document.getElementById('form_add_net_growth_rate_range').value;
-    let timeframeValue    = parseInt(document.getElementById('form_add_timeframe_value').value);
-    let timeframeRange    = document.getElementById('form_add_timeframe_range').value;
+    let UsageJourneyValue  = parseInt(document.getElementById('avg_nb_usage_journey_value').value);
+    let UsageJourneyRange  = document.getElementById('avg_nb_usage_journey_range').value;
+    let growthRateRange   = document.getElementById('net_growth_rate_range').value;
+    let timeframeValue    = parseInt(document.getElementById('timeframe_value').value);
+    let timeframeRange    = document.getElementById('timeframe_range').value;
 
     let dateLooper = luxon.DateTime.local().startOf('year');
     let dateGrowth = luxon.DateTime.local().startOf('year');
@@ -850,7 +850,7 @@ function frequencyChart(launchTimeSeriesChart = false){
     labels.push(dateLooper.toFormat('yyyy-MM-dd'));
 
     while (periodStep < timeframe.shiftTo(growthRateRange)[`${growthRateRange}s`]-1) {
-        dailyUsageJourneyValue = Math.ceil(dailyUsageJourneyValue * (1 + parseFloat(document.getElementById('form_add_net_growth_rate_value').value) / 100));
+        dailyUsageJourneyValue = Math.ceil(dailyUsageJourneyValue * (1 + parseFloat(document.getElementById('net_growth_rate_value').value) / 100));
         dateGrowth = dateGrowth.plus(growthRateFrame);
         dateLooper = dateLooper.plus(growthRateFrame);
         results.push(dailyUsageJourneyValue.toFixed(2));
@@ -883,12 +883,12 @@ function variationChart(periodVariation, launchTimeSeriesChart = false){
     window.variationFactor[periodVariation] = Array(window.indexInput[periodVariation]['max']).fill(1);
 
     let totalVolume = getTotalVolume(periodVariation);
-    let elementVariations = document.querySelectorAll('[id^="form_add_from_' + periodVariation + '_variation_"]');
+    let elementVariations = document.querySelectorAll('[id^="from_' + periodVariation + '_variation_"]');
     elementVariations.forEach(function (element) {
         let idx = element.id.split('_')[element.id.split('_').length - 1];
-        let from = parseInt(document.getElementById('form_add_from_'+periodVariation+'_variation_' + idx).value);
-        let to = parseInt(document.getElementById('form_add_to_'+periodVariation+'_variation_' + idx).value);
-        let multiplier = parseInt(document.getElementById('form_add_multiplier_'+periodVariation+'_variation_' + idx).value);
+        let from = parseInt(document.getElementById('from_'+periodVariation+'_variation_' + idx).value);
+        let to = parseInt(document.getElementById('to_'+periodVariation+'_variation_' + idx).value);
+        let multiplier = parseInt(document.getElementById('multiplier_'+periodVariation+'_variation_' + idx).value);
         if (from !== to) {
             for (let slotTime = from; slotTime < to; slotTime++) {
                 window.variationFactor[periodVariation][slotTime] = multiplier;
@@ -923,10 +923,10 @@ document.getElementById('time-series-modal').addEventListener('shown.bs.modal', 
 
 function checkAttributes(usagePatternAttribute){
     if(usagePatternAttribute === 'timeseries'){
-        document.getElementById('form_add_date_hourly_usage_journey_starts').value= document.getElementById('form_add_timeframe_start_date').value;
-        document.getElementById('form_add_list_hourly_usage_journey_starts').value = window.timeseriesToSave['variationsValues'].toString();
+        document.getElementById('date_hourly_usage_journey_starts').value= document.getElementById('timeframe_start_date').value;
+        document.getElementById('list_hourly_usage_journey_starts').value = window.timeseriesToSave['variationsValues'].toString();
     }else{
-        document.getElementById('form_add_'+usagePatternAttribute).value = document.getElementById('form_select_'+usagePatternAttribute).value;
+        document.getElementById(''+usagePatternAttribute).value = document.getElementById('form_select_'+usagePatternAttribute).value;
     }
     if(document.getElementById(usagePatternAttribute+'_icon_check').classList.contains('d-none')){
         document.getElementById(usagePatternAttribute+'_icon_check').classList.remove('d-none');

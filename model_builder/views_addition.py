@@ -142,7 +142,7 @@ def open_create_usage_pattern_panel(request):
 
 def add_new_usage_journey(request):
     model_web = ModelWeb(request.session)
-    if request.POST.getlist("form_add_uj_steps"):
+    if request.POST.getlist("uj_steps"):
         new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, 'UsageJourney')
         added_obj = add_new_efootprint_object_to_system(request.session, model_web, new_efootprint_obj)
         response = render(
@@ -158,7 +158,7 @@ def add_new_usage_journey(request):
         else:
             empty_uj_id = request.POST["efootprint_id_of_empty_object_origin"]
         added_obj = {
-            "name": request.POST["form_add_name"],
+            "name": request.POST["name"],
             "web_id": empty_uj_id,
             "efootprint_id": empty_uj_id,
             "links_to": "",
@@ -188,13 +188,10 @@ def add_new_usage_journey_step(request, usage_journey_efootprint_id):
     added_obj = add_new_efootprint_object_to_system(request.session, model_web, new_efootprint_obj)
     usage_journey_to_edit = model_web.get_web_object_from_efootprint_id(usage_journey_efootprint_id)
     mutable_post = request.POST.copy()
-    for key in list(mutable_post.keys()):
-        if key.startswith('form_add'):
-            del mutable_post[key]
-    mutable_post['form_edit_name'] = usage_journey_to_edit.name
+    mutable_post['name'] = usage_journey_to_edit.name
     usage_journey_step_ids = [uj_step.efootprint_id for uj_step in usage_journey_to_edit.uj_steps]
     usage_journey_step_ids.append(added_obj.efootprint_id)
-    mutable_post.setlist('form_edit_uj_steps', usage_journey_step_ids)
+    mutable_post.setlist('uj_steps', usage_journey_step_ids)
     request.POST = mutable_post
 
     return edit_object(request, usage_journey_efootprint_id, model_web)
@@ -202,12 +199,12 @@ def add_new_usage_journey_step(request, usage_journey_efootprint_id):
 
 def add_new_server(request):
     model_web = ModelWeb(request.session)
-    server_type = request.POST.get('form_add_type_object_available')
+    server_type = request.POST.get('type_object_available')
 
-    default_ssd = Storage.ssd(f"{request.POST['form_add_name']} default ssd")
+    default_ssd = Storage.ssd(f"{request.POST['name']} default ssd")
     add_new_efootprint_object_to_system(request.session, model_web, default_ssd)
     mutable_post = request.POST.copy()
-    mutable_post['form_add_storage'] = default_ssd.id
+    mutable_post['storage'] = default_ssd.id
     request.POST = mutable_post
 
     new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, server_type)
@@ -221,11 +218,11 @@ def add_new_server(request):
 def add_new_service(request, server_efootprint_id):
     model_web = ModelWeb(request.session)
     mutable_post = request.POST.copy()
-    mutable_post['form_add_server'] = server_efootprint_id
+    mutable_post['server'] = server_efootprint_id
     request.POST = mutable_post
     try:
         new_efootprint_obj = create_efootprint_obj_from_post_data(
-            request, model_web, request.POST.get('form_add_type_object_available'))
+            request, model_web, request.POST.get('type_object_available'))
 
         efootprint_server = model_web.get_web_object_from_efootprint_id(server_efootprint_id).modeling_obj
         efootprint_server.compute_calculated_attributes()
@@ -247,21 +244,18 @@ def add_new_job(request, usage_journey_step_efootprint_id):
 
     try:
         new_efootprint_obj = create_efootprint_obj_from_post_data(
-            request, model_web, request.POST.get('form_add_type_object_available'))
+            request, model_web, request.POST.get('type_object_available'))
     except Exception as e:
         return render_exception_modal(request, e)
 
     added_obj = add_new_efootprint_object_to_system(request.session, model_web, new_efootprint_obj)
 
     mutable_post = request.POST.copy()
-    for key in list(mutable_post.keys()):
-        if key.startswith('form_add'):
-            del mutable_post[key]
-    mutable_post['form_edit_name'] = usage_journey_step_to_edit.name
-    mutable_post['form_edit_user_time_spent'] = usage_journey_step_to_edit.user_time_spent.rounded_magnitude
+    mutable_post['name'] = usage_journey_step_to_edit.name
+    mutable_post['user_time_spent'] = usage_journey_step_to_edit.user_time_spent.rounded_magnitude
     job_ids = [job.efootprint_id for job in usage_journey_step_to_edit.jobs]
     job_ids.append(added_obj.efootprint_id)
-    mutable_post.setlist('form_edit_jobs', job_ids)
+    mutable_post.setlist('jobs', job_ids)
     request.POST = mutable_post
 
     return edit_object(request, usage_journey_step_efootprint_id, model_web)
