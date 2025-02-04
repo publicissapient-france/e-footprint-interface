@@ -4,6 +4,8 @@
     hx-get="/model_builder/open-edit-object-panel/{{ service.efootprint_id }}/"
     hx-target="#formPanel"
     hx-trigger="click"
-    hx-swap="innerHTML">
+    hx-swap="innerHTML"
+    hx-disabled-elt="this"
+>
     {{ service.name }}
 </button>

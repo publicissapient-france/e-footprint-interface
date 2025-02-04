@@ -5,6 +5,7 @@
         hx-swap="beforeend"
         onsubmit="openLoader()"
         hx-on::after-request="closeLoader()"
+      hx-disabled-elt="find button[type=submit]"
 >
     {% include "model_builder/side_panels/dynamic_form_structure.html" %}
 </form>
