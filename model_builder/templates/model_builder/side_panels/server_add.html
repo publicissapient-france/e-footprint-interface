@@ -7,7 +7,7 @@
         hx-on::after-request="closeLoader()"
       hx-disabled-elt="button"
 >
-    {% with helper_message="Use “BoavistaCloudServer” to select your provider and configuration to use predefined values<br><br>Select “Server” to create your fully custom server.<br><br>With these two types of server, you can install web applications and streaming services.<br><br>If you need GenAI services, use “GPUserver” type" %}
+    {% with helper_message="How to choose the server type?<br><br>“GPUserver” to get help on configuring servers for AI use.<br><br>“BoavistaCloudServer” to get help on configuring servers for all other kinds of use.<br><br>“Server” to fully customize your server." %}
         {% include "model_builder/side_panels/dynamic_form_structure.html" %}
     {% endwith %}
 </form>
