@@ -6,14 +6,14 @@ from django.test import TestCase, RequestFactory
 from django.http import QueryDict
 from efootprint.logger import logger
 
-from model_builder.views_addition import add_new_usage_pattern, add_new_service, add_new_job
+from model_builder.views_addition import add_new_service, add_new_job
 from model_builder.model_web import ModelWeb
 
 
 class TestModelWeb(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
-        system_data_path = os.path.join("model_builder", "default_system_data.json")
+        system_data_path = os.path.join("tests", "model_builder", "default_system_data.json")
 
         # Load system data
         with open(system_data_path, "r") as f:

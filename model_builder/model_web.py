@@ -39,9 +39,8 @@ class ModelWeb:
         logger.info(f"ModelWeb object created in {time() - start:.3f} seconds.")
 
     def set_all_trigger_modeling_updates_to_false(self):
-        self.system.set_efootprint_value("trigger_modeling_updates", False)
-        for web_obj in self.system.all_linked_objects:
-            web_obj.set_efootprint_value("trigger_modeling_updates", False)
+        for efootprint_obj in self.flat_efootprint_objs_dict.values():
+            efootprint_obj.trigger_modeling_updates = False
 
     def get_efootprint_objects_from_efootprint_type(self, obj_type):
         output_list = []

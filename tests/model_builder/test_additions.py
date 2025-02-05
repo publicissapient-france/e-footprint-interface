@@ -11,7 +11,7 @@ from model_builder.model_web import DEFAULT_HARDWARES, DEFAULT_NETWORKS, DEFAULT
 class AddNewUsagePatternTestCase(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
-        system_data_path = os.path.join("model_builder", "default_system_data.json")
+        system_data_path = os.path.join("tests", "model_builder", "default_system_data.json")
 
         # Load system data
         with open(system_data_path, "r") as f:

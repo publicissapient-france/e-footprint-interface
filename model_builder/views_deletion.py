@@ -6,7 +6,7 @@ from efootprint.logger import logger
 
 from model_builder.class_structure import efootprint_class_structure
 from model_builder.model_web import ModelWeb
-from model_builder.modeling_objects_web import JobWeb, UsageJourneyStepWeb, UsagePatternWeb, UsageJourneyWeb
+from model_builder.modeling_objects_web import JobWeb, UsageJourneyStepWeb, UsagePatternWeb, UsageJourneyWeb, ServerWeb
 from model_builder.views_edition import compute_edit_object_html_and_event_response, \
     generate_http_response_from_edit_html_and_events
 
@@ -18,10 +18,17 @@ def ask_delete_object(request, object_id):
     if (not (isinstance(web_obj, UsagePatternWeb) or isinstance(web_obj, JobWeb)
              or isinstance(web_obj, UsageJourneyStepWeb)) and web_obj.modeling_obj_containers):
 
+        if isinstance(web_obj, ServerWeb) and web_obj.jobs:
+            msg = (f"This server is requested by {", ".join([obj.name for obj in web_obj.jobs])}. "
+                   f"To delete it, first delete or reorient these jobs making requests to it.")
+        else:
+            msg = (f"This {web_obj.class_as_simple_str} is referenced by "
+                   f"{", ".join([obj.name for obj in web_obj.modeling_obj_containers])}. "
+                   f"To delete it, first delete or reorient these "
+                   f"{web_obj.modeling_obj_containers[0].class_as_simple_str}s.")
+
         http_response = render(request, "model_builder/modals/cant-delete-modal.html",
-            context={"msg":f"This server is requested by "
-                           f"{", ".join([obj.name for obj in web_obj.modeling_obj_containers])}"
-                     f". To delete it, first delete or reorient these jobs making requests to it."})
+            context={"msg": msg})
     else:
         message = f"Are you sure you want to delete this {web_obj.class_as_simple_str} ?"
         if isinstance(web_obj, UsageJourneyWeb):

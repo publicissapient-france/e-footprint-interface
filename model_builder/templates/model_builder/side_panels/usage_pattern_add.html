@@ -205,8 +205,8 @@
                                                             name="timeseries_kpi_analysis"
                                                         onchange="updateTimeseriesChart()">
                                                     >
-                                                        <option value="avg" selected>Average</option>
-                                                        <option value="sum">Sum</option>
+                                                        <option value="avg">Hourly average</option>
+                                                        <option value="sum" selected>Sum by period</option>
                                                         <option value="cumsum">Cumulative sum</option>
 
                                                     </select>
@@ -251,7 +251,7 @@
                                     <div id="collapse-help-build" class="accordion-collapse collapse show">
                                         <div class="accordion-body">
                                             <div class="mb-3 mx-2">
-                                                <label for="timeframe_start_date" class="form-label w-100 text-start fz-0-8">When the service has started ?</label>
+                                                <label for="timeframe_start_date" class="form-label w-100 text-start fz-0-8">Start date</label>
                                                 <input type="date" class="form-control" id="timeframe_start_date" name="timeframe_start_date" value="2025-01-01" onchange="frequencyChart(true)">
                                             </div>
                                             <div class="mb-3 mx-2">
