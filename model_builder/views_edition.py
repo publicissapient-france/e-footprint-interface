@@ -4,11 +4,11 @@ from copy import copy
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
-from efootprint.builders.services.service_base_class import Service
-from efootprint.core.hardware.server_base import ServerBase
+from efootprint.core.all_classes_in_order import SERVICE_CLASSES
 
 from model_builder.class_structure import generate_object_edition_structure
 from model_builder.model_web import ModelWeb, ATTRIBUTES_TO_SKIP_IN_FORMS
+from model_builder.modeling_objects_web import ServerWeb
 from model_builder.object_creation_and_edition_utils import edit_object_in_system, render_exception_modal
 
 
@@ -17,10 +17,10 @@ def open_edit_object_panel(request, object_id):
     obj_to_edit = model_web.get_web_object_from_efootprint_id(object_id)
     structure_dict, dynamic_form_data = generate_object_edition_structure(
         obj_to_edit, attributes_to_skip=ATTRIBUTES_TO_SKIP_IN_FORMS)
-    if isinstance(obj_to_edit.modeling_obj, ServerBase):
+    if isinstance(obj_to_edit, ServerWeb):
         # TODO: remove when developing the storage edition feature
         structure_dict["modeling_obj_attributes"] = []
-    if isinstance(obj_to_edit.modeling_obj, Service):
+    if obj_to_edit.class_as_simple_str in [service_class.__name__ for service_class in SERVICE_CLASSES]:
         structure_dict["modeling_obj_attributes"] = []
 
     http_response = render(

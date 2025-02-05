@@ -4,9 +4,8 @@ from django.contrib.sessions.backends.base import SessionBase
 from efootprint.abstract_modeling_classes.explainable_object_base_class import ExplainableObject
 from efootprint.abstract_modeling_classes.explainable_objects import EmptyExplainableObject
 from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
+from efootprint.core.all_classes_in_order import SERVICE_CLASSES
 from efootprint.logger import logger
-from efootprint.builders.services.service_base_class import Service
-from efootprint.core.hardware.server_base import ServerBase
 
 from model_builder.class_structure import efootprint_class_structure
 
@@ -198,8 +197,8 @@ class ModelingObjectWeb:
         object_id = self.efootprint_id
         objects_to_delete_afterwards = []
         for modeling_obj in self.mod_obj_attributes:
-            if (not (isinstance(modeling_obj.modeling_obj, Service)
-                     or isinstance(modeling_obj.modeling_obj, ServerBase))
+            if (not ((modeling_obj.class_as_simple_str in [service_class.__name__ for service_class in SERVICE_CLASSES])
+                     or isinstance(modeling_obj, ServerWeb))
                 and len(modeling_obj.modeling_obj_containers) == 1):
                 objects_to_delete_afterwards.append(modeling_obj)
         logger.info(f"Deleting {self.name}")
