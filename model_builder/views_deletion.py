@@ -31,14 +31,15 @@ def ask_delete_object(request, object_id):
             context={"msg": msg})
     else:
         message = f"Are you sure you want to delete this {web_obj.class_as_simple_str} ?"
+        sub_message = ""
         if isinstance(web_obj, UsageJourneyWeb):
-            message= (f"This usage journey is associated with {len(web_obj.uj_steps)+1} steps. This action will delete "
+            message= (f"This usage journey is associated with {len(web_obj.uj_steps)} steps. This action will delete "
                       f"them all")
+            sub_message = "Steps and jobs used in other usage journeys will remain in those."
         if isinstance(web_obj, UsageJourneyStepWeb):
             message= (f"This usage journey step is associated with {len(web_obj.jobs)} jobs. This action will "
                       f"delete "
                       f"them all")
-        sub_message=""
         remove_card_with_hyperscript = True
         if isinstance(web_obj, JobWeb) or isinstance(web_obj, UsageJourneyStepWeb):
             remove_card_with_hyperscript = False
