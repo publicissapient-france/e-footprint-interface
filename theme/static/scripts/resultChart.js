@@ -7,35 +7,35 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
             {
                 label: "Server usage",
                 data: [0, 0.02, 0.04, 0.06, 0.08, 0.1],
-                backgroundColor: "rgba(176, 228, 246, 0.8)",
+                backgroundColor: "#C6FFF9",
                 borderWidth: 1,
                 fill: true,
             },
             {
                 label: "Devices usage",
                 data: [0, 0.03, 0.06, 0.09, 0.12, 0.15],
-                backgroundColor: "rgba(124, 205, 224, 0.8)",
+                backgroundColor: "#44E0D9",
                 borderWidth: 1,
                 fill: true,
             },
             {
                 label: "Network usage",
                 data: [0, 0.05, 0.1, 0.15, 0.2, 0.25],
-                backgroundColor: "rgba(100, 181, 192, 0.8)",
+                backgroundColor: "#00A3A1",
                 borderWidth: 1,
                 fill: true,
             },
             {
                 label: "Servers fabrication",
                 data: [0, 0.01, 0.02, 0.03, 0.04, 0.05],
-                backgroundColor: "rgba(162, 210, 255, 0.8)",
+                backgroundColor: "#DEECF8",
                 borderWidth: 1,
                 fill: true,
             },
             {
                 label: "Devices fabrication",
                 data: [0, 0.015, 0.03, 0.045, 0.06, 0.075],
-                backgroundColor: "rgba(220, 235, 255, 0.8)",
+                backgroundColor: "#A3CDED",
                 borderWidth: 1,
                 fill: true,
             },
@@ -47,27 +47,27 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
         {
             label: "Server usage",
             data: emissions['Servers_energy']['values'],
-            backgroundColor: "rgba(176, 228, 246, 0.8)",
+            backgroundColor: "#C6FFF9",
         },
         {
             label: "Devices usage",
             data: emissions['Devices_energy']['values'],
-            backgroundColor: "rgba(124, 205, 224, 0.8)",
+            backgroundColor: "#44E0D9",
         },
         {
             label: "Network usage",
             data: emissions['Network_energy']['values'],
-            backgroundColor: "rgba(100, 181, 192, 0.8)",
+            backgroundColor: "#00A3A1",
         },
         {
             label: "Servers fabrication",
             data: emissions['Servers_fabrication']['values'],
-            backgroundColor: "rgba(162, 210, 255, 0.8)",
+            backgroundColor: "#DEECF8",
         },
         {
             label: "Devices fabrication",
             data: emissions['Devices_fabrication']['values'],
-            backgroundColor: "rgba(220, 235, 255, 0.8)",
+            backgroundColor: "#A3CDED",
         },
     ],
 }
@@ -103,7 +103,7 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
                     stacked: true,
                     title: {
                         display: true,
-                        text: "Total tons of CO2 emissions",
+                        text: "Total Kg of CO2 emissions",
                     },
                 },
             },
@@ -123,7 +123,7 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
                 },
                 title: {
                     display: true,
-                    text: 'Total tons of CO2 emissions',
+                    text: 'Total Kg of CO2 emissions',
                     color: "rgb(107,114,128)"
                 },
                 tooltip: {
@@ -145,7 +145,7 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
                     stacked: true,
                     title: {
                         display: true,
-                        text: "Total tons of CO2 emissions",
+                        text: "Total Kg of CO2 emissions",
                         color: "rgb(107,114,128)"
                     },
                 },
@@ -209,7 +209,7 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
         window.charts[chart] = new Chart(area_ctx, config[chart]);
     }else{
         dataNameKPI.forEach(name => {
-            window.charts[chart].data.datasets[dataNameKPI.indexOf(name)].label = "Total tons of CO2 emissions";
+            window.charts[chart].data.datasets[dataNameKPI.indexOf(name)].label = "Total Kg of CO2 emissions";
             window.charts[chart].data.datasets[dataNameKPI.indexOf(name)].data = dataKPI[name];
             window.charts[chart].data.labels = labels;
         });

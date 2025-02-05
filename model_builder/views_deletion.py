@@ -6,7 +6,7 @@ from efootprint.logger import logger
 
 from model_builder.class_structure import efootprint_class_structure
 from model_builder.model_web import ModelWeb
-from model_builder.modeling_objects_web import JobWeb, UsageJourneyStepWeb, UsagePatternWeb
+from model_builder.modeling_objects_web import JobWeb, UsageJourneyStepWeb, UsagePatternWeb, UsageJourneyWeb
 from model_builder.views_edition import compute_edit_object_html_and_event_response, \
     generate_http_response_from_edit_html_and_events
 
@@ -19,11 +19,19 @@ def ask_delete_object(request, object_id):
              or isinstance(web_obj, UsageJourneyStepWeb)) and web_obj.modeling_obj_containers):
 
         http_response = render(request, "model_builder/modals/cant-delete-modal.html",
-            context={"msg":f"Can’t delete {web_obj.name} because it is referenced by "
-                           f"{",".join([obj.name for obj in web_obj.modeling_obj_containers])}"})
+            context={"msg":f"This server is requested by "
+                           f"{", ".join([obj.name for obj in web_obj.modeling_obj_containers])}"
+                     f". To delete it, first delete or reorient these jobs making requests to it."})
     else:
         message = f"Are you sure you want to delete this {web_obj.class_as_simple_str} ?"
-        sub_message = ""
+        if isinstance(web_obj, UsageJourneyWeb):
+            message= (f"This usage journey is associated with {len(web_obj.uj_steps)+1} steps. This action will delete "
+                      f"them all")
+        if isinstance(web_obj, UsageJourneyStepWeb):
+            message= (f"This usage journey step is associated with {len(web_obj.jobs)} jobs. This action will "
+                      f"delete "
+                      f"them all")
+        sub_message=""
         remove_card_with_hyperscript = True
         if isinstance(web_obj, JobWeb) or isinstance(web_obj, UsageJourneyStepWeb):
             remove_card_with_hyperscript = False

@@ -1,18 +1,29 @@
-<div class="text-end">
-    <button type="button" class="btn btn-white" aria-label="Close"
-            onclick="closePanel()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-          <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708 .708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
-        </svg>
-    </button>
+<div class="form-header" id="panel-header">
+    <div class="w-100 text-end">
+        <div class="row align-items-center">
+            <div class="col-10 text-start">
+                <h5 id="formModalLabel" class="m-0">
+                    <b>Add new {{ obj_type }}</b>
+                </h5>
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-white" aria-label="Close"
+                        onclick="closePanel()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                      <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="form-header p-1" id="panel-header">
-    <h5 id="formModalLabel" class="mt-4">
-        <b>Add a new {{ obj_type }}</b>
-    </h5>
-</div>
+
 <div class="form-body p-1" id="panel-body">
     <div class="row text-start">
+    {% if helper_message %}
+        <p>{{ helper_message }}</p>
+        <hr>
+    {% endif %}
         <div class="col-12 mt-3 mb-5">
             <label for="name" class="form-label">Name</label>
             <input type="text" class="form-control p-2" id="name" name="name" value="New {{ obj_type }}" required>

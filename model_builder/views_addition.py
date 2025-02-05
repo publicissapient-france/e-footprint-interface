@@ -22,7 +22,7 @@ def open_create_object_panel(request, object_type):
         "UsageJourney": "usage_journey", "UsageJourneyStep": "usage_journey_step"}
     template_name = template_name_mapping[object_type]
     context_data = {"object_structure": new_object_structure,
-                    "header_name": "Create " +  template_name.replace("_", " "),
+                    "header_name": "Add new " +  template_name.replace("_", " "),
                     "new_object_name": "New " + template_name.replace("_", " ")}
     if request.GET.get('efootprint_id_of_parent_to_link_to'):
         context_data['efootprint_id_of_parent_to_link_to'] = request.GET['efootprint_id_of_parent_to_link_to']

@@ -1,5 +1,5 @@
 {% load static %}
-<form class="container-fluid panel text-start"
+<form class="container-fluid panel text-start p-4"
         hx-post="/model_builder/add-new-server/"
         hx-target="#server-list"
         hx-swap="beforeend"
@@ -7,5 +7,7 @@
         hx-on::after-request="closeLoader()"
       hx-disabled-elt="button"
 >
-    {% include "model_builder/side_panels/dynamic_form_structure.html" %}
+    {% with helper_message="Use “BoavistaCloudServer” to select your provider and configuration to use predefined values<br><br>Select “Server” to create your fully custom server.<br><br>With these two types of server, you can install web applications and streaming services.<br><br>If you need GenAI services, use “GPUserver” type" %}
+        {% include "model_builder/side_panels/dynamic_form_structure.html" %}
+    {% endwith %}
 </form>

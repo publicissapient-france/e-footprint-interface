@@ -13,18 +13,24 @@
         hx-on::after-request="closeLoader()"
       hx-disabled-elt="button"
 >
-    <div class="w-100 text-end">
-        <button type="button" class="btn btn-white" aria-label="Close"
-                onclick="closePanel()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-              <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
-            </svg>
-        </button>
-    </div>
     <div class="form-header" id="panel-header">
-        <h5 id="formModalLabel" class="mt-4">
-            <b>{{ header_name }}</b>
-        </h5>
+        <div class="w-100 text-end">
+            <div class="row align-items-center">
+                <div class="col-10 text-start">
+                    <h5 id="formModalLabel" class="m-0">
+                        <b>{{ header_name }}</b>
+                    </h5>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-white" aria-label="Close"
+                            onclick="closePanel()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                          <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="form-body" id="panel-body">
         <div class="row text-start">
@@ -32,7 +38,7 @@
             <div class="col-12 mb-3">
                 <label for="name" class="form-label">Name</label>
                 <input type="text" class="form-control p-2" id="name" name="name" required
-                value="{{ new_object_name }}">
+                placeholder="{{ new_object_name }}">
             </div>
 
             {% for attr in object_structure.numerical_attributes %}
@@ -62,9 +68,20 @@
                 </div>
                 <hr>
             {% endfor %}
+            <div class="col-12 mb-3">
+                    <p>
+                       Create a new usage journey by adding the key steps users typically take while using your service, and linking it to a usage pattern.
+                    </p>
+                    <p>
+                        Then create a server, and install services.
+                    </p>
+                    <p>
+                        For each usage journey step, define the the jobs, which are the requests being made to the services.
+                    </p>
+                </div>
         </div>
         <div class="modal-footer border border-0">
-            <button type="submit" class="btn btn-primary rounded-pill w-100">Sauvegarder</button>
+            <button type="submit" class="btn btn-primary rounded-pill w-100">Save</button>
         </div>
     </div>
 </form>
