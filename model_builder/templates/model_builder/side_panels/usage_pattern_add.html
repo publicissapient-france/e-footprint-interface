@@ -252,12 +252,12 @@
                                         <div class="accordion-body">
                                             <div class="mb-3 mx-2">
                                                 <label for="timeframe_start_date" class="form-label w-100 text-start fz-0-8">When the service has started ?</label>
-                                                <input type="date" class="form-control" id="timeframe_start_date" name="timeframe_start_date" value="2025-01-01">
+                                                <input type="date" class="form-control" id="timeframe_start_date" name="timeframe_start_date" value="2025-01-01" onchange="frequencyChart(true)">
                                             </div>
                                             <div class="mb-3 mx-2">
                                                 <label for="timeframe_value" class="form-label w-100 text-start">TimeFrame</label>
                                                 <div class="input-group">
-                                                    <input type="number" class="form-control" id="timeframe_value" name="timeframe_value" aria-describedby="basic-addon3 basic-addon4" value="5" onchange="frequencyChart(true)">
+                                                    <input type="number" class="form-control" id="timeframe_value" name="timeframe_value" aria-describedby="basic-addon3 basic-addon4" value="1" onchange="frequencyChart(true)">
                                                     <select class="input-group-text" id="timeframe_range"  onchange="frequencyChart(true)">
                                                         <option value="day">Days</option>
                                                         <option value="week">Weeks</option>
@@ -285,15 +285,15 @@
                                                                id="avg_nb_usage_journey_value"
                                                                name="avg_nb_usage_journey_value"
                                                                aria-describedby="basic-addon3 basic-addon4"
-                                                               value=1000
+                                                               value=10000
                                                                oninput="frequencyChart(true)">
                                                         <select class="input-group-text fz-0-8"
                                                                 id="avg_nb_usage_journey_range"
                                                                 name="avg_nb_usage_journey_range"
                                                                 onchange="editFrequencyField(true)">
-                                                            <option value="day" selected>Daily</option>
+                                                            <option value="day">Daily</option>
                                                             <option value="week">Weekly</option>
-                                                            <option value="month">Monthly</option>
+                                                            <option value="month" selected>Monthly</option>
                                                             <option value="year">Yearly</option>
                                                         </select>
                                                     </div>
@@ -306,7 +306,7 @@
                                                                id="net_growth_rate_value"
                                                                name="net_growth_rate_value"
                                                                aria-describedby="basic-addon3 basic-addon4"
-                                                               value=1
+                                                               value=10
                                                                oninput="frequencyChart(true)">
                                                         <select class="input-group-text fz-0-8" id="net_growth_rate_range"
                                                                 onchange="frequencyChart(true)">

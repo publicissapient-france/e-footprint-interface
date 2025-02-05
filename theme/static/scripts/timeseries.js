@@ -657,52 +657,55 @@ function addTimeSlot(periodVariation){
 }
 
 function createTimeSeriesChart(){
-    let startDate = document.getElementById('timeframe_start_date').value;
+    let startDateValue = document.getElementById('timeframe_start_date').value;
     let netGrowRatePeriod = document.getElementById('net_growth_rate_range').value;
     let netGrowRateValue = document.getElementById('net_growth_rate_value').value;
-    let avgNbUsageJourneyPeriod = document.getElementById('avg_nb_usage_journey_range').value;
     let avgNbUsageJourneyValue = document.getElementById('avg_nb_usage_journey_value').value;
+    let avg_nb_usage_journey_range = document.getElementById('avg_nb_usage_journey_range').value;
     let timeframeValue = document.getElementById('timeframe_value').value;
     let timeframeRange = document.getElementById('timeframe_range').value;
 
-    let timeseriesIndexWithVariations = [];
-    let timeseriesValueWithVariations = [];
+    let variationsIndex = [];
+    let variationsValues = [];
+    let hourlyvariationsIndex = [];
+    let hourlyvariationsValues = [];
 
-    let initDate = luxon.DateTime.local().startOf('year');
-    let dateGrowth = luxon.DateTime.local().startOf('year')
-
+    let startDate = luxon.DateTime.fromISO(startDateValue);
     let growthRateDuration = luxon.Duration.fromObject({ [netGrowRatePeriod]: 1 });
     let timeframeDuration = luxon.Duration.fromObject({ [timeframeRange]: timeframeValue });
-    let avgNbUsageJourneyPeriodDuration = luxon.Duration.fromObject({ [avgNbUsageJourneyPeriod]: 1 })
+    let avgNbUsageJourneyRange = luxon.Duration.fromObject({ [avg_nb_usage_journey_range]: 1 });
 
-    // on calcule le volume total et on s'arrange pour que le base soit le jour
-    let totalVolume = (avgNbUsageJourneyValue / avgNbUsageJourneyPeriodDuration.shiftTo('days').days) *
-        growthRateDuration.shiftTo('days').days
-    console.log(totalVolume);
+    let ratioDay = (startDate.plus(growthRateDuration).diff(startDate, 'days').days)/avgNbUsageJourneyRange.shiftTo('days').days;
 
-    //on va d'abord appliquer le taux de croissance
-    let volumeLooper = totalVolume
+    let volumeLooper = avgNbUsageJourneyValue * ratioDay;
     for(let timeFrameUnit = 0; timeFrameUnit < timeframeValue; timeFrameUnit++){
-        let dateLooper = initDate.plus({ [timeframeRange]: timeFrameUnit });
+        let dateLooper = startDate.plus({ [timeframeRange]: timeFrameUnit });
         for(let timeGrowthRateUnit=0; timeGrowthRateUnit < Math.round(timeframeDuration.shiftTo(netGrowRatePeriod+'s')[netGrowRatePeriod+'s']/timeframeValue); timeGrowthRateUnit++) {
-            console.log(dateLooper.toISO(), volumeLooper);
-            timeseriesIndexWithVariations.push(dateLooper.toISO());
-            timeseriesValueWithVariations.push(volumeLooper);
-            volumeLooper = volumeLooper + Math.round( parseInt(netGrowRateValue)/100 * volumeLooper);
+            variationsIndex.push(dateLooper.toISO());
+            variationsValues.push(volumeLooper);
+            volumeLooper *=  (1 + parseInt(netGrowRateValue)/100);
             dateLooper = dateLooper.plus(growthRateDuration);
         }
     }
 
-    console.log(timeseriesIndexWithVariations, timeseriesValueWithVariations);
-
-    if(netGrowRatePeriod === 'year'){
-        //on applique la variation seosonal
-    }
-    if(netGrowRatePeriod !== 'day'){
-        //on applique la variation week
-    }
-    //on applique la variation daily
-
+    let indexDay = 0
+    variationsIndex.forEach((row) => {
+        let indexDate = luxon.DateTime.fromISO(row);
+        let nbDays = indexDate.plus(growthRateDuration).diff(indexDate, 'days').days;
+        let convertedValue = Math.round(variationsValues[indexDay]/nbDays);
+        for (let day = 0; day < nbDays; day++) {
+            let dayDate = indexDate.plus({days: day});
+            for(let hour=0; hour < 24; hour++){
+                hourlyvariationsIndex.push(dayDate.plus({hours: hour}).toISO());
+                hourlyvariationsValues.push(convertedValue/24);
+                console.log(dayDate.plus({hours: hour}).toISO(), nbDays, variationsValues[indexDay], convertedValue);
+            }
+        }
+        indexDay += 1;
+    });
+    window.variationsIndex = hourlyvariationsIndex;
+    window.variationsValues = hourlyvariationsValues;
+    window.timeseriesToSave = { hourlyvariationsIndex, hourlyvariationsValues };
 }
 
 function applyVariation(timeseries, index, avgNbUsageJourneyPeriod, netGrowRatePeriod, timeframe, timeframeValue){
@@ -752,6 +755,7 @@ function applyVariation(timeseries, index, avgNbUsageJourneyPeriod, netGrowRateP
 }
 
 function timeSeriesChart(){
+    /*
     let timeRangeValue = parseInt(document.getElementById('timeframe_value').value);
     let timeRange = document.getElementById('timeframe_range').value;
     let frequency = window.optionsChartJs['frequencyChart']['data']['datasets'][0]['data']
@@ -759,18 +763,20 @@ function timeSeriesChart(){
     let avgNbUsageJourneyPeriod = document.getElementById('avg_nb_usage_journey_range').value;
     let netGrowRatePeriod = document.getElementById('net_growth_rate_range').value;
     let timeSeries = applyVariation(frequency, index, avgNbUsageJourneyPeriod, netGrowRatePeriod, timeRange, timeRangeValue);
+     */
+    createTimeSeriesChart()
     updateTimeseriesChart();
 }
 
 function updateTimeseriesChart() {
     let periodAnalysis = document.getElementById('timeseries_period_analysis').value;
     let kpiAnalysis = document.getElementById('timeseries_kpi_analysis').value;
-    let variationsIndex = window.timeseriesToSave.variationsIndex;
-    let variationsValues = window.timeseriesToSave.variationsValues;
+    let variationsIndex = window.variationsIndex;
+    let variationsValues = window.variationsValues;
     let aggregatedIndex = [];
     let aggregatedValues = [];
     let currentGroup = [];
-    let currentDate = luxon.DateTime.fromISO(variationsIndex[0]).startOf(periodAnalysis);
+    let currentDate = luxon.DateTime.fromISO(document.getElementById('timeframe_start_date').value)
 
     let normalizedIndex = variationsIndex.map(date =>
         luxon.DateTime.fromISO(date).toUTC().toISO()
@@ -924,7 +930,7 @@ document.getElementById('time-series-modal').addEventListener('shown.bs.modal', 
 function checkAttributes(usagePatternAttribute){
     if(usagePatternAttribute === 'timeseries'){
         document.getElementById('date_hourly_usage_journey_starts').value= document.getElementById('timeframe_start_date').value;
-        document.getElementById('list_hourly_usage_journey_starts').value = window.timeseriesToSave['variationsValues'].toString();
+        document.getElementById('list_hourly_usage_journey_starts').value = window.timeseriesToSave['hourlyvariationsValues'].toString();
     }else{
         document.getElementById(''+usagePatternAttribute).value = document.getElementById('form_select_'+usagePatternAttribute).value;
     }
