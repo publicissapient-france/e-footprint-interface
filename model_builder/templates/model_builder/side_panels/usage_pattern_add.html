@@ -11,7 +11,7 @@
     <input type="hidden" name="devices" id="devices" value="">
     <input type="hidden" name="network" id="network" value="">
     <input type="hidden" name="country" id="country" value="">
-    <input type="hidden" name="usage_journey" id="usage_journey" value="">
+    <input type="hidden" name="usage_journey" id="usage-journey" value="">
     <input type="hidden" name="date_hourly_usage_journey_starts" id="date_hourly_usage_journey_starts" value="">
     <input type="hidden" name="list_hourly_usage_journey_starts" id="list_hourly_usage_journey_starts" value="">
     <div class="text-end">
@@ -50,7 +50,7 @@
                             <div class="accordion-body p-0">
                                 <div class="row p-2 g-0 align-items-center border border-end-0 border-start-0 border-top-0 border-bottom-1 border-body-tertiary">
                                     <div class="col-2 text-center">
-                                        <div id="devices_icon_check" class="d-none">
+                                        <div id="devices-icon-check" class="d-none">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
                                               <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
                                               <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
@@ -61,14 +61,14 @@
                                         Device
                                     </div>
                                     <div class="col-5 text-end">
-                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" data-bs-toggle="modal" data-bs-target="#usage-pattern-attributes-modal-device">
+                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" onclick="openModalUsagePattern('devices')">
                                             Add
                                         </button>
                                     </div>
                                 </div>
                                 <div class="row p-2 g-0 align-items-center border border-end-0 border-start-0 border-top-0 border-bottom-1 border-body-tertiary">
                                     <div class="col-2 text-center">
-                                        <div id="network_icon_check" class="d-none">
+                                        <div id="network-icon-check" class="d-none">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
                                               <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
                                               <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
@@ -79,14 +79,14 @@
                                         Network
                                     </div>
                                     <div class="col-5 text-end">
-                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" data-bs-toggle="modal" data-bs-target="#usage-pattern-attributes-modal-network">
+                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" onclick="openModalUsagePattern('network')">
                                             Add
                                         </button>
                                     </div>
                                 </div>
                                 <div class="row p-2 g-0 align-items-center border border-end-0 border-start-0 border-top-0 border-bottom-1 border-body-tertiary">
                                     <div class="col-2 text-center">
-                                        <div id="country_icon_check" class="d-none">
+                                        <div id="country-icon-check" class="d-none">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
                                               <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
                                               <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
@@ -97,14 +97,14 @@
                                         Country
                                     </div>
                                     <div class="col-5 text-end">
-                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" data-bs-toggle="modal" data-bs-target="#usage-pattern-attributes-modal-country">
+                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" onclick="openModalUsagePattern('country')">
                                             Add
                                         </button>
                                     </div>
                                 </div>
                                 <div class="row p-2 g-0 align-items-center border border-end-0 border-start-0 border-top-0 border-bottom-1 border-body-tertiary">
                                     <div class="col-2 text-center">
-                                        <div id="usage_journey_icon_check" class="d-none">
+                                        <div id="usage-journey-icon-check" class="d-none">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
                                               <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
                                               <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
@@ -112,17 +112,17 @@
                                         </div>
                                     </div>
                                     <div class="col-5">
-                                        Usage Journey
+                                        Usage journey
                                     </div>
                                     <div class="col-5 text-end">
-                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" data-bs-toggle="modal" data-bs-target="#usage-pattern-attributes-modal-usage-journey">
+                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" onclick="openModalUsagePattern('usage-journey')">
                                             Add
                                         </button>
                                     </div>
                                 </div>
                                 <div class="row p-2 g-0 align-items-center border-0">
                                     <div class="col-2 text-center">
-                                        <div id="timeseries_icon_check" class="d-none">
+                                        <div id="timeseries-icon-check" class="d-none">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
                                               <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
                                               <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
@@ -299,7 +299,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-6">
-                                                    <label for="net_growth_rate_value" class="form-label w-100 text-start fz-0-8">Net growth rate</label>
+                                                    <label for="net_growth_rate_value" class="form-label w-100 text-start fz-0-8">Net growth rate (%)</label>
                                                     <div class="input-group">
                                                         <input type="number"
                                                                class="form-control fz-0-8"
@@ -334,96 +334,9 @@
                                     </h2>
                                     <div id="collapse-daily-variation" class="accordion-collapse collapse show">
                                         <div class="accordion-body px-2">
-                                            <div id="daily_variation_bloc">
-                                                <div class="row g-2 mb-2" id="daily_variation_1">
-                                                <div class="col-4">
-                                                    <label for="from_daily_variation_1" class="form-label w-100 text-start fz-0-8">From</label>
-                                                    <select class="form-select light-select fz-0-8 h-30"
-                                                            id="from_daily_variation_1"
-                                                            name="from_daily_variation_1"
-                                                        onchange="variationController('daily', true)">
-                                                        <option value=0 selected>12am</option>
-                                                        <option value=1>1am</option>
-                                                        <option value=2>2am</option>
-                                                        <option value=3>3am</option>
-                                                        <option value=4>4am</option>
-                                                        <option value=5>5am</option>
-                                                        <option value=6>6am</option>
-                                                        <option value=7>7am</option>
-                                                        <option value=8>8am</option>
-                                                        <option value=9>9am</option>
-                                                        <option value=10>10am</option>
-                                                        <option value=11>11am</option>
-                                                        <option value=12>12pm</option>
-                                                        <option value=13>1pm</option>
-                                                        <option value=14>2pm</option>
-                                                        <option value=15>3pm</option>
-                                                        <option value=16>4pm</option>
-                                                        <option value=17>5pm</option>
-                                                        <option value=18>6pm</option>
-                                                        <option value=19>7pm</option>
-                                                        <option value=20>8pm</option>
-                                                        <option value=21>9pm</option>
-                                                        <option value=22>10pm</option>
-                                                        <option value=23>11pm</option>
-                                                    </select>
-                                                </div>
-                                                 <div class="col-4">
-                                                    <label for="to_daily_variation_1" class="form-label w-100 text-start fz-0-8">To</label>
-                                                    <select class="form-select light-select fz-0-8 h-30"
-                                                            id="to_daily_variation_1"
-                                                            name="to_daily_variation_1"
-                                                            onchange="variationController('daily', true)">
-                                                        <option value=1 selected>1am</option>
-                                                        <option value=2>2am</option>
-                                                        <option value=3>3am</option>
-                                                        <option value=4>4am</option>
-                                                        <option value=5>5am</option>
-                                                        <option value=6>6am</option>
-                                                        <option value=7>7am</option>
-                                                        <option value=8>8am</option>
-                                                        <option value=9>9am</option>
-                                                        <option value=10>10am</option>
-                                                        <option value=11>11am</option>
-                                                        <option value=12>12pm</option>
-                                                        <option value=13>1pm</option>
-                                                        <option value=14>2pm</option>
-                                                        <option value=15>3pm</option>
-                                                        <option value=16>4pm</option>
-                                                        <option value=17>5pm</option>
-                                                        <option value=18>6pm</option>
-                                                        <option value=19>7pm</option>
-                                                        <option value=20>8pm</option>
-                                                        <option value=21>9pm</option>
-                                                        <option value=22>10pm</option>
-                                                        <option value=23>11pm</option>
-                                                        <option value=24>12am</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-4">
-                                                    <label for="multiplier_daily_variation_1" class="form-label w-100 text-start">Multiplier</label>
-                                                    <div class="input-group h-30">
-                                                        <span class="input-group-text h-30" id="basic-addon1">x</span>
-                                                        <input type="number"
-                                                               class="form-control fz-0-8 py-0 h-30"
-                                                               id="multiplier_daily_variation_1"
-                                                               name="multiplier_daily_variation_1" value="1"
-                                                               aria-describedby="basic-addon1"
-                                                               oninput="variationChart('daily', true)">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                            <div class="d-grid gap-2 mt-3">
-                                                <button class="btn btn-white border border-1 border-body-tertiary rounded-pill fz-0-8"
-                                                        id="add_daily_slot"
-                                                    script="on click addTimeSlot('daily')">
-                                                Add a time slot
-                                                </button>
-                                            </div>
-                                            <div class="mt-3" style="width: 100%;">
-                                                <canvas id="dailyVariationChart" height="75"></canvas>
-                                            </div>
+                                            {% with variation="daily" dataVariations=dataDailyVariations %}
+                                                {% include 'model_builder/side_panels/variationBloc.html' %}
+                                            {% endwith %}
                                         </div>
                                     </div>
                                 </div>
@@ -435,61 +348,9 @@
                                     </h2>
                                     <div id="collapse-weekly-variation" class="accordion-collapse collapse show">
                                         <div class="accordion-body px-2">
-                                            <div id="weekly_variation_bloc">
-                                                <div class="row g-2 mb-2" id="weekly_variation_1">
-                                                <div class="col-4">
-                                                    <label for="from_weekly_variation_1 fz-0-8" class="form-label w-100 text-start">From</label>
-                                                    <select class="form-select light-select fz-0-8 h-30"
-                                                            id="from_weekly_variation_1"
-                                                            name="from_weekly_variation_1"
-                                                            onchange="variationController('weekly', true)">
-                                                        <option value=0 selected>Monday</option>
-                                                        <option value=1>Tuesday</option>
-                                                        <option value=2>Wednesday</option>
-                                                        <option value=3>Thursday</option>
-                                                        <option value=4>Friday</option>
-                                                        <option value=5">Saturday</option>
-                                                        <option value=6>Sunday</option>
-                                                    </select>
-                                                </div>
-                                                 <div class="col-4">
-                                                    <label for="to_weekly_variation_1 fz-0-8" class="form-label w-100 text-start">To</label>
-                                                    <select class="form-select light-select fz-0-8 h-30"
-                                                            id="to_weekly_variation_1"
-                                                            name="to_weekly_variation_1"
-                                                            onchange="variationController('weekly', true)">
-                                                        <option value=1 selected>Tuesday</option>
-                                                        <option value=2>Wednesday</option>
-                                                        <option value=3>Thursday</option>
-                                                        <option value=4>Friday</option>
-                                                        <option value=5">Saturday</option>
-                                                        <option value=6>Sunday</option>
-                                                        <option value=7>Monday</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-4">
-                                                    <label for="multiplier_weekly_variation_1" class="form-label w-100 text-start">Multiplier</label>
-                                                    <div class="input-group h-30">
-                                                        <span class="input-group-text h-30" id="basic-addon1">x</span>
-                                                        <input type="number"
-                                                               class="form-control fz-0-8 py-0 h-30"
-                                                               id="multiplier_weekly_variation_1"
-                                                               name="multiplier_weekly_variation_1" value="1"
-                                                               aria-describedby="basic-addon1"
-                                                               oninput="variationChart('weekly', true)">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                            <div class="d-grid gap-2 mt-3">
-                                                <button class="btn btn-white border border-1 border-body-tertiary rounded-pill fz-0-8"  id="add_weekly_slot"
-                                                        script="on click addTimeSlot('weekly')">
-                                                    Add a time slot
-                                                </button>
-                                            </div>
-                                            <div class="mt-3" style="width: 100%;">
-                                                <canvas id="weeklyVariationChart" height="75"></canvas>
-                                            </div>
+                                            {% with variation="weekly" dataVariations=dataWeeklyVariations %}
+                                                {% include 'model_builder/side_panels/variationBloc.html' %}
+                                            {% endwith %}
                                         </div>
                                     </div>
                                 </div>
@@ -501,85 +362,15 @@
                                     </h2>
                                     <div id="collapse-seasonal-variation" class="accordion-collapse collapse show">
                                         <div class="accordion-body px-2">
-                                            <div id="seasonal_variation_bloc">
-                                                <div class="row g-2 mb-2" id="seasonal_variation_1">
-                                                <div class="col-4">
-                                                    <label for="from_seasonal_variation_1" class="form-label w-100 text-start fz-0-8">From</label>
-                                                    <select class="form-select light-select fz-0-8 h-30"
-                                                            id="from_seasonal_variation_1"
-                                                            name="from_seasonal_variation_1"
-                                                            onchange="variationController('seasonal', true)">
-                                                        <option value=0 selected>January</option>
-                                                        <option value=1>February</option>
-                                                        <option value=2>March</option>
-                                                        <option value=3>April</option>
-                                                        <option value=4>May</option>
-                                                        <option value=5>June</option>
-                                                        <option value=6>July</option>
-                                                        <option value=7>August</option>
-                                                        <option value=8>September</option>
-                                                        <option value=9>October</option>
-                                                        <option value=10>November</option>
-                                                        <option value=11>December</option>
-                                                    </select>
-                                                </div>
-                                                 <div class="col-4">
-                                                    <label for="to_seasonal_variation_1"class="form-label w-100 text-start fz-0-8">To</label>
-                                                    <select class="form-select light-select fz-0-8 h-30"
-                                                            id="to_seasonal_variation_1"
-                                                            name="to_seasonal_variation_1"
-                                                            onchange="variationController('seasonal', true)">
-                                                        <option value=1 selected>February</option>
-                                                        <option value=2>March</option>
-                                                        <option value=3>April</option>
-                                                        <option value=4>May</option>
-                                                        <option value=5>June</option>
-                                                        <option value=6>July</option>
-                                                        <option value=7>August</option>
-                                                        <option value=8>September</option>
-                                                        <option value=9>October</option>
-                                                        <option value=10>November</option>
-                                                        <option value=11>December</option>
-                                                        <option value=12>January</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-4">
-                                                    <label for="multiplier_seasonal_variation_1" class="form-label w-100 text-start">Multiplier</label>
-                                                    <div class="input-group h-30">
-                                                        <span class="input-group-text h-30" id="basic-addon1">x</span>
-                                                        <input type="number"
-                                                               class="form-control fz-0-8 py-0 h-30"
-                                                               id="multiplier_seasonal_variation_1"
-                                                               name="multiplier_seasonal_variation_1" value="1"
-                                                               aria-describedby="basic-addon1"
-                                                               oninput="variationChart('seasonal', true)">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
-                                            <div class="d-grid gap-2 mt-3">
-                                                <button class="btn btn-white border border-1 border-body-tertiary rounded-pill fz-0-8"  id="add_seasonal_slot"
-                                                    script="on click addTimeSlot('seasonal')">
-                                                    Add a time slot
-                                                </button>
-                                            </div>
-                                            <div class="mt-3" style="width: 100%;">
-                                                <canvas id="seasonalVariationChart" height="75"></canvas>
-                                            </div>
+                                            {% with variation="seasonal" dataVariations=dataSeasonalVariations %}
+                                                {% include 'model_builder/side_panels/variationBloc.html' %}
+                                            {% endwith %}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="form-footer mt-5 px-3 d-grid gap-2">
-                            <!--
-                            <button class="btn btn-white border border-1 border-black rounded-pill">
-                                Show time series
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-fullscreen" viewBox="0 0 16 16">
-                                  <path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707m4.344 0a.5.5 0 0 1 .707 0l4.096 4.096V11.5a.5.5 0 1 1 1 0v3.975a.5.5 0 0 1-.5.5H11.5a.5.5 0 0 1 0-1h2.768l-4.096-4.096a.5.5 0 0 1 0-.707m0-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707m-4.344 0a.5.5 0 0 1-.707 0L1.025 1.732V4.5a.5.5 0 0 1-1 0V.525a.5.5 0 0 1 .5-.5H4.5a.5.5 0 0 1 0 1H1.732l4.096 4.096a.5.5 0 0 1 0 .707"/>
-                                </svg>
-                            </button>
-                            -->
                             <button type="button" class="btn btn-primary rounded-pill w-100" id="save_time_series_btn" data-bs-dismiss="modal" onclick="checkAttributes('timeseries')">
                                 Save
                             </button>
@@ -591,125 +382,21 @@
     </div>
 </div>
 
-<!-- Modal -->
-<div class="modal usage-pattern-modal-attributes fade" id="usage-pattern-attributes-modal-country" tabindex="-1" aria-labelledby="usage-pattern-attributes-modal-country" aria-hidden="true" data-bs-backdrop="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="form-header text-start">
-                    <h5 id="formModalLabel" class="mt-4">
-                        <b>Add Country</b>
-                    </h5>
-                </div>
-                <div class="form-body">
-                    <div class="">
-                        <label for="form_select_country" class="form-label w-100 text-start fz-0-8">Country</label>
-                        <select class="form-select light-select fz-0-8 h-30"  id="form_select_country" name="form_select_country">
-                            {% for country in countries %}
-                                <option value="{{ country.efootprint_id }}" {% if forloop.counter0 == 0 %}selected{% endif %}>{{ country.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="form-footer mt-5 px-3 d-grid gap-2">
-                    <button type="button" class="btn btn-primary rounded-pill w-100" id="save_time_series_btn" data-bs-dismiss="modal" onclick="checkAttributes('country')">
-                        Save
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<script>
+    window.usageJourneys = [
+        {% for usageJourney in usageJourneys %}
+            {'efootprint_id': '{{ usageJourney.efootprint_id }}', 'name':'{{ usageJourney.name }}' }
+        {% endfor %}
+    ]
 
-<!-- Modal -->
-<div class="modal usage-pattern-modal-attributes fade" id="usage-pattern-attributes-modal-device" tabindex="-1" aria-labelledby="usage-pattern-attributes-modal-device" aria-hidden="true" data-bs-backdrop="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="form-header text-start">
-                    <h5 id="formModalLabel" class="mt-4">
-                        <b>Add Devices</b>
-                    </h5>
-                </div>
-                <div class="form-body">
-                    <div class="">
-                        <label for="form_select_devices" class="form-label w-100 text-start fz-0-8">Devices</label>
-                        <select class="form-select light-select fz-0-8 h-30"  id="form_select_devices" name="form_select_devices">
-                            {% for device in devices %}
-                                <option value="{{ device.efootprint_id }}" {% if forloop.counter0 == 0 %}selected{% endif %}>{{ device.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="form-footer mt-5 px-3 d-grid gap-2">
-                    <button type="button" class="btn btn-primary rounded-pill w-100" id="save_time_series_btn" data-bs-dismiss="modal" onclick="checkAttributes('devices')">
-                        Save
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    window.modalContent = {
+        'country': { 'name': 'Countries', 'data':{{ countries|safe }} },
+        'devices': { 'name': 'Devices', 'data':{{ devices|safe }} },
+        'network': { 'name': 'Network', 'data': {{ networks|safe }} },
+        'usage-journey': { 'name': 'Network', 'data': usageJourneys }
+    }
+</script>
 
-<!-- Modal -->
-<div class="modal usage-pattern-modal-attributes fade" id="usage-pattern-attributes-modal-network" tabindex="-1" aria-labelledby="usage-pattern-attributes-modal-network" aria-hidden="true" data-bs-backdrop="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="form-header text-start">
-                    <h5 id="formModalLabel" class="mt-4">
-                        <b>Add Network</b>
-                    </h5>
-                </div>
-                <div class="form-body">
-                    <div class="">
-                        <label for="form_select_network" class="form-label w-100 text-start fz-0-8">Network</label>
-                        <select class="form-select light-select fz-0-8 h-30"  id="form_select_network" name="form_select_network">
-                            {% for network in networks %}
-                                <option value="{{ network.efootprint_id }}" {% if forloop.counter0 == 0 %}selected{% endif %}>{{ network.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="form-footer mt-5 px-3 d-grid gap-2">
-                    <button type="button" class="btn btn-primary rounded-pill w-100" id="save_time_series_btn" data-bs-dismiss="modal" onclick="checkAttributes('network')">
-                        Save
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- Modal -->
-<div class="modal usage-pattern-modal-attributes fade" id="usage-pattern-attributes-modal-usage-journey" tabindex="-1" aria-labelledby="usage-pattern-attributes-modal-usage-journey" aria-hidden="true" data-bs-backdrop="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="form-header text-start">
-                    <h5 id="formModalLabel" class="mt-4">
-                        <b>Link Usage Journey</b>
-                    </h5>
-                </div>
-                <div class="form-body">
-                    <div class="">
-                        <label for="form_select_usage_journey" class="form-label w-100 text-start fz-0-8">User Journey</label>
-                        <select class="form-select light-select fz-0-8 h-30"  id="form_select_usage_journey"  name="form_select_usage_journey" >
-                            {% for usageJourney in usageJourneys %}
-                                <option value="{{ usageJourney.efootprint_id }}" {% if forloop.counter0 == 0 %}selected{% endif %}>{{ usageJourney.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="form-footer mt-5 px-3 d-grid gap-2">
-                    <button type="button" class="btn btn-primary rounded-pill w-100" id="save_time_series_btn" data-bs-dismiss="modal" onclick="checkAttributes('usage_journey')">
-                        Save
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
+<script src="{% static 'scripts/modalControllerUsagePattern.js' %}"></script>
+<script src="{% static 'scripts/formTimeseriesController.js' %}"></script>
 <script src="{% static 'scripts/timeseries.js' %}"></script>

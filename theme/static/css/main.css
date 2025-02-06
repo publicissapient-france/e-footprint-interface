@@ -77,11 +77,16 @@ body{
 
 .panel-result-btn{
     position: absolute;
-    bottom: 0;
+    bottom: 0 !important;
     width: 75vw;
     height: 10vh;
     cursor: pointer;
     z-index: 100;
+    padding: 0;
+}
+
+.panel-result-btn button{
+    height: 10vh;
 }
 
 #formPanel {

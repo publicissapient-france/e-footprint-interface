@@ -344,6 +344,5 @@ function closeLoader() {
     if (modal) {
         modal.hide();
     }
-
      */
 }
