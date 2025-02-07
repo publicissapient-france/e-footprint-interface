@@ -6,8 +6,8 @@ from django.test import TestCase, RequestFactory
 from django.http import QueryDict
 from efootprint.logger import logger
 
-from model_builder.views_addition import add_new_usage_pattern, add_new_service, add_new_job
-from model_builder.model_web import DEFAULT_HARDWARES, DEFAULT_NETWORKS, DEFAULT_COUNTRIES
+from model_builder.views_addition import add_new_usage_pattern, add_new_service, add_new_job, add_new_usage_journey
+from model_builder.model_web import default_networks, default_hardwares, default_countries
 from model_builder.views_deletion import delete_object
 
 
@@ -27,14 +27,14 @@ class AddNewUsagePatternTestCase(TestCase):
         request.session["system_data"] = system_data
         request.session.save()
 
-    def test_integration(self):
+    def test_partial_integration(self):
         logger.info(f"Creating usage pattern")
         post_data = QueryDict(mutable=True)
         post_data.update({
             'csrfmiddlewaretoken': ['ruwwTrYareoTugkh9MF7b5lhY3DF70xEwgHKAE6gHAYDvYZFDyr1YiXsV5VDJHKv'],
-            'devices': [list(DEFAULT_HARDWARES.keys())[0]],
-            'network': [list(DEFAULT_NETWORKS.keys())[0]],
-            'country': [list(DEFAULT_COUNTRIES.keys())[0]],
+            'devices': [list(default_hardwares().keys())[0]],
+            'network': [list(default_networks().keys())[0]],
+            'country': [list(default_countries().keys())[0]],
             'usage_journey': ['uuid-Daily-video-usage'],
             'date_hourly_usage_journey_starts': ['2025-02-01'],
             'list_hourly_usage_journey_starts': ['6,6,6,6,6,6,69,9,9,9,9,9,10,10,10,10,10,10,10,10,10'],
@@ -90,3 +90,22 @@ class AddNewUsagePatternTestCase(TestCase):
         delete_object(job_request, service_id)
 
         self.assertEqual(job_request.session["system_data"], self.system_data)
+
+    def test_full_integration(self):
+        logger.info("Creating user journey")
+        post_data = QueryDict(mutable=True)
+        post_data.update({"name": "First user journey", "uj_steps": []})
+
+        uj_request = self.factory.post('/add_new_user_journey/', data=post_data)
+        self._add_session_to_request(uj_request, {
+            "efootprint_version": "9.1.4",
+            "System": {
+                "uuid-system-1": {
+                    "name": "system 1",
+                    "id": "uuid-system-1",
+                    "usage_patterns": []
+                }
+            }
+        })
+
+        response = add_new_usage_journey(uj_request)

@@ -38,10 +38,10 @@ class EmptyExplainableObjectWeb:
 
 class ExplainableObjectWeb:
     def __init__(self, explainable_quantity: ExplainableObject):
-        self.explainable_quantity = explainable_quantity
+        self.explainable_object = explainable_quantity
 
     def __getattr__(self, name):
-        attr = getattr(self.explainable_quantity, name)
+        attr = getattr(self.explainable_object, name)
 
         return attr
 

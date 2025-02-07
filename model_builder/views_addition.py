@@ -9,7 +9,7 @@ from efootprint.core.usage.job import Job
 from efootprint.core.usage.usage_journey_step import UsageJourneyStep
 
 from model_builder.class_structure import generate_object_creation_structure, efootprint_class_structure
-from model_builder.model_web import ModelWeb, DEFAULT_NETWORKS, DEFAULT_COUNTRIES, DEFAULT_HARDWARES
+from model_builder.model_web import ModelWeb, default_networks, default_countries, default_hardwares
 from model_builder.object_creation_and_edition_utils import create_efootprint_obj_from_post_data, \
     add_new_efootprint_object_to_system, render_exception_modal
 from model_builder.views_edition import edit_object
@@ -128,9 +128,9 @@ def open_create_job_panel(request):
 
 def open_create_usage_pattern_panel(request):
     model_web = ModelWeb(request.session)
-    networks = [{"efootprint_id": network["id"], "name": network["name"]} for network in DEFAULT_NETWORKS.values()]
-    countries = [{"efootprint_id": country["id"], "name": country["name"]} for country in DEFAULT_COUNTRIES.values()]
-    devices = [{"efootprint_id": device["id"], "name": device["name"]} for device in DEFAULT_HARDWARES.values()]
+    networks = [{"efootprint_id": network["id"], "name": network["name"]} for network in default_networks().values()]
+    countries = [{"efootprint_id": country["id"], "name": country["name"]} for country in default_countries().values()]
+    devices = [{"efootprint_id": device["id"], "name": device["name"]} for device in default_hardwares().values()]
 
     http_response = render(
         request, "model_builder/side_panels/usage_pattern_add.html", {

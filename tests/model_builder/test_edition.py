@@ -7,9 +7,8 @@ from django.http import QueryDict
 from efootprint.logger import logger
 
 from model_builder.class_structure import generate_object_edition_structure
-from model_builder.views_addition import add_new_usage_pattern, add_new_service, add_new_job
-from model_builder.model_web import DEFAULT_HARDWARES, DEFAULT_NETWORKS, DEFAULT_COUNTRIES, ModelWeb
-from model_builder.views_deletion import delete_object
+from model_builder.views_addition import add_new_service, add_new_job
+from model_builder.model_web import ModelWeb
 
 
 class AddNewUsagePatternTestCase(TestCase):

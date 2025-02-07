@@ -98,6 +98,20 @@ def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
                 logger.debug(f"{attr_dict['attr_name']} has changed in {obj_to_edit.efootprint_id}")
                 new_value.set_label(current_value.label)
                 obj_to_edit.set_efootprint_value(attr_dict["attr_name"], new_value)
+    for attr_dict in obj_structure["hourly_quantities_attributes"]:
+        if (f"list_{attr_dict["attr_name"]}" in request.POST.keys()
+            and f"date_{attr_dict['attr_name']}" in request.POST.keys()):
+            logger.debug(f"{attr_dict['attr_name']} has changed in {obj_to_edit.efootprint_id}")
+            values = request.POST.getlist(f'list_{attr_dict["attr_name"]}')[0].split(",")
+            start_date = datetime.strptime(request.POST[f'date_{attr_dict["attr_name"]}'], "%Y-%m-%d")
+            new_value = SourceHourlyValues(
+                create_hourly_usage_df_from_list([float(value) for value in values],
+                                                 start_date=start_date, pint_unit=u.dimensionless)
+            )
+            current_value = getattr(obj_to_edit, attr_dict["attr_name"])
+            if new_value != current_value.explainable_object:
+                logger.debug(f"{attr_dict['attr_name']} has changed in {obj_to_edit.efootprint_id}")
+                obj_to_edit.set_efootprint_value(attr_dict["attr_name"], new_value)
     for attr_dict in obj_structure["str_attributes"] + obj_structure["conditional_str_attributes"]:
         if attr_dict["attr_name"] in request.POST.keys():
             new_value = SourceObject(request.POST[attr_dict["attr_name"]], source=Sources.USER_DATA)
@@ -126,7 +140,7 @@ def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
             if new_mod_obj_ids != current_mod_obj_ids:
                 obj_to_edit.set_efootprint_value(
                     mod_obj["attr_name"],
-                    [model_web.get_web_object_from_efootprint_id(obj_id).modeling_obj
+                    [model_web.get_efootprint_object_from_efootprint_id(obj_id, mod_obj["object_type"], request.session)
                      for obj_id in unchanged_mod_obj_ids + added_mod_obj_ids])
 
     # Update session data

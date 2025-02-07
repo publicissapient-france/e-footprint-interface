@@ -13,16 +13,20 @@ from utils import EFOOTPRINT_COUNTRIES
 
 model_web_root = os.path.dirname(os.path.abspath(__file__))
 
-with open(os.path.join(model_web_root, "default_networks.json"), "r") as f:
-    DEFAULT_NETWORKS = json.load(f)
-with open(os.path.join(model_web_root, "default_hardwares.json"), "r") as f:
-    DEFAULT_HARDWARES = json.load(f)
-with open(os.path.join(model_web_root, "default_countries.json"), "r") as f:
-    DEFAULT_COUNTRIES = json.load(f)
+def default_networks():
+    with open(os.path.join(model_web_root, "default_networks.json"), "r") as f:
+        return json.load(f)
 
+def default_hardwares():
+    with open(os.path.join(model_web_root, "default_hardwares.json"), "r") as f:
+        return json.load(f)
+
+def default_countries():
+    with open(os.path.join(model_web_root, "default_countries.json"), "r") as f:
+        return json.load(f)
 
 DEFAULT_OBJECTS_CLASS_MAPPING = {
-    "Network": DEFAULT_NETWORKS, "Hardware": DEFAULT_HARDWARES, "Country": DEFAULT_COUNTRIES}
+    "Network": default_networks, "Hardware": default_hardwares, "Country": default_countries}
 ATTRIBUTES_TO_SKIP_IN_FORMS = ["gpu_latency_alpha", "gpu_latency_beta", "fixed_nb_of_instances"]
 
 
@@ -52,7 +56,7 @@ class ModelWeb:
 
     def get_web_objects_from_efootprint_type(self, obj_type):
         if obj_type in DEFAULT_OBJECTS_CLASS_MAPPING.keys():
-            default_objects_dicts = DEFAULT_OBJECTS_CLASS_MAPPING[obj_type].values()
+            default_objects_dicts = DEFAULT_OBJECTS_CLASS_MAPPING[obj_type]().values()
 
             for default_dict in default_objects_dicts:
                 default_dict["efootprint_id"] = default_dict["id"]
@@ -71,7 +75,7 @@ class ModelWeb:
             efootprint_object = self.flat_efootprint_objs_dict[efootprint_id]
         else:
             from model_builder.object_creation_and_edition_utils import add_new_efootprint_object_to_system
-            web_object_json = DEFAULT_OBJECTS_CLASS_MAPPING[object_type][efootprint_id]
+            web_object_json = DEFAULT_OBJECTS_CLASS_MAPPING[object_type]()[efootprint_id]
             efootprint_class = MODELING_OBJECT_CLASSES_DICT[object_type]
             efootprint_object = efootprint_class.__new__(efootprint_class)
             efootprint_object.__dict__["contextual_modeling_obj_containers"] = []
