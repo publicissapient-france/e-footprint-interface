@@ -11,9 +11,24 @@
            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <button hx-get="/understand" hx-target="#main-content-block" hx-swap="beforeend"
-                                    hx-push-url="/understand" hx-indicator="#global_loader" hx-disabled-elt="button"
-                                script="on click remove the first <div/> in #main-content-block"
+                        <button hx-get="{% url 'model-builder' %}"
+                                hx-target="#main-content-block" hx-swap="innerHTML"
+                                hx-push-url="{% url 'model-builder' %}"
+                                hx-disabled-elt="button"
+                                class="nav-link d-flex flex-row gap-2 mx-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-steps" viewBox="0 0 16 16">
+                              <path d="M.5 0a.5.5 0 0 1 .5.5v15a.5.5 0 0 1-1 0V.5A.5.5 0 0 1 .5 0M2 1.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm2 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5z"/>
+                            </svg>
+                            <span>My model</span>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button hx-get="/understand"
+                                hx-swap="innerHTML"
+                                hx-target="#model-builder-page"
+                                hx-push-url="/understand"
+                                hx-disabled-elt="button"
+                                onclick="removeAllLines()"
                                 class="nav-link d-flex flex-row gap-2 mx-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-charge-fill" viewBox="0 0 16 16">
                               <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"/>
