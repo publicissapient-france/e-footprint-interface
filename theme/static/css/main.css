@@ -1,11 +1,18 @@
+
+html{
+    height: 100vh !important;
+    margin: 0;
+    padding: 0;
+}
 body{
-    background-color: #F9F7FC;
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
         "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
     color: #111928;
     font-size: 0.8em;
-    height: 100vh;
+    height: 100vh !important;
+    padding: 0;
+    margin: 0;
 }
 
 .home-btn-1,
@@ -15,15 +22,15 @@ body{
 }
 
 .home-btn-1{
-    background-image: url('../images/understand-bg.svg');
+    /*background-image: url('../images/understand-bg.svg');*/
 }
 
 .home-btn-2{
-    background-image: url('../images/analyze-bg.svg');
+    /*background-image: url('../images/analyze-bg.svg');*/
 }
 
 .home-btn-3{
-    background-image: url('../images/identify-bg.svg');
+    /*background-image: url('../images/identify-bg.svg');*/
 }
 
 .home-btn-1,
@@ -32,6 +39,15 @@ body{
     background-repeat: no-repeat;
     background-position: center;
     background-size: 60%;
+}
+
+.home-img{
+    width: 175px;
+    height: 175px;
+}
+
+.F3F4F6{
+    background-color: #F3F4F6;
 }
 
 .card-hover:hover{

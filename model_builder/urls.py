@@ -33,4 +33,6 @@ urlpatterns = [
     path("ask-delete-object/<object_id>/", model_builder.views_deletion.ask_delete_object, name="ask-delete-object"),
     path("download-json/", views.download_json, name="download-json"),
     path("result-chart/", views.result_chart, name="result-chart"),
+    path("open-import-json-panel/", views.open_import_json_panel, name="open-import-json-panel"),
+    path("upload-json/", views.upload_json, name="upload-json"),
 ]
