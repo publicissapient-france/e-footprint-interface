@@ -38,8 +38,8 @@ const baseOptions = {
     maintainAspectRatio: false
 }
 
-window.optionsChartJs = {
-    timeSeriesChart: {
+window.optionsChartJs={
+    'timeSeriesChart' : {
         type: 'line',
         data: {
             labels: [],
@@ -169,6 +169,18 @@ window.optionsChartJs = {
         options: baseOptions
     }
 };
+
+function refreshFormValue(){
+    window.formValues = {
+        'timeframe_start_date': document.getElementById('timeframe_start_date'),
+        'net_growth_rate_range': document.getElementById('net_growth_rate_range'),
+        'net_growth_rate_value': document.getElementById('net_growth_rate_value'),
+        'avg_nb_usage_journey_value': document.getElementById('avg_nb_usage_journey_value'),
+        'avg_nb_usage_journey_range': document.getElementById('avg_nb_usage_journey_range'),
+        'timeframe_value': document.getElementById('timeframe_value'),
+        'timeframe_range': document.getElementById('timeframe_range')
+    }
+}
 
 function getConvertedVolume(){
     refreshFormValue();
@@ -378,4 +390,4 @@ function initChart(){
     updateTimeseriesChart();
 }
 
-document.getElementById('time-series-modal').addEventListener('shown.bs.modal', initChart);
+document.getElementById('usage-pattern-attributes-modal-timeseries').addEventListener('shown.bs.modal', initChart);

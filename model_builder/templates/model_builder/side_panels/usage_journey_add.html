@@ -1,5 +1,5 @@
 
-<form class="panel p-4 text-start"
+<form class="panel p-4 text-start" id="form-add-usage-journey"
         hx-post="/model_builder/add-new-usage-journey/"
         {% if efootprint_id_of_parent_to_link_to %}
             hx-vals='{"efootprint_id_of_parent_to_link_to": "{{ efootprint_id_of_parent_to_link_to }}"}'
@@ -12,6 +12,7 @@
         onsubmit="openLoader()"
         hx-on::after-request="closeLoader()"
       hx-disabled-elt="button"
+
 >
     <div class="form-header" id="panel-header">
         <div class="w-100 text-end">
@@ -75,7 +76,7 @@
                 </div>
         </div>
         <div class="modal-footer border border-0">
-            <button type="submit" class="btn btn-primary rounded-pill w-100">Save</button>
+            <button type="submit" id="btn-submit-form-add-usage-journey" class="btn btn-primary rounded-pill w-100">Save</button>
         </div>
     </div>
 </form>

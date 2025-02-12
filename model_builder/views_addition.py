@@ -156,6 +156,30 @@ def open_create_usage_pattern_panel(request):
         {'value': '9', 'label': 'October'},{'value': '10', 'label': 'November'},{'value': '11', 'label': 'December'}
     ]
 
+    dataDailyVariations = [
+        {'value': '0', 'label': '12am'},{ 'value': '1', 'label': '1am'},{ 'value': '2', 'label': '2am'},
+        { 'value': '3', 'label': '3am'},{'value': '4', 'label': '4am'},{ 'value': '5', 'label': '5am'},
+        { 'value': '6', 'label': '6am'},{ 'value': '7', 'label': '7am'},{'value': '8', 'label': '8am'},
+        { 'value': '9', 'label': '9am'},{ 'value': '10', 'label': '10am'},{ 'value': '11', 'label': '11am'},
+        {'value': '12', 'label': '12pm'},{ 'value': '13', 'label': '1pm'},{ 'value': '14', 'label': '2pm'},
+        { 'value': '15', 'label': '3pm'},{'value': '16', 'label': '4pm'},{ 'value': '17', 'label': '5pm'},
+        { 'value': '18', 'label': '6pm'},{ 'value': '19', 'label': '7pm'},{'value': '20', 'label': '8pm'},
+        { 'value': '21', 'label': '9pm'},{ 'value': '22', 'label': '10pm'},{ 'value': '23', 'label': '11pm'}
+    ]
+
+    dataWeeklyVariations = [
+        {'value': '0', 'label': 'Monday'},{'value': '1', 'label': 'Tuesday'},{'value': '2', 'label': 'Wednesday'},
+        {'value': '3', 'label': 'Thursday'},{'value': '4', 'label': 'Friday'},{'value': '5', 'label': 'Saturday'},
+        {'value': '6', 'label': 'Sunday'}
+    ]
+
+    dataSeasonalVariations = [
+        {'value': '0', 'label': 'January'},{'value': '1', 'label': 'February'},{'value': '2', 'label': 'March'},
+        {'value': '3', 'label': 'April'},{'value': '4', 'label': 'May'},{'value': '5', 'label': 'June'},
+        {'value': '6', 'label': 'July'},{'value': '7', 'label': 'August'},{'value': '8', 'label': 'September'},
+        {'value': '9', 'label': 'October'},{'value': '10', 'label': 'November'},{'value': '11', 'label': 'December'}
+    ]
+
     http_response = render(
         request, "model_builder/side_panels/usage_pattern_add.html", {
             "usageJourneys": model_web.usage_journeys,

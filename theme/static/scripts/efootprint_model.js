@@ -252,6 +252,18 @@ document.body.addEventListener('closePanelAfterSwap', function (event) {
     closePanel();
 });
 
-
 window.initLeaderLines = initLeaderLines;
 
+
+function dropModalDelete(){
+    let modalElement = document.getElementById('model-builder-modal');
+    let modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (modalInstance) {
+        modalInstance.hide();
+        modalElement.remove();
+    }
+    let backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) {
+        backdrop.remove();
+    }
+}

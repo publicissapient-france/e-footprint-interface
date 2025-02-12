@@ -46,6 +46,10 @@ body{
     height: 175px;
 }
 
+.navbar{
+    z-index: 101 !important;
+}
+
 .F3F4F6{
     background-color: #F3F4F6;
 }
@@ -87,8 +91,12 @@ body{
 #model-canva{
     height: 95vh !important;
     overflow: auto;
-    padding-bottom: 15vh;
     background-color: white;
+    padding-bottom: 10vh;
+}
+
+.list-object-efootprint{
+    min-height: 95vh !important;
 }
 
 .panel-result-btn{
@@ -177,6 +185,7 @@ body{
     background-color: rgba(241, 247, 253, 0.5);
 }
 
+
 .fz-0-8{
     font-size: 0.8em;
 }
@@ -247,10 +256,10 @@ body{
     overflow-y: auto;
 }
 
-#time-series-modal .accordion-button,
-#time-series-modal .accordion-header,
-#time-series-modal .accordion-button:not(.collapsed),
-#time-series-modal .accordion-button:not(.collapsed):after{
+#usage-pattern-attributes-modal-timeseries .accordion-button,
+#usage-pattern-attributes-modal-timeseries .accordion-header,
+#usage-pattern-attributes-modal-timeseries .accordion-button:not(.collapsed),
+#usage-pattern-attributes-modal-timeseries .accordion-button:not(.collapsed):after{
     background-color: #F9FAFB;
 }
 

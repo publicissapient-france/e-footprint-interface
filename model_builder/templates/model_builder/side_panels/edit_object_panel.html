@@ -18,8 +18,8 @@
                             </h5>
                         </div>
                         <div class="col-auto">
-                            <button type="button" class="btn border border-2 border-light rounded-2" aria-label="Delete"
-                                    hx-get="/model_builder/ask-delete-object/{{ object_to_edit.efootprint_id }}"
+                            <button type="button" class="btn border border-2 border-light rounded-2" aria-label="Delete" id="btn-ask-delete"
+                                    hx-get="/model_builder/ask-delete-object/{{ object_to_edit.efootprint_id }}/"
                                     hx-swap="innerHTML"
                                     hx-target="#modal-container">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">

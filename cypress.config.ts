@@ -1,11 +1,13 @@
-import { defineConfig } from 'cypress';
+const { defineConfig } = require("cypress");
 
-export default defineConfig({
-    watchForFileChanges: false,
-    viewportWidth: 1920,
+
+module.exports = defineConfig({
+  e2e: {
+    baseUrl: "http://localhost:8000/",
+    viewportWidth: 1920,   // Largeur en pixels
     viewportHeight: 1080,
-    e2e: {
-        baseUrl: 'http://localhost:8000/',
-        specPattern: 'cypress/e2e/**/*.spec.ts',
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
     },
+  },
 });

@@ -27,7 +27,7 @@ function openModalUsagePattern(attributeName) {
                             </div>
                         </div>
                         <div class="form-footer mt-5 px-3 d-grid gap-2">
-                            <button type="button" class="btn btn-primary rounded-pill w-100" id="save_time_series_btn" data-bs-dismiss="modal" onclick="checkAttributes('`+ attributeName +`')">
+                            <button type="button" class="btn btn-primary rounded-pill w-100" id="save-`+attributeName+`-attributes-btn" data-bs-dismiss="modal" onclick="checkAttributes('`+ attributeName +`')">
                                 Save
                             </button>
                         </div>
@@ -45,11 +45,21 @@ function openModalUsagePattern(attributeName) {
 function checkAttributes(usagePatternAttribute) {
     if (usagePatternAttribute === 'timeseries') {
         document.getElementById('date_hourly_usage_journey_starts').value = document.getElementById('timeframe_start_date').value;
-        document.getElementById('list_hourly_usage_journey_starts').value = window.timeseriesToSave['hourlyvariationsValues'].toString();
+        document.getElementById('list_hourly_usage_journey_starts').value = window.timeseriesToSave['hourlyVariationsValues'].toString();
     } else {
         document.getElementById(usagePatternAttribute).value = document.getElementById('form-select-' + usagePatternAttribute).value;
     }
     if (document.getElementById(usagePatternAttribute + '-icon-check').classList.contains('d-none')) {
         document.getElementById(usagePatternAttribute + '-icon-check').classList.remove('d-none');
+    }
+    let modalElement = document.getElementById('usage-pattern-attributes-modal-' + usagePatternAttribute);
+    let modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (modalInstance) {
+        modalInstance.hide();
+        modalElement.remove();
+    }
+    let backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) {
+        backdrop.remove();
     }
 }
