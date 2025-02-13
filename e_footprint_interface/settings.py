@@ -158,7 +158,7 @@ if os.getenv('DJANGO_PROD') == 'True':
 
     # SECURITY WARNING: don't run with debug turned on in production!
     # Change this to "False" when you are ready for production
-    DEBUG = True
+    DEBUG = False
 
     APPENGINE_URL = env("APPENGINE_URL", default=None)
     if APPENGINE_URL:
