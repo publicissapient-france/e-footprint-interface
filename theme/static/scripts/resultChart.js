@@ -5,7 +5,7 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
             labels: ["0", "y1", "y2", "y3", "y4", "y5"],
             datasets: [
             {
-                label: "Server usage",
+                label: "Server and storage usage",
                 data: [0, 0.02, 0.04, 0.06, 0.08, 0.1],
                 backgroundColor: "#C6FFF9",
                 borderWidth: 1,
@@ -26,7 +26,7 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
                 fill: true,
             },
             {
-                label: "Servers fabrication",
+                label: "Server and storage fabrication",
                 data: [0, 0.01, 0.02, 0.03, 0.04, 0.05],
                 backgroundColor: "#DEECF8",
                 borderWidth: 1,
@@ -45,8 +45,8 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
     labels: ["y1", "y2", "y3", "y4", "y5"],
     datasets: [
         {
-            label: "Server usage",
-            data: emissions['Servers_energy']['values'],
+            label: "Server and storage usage",
+            data: emissions['Servers_and_storage_energy']['values'],
             backgroundColor: "#C6FFF9",
         },
         {
@@ -60,8 +60,8 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
             backgroundColor: "#00A3A1",
         },
         {
-            label: "Servers fabrication",
-            data: emissions['Servers_fabrication']['values'],
+            label: "Server and storage fabrication",
+            data: emissions['Servers_and_storage_fabrication']['values'],
             backgroundColor: "#DEECF8",
         },
         {
@@ -123,7 +123,7 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
                 },
                 title: {
                     display: true,
-                    text: 'Total Kg of CO2 emissions',
+                    text: 'Total CO2 emissions in kg',
                     color: "rgb(107,114,128)"
                 },
                 tooltip: {
@@ -145,7 +145,7 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
                     stacked: true,
                     title: {
                         display: true,
-                        text: "Total Kg of CO2 emissions",
+                        text: "Total CO2 emissions in kg",
                         color: "rgb(107,114,128)"
                     },
                 },
@@ -154,25 +154,25 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
     }
     }
 
-    let dataNameKPI = ['Servers_energy', 'Devices_energy', 'Network_energy', 'Servers_fabrication', 'Devices_fabrication'];
+    let dataNameKPI = ['Servers_and_storage_energy', 'Devices_energy', 'Network_energy', 'Servers_and_storage_fabrication', 'Devices_fabrication'];
     let dataKPI = {
-        'Servers_energy' : [],
+        'Servers_and_storage_energy' : [],
         'Devices_energy' : [],
         'Network_energy' : [],
-        'Servers_fabrication' : [],
+        'Servers_and_storage_fabrication' : [],
         'Devices_fabrication' : []};
-    let startDate = luxon.DateTime.fromFormat(emissions['Servers_energy']['start_date'], "yyyy-MM-dd HH:mm:ss");
-    let nbElement = emissions['Servers_energy']['values'].length
+    let startDate = luxon.DateTime.fromFormat(emissions['Servers_and_storage_energy']['start_date'], "yyyy-MM-dd HH:mm:ss");
+    let nbElement = emissions['Servers_and_storage_energy']['values'].length
     let endDate = startDate.plus(luxon.Duration.fromObject({ hours: nbElement }));
     let periodToAppliedFrame = luxon.Duration.fromObject({ [periodToApplied]: 1 });
     let labels = [];
     let index = 0;
 
     let cumsumValues = {
-        'Servers_energy': 0,
+        'Servers_and_storage_energy': 0,
         'Devices_energy': 0,
         'Network_energy': 0,
-        'Servers_fabrication': 0,
+        'Servers_and_storage_fabrication': 0,
         'Devices_fabrication': 0
     };
 
@@ -209,7 +209,7 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
         window.charts[chart] = new Chart(area_ctx, config[chart]);
     }else{
         dataNameKPI.forEach(name => {
-            window.charts[chart].data.datasets[dataNameKPI.indexOf(name)].label = "Total Kg of CO2 emissions";
+            window.charts[chart].data.datasets[dataNameKPI.indexOf(name)].label = "Total CO2 emissions in kg";
             window.charts[chart].data.datasets[dataNameKPI.indexOf(name)].data = dataKPI[name];
             window.charts[chart].data.labels = labels;
         });

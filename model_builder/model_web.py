@@ -139,11 +139,15 @@ class ModelWeb:
     @property
     def system_emissions(self):
         emissions = {}
-        for energy_row in self.system.total_energy_footprints:
-            emissions[f"{energy_row}_energy"] = self.system.total_energy_footprints[energy_row].to_json()
+        energy_footprints = self.system.total_energy_footprints
+        emissions["Servers_and_storage_energy"] = (energy_footprints["Servers"] + energy_footprints["Storage"]
+                                                   ).to_json()
+        emissions["Devices_energy"] = energy_footprints["Devices"].to_json()
+        emissions["Network_energy"] = energy_footprints["Network"].to_json()
 
-        for fabrication_row in self.system.total_fabrication_footprints:
-            emissions[f"{fabrication_row}_fabrication"] = self.system.total_energy_footprints[
-                fabrication_row].to_json()
+        fabrication_footprints = self.system.total_fabrication_footprints
+        emissions["Servers_and_storage_fabrication"] = (fabrication_footprints["Servers"] +
+                                                        fabrication_footprints["Storage"]).to_json()
+        emissions["Devices_fabrication"] = fabrication_footprints["Devices"].to_json()
 
         return emissions
