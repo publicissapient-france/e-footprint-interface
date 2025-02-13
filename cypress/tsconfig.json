@@ -8,6 +8,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["e2e/**/*.ts", "support/**/*.ts"],
+  "include": ["e2e/**/*.ts", "support/**/*.ts", "cypress/support/component.ts"],
   "exclude": ["node_modules"]
 }

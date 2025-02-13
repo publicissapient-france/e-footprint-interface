@@ -15,6 +15,10 @@ body{
     margin: 0;
 }
 
+#btn-start-modeling-my-service{
+    font-size: 16px;
+}
+
 .home-btn-1,
 .home-btn-2,
 .home-btn-3 {

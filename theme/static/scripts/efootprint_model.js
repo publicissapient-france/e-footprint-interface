@@ -255,8 +255,8 @@ document.body.addEventListener('closePanelAfterSwap', function (event) {
 window.initLeaderLines = initLeaderLines;
 
 
-function dropModalDelete(){
-    let modalElement = document.getElementById('model-builder-modal');
+function dropModal(id){
+    let modalElement = document.getElementById(id);
     let modalInstance = bootstrap.Modal.getInstance(modalElement);
     if (modalInstance) {
         modalInstance.hide();
@@ -266,4 +266,8 @@ function dropModalDelete(){
     if (backdrop) {
         backdrop.remove();
     }
+}
+
+function dropModalUnderstand(){
+    document.getElementById("open-understand-modal").focus();
 }
