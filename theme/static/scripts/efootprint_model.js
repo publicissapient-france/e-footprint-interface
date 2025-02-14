@@ -254,6 +254,8 @@ document.body.addEventListener('closePanelAfterSwap', function (event) {
     closePanel();
 });
 
+
+
 window.initLeaderLines = initLeaderLines;
 
 // MODAL
@@ -267,7 +269,6 @@ function openLoader() {
     let modalElement = document.getElementById("loader-modal");
     let modal = new bootstrap.Modal(modalElement);
     modal.show();
-
 }
 
 function closeLoader() {
@@ -276,7 +277,7 @@ function closeLoader() {
     if (modal) {
         modal.hide();
     }
-     document.getElementById("link-to-home").focus();
+    document.getElementById("link-to-home").focus();
 }
 
 function dropModal(id){
@@ -296,6 +297,10 @@ function dropModalUnderstand(){
     document.getElementById("open-understand-modal").focus();
 }
 
+document.body.addEventListener('closeModalLoader', function (event) {
+    closeLoader()
+});
+
 function movePanel(action){
     let modelCanva = document.getElementById("model-canva");
     let formPanel = document.getElementById("formPanel");
@@ -308,6 +313,7 @@ function movePanel(action){
         modelCanva.classList.replace("col-9", "col-12");
         formPanel.classList.replace("col-3", "d-none");
         window.panel = 0;
+        formPanel.innerHTML = '';
     }
     removeAllLines();
     initLeaderLines();

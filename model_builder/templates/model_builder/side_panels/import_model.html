@@ -1,11 +1,11 @@
 <form class="container-fluid panel text-start p-4"
-      hx-post="{% url 'upload-json' %}"
-      hx-disabled-elt="button"
-      enctype="multipart/form-data"
-      hx-on::before-request="openLoader()"
-      hx-on::after-request="movePanel('close');closeLoader()"
-      hx-swap="innerHTML"
-      hx-target="#main-content-block"
+        hx-post="{% url 'upload-json' %}"
+        hx-disabled-elt="button"
+        enctype="multipart/form-data"
+        hx-swap="innerHTML"
+        hx-target="#main-content-block"
+        hx-on::before-request="openLoader();movePanel('close');"
+        hx-on::after-request="closeLoader()"
 >
     {% csrf_token %}
     <div class="form-header" id="panel-header">

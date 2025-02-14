@@ -3,7 +3,7 @@
         hx-post="/model_builder/add-new-usage-journey-step/{{ efootprint_id_of_parent_to_link_to }}/"
         hx-swap="none"
         hx-on::before-request="openLoader()"
-      hx-on::after-request="movePanel('close');closeLoader()"
+        hx-on::after-request="movePanel('close');closeLoader()"
       hx-disabled-elt="button"
 >
     <div class="form-header" id="panel-header">

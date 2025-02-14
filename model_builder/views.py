@@ -68,7 +68,10 @@ def upload_json(request):
 
     http_response = render(request, "model_builder/model-builder-main.html",
                   context={"import_error_message": import_error_message})
-    http_response["HX-Trigger-After-Swap"] = "alertImportError"
+    http_response["HX-Trigger-After-Swap"] = json.dumps({
+        "alertImportError",
+        "closeModalLoader"
+    })
     return http_response
 
 def result_chart(request):

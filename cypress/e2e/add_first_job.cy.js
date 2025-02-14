@@ -14,6 +14,7 @@ describe("Test - Import JSON", () => {
         let fileTest = 'cypress/fixtures/efootprint-model-no-job.json'
         cy.get('input[type="file"]').selectFile(fileTest);
         cy.get('button[type="submit"]').click();
+
         cy.get('button[data-bs-target^="#flush-"][data-bs-target$="'+ujsOne.replaceAll(' ', '-')+'"]').click();
         cy.get('button[data-bs-target^="#flush-"][data-bs-target$="'+ujsTwo.replaceAll(' ', '-')+'"]').click();
 
@@ -28,9 +29,6 @@ describe("Test - Import JSON", () => {
         cy.get('#service').select(service);
         cy.get('#formPanel form').find('button[type="submit"]').click();
 
-        //check if the newest job is before the add button, get he div starting with 'flush-id-' and ending with the
-        // ujstep
-        // name
         cy.get("button[id^='button-id-'][id$='"+jobOne.replaceAll(' ', '-')+"']").should('exist');
         cy.get('button[hx-get^="/model_builder/open_create_job_panel/"][hx-vals*="'+ujsOne.replaceAll(' ', '-')+'"]').should('exist');
 

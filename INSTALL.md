@@ -70,7 +70,18 @@ poetry run python manage.py runserver
 poetry run python manage.py test
 ```
 
-## Javascript tests
+## E2E tests
+
+To run all front end tests in console without opening the browser
 ```
-npm run test:e2e
+npx cypress run --e2e
+```
+
+To check the tests in the browser, run this command
+```
+npx cypress open
+```
+Select E2E Testing in the Cypress window that opens and choose the browser you want to run the tests in.
+Then click on the test file you want to run i nthe specs tabs
+
 ```
