@@ -1,5 +1,7 @@
 // LEADERLINE
 
+window.panel = 0
+
 window.dictLeaderLineOption = {
     'object-to-object': {
         color: "#9CA3AF",
@@ -254,6 +256,28 @@ document.body.addEventListener('closePanelAfterSwap', function (event) {
 
 window.initLeaderLines = initLeaderLines;
 
+// MODAL
+document.body.addEventListener("openModalDialog", function(event) {
+    let modalElement = document.getElementById("model-builder-modal");
+    let modal = new bootstrap.Modal(modalElement);
+    modal.show();
+});
+
+function openLoader() {
+    let modalElement = document.getElementById("loader-modal");
+    let modal = new bootstrap.Modal(modalElement);
+    modal.show();
+
+}
+
+function closeLoader() {
+    let modalElement = document.getElementById("loader-modal");
+    let modal = bootstrap.Modal.getInstance(modalElement);
+    if (modal) {
+        modal.hide();
+    }
+     document.getElementById("link-to-home").focus();
+}
 
 function dropModal(id){
     let modalElement = document.getElementById(id);
@@ -270,4 +294,26 @@ function dropModal(id){
 
 function dropModalUnderstand(){
     document.getElementById("open-understand-modal").focus();
+}
+
+function movePanel(action){
+    let modelCanva = document.getElementById("model-canva");
+    let formPanel = document.getElementById("formPanel");
+    if (window.panel === 0 && action === 'open'){
+        modelCanva.classList.replace("col-12", "col-9");
+        formPanel.classList.replace("d-none", "col-3");
+        window.panel = 1;
+    }
+    if(window.panel === 1 && action === 'close'){
+        modelCanva.classList.replace("col-9", "col-12");
+        formPanel.classList.replace("col-3", "d-none");
+        window.panel = 0;
+    }
+    removeAllLines();
+    initLeaderLines();
+}
+
+function closePanel() {
+    const formPanel = document.getElementById('formPanel');
+    formPanel.innerHTML = '';
 }

@@ -21,11 +21,6 @@ document.addEventListener("DOMContentLoaded", function () {
 // ------------------------------------------------------------
 // User interaction
 
-function closePanel() {
-    const formPanel = document.getElementById('formPanel');
-    formPanel.innerHTML = '';
-}
-
 function reverseIconAccordion(objectId){
     let icon = document.getElementById('icon_accordion_'+objectId);
     if (icon.classList.contains('chevron-rotate')) {
@@ -65,28 +60,4 @@ window.addEventListener("load", function () {
     }, 100);
 });
 
-// MODAL
-document.body.addEventListener("openModalDialog", function(event) {
-    let modalElement = document.getElementById("model-builder-modal");
-    let modal = new bootstrap.Modal(modalElement);
-    modal.show();
-});
 
-function openLoader() {
-    /*
-    let modalElement = document.getElementById("loader-modal");
-    let modal = new bootstrap.Modal(modalElement);
-    modal.show();
-     */
-}
-
-function closeLoader() {
-    /*
-    let modalElement = document.getElementById("loader-modal");
-    let modal = bootstrap.Modal.getInstance(modalElement);
-    if (modal) {
-        modal.hide();
-    }
-
-     */
-}

@@ -15,6 +15,10 @@ body{
     margin: 0;
 }
 
+.transition-width {
+    transition: width 0.5s ease-in-out;
+}
+
 #btn-start-modeling-my-service{
     font-size: 16px;
 }

@@ -2,7 +2,7 @@
 {% include 'model_builder/navbar.html' %}
 <div class="container-fluid p-0" id="model-builder-page">
     <div class="row g-0">
-        <div class="col-9" id="model-canva">
+        <div class="col-12" id="model-canva">
             <div class="row my-3 mx-0 px-2 gx-3 ">
                 <div class="col-4">
                     <div class="rounded-4 p-4 list-object-efootprint" id="usage-pattern-container">
@@ -17,8 +17,8 @@
                                 hx-target="#formPanel"
                                 hx-trigger="click"
                                 hx-swap="innerHTML"
-                                hx-on::after-request="closeLoader()"
-                                onclick="openLoader()"
+                                hx-on::before-request="openLoader();movePanel('open')"
+                                hx-on::after-request="updateLines();closeLoader()"
                                 hx-disabled-elt="button"
                                 >
                                 <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-3"  width="14px" height="14px" alt="add icon" />
@@ -46,7 +46,8 @@
                                         hx-target="#formPanel"
                                         hx-trigger="click"
                                         hx-swap="innerHTML"
-                                        hx-on::after-request="closeLoader()"
+                                        hx-on::before-request="openLoader();movePanel('open')"
+                                        hx-on::after-request="updateLines();closeLoader()"
                                         onclick="openLoader()"
                                         hx-disabled-elt="button"
                                 >
@@ -78,7 +79,8 @@
                                 hx-target="#formPanel"
                                 hx-trigger="click"
                                 hx-swap="innerHTML"
-                                hx-on::after-request="closeLoader()"
+                                hx-on::before-request="openLoader();movePanel('open')"
+                                hx-on::after-request="updateLines();closeLoader()"
                                 onclick="openLoader()"
                                 hx-disabled-elt="button"
                                 >
@@ -97,7 +99,7 @@
             </div>
         </div>
     </div>
-    <div class="col-3" id="formPanel"></div>
+    <div class="col-3 d-none transition-width" id="formPanel"></div>
 </div>
 
 <div id="panel-result-btn" class="panel-result-btn position-fixed bottom-0" style="z-index: 1000;">

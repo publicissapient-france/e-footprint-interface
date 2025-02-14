@@ -6,6 +6,8 @@
     hx-trigger="click"
     hx-swap="innerHTML"
     hx-disabled-elt="button"
+    hx-on::before-request="openLoader();movePanel('open')"
+    hx-on::after-request="updateLines();closeLoader()"
 >
     {{ service.name }}
 </button>

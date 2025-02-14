@@ -17,8 +17,8 @@
                         hx-target="#formPanel"
                         hx-trigger="click"
                         hx-swap="innerHTML"
-                        hx-on::after-request="closeLoader()"
-                        onclick="openLoader()"
+                        hx-on::before-request="openLoader();movePanel('open')"
+                        hx-on::after-request="updateLines();closeLoader()"
                         hx-disabled-elt="button"
                 >
                     {{ server.name}}
@@ -37,8 +37,8 @@
                             hx-target="#formPanel"
                             hx-trigger="click"
                             hx-swap="innerHTML"
-                            hx-on::after-request="closeLoader()"
-                            onclick="openLoader()"
+                            hx-on::before-request="openLoader();movePanel('open')"
+                            hx-on::after-request="updateLines();closeLoader()"
                             hx-disabled-elt="button"
                     >
                         <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-2"  width="16px" height="16px" alt="add icon" />

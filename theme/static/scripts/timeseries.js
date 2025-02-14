@@ -14,13 +14,13 @@ window.charts = {
 
 window.timeseriesToSave = [];
 
-const baseDataset = {
+window.baseDataset = {
     label: 'User journeys',
     borderColor: '#017E7E',
     backgroundColor: '#017E7E'
 };
 
-const basePlugins = {
+window.basePlugins = {
     tooltip: {
         mode: 'index',
         intersect: false
@@ -28,12 +28,12 @@ const basePlugins = {
     legend: { display: false }
 };
 
-const baseOptions = {
+window.baseOptions = {
     scales: {
         x: { type: 'category', title: { display: false } },
         y: { display: false, title: { display: false } }
     },
-    plugins: basePlugins,
+    plugins: window.basePlugins,
     responsive: true,
     maintainAspectRatio: false
 }
@@ -44,7 +44,7 @@ window.optionsChartJs={
         data: {
             labels: [],
             datasets: [{
-                ...baseDataset,
+                ...window.baseDataset,
                 data: [],
                 fill: false,
                 tension: 0.5
@@ -97,7 +97,7 @@ window.optionsChartJs={
         data: {
             labels: [],
             datasets: [{
-                ...baseDataset,
+                ...window.baseDataset,
                 data: [],
                 fill: {
                     target: 'start',
@@ -124,7 +124,7 @@ window.optionsChartJs={
                     grid: { display: false }
                 }
             },
-            plugins: basePlugins,
+            plugins: window.basePlugins,
             responsive: true,
             maintainAspectRatio: false
         }
@@ -134,39 +134,39 @@ window.optionsChartJs={
         data: {
             labels: Array.from({ length: 24 }, (_, i) => `${i}`),
             datasets: [{
-                ...baseDataset,
+                ...window.baseDataset,
                 data: Array(24).fill(Math.ceil(getConvertedVolume() / 24)).map(value => value.toFixed(2)),
                 fill: true,
                 tension: 0
             }]
         },
-        options: baseOptions
+        options: window.baseOptions
     },
     weeklyVariationChart: {
         type: 'bar',
         data: {
             labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
             datasets: [{
-                ...baseDataset,
+                ...window.baseDataset,
                 data: Array(7).fill(Math.ceil(getConvertedVolume())).map(value => value.toFixed(2)),
                 fill: true,
                 tension: 0
             }]
         },
-        options: baseOptions
+        options: window.baseOptions
     },
     seasonalVariationChart: {
         type: 'bar',
         data: {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             datasets: [{
-                ...baseDataset,
+                ...window.baseDataset,
                 data: [],
                 fill: true,
                 tension: 0
             }]
         },
-        options: baseOptions
+        options: window.baseOptions
     }
 };
 

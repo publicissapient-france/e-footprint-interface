@@ -17,8 +17,8 @@
                         hx-target="#formPanel"
                         hx-trigger="click"
                         hx-swap="innerHTML"
-                        hx-on::after-request="closeLoader()"
-                        onclick="openLoader()"
+                        hx-on::before-request="openLoader();movePanel('open')"
+                        hx-on::after-request="updateLines();closeLoader()"
                         hx-disabled-elt="button"
                 >
                     {{ usage_journey.name }}
@@ -40,8 +40,8 @@
                                     hx-trigger="click"
                                     hx-swap="innerHTML"
                                     hx-vals='{"efootprint_id_of_parent_to_link_to": "{{ usage_journey.efootprint_id }}"}'
-                                    hx-on::after-request="closeLoader()"
-                                    onclick="openLoader()"
+                                    hx-on::before-request="openLoader();movePanel('open')"
+                                    hx-on::after-request="updateLines();closeLoader()"
                                     hx-disabled-elt="button"
                             >
                                 Add usage journey step
