@@ -21,10 +21,10 @@
                         </p>
                          <div class="row align-items-center mb-2" id="form-result-panel">
                             <div class="col-auto">
-                                <label for="result_period_analysis" class="form-label w-100 text-start fz-0-8">Time period</label>
+                                <label for="results_temporal_granularity" class="form-label w-100 text-start fz-0-8">Time granularity</label>
                                 <select class="form-select light-select fz-0-8 h-30"
-                                        id="result_period_analysis"
-                                        name="result_period_analysis"
+                                        id="results_temporal_granularity"
+                                        name="results_temporal_granularity"
                                         onchange="drawAreaResultChart()">
                                     <option value="day">Day</option>
                                     <option value="week">Week</option>
@@ -33,32 +33,21 @@
                                 </select>
                             </div>
                             <div class="col-auto">
-                                <label for="result_kpi_analysis" class="form-label w-100 text-start fz-0-8">Calculation</label>
-                                <select class="form-select light-select fz-0-8 h-30"
-                                        id="result_kpi_analysis"
-                                        name="result_kpi_analysis"
-                                        onchange="drawAreaResultChart()">
-                                    <option value="avg">Average emissions over period</option>
-                                    <option value="sum">Emissions over period</option>
-                                    <option value="cumsum" selected>Cumulative emissions</option>
-                                </select>
-                            </div>
-                            <div class="col-auto">
                                 <button class="btn btn-white border border-1 border-body-tertiary rounded-pill fz-0-8"
                                     id="reset_zoom"
-                                    onclick="charts['stackedAreaChart'].resetZoom();charts['barStackedChart'].resetZoom();">
+                                    onclick="charts['lineChart'].resetZoom();charts['barStackedChart'].resetZoom();">
                                     Reset zoom
                                 </button>
                             </div>
                         </div>
-                        <canvas id="stackedAreaChart"></canvas>
+                        <canvas id="lineChart"></canvas>
                     </div>
                     <div class="col-12 mt-3 shadow rounded-2 p-4">
                         <p class="h5 ">
                             Total CO2 emissions over time
                         </p>
 
-                        <canvas id="stackedBarChart"></canvas>
+                        <canvas id="barChart"></canvas>
                         </div>
                 </div>
             </div>
@@ -70,8 +59,8 @@
 </div>
 <script>
     window.charts = {
-        'stackedAreaChart' : null,
-        'stackedBarChart' : null
+        'lineChart' : null,
+        'barChart' : null
     };
 
     window.emissions = {{ model_web.system_emissions|safe }}

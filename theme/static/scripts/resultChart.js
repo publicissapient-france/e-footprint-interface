@@ -1,120 +1,8 @@
-function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
-
-    let data = {
-        'stackedAreaChart' : {
-            labels: ["0", "y1", "y2", "y3", "y4", "y5"],
-            datasets: [
-            {
-                label: "Server and storage usage",
-                data: [0, 0.02, 0.04, 0.06, 0.08, 0.1],
-                backgroundColor: "#C6FFF9",
-                borderWidth: 1,
-                fill: true,
-            },
-            {
-                label: "Devices usage",
-                data: [0, 0.03, 0.06, 0.09, 0.12, 0.15],
-                backgroundColor: "#44E0D9",
-                borderWidth: 1,
-                fill: true,
-            },
-            {
-                label: "Network usage",
-                data: [0, 0.05, 0.1, 0.15, 0.2, 0.25],
-                backgroundColor: "#00A3A1",
-                borderWidth: 1,
-                fill: true,
-            },
-            {
-                label: "Server and storage fabrication",
-                data: [0, 0.01, 0.02, 0.03, 0.04, 0.05],
-                backgroundColor: "#DEECF8",
-                borderWidth: 1,
-                fill: true,
-            },
-            {
-                label: "Devices fabrication",
-                data: [0, 0.015, 0.03, 0.045, 0.06, 0.075],
-                backgroundColor: "#A3CDED",
-                borderWidth: 1,
-                fill: true,
-            },
-        ],
-        },
-        'stackedBarChart' : {
-    labels: ["y1", "y2", "y3", "y4", "y5"],
-    datasets: [
-        {
-            label: "Server and storage usage",
-            data: emissions['Servers_and_storage_energy']['values'],
-            backgroundColor: "#C6FFF9",
-        },
-        {
-            label: "Devices usage",
-            data: emissions['Devices_energy']['values'],
-            backgroundColor: "#44E0D9",
-        },
-        {
-            label: "Network usage",
-            data: emissions['Network_energy']['values'],
-            backgroundColor: "#00A3A1",
-        },
-        {
-            label: "Server and storage fabrication",
-            data: emissions['Servers_and_storage_fabrication']['values'],
-            backgroundColor: "#DEECF8",
-        },
-        {
-            label: "Devices fabrication",
-            data: emissions['Devices_fabrication']['values'],
-            backgroundColor: "#A3CDED",
-        },
-    ],
-}
-}
-
+function updateAreaResultChart(chartType, resultsTemporalGranularity){
     let config = {
-        'stackedAreaChart' : {
         chart:{
             height: '400px',
         },
-        type: "line",
-        data: data['stackedAreaChart'],
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: "bottom",
-                },
-                tooltip: {
-                    mode: "index",
-                    intersect: false,
-                },
-            },
-            scales: {
-                x: {
-                    stacked: true,
-                    title: {
-                        display: true,
-                        text: "Years",
-                    },
-                },
-                y: {
-                    stacked: true,
-                    title: {
-                        display: true,
-                        text: "Total Kg of CO2 emissions",
-                    },
-                },
-            },
-        },
-    },
-        'stackedBarChart' : {
-        chart:{
-            height: '400px',
-        },
-        type: "bar",
-        data: data['stackedBarChart'],
         options: {
             responsive: true,
             plugins: {
@@ -123,7 +11,7 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
                 },
                 title: {
                     display: true,
-                    text: 'Total CO2 emissions in kg',
+                    text: 'Total CO2 emissions in metric tons',
                     color: "rgb(107,114,128)"
                 },
                 tooltip: {
@@ -145,80 +33,108 @@ function updateAreaResultChart(chart, periodToApplied, kpiToCalculate){
                     stacked: true,
                     title: {
                         display: true,
-                        text: "Total CO2 emissions in kg",
+                        text: "Total CO2 emissions in metric tons",
                         color: "rgb(107,114,128)"
                     },
                 },
             },
         },
     }
+
+    let dataByHardwareType = {
+        'Servers_and_storage_energy': {
+            label: "Servers and storage usage",
+            backgroundColor: "#C6FFF9",
+        },
+        'Devices_energy': {
+            label: "Devices usage",
+            backgroundColor: "#44E0D9",
+        },
+        'Network_energy': {
+            label: "Network usage",
+            backgroundColor: "#00A3A1",
+        },
+        'Servers_and_storage_fabrication': {
+            label: "Servers and storage fabrication",
+            backgroundColor: "#DEECF8",
+        },
+        'Devices_fabrication': {
+            label: "Devices fabrication",
+            backgroundColor: "#A3CDED",
+        }
     }
 
-    let dataNameKPI = ['Servers_and_storage_energy', 'Devices_energy', 'Network_energy', 'Servers_and_storage_fabrication', 'Devices_fabrication'];
-    let dataKPI = {
-        'Servers_and_storage_energy' : [],
-        'Devices_energy' : [],
-        'Network_energy' : [],
-        'Servers_and_storage_fabrication' : [],
-        'Devices_fabrication' : []};
+    for (const hardwareType of Object.keys(dataByHardwareType)) {
+        if (chartType === "line") {
+            dataByHardwareType[hardwareType]["borderWidth"] = 1;
+            dataByHardwareType[hardwareType]["fill"] = true;
+            dataByHardwareType[hardwareType]["data"] = [0];
+        }else {
+            dataByHardwareType[hardwareType]["data"] = [];
+        }
+    }
+
     let startDate = luxon.DateTime.fromFormat(emissions['Servers_and_storage_energy']['start_date'], "yyyy-MM-dd HH:mm:ss");
-    let nbElement = emissions['Servers_and_storage_energy']['values'].length
-    let endDate = startDate.plus(luxon.Duration.fromObject({ hours: nbElement }));
-    let periodToAppliedFrame = luxon.Duration.fromObject({ [periodToApplied]: 1 });
+    let nbElements = emissions['Servers_and_storage_energy']['values'].length
+    let endDate = startDate.plus(luxon.Duration.fromObject({ hours: nbElements }));
+    let resultsTemporalGranularityDuration = luxon.Duration.fromObject({ [resultsTemporalGranularity]: 1 });
     let labels = [];
-    let index = 0;
-
-    let cumsumValues = {
-        'Servers_and_storage_energy': 0,
-        'Devices_energy': 0,
-        'Network_energy': 0,
-        'Servers_and_storage_fabrication': 0,
-        'Devices_fabrication': 0
-    };
-
-    while (startDate < endDate){
-        let nextDate = startDate.plus(periodToAppliedFrame);
+    let rawValuesIndex = 0;
+    let computedValuesIndex = 0;
+    if (chartType === "line") {
         labels.push(startDate.toISODate());
-        let nbHours = Math.min(nextDate.diff(startDate, 'hours').hours, nbElement - index);
-        let limitIndex = index + nbHours;
-        dataNameKPI.forEach(name => {
-            let value_kpi = 0;
-            for (let i = index; i < limitIndex; i++){
-                value_kpi += emissions[name]['values'][i];
+        computedValuesIndex += 1;
+    }
+
+    while (startDate.plus(resultsTemporalGranularityDuration) <= endDate){
+        let nextDate = startDate.plus(resultsTemporalGranularityDuration);
+        let nbHours = nextDate.diff(startDate, 'hours').hours;
+        let limitIndex = rawValuesIndex + nbHours;
+        for (const hardwareType of Object.keys(dataByHardwareType)) {
+            let sumOverPeriod = 0;
+            for (let i = rawValuesIndex; i < limitIndex; i++){
+                if (i < emissions[hardwareType]['values'].length){
+                    sumOverPeriod += emissions[hardwareType]['values'][i];
+                }
             }
-            if(kpiToCalculate === 'avg'){
-                dataKPI[name].push(value_kpi/nbHours);
-            }else if(kpiToCalculate === 'sum'){
-                dataKPI[name].push(value_kpi);
+            // Convert to metric tons
+            sumOverPeriod = sumOverPeriod / 1000;
+            if (chartType === "line") {
+                let previousCumulativeValue = dataByHardwareType[hardwareType]["data"][computedValuesIndex - 1];
+                dataByHardwareType[hardwareType]["data"].push(sumOverPeriod + previousCumulativeValue);
             }else{
-                cumsumValues[name] += value_kpi;
-                dataKPI[name].push(cumsumValues[name]);
+                dataByHardwareType[hardwareType]["data"].push(sumOverPeriod);
             }
-        });
-        index += nbHours;
+        }
+        if (chartType === "line") {
+            labels.push(nextDate.toISODate());
+        }else{
+            labels.push(startDate.toISODate() + " to " + nextDate.toISODate());
+        }
+        rawValuesIndex += nbHours;
+        computedValuesIndex += 1;
         startDate = nextDate;
     }
 
-    dataNameKPI.forEach(name => {
-        data[chart].datasets[dataNameKPI.indexOf(name)].data = dataKPI[name];
-    });
-    data[chart].labels = labels;
-    let area_ctx = document.getElementById(chart).getContext("2d");
-    if(window.charts[chart] == null){
+    let chartData = {labels: labels, datasets: []}
 
-        window.charts[chart] = new Chart(area_ctx, config[chart]);
+    for (const hardwareType of Object.keys(dataByHardwareType)) {
+        chartData["datasets"].push(dataByHardwareType[hardwareType]);
+    }
+
+    config["data"] = chartData;
+    config["type"] = chartType;
+
+    let area_ctx = document.getElementById(chartType + "Chart").getContext("2d");
+    if(window.charts[chartType] == null){
+        window.charts[chartType] = new Chart(area_ctx, config);
     }else{
-        dataNameKPI.forEach(name => {
-            window.charts[chart].data.datasets[dataNameKPI.indexOf(name)].label = "Total CO2 emissions in kg";
-            window.charts[chart].data.datasets[dataNameKPI.indexOf(name)].data = dataKPI[name];
-            window.charts[chart].data.labels = labels;
-        });
-        window.charts[chart].update();
+        window.charts[chartType].data = chartData;
+        window.charts[chartType].update();
     }
 }
 
 function drawAreaResultChart(){
-    let periodToApplied = document.getElementById('result_period_analysis').value;
-    let kpiToCalculate = document.getElementById('result_kpi_analysis').value;
-    updateAreaResultChart('stackedAreaChart', periodToApplied, kpiToCalculate);
+    let resultsTemporalGranularity = document.getElementById('results_temporal_granularity').value;
+    updateAreaResultChart('line', resultsTemporalGranularity);
 }
