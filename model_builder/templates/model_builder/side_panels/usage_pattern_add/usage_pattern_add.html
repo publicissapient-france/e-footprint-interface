@@ -1,0 +1,176 @@
+{% load static %}
+<form class="container-fluid panel text-start"
+        hx-post="/model_builder/add-new-usage-pattern/"
+        hx-target="#up-list"
+        hx-swap="beforeend"
+        onsubmit="openLoader()"
+        hx-on::after-request="closeLoader()"
+      hx-disabled-elt="button"
+>
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <input type="hidden" name="devices" id="devices" value="">
+    <input type="hidden" name="network" id="network" value="">
+    <input type="hidden" name="country" id="country" value="">
+    <input type="hidden" name="usage_journey" id="usage-journey" value="">
+    <input type="hidden" name="date_hourly_usage_journey_starts" id="date_hourly_usage_journey_starts" value="">
+    <input type="hidden" name="list_hourly_usage_journey_starts" id="list_hourly_usage_journey_starts" value="">
+    <div class="text-end">
+        <button type="button" class="btn btn-white" aria-label="Close"
+                onclick="closePanel()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+              <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708 .708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+            </svg>
+        </button>
+    </div>
+    <div class="form-header p-1" id="panel-header">
+        <h5 id="formModalLabel" class="mt-4">
+            <b>Add new usage pattern</b>
+        </h5>
+    </div>
+    <div class="form-body p-1" id="panel-body">
+        <div class="row text-start">
+            <div class="col-12 mt-3 mb-5">
+                <label for="name" class="form-label w-100 text-start">Name</label>
+                <input type="text" class="form-control p-2" id="name" name="name" placeholder="New usage pattern" required>
+            </div>
+            <div class="col-12">
+                <p class="mt-4">
+                    Create a new usage pattern by defining its device mix, network mix, country mix, usage over time, and linking it to a usage journey.
+                </p>
+            </div>
+            <div class="col-10 offset-1 mt-2">
+                <div class="accordion" id="accordionUsagePatternAttributes">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-usage-pattern-attributes" aria-expanded="true" aria-controls="collapse-usage-pattern-attributes">
+                                Usages pattern attributes
+                            </button>
+                        </h2>
+                        <div id="collapse-usage-pattern-attributes" class="accordion-collapse collapse show">
+                            <div class="accordion-body p-0">
+                                <div class="row p-2 g-0 align-items-center border border-end-0 border-start-0 border-top-0 border-bottom-1 border-body-tertiary">
+                                    <div class="col-2 text-center">
+                                        <div id="devices-icon-check" class="d-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                              <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        Device
+                                    </div>
+                                    <div class="col-5 text-end">
+                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" onclick="openModalUsagePattern('devices')">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row p-2 g-0 align-items-center border border-end-0 border-start-0 border-top-0 border-bottom-1 border-body-tertiary">
+                                    <div class="col-2 text-center">
+                                        <div id="network-icon-check" class="d-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                              <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        Network
+                                    </div>
+                                    <div class="col-5 text-end">
+                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" onclick="openModalUsagePattern('network')">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row p-2 g-0 align-items-center border border-end-0 border-start-0 border-top-0 border-bottom-1 border-body-tertiary">
+                                    <div class="col-2 text-center">
+                                        <div id="country-icon-check" class="d-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                              <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        Country
+                                    </div>
+                                    <div class="col-5 text-end">
+                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" onclick="openModalUsagePattern('country')">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row p-2 g-0 align-items-center border border-end-0 border-start-0 border-top-0 border-bottom-1 border-body-tertiary">
+                                    <div class="col-2 text-center">
+                                        <div id="usage-journey-icon-check" class="d-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                              <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        Usage journey
+                                    </div>
+                                    <div class="col-5 text-end">
+                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" onclick="openModalUsagePattern('usage-journey')">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row p-2 g-0 align-items-center border-0">
+                                    <div class="col-2 text-center">
+                                        <div id="timeseries-icon-check" class="d-none">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                              <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="col-5">
+                                        Time series
+                                    </div>
+                                    <div class="col-5 text-end">
+                                        <button type="button" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" data-bs-toggle="modal" data-bs-target="#usage-pattern-attributes-modal-timeseries">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-footer p-1" id="panel-footer">
+        <div class="row justify-content-between">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary rounded-pill w-100" id="save_usage_pattern_btn">Save</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% include 'model_builder/side_panels/usage_pattern_add/timeseries_modal.html' %}
+
+<script>
+    window.usageJourneys = [
+        {% for usageJourney in usageJourneys %}
+            {'efootprint_id': '{{ usageJourney.efootprint_id }}', 'name':'{{ usageJourney.name }}' }
+        {% endfor %}
+    ]
+
+    window.modalContent = {
+        'country': { 'name': 'Countries', 'data':{{ countries|safe }} },
+        'devices': { 'name': 'Devices', 'data':{{ devices|safe }} },
+        'network': { 'name': 'Network', 'data': {{ networks|safe }} },
+        'usage-journey': { 'name': 'UsageJourney', 'data': usageJourneys }
+    }
+</script>
+
+<script src="{% static 'scripts/modalControllerUsagePattern.js' %}"></script>
+<script src="{% static 'scripts/formTimeseriesController.js' %}"></script>
+<script src="{% static 'scripts/timeseries.js' %}"></script>

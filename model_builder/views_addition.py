@@ -181,7 +181,7 @@ def open_create_usage_pattern_panel(request):
     ]
 
     http_response = render(
-        request, "model_builder/side_panels/usage_pattern_add.html", {
+        request, "model_builder/side_panels/usage_pattern_add/usage_pattern_add.html", {
             "usage_journeys": [{'efootprint_id': uj.efootprint_id, 'name':uj.name} for uj in model_web.usage_journeys],
             "networks": networks,
             "countries": countries,
