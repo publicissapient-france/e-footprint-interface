@@ -88,8 +88,6 @@
                                                 <div class="input-group">
                                                     <input type="number" class="form-control" id="timeframe_value" name="timeframe_value" aria-describedby="basic-addon3 basic-addon4" value="1" onchange="frequencyChart(true)">
                                                     <select class="input-group-text" id="timeframe_range"  onchange="frequencyChart(true)">
-                                                        <option value="day">Days</option>
-                                                        <option value="week">Weeks</option>
                                                         <option value="month">Months</option>
                                                         <option value="year" selected>Years</option>
                                                     </select>
@@ -117,11 +115,9 @@
                                                                value=10000
                                                                oninput="frequencyChart(true)">
                                                         <select class="input-group-text fz-0-8"
-                                                                id="avg_nb_usage_journey_range"
-                                                                name="avg_nb_usage_journey_range"
+                                                                id="avg_nb_usage_journey_period"
+                                                                name="avg_nb_usage_journey_period"
                                                                 onchange="editFrequencyField(true)">
-                                                            <option value="day">Daily</option>
-                                                            <option value="week">Weekly</option>
                                                             <option value="month" selected>Monthly</option>
                                                             <option value="year">Yearly</option>
                                                         </select>
@@ -137,10 +133,8 @@
                                                                aria-describedby="basic-addon3 basic-addon4"
                                                                value=10
                                                                oninput="frequencyChart(true)">
-                                                        <select class="input-group-text fz-0-8" id="net_growth_rate_range"
+                                                        <select class="input-group-text fz-0-8" id="net_growth_rate_period"
                                                                 onchange="frequencyChart(true)">
-                                                            <option value="day">Daily</option>
-                                                            <option value="week">Weekly</option>
                                                             <option value="month" selected>Monthly</option>
                                                             <option value="year">Yearly</option>
                                                         </select>

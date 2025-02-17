@@ -13,10 +13,10 @@ window.adjustedVolumes = {
 function refreshFormValue(){
     window.formValues = {
         'timeframe_start_date': document.getElementById('timeframe_start_date'),
-        'net_growth_rate_range': document.getElementById('net_growth_rate_range'),
+        'net_growth_rate_period': document.getElementById('net_growth_rate_period'),
         'net_growth_rate_value': document.getElementById('net_growth_rate_value'),
         'avg_nb_usage_journey_value': document.getElementById('avg_nb_usage_journey_value'),
-        'avg_nb_usage_journey_range': document.getElementById('avg_nb_usage_journey_range'),
+        'avg_nb_usage_journey_period': document.getElementById('avg_nb_usage_journey_period'),
         'timeframe_value': document.getElementById('timeframe_value'),
         'timeframe_range': document.getElementById('timeframe_range')
     }
@@ -24,18 +24,18 @@ function refreshFormValue(){
 
 function editFrequencyField(launchTimeSeriesChart = false){
     refreshFormValue();
-    let avgNbUsageJourneyRange = window.formValues['avg_nb_usage_journey_range'];
-    let netGrowthRateRange = window.formValues['net_growth_rate_range'];
-    let optionsToCopy = avgNbUsageJourneyRange.querySelectorAll('option');
+    let avgNbUsageJourneyPeriod = window.formValues['avg_nb_usage_journey_period'];
+    let netGrowthRatePeriod = window.formValues['net_growth_rate_period'];
+    let optionsToCopy = avgNbUsageJourneyPeriod.querySelectorAll('option');
     let toCopy = false;
-    netGrowthRateRange.innerHTML = '';
+    netGrowthRatePeriod.innerHTML = '';
     optionsToCopy.forEach(function(option){
-        if(parseInt(avgNbUsageJourneyRange.value) === parseInt(option.value)){
+        if(parseInt(avgNbUsageJourneyPeriod.value) === parseInt(option.value)){
             toCopy = true;
         }
         if(toCopy){
             let optionCopy = option.cloneNode(true);
-            netGrowthRateRange.appendChild(optionCopy);
+            netGrowthRatePeriod.appendChild(optionCopy);
         }
     });
     frequencyChart(launchTimeSeriesChart);
@@ -184,10 +184,10 @@ function addTimeSlot(periodVariation){
 function createTimeSeriesChart(){
     refreshFormValue();
     let timeframeStartDate = window.formValues['timeframe_start_date'].value;
-    let netGrowthRateRange = window.formValues['net_growth_rate_range'].value;
+    let netGrowthRatePeriod = window.formValues['net_growth_rate_period'].value;
     let netGrowRateValue = parseInt(window.formValues['net_growth_rate_value'].value);
     let avgNbUsageJourneyValue = parseInt(window.formValues['avg_nb_usage_journey_value'].value);
-    let avgNbUsageJourneyRange = window.formValues['avg_nb_usage_journey_range'].value;
+    let avgNbUsageJourneyPeriod = window.formValues['avg_nb_usage_journey_period'].value;
     let timeframeValue = parseInt(window.formValues['timeframe_value'].value);
     let timeframeRange = window.formValues['timeframe_range'].value;
 
@@ -197,16 +197,16 @@ function createTimeSeriesChart(){
     let hourlyVariationsValues = [];
 
     let luxonStartDate = luxon.DateTime.fromISO(timeframeStartDate);
-    let luxonGrowthRateDuration = luxon.Duration.fromObject({ [netGrowthRateRange]: 1 });
+    let luxonGrowthRateDuration = luxon.Duration.fromObject({ [netGrowthRatePeriod]: 1 });
     let luxonTimeframeDuration = luxon.Duration.fromObject({ [timeframeRange]: timeframeValue });
-    let luxonAvgNbUsageJourneyRange = luxon.Duration.fromObject({ [avgNbUsageJourneyRange]: 1 });
+    let luxonAvgNbUsageJourneyRange = luxon.Duration.fromObject({ [avgNbUsageJourneyPeriod]: 1 });
 
     let ratioDay = (luxonStartDate.plus(luxonGrowthRateDuration).diff(luxonStartDate, 'days').days)/luxonAvgNbUsageJourneyRange.shiftTo('days').days;
 
     let volumeLooper = avgNbUsageJourneyValue * ratioDay;
     for(let timeFrameUnit = 0; timeFrameUnit < timeframeValue; timeFrameUnit++){
         let dateLooper = luxonStartDate.plus({ [timeframeRange]: timeFrameUnit });
-        for(let timeGrowthRateUnit=0; timeGrowthRateUnit < Math.round(luxonTimeframeDuration.shiftTo(netGrowthRateRange+'s')[netGrowthRateRange+'s']/timeframeValue); timeGrowthRateUnit++) {
+        for(let timeGrowthRateUnit=0; timeGrowthRateUnit < Math.round(luxonTimeframeDuration.shiftTo(netGrowthRatePeriod+'s')[netGrowthRatePeriod+'s']/timeframeValue); timeGrowthRateUnit++) {
             variationsIndex.push(dateLooper.toISO());
             variationsValues.push(volumeLooper);
             volumeLooper *=  (1 + netGrowRateValue/100);

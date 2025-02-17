@@ -173,10 +173,10 @@ window.optionsChartJs={
 function refreshFormValue(){
     window.formValues = {
         'timeframe_start_date': document.getElementById('timeframe_start_date'),
-        'net_growth_rate_range': document.getElementById('net_growth_rate_range'),
+        'net_growth_rate_period': document.getElementById('net_growth_rate_period'),
         'net_growth_rate_value': document.getElementById('net_growth_rate_value'),
         'avg_nb_usage_journey_value': document.getElementById('avg_nb_usage_journey_value'),
-        'avg_nb_usage_journey_range': document.getElementById('avg_nb_usage_journey_range'),
+        'avg_nb_usage_journey_period': document.getElementById('avg_nb_usage_journey_period'),
         'timeframe_value': document.getElementById('timeframe_value'),
         'timeframe_range': document.getElementById('timeframe_range')
     }
@@ -184,10 +184,10 @@ function refreshFormValue(){
 
 function getConvertedVolume(){
     refreshFormValue();
-    let growthRateDuration = luxon.Duration.fromObject({ [window.formValues['net_growth_rate_range'].value]: 1 });
-    let avgNbUsageJourneyRange = luxon.Duration.fromObject({ [window.formValues['avg_nb_usage_journey_range'].value]: 1 });
+    let growthRateDuration = luxon.Duration.fromObject({ [window.formValues['net_growth_rate_period'].value]: 1 });
+    let avgNbUsageJourneyPeriod = luxon.Duration.fromObject({ [window.formValues['avg_nb_usage_journey_period'].value]: 1 });
     let startDate = luxon.DateTime.fromISO(window.formValues['timeframe_start_date'].value);
-    let ratioDay = (startDate.plus(growthRateDuration).diff(startDate, 'days').days)/avgNbUsageJourneyRange.shiftTo('days').days;
+    let ratioDay = (startDate.plus(growthRateDuration).diff(startDate, 'days').days)/avgNbUsageJourneyPeriod.shiftTo('days').days;
     return window.formValues['avg_nb_usage_journey_value'].value * ratioDay;
 }
 
@@ -268,24 +268,24 @@ function updateTimeseriesChart() {
 function frequencyChart(launchTimeSeriesChart = false){
     refreshFormValue();
     let avgNbUsageJourneyValue  = parseInt(window.formValues['avg_nb_usage_journey_value'].value);
-    let avgNbUsageJourneyRange = window.formValues['avg_nb_usage_journey_range'].value;
-    let netGrowthRateRange = window.formValues['net_growth_rate_range'].value;
+    let avgNbUsageJourneyPeriod = window.formValues['avg_nb_usage_journey_period'].value;
+    let netGrowthRatePeriod = window.formValues['net_growth_rate_period'].value;
     let timeframeValue= parseInt(window.formValues['timeframe_value'].value);
     let timeframeRange = window.formValues['timeframe_range'].value;
 
     let dateLooper = luxon.DateTime.local().startOf('year');
     let dateGrowth = luxon.DateTime.local().startOf('year');
-    let growthRateFrame = luxon.Duration.fromObject({ [netGrowthRateRange]: 1 });
+    let growthRateFrame = luxon.Duration.fromObject({ [netGrowthRatePeriod]: 1 });
     let timeframe = luxon.Duration.fromObject({ [timeframeRange]: timeframeValue });
     let periodStep = 0;
     let results = [];
     let labels = [];
 
     let dailyAvgNbUsageJourneyValue = 0;
-    if (avgNbUsageJourneyRange !== 'day') {
+    if (avgNbUsageJourneyPeriod !== 'day') {
         dailyAvgNbUsageJourneyValue = Math.ceil(
             avgNbUsageJourneyValue /
-            luxon.Duration.fromObject({ [avgNbUsageJourneyRange]: 1 }).shiftTo('days').days
+            luxon.Duration.fromObject({ [avgNbUsageJourneyPeriod]: 1 }).shiftTo('days').days
         );
     } else {
         dailyAvgNbUsageJourneyValue = avgNbUsageJourneyValue;
@@ -294,7 +294,7 @@ function frequencyChart(launchTimeSeriesChart = false){
     results.push(dailyAvgNbUsageJourneyValue.toFixed(2));
     labels.push(dateLooper.toFormat('yyyy-MM-dd'));
 
-    while (periodStep < timeframe.shiftTo(netGrowthRateRange)[`${netGrowthRateRange}s`]-1) {
+    while (periodStep < timeframe.shiftTo(netGrowthRatePeriod)[`${netGrowthRatePeriod}s`]-1) {
         dailyAvgNbUsageJourneyValue = Math.ceil(dailyAvgNbUsageJourneyValue * (1 + parseFloat(window.formValues['net_growth_rate_value'].value) / 100));
         dateGrowth = dateGrowth.plus(growthRateFrame);
         dateLooper = dateLooper.plus(growthRateFrame);
