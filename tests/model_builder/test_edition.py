@@ -1,14 +1,23 @@
 import os
 import json
+from unittest.mock import patch
 
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import TestCase, RequestFactory
 from django.http import QueryDict
+from efootprint.abstract_modeling_classes.source_objects import SourceValue, SourceObject
+from efootprint.builders.services.generative_ai_ecologits import GenAIModel
+from efootprint.core.hardware.gpu_server import GPUServer
+from efootprint.core.hardware.storage import Storage
+from efootprint.core.system import System
 from efootprint.logger import logger
+from efootprint.constants.units import u
 
 from model_builder.class_structure import generate_object_edition_structure
+from model_builder.object_creation_and_edition_utils import edit_object_in_system
 from model_builder.views_addition import add_new_service, add_new_job
 from model_builder.model_web import ModelWeb
+from model_builder.views_edition import edit_object
 
 
 class AddNewUsagePatternTestCase(TestCase):
@@ -97,3 +106,34 @@ class AddNewUsagePatternTestCase(TestCase):
 
         self.assertDictEqual(job_edition_structure, ref_job_edition_structure)
         self.assertDictEqual(dynamic_form_data, ref_dynamic_form_data)
+
+    @patch("model_builder.views_edition.render_exception_modal")
+    def test_edit_genai_model(self, mock_render_exception_modal):
+        gpu_server = GPUServer.from_defaults("GPU server", compute=SourceValue(16 * u.gpu), storage=Storage.ssd())
+        first_provider = GenAIModel.list_values()["provider"][0]
+        first_model_name = GenAIModel.conditional_list_values()[
+            "model_name"]["conditional_list_values"][first_provider][0]
+        genai_service = GenAIModel.from_defaults(
+            "GenAI service", server=gpu_server, provider=first_provider, model_name=first_model_name)
+        system = System("Test system", usage_patterns=[])
+        logger.info(f"Created GenAI service with provider {first_provider} and model name {first_model_name}")
+
+        post_data = QueryDict(mutable=True)
+        second_provider = GenAIModel.list_values()["provider"][1]
+        second_model_name = GenAIModel.conditional_list_values()[
+            "model_name"]["conditional_list_values"][second_provider][0]
+        post_data.update(
+            {'name': ['Gen AI service'], 'server': [gpu_server.id],
+             "provider": [second_provider], "model_name": [second_model_name]}
+        )
+
+        edit_service_request = self.factory.post(f'/edit-object/{genai_service.id}', data=post_data)
+        self._add_session_to_request(
+            edit_service_request,
+            {
+                "System": {system.id: system.to_json()},
+                "GenAIModel": {genai_service.id: genai_service.to_json()},
+                "GPUServer": {gpu_server.id: gpu_server.to_json()}})
+
+        response = edit_object(edit_service_request, genai_service.id)
+        mock_render_exception_modal.assert_not_called()

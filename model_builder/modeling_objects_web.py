@@ -100,7 +100,7 @@ class ModelingObjectWeb:
     def __eq__(self, other):
         return self.web_id == other.web_id
 
-    def set_efootprint_value(self, key, value):
+    def set_efootprint_value(self, key, value, check_input_validity=True):
         error_message = (f"{self} tried to set a ModelingObjectWrapper attribute to its underlying e-footprint "
                          f"object, which is forbidden. Only set e-footprint objects as attributes of e-footprint "
                          f"objects.")
@@ -113,7 +113,7 @@ class ModelingObjectWeb:
         if isinstance(value, ExplainableObjectWeb):
             raise PermissionError(error_message)
 
-        self._modeling_obj.__setattr__(key, value)
+        self._modeling_obj.__setattr__(key, value, check_input_validity)
 
     def get_efootprint_value(self, key):
         return getattr(self._modeling_obj, key, None)

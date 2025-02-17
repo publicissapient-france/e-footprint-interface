@@ -112,14 +112,29 @@ def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
             if new_value != current_value.explainable_object:
                 logger.debug(f"{attr_dict['attr_name']} has changed in {obj_to_edit.efootprint_id}")
                 obj_to_edit.set_efootprint_value(attr_dict["attr_name"], new_value)
-    for attr_dict in obj_structure["str_attributes"] + obj_structure["conditional_str_attributes"]:
+    for attr_dict in obj_structure["str_attributes"]:
         if attr_dict["attr_name"] in request.POST.keys():
             new_value = SourceObject(request.POST[attr_dict["attr_name"]], source=Sources.USER_DATA)
             current_value = getattr(obj_to_edit, attr_dict["attr_name"])
             if new_value.value != current_value.value:
                 logger.debug(f"{attr_dict['attr_name']} has changed in {obj_to_edit.efootprint_id}")
                 new_value.set_label(current_value.label)
-                obj_to_edit.set_efootprint_value(attr_dict["attr_name"], new_value)
+                check_input_validity = True
+                if attr_dict["attr_name"] in obj_to_edit.attributes_with_depending_values().keys():
+                    logger.info(f"Won’t check input validity for {attr_dict['attr_name']} "
+                                f"because it has depending values: "
+                                f"{obj_to_edit.attributes_with_depending_values()[attr_dict['attr_name']]}")
+                    check_input_validity = False
+                obj_to_edit.set_efootprint_value(attr_dict["attr_name"], new_value, check_input_validity)
+    for attr_dict in obj_structure["conditional_str_attributes"]:
+        if attr_dict["attr_name"] in request.POST.keys():
+            new_value = SourceObject(request.POST[attr_dict["attr_name"]], source=Sources.USER_DATA)
+            current_value = getattr(obj_to_edit, attr_dict["attr_name"])
+            if new_value.value != current_value.value:
+                logger.debug(f"{attr_dict['attr_name']} has changed in {obj_to_edit.efootprint_id}")
+            # Always update value for conditional str attribute to make sure that they belong to authorized values
+            new_value.set_label(current_value.label)
+            obj_to_edit.set_efootprint_value(attr_dict["attr_name"], new_value)
     for mod_obj in obj_structure["modeling_obj_attributes"]:
         if mod_obj["attr_name"] in request.POST.keys():
             new_mod_obj_id = request.POST[mod_obj["attr_name"]]
