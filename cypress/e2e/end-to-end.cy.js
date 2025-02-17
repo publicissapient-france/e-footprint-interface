@@ -17,14 +17,13 @@ describe('Test de la page d\'accueil', () => {
 
         //test de l'ajout d'un usagejourney avec d'abord submit d'un form vide et ensuite d'un form valide
         cy.get('#btn-add-usage-journey').click();
-        cy.get('#form-add-usage-journey').should('be.visible');
+        cy.get('#btn-add-usage-journey').should('be.visible');
         cy.get('#btn-submit-form-add-usage-journey').click();
         cy.get('#name').then(($input) => {
         expect($input[0].validationMessage).to.not.be.empty;
         });
         cy.get('#name').type(ujName);
         cy.get('#btn-submit-form-add-usage-journey').click();
-        cy.window().its('closePanel')
         cy.get('#form-add-usage-journey').should('not.exist');
 
         //Le usagejourney doit être visible et ensuite on va lui ajouter deux usagejourneystep
@@ -36,7 +35,6 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#name').type(ujsOne);
         cy.get('#user_time_spent').type('10');
         cy.get('#formPanel form').find('button[type="submit"]').click();
-        cy.window().its('closePanel')
         cy.get('#formPanel').should('exist').find('form').should('not.exist');
         // @ts-ignore
         cy.get('div[id$="'+ujName.replaceAll(' ', '-')+'"]').should('have.class', 'leader-line-object')
@@ -47,7 +45,6 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#name').type(ujsTwo);
         cy.get('#user_time_spent').type('20');
         cy.get('#formPanel form').find('button[type="submit"]').click();
-        cy.window().its('closePanel')
         cy.get('#formPanel').should('exist').find('form').should('not.exist');
         cy.get('div[id$="'+ujName.replaceAll(' ', '-')+'"]').should('have.class', 'leader-line-object')
         //on vérifie que les deux ujs ont bien été ajoutés

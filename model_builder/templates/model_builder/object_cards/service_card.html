@@ -1,13 +1,11 @@
 <button
     id="{{ service.web_id }}"
-    class="btn btn-white text-start fz-0-8"
+    class="btn btn-white text-start fz-0-8 move-panel-open"
     hx-get="/model_builder/open-edit-object-panel/{{ service.efootprint_id }}/"
     hx-target="#formPanel"
     hx-trigger="click"
     hx-swap="innerHTML"
     hx-disabled-elt="button"
-    hx-on::before-request="openLoader();movePanel('open')"
-    hx-on::after-request="updateLines();closeLoader()"
 >
     {{ service.name }}
 </button>

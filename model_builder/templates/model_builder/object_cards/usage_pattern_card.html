@@ -10,15 +10,12 @@
                         </svg>
                 </button>
                 <button id="button-{{ usage_pattern.web_id }}"
-                        class="btn btn-white ms-1 text-start fz-0-8"
+                        class="btn btn-white ms-1 text-start fz-0-8 move-panel-open"
                         type="button"
                         hx-get="/model_builder/open-edit-object-panel/{{ usage_pattern.efootprint_id }}"
                         hx-target="#formPanel"
                         hx-trigger="click"
                         hx-swap="innerHTML"
-                        hx-on::before-request="openLoader();movePanel('open')"
-                        hx-on::after-request="updateLines();closeLoader()"
-                        onclick="openLoader()"
                         hx-disabled-elt="button"
                 >
                     {{ usage_pattern.name}}

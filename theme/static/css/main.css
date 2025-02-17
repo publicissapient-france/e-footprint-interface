@@ -15,6 +15,32 @@ body{
     margin: 0;
 }
 
+@keyframes loadingMove {
+    0% { left: 0%; width: 0%; }
+    20% { left: 0%; width: 25%; }
+    50% { left: 50%; width: 25%; }
+    80% { left: 100%; width: 25%; }
+    100% { left: 100%; width: 0%; }
+}
+
+#loading-bar {
+    position: relative;
+    width: 100%;
+    height: 2px;
+    background-color: #e0e0e0; /* Couleur de la barre de fond */
+    overflow: hidden;
+}
+
+#loading-bar .progress-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background-color: #0d6efd; /* Couleur de la barre animée */
+    animation: none;
+}
+
 .transition-width {
     transition: width 0.5s ease-in-out;
 }

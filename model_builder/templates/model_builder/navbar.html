@@ -23,9 +23,7 @@
                                 hx-target="#formPanel"
                                 hx-swap="innerHTML"
                                 hx-disabled-elt="button"
-                                hx-on::before-request="openLoader();movePanel('open')"
-                                hx-on::after-request="updateLines();closeLoader()"
-                                class="nav-link d-flex flex-row gap-2  mx-2">
+                                class="nav-link d-flex flex-row gap-2  mx-2 move-panel-open">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-plus-fill" viewBox="0 0 16 16">
                               <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M8.5 7v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 1 0"/>
                             </svg>
@@ -42,7 +40,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="reboot" class="nav-link d-flex flex-row gap-2 mx-2" id="btn-reboot-modeling" onclick="openLoader()">
+                        <a href="reboot" class="nav-link d-flex flex-row gap-2 mx-2" id="btn-reboot-modeling">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                               <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
                               <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>

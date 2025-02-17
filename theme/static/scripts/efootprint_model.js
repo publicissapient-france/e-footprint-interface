@@ -1,5 +1,6 @@
 // LEADERLINE
 
+window.openPanel = null
 window.panel = 0
 
 window.dictLeaderLineOption = {
@@ -251,10 +252,9 @@ document.body.addEventListener('setAccordionListeners', function (event) {
 });
 
 document.body.addEventListener('closePanelAfterSwap', function (event) {
-    closePanel();
+    window.openPanel = 'close';
+    panelController();
 });
-
-
 
 window.initLeaderLines = initLeaderLines;
 
@@ -264,21 +264,6 @@ document.body.addEventListener("openModalDialog", function(event) {
     let modal = new bootstrap.Modal(modalElement);
     modal.show();
 });
-
-function openLoader() {
-    let modalElement = document.getElementById("loader-modal");
-    let modal = new bootstrap.Modal(modalElement);
-    modal.show();
-}
-
-function closeLoader() {
-    let modalElement = document.getElementById("loader-modal");
-    let modal = bootstrap.Modal.getInstance(modalElement);
-    if (modal) {
-        modal.hide();
-    }
-    document.getElementById("link-to-home").focus();
-}
 
 function dropModal(id){
     let modalElement = document.getElementById(id);
@@ -296,10 +281,6 @@ function dropModal(id){
 function dropModalUnderstand(){
     document.getElementById("open-understand-modal").focus();
 }
-
-document.body.addEventListener('closeModalLoader', function (event) {
-    closeLoader()
-});
 
 function movePanel(action){
     let modelCanva = document.getElementById("model-canva");
@@ -319,7 +300,43 @@ function movePanel(action){
     initLeaderLines();
 }
 
-function closePanel() {
-    const formPanel = document.getElementById('formPanel');
-    formPanel.innerHTML = '';
+
+function panelController(){
+    if (window.openPanel === 'open') {
+        movePanel("open");
+        window.openPanel = null;
+    }
+    if (window.openPanel === 'close') {
+        movePanel("close");
+        window.openPanel = null;
+    }
 }
+
+document.addEventListener("click", function(event) {
+    let button = event.target.closest("button");
+    if (button && button.classList.contains("move-panel-open")) {
+        window.openPanel = 'open';
+    }
+    if (button && button.classList.contains("move-panel-close")) {
+        window.openPanel = 'close';
+        panelController();
+    }
+});
+
+document.addEventListener("htmx:beforeRequest", function() {
+    let progressBar = document.querySelector("#loading-bar .progress-bar");
+    if (progressBar) {
+        progressBar.style.animation = "loadingMove 0.5s infinite linear";
+    }
+});
+
+document.addEventListener("htmx:afterRequest", function() {
+    let progressBar = document.querySelector("#loading-bar .progress-bar");
+    progressBar.style.animation = "none";
+    progressBar.style.width = "0%";
+    panelController();
+});
+
+
+
+

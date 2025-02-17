@@ -3,8 +3,7 @@
         hx-post="/model_builder/add-new-server/"
         hx-target="#server-list"
         hx-swap="beforeend"
-        hx-on::before-request="openLoader()"
-        hx-on::after-request="movePanel('close');closeLoader()"
+        onsubmit="window.openPanel='close'"
       hx-disabled-elt="button"
 >
     {% with helper_message="How to choose the server type?<br><br>“GPUserver” to get help on configuring servers for AI use.<br><br>“BoavistaCloudServer” to get help on configuring servers for all other kinds of use.<br><br>“Server” to fully customize your server." %}
