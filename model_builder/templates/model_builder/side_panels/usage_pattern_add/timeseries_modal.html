@@ -28,29 +28,16 @@
                                         <div class="accordion-body">
                                             <div class="row mb-3">
                                                 <div class="col-auto">
-                                                    <label for="timeseries_period_analysis" class="form-label w-100 text-start fz-0-8">Time period</label>
+                                                    <label for="display_granularity" class="form-label w-100 text-start fz-0-8">Time period</label>
                                                     <select class="form-select light-select fz-0-8 h-30"
-                                                            id="timeseries_period_analysis"
-                                                            name="timeseries_period_analysis"
+                                                            id="display_granularity"
+                                                            name="display_granularity"
                                                         onchange="updateTimeseriesChart()">
                                                     >
                                                         <option value="day">Day</option>
                                                         <option value="week">Week</option>
                                                         <option value="month" selected>Month</option>
                                                         <option value="year">Year</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <label for="timeseries_kpi_analysis" class="form-label w-100 text-start fz-0-8">Calculation</label>
-                                                    <select class="form-select light-select fz-0-8 h-30"
-                                                            id="timeseries_kpi_analysis"
-                                                            name="timeseries_kpi_analysis"
-                                                        onchange="updateTimeseriesChart()">
-                                                    >
-                                                        <option value="avg">Hourly average</option>
-                                                        <option value="sum" selected>Sum by period</option>
-                                                        <option value="cumsum">Cumulative sum</option>
-
                                                     </select>
                                                 </div>
                                                 <div class="col-auto">
@@ -177,7 +164,7 @@
                                     <div id="collapse-daily-variation" class="accordion-collapse collapse show">
                                         <div class="accordion-body px-2">
                                             {% with variation="daily" dataVariations=dataDailyVariations %}
-                                                {% include 'model_builder/side_panels/variation_bloc.html' %}
+                                                {% include 'model_builder/side_panels/usage_pattern_add/timeseries_variations.html' %}
                                             {% endwith %}
                                         </div>
                                     </div>
@@ -191,7 +178,7 @@
                                     <div id="collapse-weekly-variation" class="accordion-collapse collapse show">
                                         <div class="accordion-body px-2">
                                             {% with variation="weekly" dataVariations=dataWeeklyVariations %}
-                                                {% include 'model_builder/side_panels/variation_bloc.html' %}
+                                                {% include 'model_builder/side_panels/usage_pattern_add/timeseries_variations.html' %}
                                             {% endwith %}
                                         </div>
                                     </div>
@@ -205,7 +192,7 @@
                                     <div id="collapse-seasonal-variation" class="accordion-collapse collapse show">
                                         <div class="accordion-body px-2">
                                             {% with variation="seasonal" dataVariations=dataSeasonalVariations %}
-                                                {% include 'model_builder/side_panels/variation_bloc.html' %}
+                                                {% include 'model_builder/side_panels/usage_pattern_add/timeseries_variations.html' %}
                                             {% endwith %}
                                         </div>
                                     </div>
@@ -223,3 +210,5 @@
         </div>
     </div>
 </div>
+
+<script>document.getElementById('usage-pattern-attributes-modal-timeseries').addEventListener('shown.bs.modal', initChart);</script>

@@ -135,7 +135,7 @@ window.optionsChartJs={
             labels: Array.from({ length: 24 }, (_, i) => `${i}`),
             datasets: [{
                 ...window.baseDataset,
-                data: Array(24).fill(Math.ceil(getConvertedVolume() / 24)).map(value => value.toFixed(2)),
+                data: Array(24).fill(1),
                 fill: true,
                 tension: 0
             }]
@@ -148,7 +148,7 @@ window.optionsChartJs={
             labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
             datasets: [{
                 ...window.baseDataset,
-                data: Array(7).fill(Math.ceil(getConvertedVolume())).map(value => value.toFixed(2)),
+                data: Array(7).fill(1),
                 fill: true,
                 tension: 0
             }]
@@ -220,8 +220,7 @@ function initOrUpdateChart(chartName, newData, newOptions) {
 
 function updateTimeseriesChart() {
     refreshFormValue();
-    let periodAnalysis = document.getElementById('timeseries_period_analysis').value;
-    let kpiAnalysis = document.getElementById('timeseries_kpi_analysis').value;
+    let displayGranularity = document.getElementById('display_granularity').value;
     let variationsIndex = window.variationsIndex;
     let variationsValues = window.variationsValues;
     let aggregatedIndex = [];
@@ -236,21 +235,7 @@ function updateTimeseriesChart() {
     function reduceData(){
         if (currentGroup.length > 0) {
             aggregatedIndex.push(currentDate.toISO());
-            if (kpiAnalysis === 'sum') {
-                aggregatedValues.push(currentGroup.reduce((a, b) => a + b, 0));
-            } else if (kpiAnalysis === 'avg') {
-                aggregatedValues.push(
-                    currentGroup.reduce((a, b) => a + b, 0) / currentGroup.length
-                );
-            }
-            else if (kpiAnalysis === 'cumsum') {
-                let lastCumulative = aggregatedValues.length
-                    ? aggregatedValues[aggregatedValues.length - 1]
-                    : 0;
-                aggregatedValues.push(
-                    lastCumulative + currentGroup.reduce((a, b) => a + b, 0)
-                );
-            }
+            aggregatedValues.push(currentGroup.reduce((a, b) => a + b, 0));
         }
         return aggregatedValues;
     }
@@ -258,9 +243,9 @@ function updateTimeseriesChart() {
     for (let i = 0; i < normalizedIndex.length; i++) {
         let date = luxon.DateTime.fromISO(normalizedIndex[i]);
         let value = variationsValues[i];
-        while (date >= currentDate.plus({ [periodAnalysis]: 1 })) {
+        while (date >= currentDate.plus({ [displayGranularity]: 1 })) {
             reduceData();
-            currentDate = currentDate.plus({ [periodAnalysis]: 1 });
+            currentDate = currentDate.plus({ [displayGranularity]: 1 });
             currentGroup = [];
         }
         currentGroup.push(value);
@@ -273,7 +258,7 @@ function updateTimeseriesChart() {
         datasets: [
             {
                 ...window.optionsChartJs.timeSeriesChart.data.datasets[0],
-                label: `User journeys (${kpiAnalysis})`,
+                label: `Usage journeys`,
                 data: aggregatedValues
             }
         ]
@@ -389,5 +374,3 @@ function initChart(){
     createTimeSeriesChart()
     updateTimeseriesChart();
 }
-
-document.getElementById('usage-pattern-attributes-modal-timeseries').addEventListener('shown.bs.modal', initChart);
