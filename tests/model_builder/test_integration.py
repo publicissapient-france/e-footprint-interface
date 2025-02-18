@@ -1,12 +1,14 @@
 import os
 import json
+from unittest.mock import patch
 
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import TestCase, RequestFactory
 from django.http import QueryDict
 from efootprint.logger import logger
 
-from model_builder.views_addition import add_new_usage_pattern, add_new_service, add_new_job, add_new_usage_journey
+from model_builder.views import result_chart
+from model_builder.views_addition import add_new_usage_pattern, add_new_service, add_new_job
 from model_builder.model_web import default_networks, default_hardwares, default_countries
 from model_builder.views_deletion import delete_object
 
@@ -91,13 +93,14 @@ class AddNewUsagePatternTestCase(TestCase):
 
         self.assertEqual(job_request.session["system_data"], self.system_data)
 
-    def test_full_integration(self):
+    @patch("model_builder.views.render_exception_modal")
+    def test_raise_error_if_users_tries_to_see_results_with_incomplete_modeling(self, mock_exception_modal):
         logger.info("Creating user journey")
         post_data = QueryDict(mutable=True)
         post_data.update({"name": "First user journey", "uj_steps": []})
 
-        uj_request = self.factory.post('/add_new_user_journey/', data=post_data)
-        self._add_session_to_request(uj_request, {
+        result_request = self.factory.post('/result-chart/', data=post_data)
+        self._add_session_to_request(result_request, {
             "efootprint_version": "9.1.4",
             "System": {
                 "uuid-system-1": {
@@ -108,4 +111,5 @@ class AddNewUsagePatternTestCase(TestCase):
             }
         })
 
-        response = add_new_usage_journey(uj_request)
+        response = result_chart(result_request)
+        mock_exception_modal.assert_called_once()

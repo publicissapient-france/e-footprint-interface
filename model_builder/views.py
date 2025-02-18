@@ -75,7 +75,15 @@ def upload_json(request):
 
 def result_chart(request):
     try:
-        model_web = ModelWeb(request.session, launch_system_computations=True)
+        model_web = ModelWeb(request.session)
+        if len(model_web.system.servers) == 0:
+            exception = ValueError(
+                "No impact could be computed because the modeling is incomplete. Please make sure you have at least "
+                "one usage pattern linked to a usage journey with at least one step making a request to a server.")
+            return render_exception_modal(request, exception)
+        else:
+            # Launch system computations
+            model_web.system.after_init()
     except Exception as e:
         return render_exception_modal(request, e)
 

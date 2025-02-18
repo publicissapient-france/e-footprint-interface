@@ -1,26 +1,40 @@
 # Release process
 
-## Make sure all tests pass
-
-```shell
-poetry run python manage.py test
-npm run test:e2e
-```
+## Update interface version in [pyproject.toml](pyproject.toml)
 
 ## Update [CHANGELOG.md](CHANGELOG.md)
 
 ## Update [README.md](README.md) if needed
 
-## Update poetry dependencies
+## Update poetry and npm dependencies
 
 ```shell
 poetry update
+npm install
+```
+if necessary, update node
+
+```shell
+nvm install node
 ```
 
 ## Generate latest requirements files with poetry
 
 ```shell
 poetry export -f requirements.txt --without-hashes -o requirements.txt 
+```
+
+## Make sure all tests pass
+
+Make sure css files are up to date.
+
+```shell
+npm run watch
+```
+
+```shell
+poetry run python manage.py test tests
+npm run test:e2e
 ```
 
 ## Make new version commit, starting with [Vx.y.z]

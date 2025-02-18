@@ -87,7 +87,7 @@ def compute_edit_object_html_and_event_response(request, object_id, model_web=No
                                   f"{added_children_html}</div>")
 
         elif added_accordion_children and not unchanged_children:
-            response_html += (f"<div hx-swap-oob='beforeend:#flush-{duplicated_card.web_id} "
+            response_html += (f"<div hx-swap-oob='afterbegin:#flush-{duplicated_card.web_id} "
                               f".accordion-body'>{added_children_html}</div>")
 
     for duplicated_card in edited_obj.duplicated_cards:

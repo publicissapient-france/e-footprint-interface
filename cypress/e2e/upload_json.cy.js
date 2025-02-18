@@ -28,8 +28,6 @@ describe("Test - Import JSON", () => {
         cy.get('button[id^="button-id-"][id$="'+ujsTwo.replaceAll(' ', '-')+'"]').should('exist').should('be.visible');
         cy.get('button[id^="button-id-"][id$="'+jobOne.replaceAll(' ', '-')+'"]').should('exist').should('not.be.visible');
         cy.get('button[id^="button-id-"][id$="'+jobTwo.replaceAll(' ', '-')+'"]').should('exist').should('not.be.visible');
-        cy.get('button[id^="id-"][id$="'+service.replaceAll(' ', '-')+'"]').should('exist').should('not.be.visible');
-
-
+        cy.get('button[id^="button-id-"][id$="'+service.replaceAll(' ', '-')+'"]').should('exist').should('not.be.visible');
     });
 });

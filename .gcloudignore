@@ -12,6 +12,8 @@
 # below:
 .git
 .gitignore
+.github
+.vscode
 venv
 notebooks
 tests
