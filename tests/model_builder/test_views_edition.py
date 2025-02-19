@@ -5,7 +5,7 @@ from unittest.mock import patch
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import TestCase, RequestFactory
 from django.http import QueryDict
-from efootprint.abstract_modeling_classes.source_objects import SourceValue, SourceObject
+from efootprint.abstract_modeling_classes.source_objects import SourceValue
 from efootprint.builders.services.generative_ai_ecologits import GenAIModel
 from efootprint.core.hardware.gpu_server import GPUServer
 from efootprint.core.hardware.storage import Storage
@@ -14,13 +14,12 @@ from efootprint.logger import logger
 from efootprint.constants.units import u
 
 from model_builder.class_structure import generate_object_edition_structure
-from model_builder.object_creation_and_edition_utils import edit_object_in_system
 from model_builder.views_addition import add_new_service, add_new_job
 from model_builder.model_web import ModelWeb
 from model_builder.views_edition import edit_object
 
 
-class AddNewUsagePatternTestCase(TestCase):
+class TestViewsEdition(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         system_data_path = os.path.join("tests", "model_builder", "default_system_data.json")

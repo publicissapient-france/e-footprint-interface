@@ -14,7 +14,7 @@ from model_builder.views_deletion import delete_object
 from model_builder.views_edition import edit_object, open_edit_object_panel
 
 
-class AddNewUsagePatternTestCase(TestCase):
+class TestViewsAddition(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         system_data_path = os.path.join("tests", "model_builder", "default_system_data.json")

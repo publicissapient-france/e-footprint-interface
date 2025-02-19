@@ -13,7 +13,7 @@ from model_builder.model_web import default_networks, default_hardwares, default
 from model_builder.views_deletion import delete_object
 
 
-class AddNewUsagePatternTestCase(TestCase):
+class IntegrationTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         system_data_path = os.path.join("tests", "model_builder", "default_system_data.json")
