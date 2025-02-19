@@ -32,7 +32,7 @@
                                                     <select class="form-select light-select fz-0-8 h-30"
                                                             id="display_granularity"
                                                             name="display_granularity"
-                                                        onchange="updateTimeseriesChart()">
+                                                        onchange="createTimeSeriesChart()">
                                                     >
                                                         <option value="day">Day</option>
                                                         <option value="week">Week</option>
@@ -81,13 +81,13 @@
                                         <div class="accordion-body">
                                             <div class="mb-3 mx-2">
                                                 <label for="timeframe_start_date" class="form-label w-100 text-start fz-0-8">Start date</label>
-                                                <input type="date" class="form-control" id="timeframe_start_date" name="timeframe_start_date" value="2025-01-01" onchange="frequencyChart(true)">
+                                                <input type="date" class="form-control" id="timeframe_start_date" name="timeframe_start_date" value="2025-01-01" onchange="createTimeSeriesChart()">
                                             </div>
                                             <div class="mb-3 mx-2">
                                                 <label for="timeframe_value" class="form-label w-100 text-start">TimeFrame</label>
                                                 <div class="input-group">
-                                                    <input type="number" class="form-control" id="timeframe_value" name="timeframe_value" aria-describedby="basic-addon3 basic-addon4" value="1" onchange="frequencyChart(true)">
-                                                    <select class="input-group-text" id="timeframe_range"  onchange="frequencyChart(true)">
+                                                    <input type="number" class="form-control" id="timeframe_value" name="timeframe_value" aria-describedby="basic-addon3 basic-addon4" value="1" onchange="createTimeSeriesChart()">
+                                                    <select class="input-group-text" id="timeframe_range"  onchange="createTimeSeriesChart()">
                                                         <option value="month">Months</option>
                                                         <option value="year" selected>Years</option>
                                                     </select>
@@ -113,7 +113,7 @@
                                                                name="avg_nb_usage_journey_value"
                                                                aria-describedby="basic-addon3 basic-addon4"
                                                                value=10000
-                                                               oninput="frequencyChart(true)">
+                                                               oninput="createTimeSeriesChart()">
                                                         <select class="input-group-text fz-0-8"
                                                                 id="avg_nb_usage_journey_period"
                                                                 name="avg_nb_usage_journey_period"
@@ -132,62 +132,15 @@
                                                                name="net_growth_rate_value"
                                                                aria-describedby="basic-addon3 basic-addon4"
                                                                value=10
-                                                               oninput="frequencyChart(true)">
+                                                               oninput="createTimeSeriesChart()">
                                                         <select class="input-group-text fz-0-8" id="net_growth_rate_period"
-                                                                onchange="frequencyChart(true)">
+                                                                onchange="createTimeSeriesChart()">
                                                             <option value="month" selected>Monthly</option>
                                                             <option value="year">Yearly</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="mb-3">
-                                                <div style="width: 100%;">
-                                                    <canvas id="frequencyChart" height="75"></canvas>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-daily-variation" aria-expanded="true" aria-controls="collapse-daily-variation">
-                                            Daily variations
-                                        </button>
-                                    </h2>
-                                    <div id="collapse-daily-variation" class="accordion-collapse collapse show">
-                                        <div class="accordion-body px-2">
-                                            {% with variation="daily" dataVariations=dataDailyVariations %}
-                                                {% include 'model_builder/side_panels/usage_pattern_add/timeseries_variations.html' %}
-                                            {% endwith %}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-weekly-variation" aria-expanded="true" aria-controls="collapse-weekly-variation">
-                                            Weekly variations
-                                        </button>
-                                    </h2>
-                                    <div id="collapse-weekly-variation" class="accordion-collapse collapse show">
-                                        <div class="accordion-body px-2">
-                                            {% with variation="weekly" dataVariations=dataWeeklyVariations %}
-                                                {% include 'model_builder/side_panels/usage_pattern_add/timeseries_variations.html' %}
-                                            {% endwith %}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-seasonal-variation" aria-expanded="true" aria-controls="collapse-seasonal-variation">
-                                            Seasonal variations
-                                        </button>
-                                    </h2>
-                                    <div id="collapse-seasonal-variation" class="accordion-collapse collapse show">
-                                        <div class="accordion-body px-2">
-                                            {% with variation="seasonal" dataVariations=dataSeasonalVariations %}
-                                                {% include 'model_builder/side_panels/usage_pattern_add/timeseries_variations.html' %}
-                                            {% endwith %}
                                         </div>
                                     </div>
                                 </div>

@@ -3,8 +3,6 @@
         hx-post="/model_builder/add-new-usage-pattern/"
         hx-target="#up-list"
         hx-swap="beforeend"
-        onsubmit="openLoader()"
-        hx-on::after-request="closeLoader()"
       hx-disabled-elt="button"
 >
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">

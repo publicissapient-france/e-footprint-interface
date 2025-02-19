@@ -1,15 +1,3 @@
-window.variationFactor = {
-    'daily': Array(24).fill(1),
-    'weekly': Array(7).fill(1),
-    'seasonal': Array(12).fill(1)
-}
-
-window.adjustedVolumes = {
-    'daily': Array(24).fill(1),
-    'weekly': Array(7).fill(1),
-    'seasonal': Array(12).fill(1)
-}
-
 function refreshFormValue(){
     window.formValues = {
         'timeframe_start_date': document.getElementById('timeframe_start_date'),
@@ -22,7 +10,7 @@ function refreshFormValue(){
     }
 }
 
-function editFrequencyField(launchTimeSeriesChart = false){
+function editFrequencyField(){
     refreshFormValue();
     let avgNbUsageJourneyPeriod = window.formValues['avg_nb_usage_journey_period'];
     let netGrowthRatePeriod = window.formValues['net_growth_rate_period'];
@@ -38,147 +26,7 @@ function editFrequencyField(launchTimeSeriesChart = false){
             netGrowthRatePeriod.appendChild(optionCopy);
         }
     });
-    frequencyChart(launchTimeSeriesChart);
-}
-
-function variationController(periodVariation, launchTimeSeriesChart = false){
-    const fromElements = Array.from(document.querySelectorAll(`[id^="from_${periodVariation}_variation_"]`));
-    const toElements = Array.from(document.querySelectorAll(`[id^="to_${periodVariation}_variation_"]`));
-
-    const intervals = fromElements.map((fromEl, i) => {
-        const fromVal = parseInt(fromEl.value, 10);
-        const toVal   = parseInt(toElements[i].value, 10);
-        return {
-            index: i,
-            from: !isNaN(fromVal) ? fromVal : -1,
-            to  : !isNaN(toVal)   ? toVal   : -1
-        };
-    });
-
-    intervals.sort((a, b) => a.from - b.from);
-
-    const usedHours = new Set();
-    intervals.forEach(interval => {
-        if (interval.from >= 0 && interval.to >= 0) {
-            const start = Math.min(interval.from, interval.to);
-            const end   = Math.max(interval.from, interval.to);
-            for (let h = start; h <= end; h++) {
-                usedHours.add(h);
-            }
-        }
-    });
-
-    intervals.forEach((current, i) => {
-        const next = intervals[i + 1];
-        const upperBound = next ? next.from : window.indexInput[periodVariation]['max'];
-        const fromEl = fromElements[current.index];
-        const toEl   = toElements[current.index];
-
-        const mySlotHours = new Set();
-        if (current.from >= 0 && current.to >= 0) {
-            const myStart = Math.min(current.from, current.to);
-            const myEnd   = Math.max(current.from, current.to);
-            for (let h = myStart; h <= myEnd; h++) {
-                mySlotHours.add(h);
-            }
-        }
-
-        fromEl.querySelectorAll('option').forEach(option => {
-            const hour = parseInt(option.value, 10);
-            if (usedHours.has(hour) && !mySlotHours.has(hour)) {
-                option.disabled = true;
-            } else {
-                option.disabled = false;
-            }
-        });
-
-        toEl.querySelectorAll('option').forEach(option => {
-            const hour = parseInt(option.value, 10);
-            if (hour <= current.from || hour > upperBound) {
-                option.disabled = true;
-                return;
-            }
-            if (usedHours.has(hour) && !mySlotHours.has(hour)) {
-                option.disabled = true;
-            } else {
-                option.disabled = false;
-            }
-        });
-
-        const selectedToOption = toEl.options[toEl.selectedIndex];
-        if (selectedToOption.disabled) {
-            const firstValidOption = Array.from(toEl.options).find(option => !option.disabled);
-            if (firstValidOption) {
-                toEl.value = firstValidOption.value;
-            } else {
-                toEl.value = '';
-            }
-        }
-    });
-    variationChart(periodVariation, launchTimeSeriesChart);
-}
-
-function addTimeSlot(periodVariation){
-    let optionsAlreadySelected =[];
-    let rowToCopy = document.getElementById(periodVariation + '_variation_1');
-    let elementVariations = document.querySelectorAll(`[id^="from_${periodVariation}_variation_"]`);
-
-    elementVariations.forEach(function (element) {
-        let from = document.getElementById(element.id).value;
-        let to = document.getElementById(element.id.replace('from', 'to')).value;
-        for (let i = parseInt(from); i < parseInt(to); i++){
-            optionsAlreadySelected.push(parseInt(i));
-        }
-    });
-
-    window.indexInput[periodVariation]['value'] += 1;
-    let newId = parseInt(window.indexInput[periodVariation]['value']);
-    let new_row = rowToCopy.cloneNode(true);
-    new_row.id = periodVariation + '_variation_' + newId;
-
-    let formElements = new_row.querySelectorAll('input, select');
-
-    formElements.forEach(function (formElement) {
-        let labelElement = new_row.querySelector('label[for="' + formElement.id + '"]');
-        let idToReplace = formElement.id.split('_');
-        let valueToSelected;
-        if (optionsAlreadySelected.length > 0) {
-            valueToSelected = Math.max(...optionsAlreadySelected) + 1;
-        } else {
-            valueToSelected = 0;
-        }
-        idToReplace[idToReplace.length - 1] = newId;
-
-        if (formElement.id.startsWith('from_')){
-            formElement.addEventListener('change', function () {
-                variationController(periodVariation);
-            });
-        }
-
-        if(formElement.id.startsWith('from_') || formElement.id.startsWith('to_')){
-            let options = formElement.querySelectorAll('option');
-            options.forEach(function(option){
-                if(!optionsAlreadySelected.includes(parseInt(option.value)) ){
-                    if(parseInt(option.value) === valueToSelected){
-                        option.selected = true;
-                    }
-                }
-            });
-        }
-
-        idToReplace = idToReplace.join('_');
-        formElement.id = idToReplace;
-        formElement.name = idToReplace;
-        if (labelElement) {
-            labelElement.htmlFor = idToReplace;
-        }
-    });
-
-    document.getElementById(periodVariation + '_variation_bloc').appendChild(new_row);
-    if (window.indexInput[periodVariation]['value'] === window.indexInput[periodVariation]['max']){
-        document.getElementById('add_' + periodVariation + '_slot').classList.add('d-none');
-    }
-    variationController(periodVariation);
+    updateTimeseriesChart();
 }
 
 function createTimeSeriesChart(){
@@ -231,4 +79,5 @@ function createTimeSeriesChart(){
     window.variationsIndex = hourlyVariationsIndex;
     window.variationsValues = hourlyVariationsValues;
     window.timeseriesToSave = { hourlyVariationsIndex, hourlyVariationsValues };
+    updateTimeseriesChart();
 }
