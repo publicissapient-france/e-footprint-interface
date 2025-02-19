@@ -40,22 +40,6 @@
                 placeholder="{{ new_object_name }}">
             </div>
 
-            {% for attr in object_structure.numerical_attributes %}
-                <div class="col-8 mb-3">
-                    <div class="input-group">
-                        <label for="{{ attr.attr_name }}" class="form-label w-100">{{ attr.attr_name }}</label>
-                        <input type="text"
-                               class="form-control input_with_add_on"
-                               id="{{ attr.attr_name }}"
-                               name="{{ attr.attr_name }}"
-                               placeholder="Enter value" required>
-                        <span class="input-group-text" id="basic-addon2">
-                            {{ attr.attr_value.short_unit }}
-                        </span>
-                    </div>
-                </div>
-            {% endfor %}
-
             {% for attr in object_structure.list_attributes %}
                 <div class="col-12 mb-3">
                     <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>

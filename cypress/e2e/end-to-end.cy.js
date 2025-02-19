@@ -33,7 +33,7 @@ describe('Test de la page d\'accueil', () => {
           .click();
         cy.get('#formPanel').contains('form', 'Add new usage journey step').should('be.visible');
         cy.get('#name').type(ujsOne);
-        cy.get('#user_time_spent').type('10');
+        cy.get('#user_time_spent').type('10.1');
         cy.get('#formPanel form').find('button[type="submit"]').click();
         cy.get('#formPanel').should('exist').find('form').should('not.exist');
         // @ts-ignore
@@ -43,7 +43,7 @@ describe('Test de la page d\'accueil', () => {
           .click();
         cy.get('#formPanel').contains('form', 'Add new usage journey step').should('be.visible');
         cy.get('#name').type(ujsTwo);
-        cy.get('#user_time_spent').type('20');
+        cy.get('#user_time_spent').type('20,2');
         cy.get('#formPanel form').find('button[type="submit"]').click();
         cy.get('#formPanel').should('exist').find('form').should('not.exist');
         cy.get('div[id$="'+ujName.replaceAll(' ', '-')+'"]').should('have.class', 'leader-line-object')
