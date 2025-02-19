@@ -18,7 +18,7 @@ function editFrequencyField(){
     let toCopy = false;
     netGrowthRatePeriod.innerHTML = '';
     optionsToCopy.forEach(function(option){
-        if(parseInt(avgNbUsageJourneyPeriod.value) === parseInt(option.value)){
+        if(avgNbUsageJourneyPeriod.value === option.value){
             toCopy = true;
         }
         if(toCopy){
