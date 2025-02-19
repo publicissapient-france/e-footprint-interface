@@ -18,6 +18,8 @@ function initSortableObjectCards() {
 function initModelBuilderMain() {
     initLeaderLines();
     initSortableObjectCards();
+    initSidePanel();
+    initHammer();
 }
 
 function reverseIconAccordion(objectId){

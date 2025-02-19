@@ -21,6 +21,7 @@ tests
 .env
 cypress
 node_modules
+js_tests
 
 # Python pycache:
 __pycache__/

@@ -13,6 +13,7 @@
         <script src="{% static 'scripts/external_librairies/_hyperscript.min.js' %}"></script>
         <script src="{% static 'scripts/external_librairies/leader-line.min.js' %}"></script>
         <script src="{% static 'scripts/external_librairies/Sortable.min.js' %}"></script>
+        <script src="{% static 'scripts/external_librairies/hammer.js' %}"></script>
         <script src="{% static 'scripts/external_librairies/luxon.min.js' %}"></script>
         <script src="{% static 'scripts/external_librairies/chart.min.js' %}"></script>
         <script src="{% static 'scripts/external_librairies/chart_js_adapter_luxon.min.js' %}"></script>
@@ -21,22 +22,26 @@
 
 </head>
 
-    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-        <div class="container-fluid p-0">
-            <!-- Main Content -->
-
-            <main id="main-content-block" class="text-center w-100" style="height: 95vh;">
-                {% if home %}
-                {% include "home.html" %}
-                {% elif understand %}
-                {% include "understand.html" %}
-                {% elif modelBuilderMain %}
-                {% include "model_builder/model_builder_main.html" %}
-                {% endif %}
-            </main>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <div class="container-fluid p-0">
+        <!-- Main Content -->
+        {% include 'navbar.html' %}
+        <div id="loading-bar" class="bg-body-tertiary">
+            <div class="progress-bar"></div>
         </div>
+        <main id="main-content-block" class="text-center w-100" style="height: 93vh;">
+            {% if home %}
+            {% include "home.html" %}
+            {% elif understand %}
+            {% include "understand.html" %}
+            {% elif modelBuilderMain %}
+            {% include "model_builder/model_builder_main.html" %}
+            {% endif %}
+        </main>
+    </div>
     {% bootstrap_javascript %}
         <script src="{% static 'scripts/leaderline_utils.js' %}"></script>
+    <script src="{% static 'scripts/hammer_utils.js' %}"></script>
         <script src="{% static 'scripts/dynamic_forms.js' %}"></script>
         <script src="{% static 'scripts/loading_bar.js' %}"></script>
         <script src="{% static 'scripts/modal_utils.js' %}"></script>
@@ -58,9 +63,6 @@
             });
 
             document.body.addEventListener("computeResultChart", function(event) {
-                let modalElement = document.getElementById("resultModal");
-                let modal = new bootstrap.Modal(modalElement);
-                modal.show();
                 drawAreaResultChart()
                 updateAreaResultChart('bar', 'year');
             });

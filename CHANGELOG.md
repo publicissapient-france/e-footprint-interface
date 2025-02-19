@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.5.0] - 2025-02-24
+
+- Explode the navbar into a new navbar and a dedicated toolbar for the model 
+  builder.
+- Add a swipe effect to open and visualize the result panel.
+
 ## [0.4.5] - 2025-03-12
 
 ### Fixed

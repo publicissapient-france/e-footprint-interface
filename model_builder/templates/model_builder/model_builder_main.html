@@ -1,11 +1,8 @@
 {% load static %}
-{% include 'model_builder/navbar.html' %}
-<div id="loading-bar" class="bg-body-tertiary">
-  <div class="progress-bar"></div>
-</div>
 <div class="container-fluid p-0" id="model-builder-page">
     <div class="row g-0">
         <div class="col-12" id="model-canva">
+            {% include 'model_builder/upload_download_reboot_model_tooltips.html' %}
             <div class="row my-3 mx-0 px-2 gx-3 ">
                 <div class="col-4">
                     <div class="rounded-4 p-4 list-object-efootprint" id="usage-pattern-container">
@@ -99,23 +96,31 @@
     <div class="col-3 d-none transition-width" id="formPanel"></div>
 </div>
 
-<div id="panel-result-btn" class="panel-result-btn position-fixed bottom-0" style="z-index: 1000;">
-    <button class="row bg-white rounded-top-2 reverse-shadow w-100 border border-0"
-            hx-get="/model_builder/result-chart/"
-            hx-target="#modal-container"
-            hx-swap="innerHTML"
-            hx-trigger="click"
-            hx-disabled-elt="button"
+<div id="panel-result-btn"
+     class="panel-result-btn position-fixed bottom-0 p-0 bg-white rounded-top-2 reverse-shadow border border-0 p-0 row align-items-center"
+     style="z-index: 1000;height: 5vh; cursor: pointer;"
+>
+    <div class="col-12" id="btn-open-panel-result"
+         hx-get="/model_builder/result-chart/"
+        hx-target="#inner-panel-result"
+        hx-swap="innerHTML"
+        hx-trigger="click"
+        hx-disabled-elt="button"
+         hx-on::after-request="displayPanelResult()"
     >
-        <div class="col-12 text-center text-secondary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="40" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
-              <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
-            </svg>
+        <div class="row align-items-center">
+            <div class="col-4 text-start px-4 py-0">
+                <p class="h5 m-0"><b>Results</b></p>
+            </div>
+            <div class="col-4 text-center text-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="40" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
+                  <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
+                </svg>
+            </div>
         </div>
-            <div class="col-12 text-start px-4 mb-5">
-                <h5><b>Results</b></h5>
-        </div>
-    </button>
+    </div>
+    <div class="col-12 bg-white" id="inner-panel-result">
+    </div>
 </div>
 
 {% include 'model_builder/side_panels/usage_pattern/timeseries_chart.html' %}

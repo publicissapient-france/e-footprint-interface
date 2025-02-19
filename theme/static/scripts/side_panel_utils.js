@@ -16,8 +16,10 @@ function closeAndEmptySidePanel() {
     updateLines();
 }
 
-document.addEventListener('click', function(event) {
-    if(event.target.closest('[hx-target="#formPanel"]')){
-        openSidePanel();
-    }
-});
+function initSidePanel() {
+    document.addEventListener('click', function(event) {
+        if(event.target.closest('[hx-target="#formPanel"]')){
+            openSidePanel();
+        }
+    });
+}

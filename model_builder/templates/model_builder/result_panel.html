@@ -1,59 +1,56 @@
-<div class="modal fade reverse-shadow result-modal" id="resultModal" tabindex="-1" aria-labelledby="resultModal" aria-hidden="true" data-bs-backdrop="false" data-bs-keyboard="true">
-    <div class="modal-dialog">
-        <div class="modal-content p-2">
-            <div class="modal-header px-2  py-0">
-                <button class="bg-transparent bg-transparent header-btn-result result-active p-2 fz-1 me-2">
-                    <b>Results</b>
-                </button>
-                <!--
-                <button class="bg-transparent bg-transparent header-btn-result p-2 fz-1">
-                    <b>Computations</b>
-                </button>
-                -->
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="row px-5" style="height:80vh; overflow-y: auto">
+    <div class="col-12">
+        <div class="row align-items-center">
+            <div class="col-4 text-start px-4 py-0">
+                <p class="h5 m-0"><b>Results</b></p>
             </div>
-            <div class="modal-body">
-                <div class="row p-4">
-                    <div class="col-12 shadow rounded-2 p-4 mt-3 ">
-                        <p class="h5">
-                            Total CO2 emissions over time
-                        </p>
-                         <div class="row align-items-center mb-2" id="form-result-panel">
-                            <div class="col-auto">
-                                <label for="results_temporal_granularity" class="form-label w-100 text-start fz-0-8">Time granularity</label>
-                                <select class="form-select light-select fz-0-8 h-30"
-                                        id="results_temporal_granularity"
-                                        name="results_temporal_granularity"
-                                        onchange="drawAreaResultChart()">
-                                    <option value="day">Day</option>
-                                    <option value="week">Week</option>
-                                    <option value="month" selected>Month</option>
-                                    <option value="year">Year</option>
-                                </select>
-                            </div>
-                            <div class="col-auto">
-                                <button class="btn btn-white border border-1 border-body-tertiary rounded-pill fz-0-8"
-                                    id="reset_zoom"
-                                    onclick="charts['lineChart'].resetZoom();charts['barStackedChart'].resetZoom();">
-                                    Reset zoom
-                                </button>
-                            </div>
-                        </div>
-                        <canvas id="lineChart"></canvas>
-                    </div>
-                    <div class="col-12 mt-3 shadow rounded-2 p-4">
-                        <p class="h5 ">
-                            Total CO2 emissions over time
-                        </p>
-
-                        <canvas id="barChart"></canvas>
-                        </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <div class="col-4 text-center text-secondary"
+                onclick="hidePanelResult()"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="40" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
+                  <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
+                </svg>
             </div>
         </div>
+    </div>
+    <div class="col-auto">
+        <button class="bg-transparent bg-transparent header-btn-result result-active p-2 fz-1 me-2">
+            <b>Results</b>
+        </button>
+    </div>
+    <div class="col-12 shadow rounded-2 p-4 mt-3 ">
+        <p class="h5">
+            Total CO2 emissions over time
+        </p>
+         <div class="row align-items-center mb-2" id="form-result-panel">
+            <div class="col-auto">
+                <label for="results_temporal_granularity" class="form-label w-100 text-start fz-0-8">Time granularity</label>
+                <select class="form-select light-select fz-0-8 h-30"
+                        id="results_temporal_granularity"
+                        name="results_temporal_granularity"
+                        onchange="drawAreaResultChart()">
+                    <option value="day">Day</option>
+                    <option value="week">Week</option>
+                    <option value="month" selected>Month</option>
+                    <option value="year">Year</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-white border border-1 border-body-tertiary rounded-pill fz-0-8"
+                    id="reset_zoom"
+                    onclick="charts['lineChart'].resetZoom();charts['barStackedChart'].resetZoom();">
+                    Reset zoom
+                </button>
+            </div>
+        </div>
+        <canvas id="lineChart" style="max-height: 600px;"></canvas>
+    </div>
+    <div class="col-12 my-3 shadow rounded-2 p-4">
+        <p class="h5 ">
+            Total CO2 emissions over time
+        </p>
+
+        <canvas id="barChart" style="max-height: 600px;"></canvas>
     </div>
 </div>
 <script>
@@ -61,10 +58,5 @@
         'lineChart' : null,
         'barChart' : null
     };
-
     window.emissions = {{ model_web.system_emissions|safe }}
-    document.getElementById('resultModal').addEventListener('hidden.bs.modal', function () {
-        document.getElementById('panel-result-btn').focus();
-        document.getElementById('modal-container').innerHTML = '';
-    });
 </script>
