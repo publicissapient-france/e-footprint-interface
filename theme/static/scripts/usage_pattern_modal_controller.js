@@ -44,8 +44,15 @@ function openModalUsagePattern(attributeName) {
 
 function checkAttributes(usagePatternAttribute) {
     if (usagePatternAttribute === 'timeseries') {
-        document.getElementById('date_hourly_usage_journey_starts').value = document.getElementById('timeframe_start_date').value;
-        document.getElementById('list_hourly_usage_journey_starts').value = window.timeseriesToSave['hourlyVariationsValues'].toString();
+        document.getElementById('date_hourly_usage_journey_starts').value = document.getElementById('modal_timeframe_start_date').value;
+        document.getElementById('list_hourly_usage_journey_starts').value = window.variationsValues.toString();
+        document.getElementById('timeframe_start_date').value = window.formValues['modal_timeframe_start_date'].value;
+        document.getElementById('net_growth_rate_period').value = window.formValues['modal_net_growth_rate_period'].value;
+        document.getElementById('net_growth_rate_value').value = window.formValues['modal_net_growth_rate_value'].value;
+        document.getElementById('avg_nb_usage_journey_value').value = window.formValues['modal_avg_nb_usage_journey_value'].value;
+        document.getElementById('avg_nb_usage_journey_period').value = window.formValues['modal_avg_nb_usage_journey_period'].value;
+        document.getElementById('timeframe_value').value = window.formValues['modal_timeframe_value'].value;
+        document.getElementById('timeframe_range').value = window.formValues['modal_timeframe_range'].value;
     } else {
         document.getElementById(usagePatternAttribute).value = document.getElementById('form-select-' + usagePatternAttribute).value;
     }

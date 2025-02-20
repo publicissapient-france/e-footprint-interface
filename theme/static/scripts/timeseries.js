@@ -86,13 +86,13 @@ window.optionsChartJs={
 
 function refreshFormValue(){
     window.formValues = {
-        'timeframe_start_date': document.getElementById('timeframe_start_date'),
-        'net_growth_rate_period': document.getElementById('net_growth_rate_period'),
-        'net_growth_rate_value': document.getElementById('net_growth_rate_value'),
-        'avg_nb_usage_journey_value': document.getElementById('avg_nb_usage_journey_value'),
-        'avg_nb_usage_journey_period': document.getElementById('avg_nb_usage_journey_period'),
-        'timeframe_value': document.getElementById('timeframe_value'),
-        'timeframe_range': document.getElementById('timeframe_range')
+        'modal_timeframe_start_date': document.getElementById('modal_timeframe_start_date'),
+        'modal_net_growth_rate_period': document.getElementById('modal_net_growth_rate_period'),
+        'modal_net_growth_rate_value': document.getElementById('modal_net_growth_rate_value'),
+        'modal_avg_nb_usage_journey_value': document.getElementById('modal_avg_nb_usage_journey_value'),
+        'modal_avg_nb_usage_journey_period': document.getElementById('modal_avg_nb_usage_journey_period'),
+        'modal_timeframe_value': document.getElementById('modal_timeframe_value'),
+        'modal_timeframe_range': document.getElementById('modal_timeframe_range')
     }
 }
 
@@ -131,7 +131,7 @@ function updateTimeseriesChart() {
     let aggregatedIndex = [];
     let aggregatedValues = [];
     let currentGroup = [];
-    let currentDate = luxon.DateTime.fromISO(window.formValues['timeframe_start_date'].value)
+    let currentDate = luxon.DateTime.fromISO(window.formValues['modal_timeframe_start_date'].value)
 
     let normalizedIndex = variationsIndex.map(date =>
         luxon.DateTime.fromISO(date).toUTC().toISO()
