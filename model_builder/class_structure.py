@@ -3,12 +3,12 @@ from typing import get_origin, List, get_args
 
 from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity, ExplainableHourlyQuantities
 from efootprint.abstract_modeling_classes.modeling_object import ModelingObject
-from efootprint.core.all_classes_in_order import ALL_CLASSES_IN_CANONICAL_COMPUTATION_ORDER
+from efootprint.core.all_classes_in_order import ALL_EFOOTPRINT_CLASSES
 from efootprint.core.hardware.server_base import ServerBase
 from efootprint.core.usage.job import JobBase
 
 MODELING_OBJECT_CLASSES_DICT = {modeling_object_class.__name__: modeling_object_class
-                                for modeling_object_class in ALL_CLASSES_IN_CANONICAL_COMPUTATION_ORDER}
+                                for modeling_object_class in ALL_EFOOTPRINT_CLASSES}
 MODELING_OBJECT_CLASSES_DICT.update({"JobBase": JobBase, "ServerBase": ServerBase})
 
 
