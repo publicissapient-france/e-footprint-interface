@@ -99,28 +99,17 @@ function refreshFormValue(){
 
 function initOrUpdateChart(chartName, newData, newOptions) {
   let baseConfig = window.optionsChartJs[chartName];
-
-  if (!window.charts[chartName]) {
-    const ctx = document.getElementById(chartName).getContext('2d');
-    window.charts[chartName] = new Chart(ctx, {
-      type: baseConfig.type,
-      data: newData || baseConfig.data,
-      options: newOptions || baseConfig.options
-    });
-  } else {
-    let chart = window.charts[chartName];
-    if (newData) {
-      chart.data.labels = newData.labels;
-      chart.data.datasets = newData.datasets;
-    }
-    if (newOptions) {
-      chart.options = {
-        ...chart.options,
-        ...newOptions
-      };
-    }
-    chart.update();
+  if (window.charts[chartName]) {
+    window.charts[chartName].destroy();
+    window.charts[chartName] = null;
   }
+
+  const ctx = document.getElementById(chartName).getContext('2d');
+  window.charts[chartName] = new Chart(ctx, {
+    type: baseConfig.type,
+    data: newData || baseConfig.data,
+    options: newOptions || baseConfig.options
+  });
 }
 
 function updateTimeseriesChart() {

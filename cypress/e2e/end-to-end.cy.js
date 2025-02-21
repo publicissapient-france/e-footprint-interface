@@ -132,7 +132,7 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#modal_net_growth_rate_period').select('year');
         cy.wait(1000);
         cy.get('button[onclick^="checkAttributes(\'timeseries\')"]').click();
-        cy.get('#usage-pattern-attributes-modal-timeseries').should('not.exist');
+        cy.get('#usage-pattern-attributes-modal-timeseries').should('not.be.visible');
 
         cy.get('#save_usage_pattern_btn').click();
         cy.get('#formPanel').should('not.contain.html');

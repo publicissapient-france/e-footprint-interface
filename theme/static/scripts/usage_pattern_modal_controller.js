@@ -43,6 +43,10 @@ function openModalUsagePattern(attributeName) {
 }
 
 function checkAttributes(usagePatternAttribute) {
+    let modalElement = document.getElementById('usage-pattern-attributes-modal-' + usagePatternAttribute);
+    let modalInstance = bootstrap.Modal.getInstance(modalElement);
+    let backdrop = document.querySelector('.modal-backdrop');
+
     if (usagePatternAttribute === 'timeseries') {
         document.getElementById('date_hourly_usage_journey_starts').value = document.getElementById('modal_timeframe_start_date').value;
         document.getElementById('list_hourly_usage_journey_starts').value = window.variationsValues.toString();
@@ -53,20 +57,35 @@ function checkAttributes(usagePatternAttribute) {
         document.getElementById('avg_nb_usage_journey_period').value = window.formValues['modal_avg_nb_usage_journey_period'].value;
         document.getElementById('timeframe_value').value = window.formValues['modal_timeframe_value'].value;
         document.getElementById('timeframe_range').value = window.formValues['modal_timeframe_range'].value;
+        window.charts['timeSeriesChart'].destroy();
+        window.charts['timeSeriesChart'] = null;
+        document.getElementById('timeSeriesChart').innerHTML = '';
+        if (modalInstance) {
+            modalInstance.hide();
+            backdrop.remove();
+        }
     } else {
         document.getElementById(usagePatternAttribute).value = document.getElementById('form-select-' + usagePatternAttribute).value;
+        modalInstance.hide();
+        modalElement.remove();
+        if (backdrop) {
+            backdrop.remove();
+        }
     }
     if (document.getElementById(usagePatternAttribute + '-icon-check').classList.contains('d-none')) {
         document.getElementById(usagePatternAttribute + '-icon-check').classList.remove('d-none');
     }
-    let modalElement = document.getElementById('usage-pattern-attributes-modal-' + usagePatternAttribute);
+}
+
+function cleanModal() {
+    let modalElement = document.getElementById('usage-pattern-attributes-modal-timeseries');
     let modalInstance = bootstrap.Modal.getInstance(modalElement);
+    let backdrop = document.querySelector('.modal-backdrop');
     if (modalInstance) {
         modalInstance.hide();
-        modalElement.remove();
     }
-    let backdrop = document.querySelector('.modal-backdrop');
-    if (backdrop) {
+    if(backdrop) {
         backdrop.remove();
     }
+    modalElement.remove();
 }

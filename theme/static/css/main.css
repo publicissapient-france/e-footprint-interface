@@ -163,6 +163,10 @@ body{
     border-left: rgba(138,138,138,0.24) solid 2px;
 }
 
+#formPanel .form-control{
+    z-index: 9999 !important;
+}
+
 .left-shadow{
     box-shadow: -5px 0 8px 4px rgba(138,138,138,0.24);
     -webkit-box-shadow: -5px 0 9px 4px rgba(138,138,138,0.24);
