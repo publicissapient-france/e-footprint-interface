@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.4.2] - 2025-02-21
+
+### Fixed
+- Add usage pattern panel was broken (clicking on Add buttons didn’t open Devices Network Country or UsageJourney panels) when there was more than one usage journey in the model.
+- Don’t use uuid-System-1 hardcoded anymore to allow for generic System ids in the model (useful when importing a model generated with e-footprint).
+
+### Changed
+- Don’t add default usage journey step to new usage journey anymore. 
+
 ## [0.4.1] - 2025-02-19
 
 ### Fixed

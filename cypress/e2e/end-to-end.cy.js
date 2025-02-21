@@ -2,8 +2,9 @@ describe('Test de la page d\'accueil', () => {
     it('Ouvre la page d\'accueil et interagit avec un bouton', () => {
 
         let ujName = "Test E2E UJ";
-        let ujsOne = "Test E2E UJ 1";
-        let ujsTwo = "Test E2E UJ 2";
+        let ujName2 = "Test E2E UJ 2";
+        let ujsOne = "Test E2E UJS 1";
+        let ujsTwo = "Test E2E UJS 2";
         let server = "Test E2E Server";
         let service = "Test E2E Service";
         let jobOne = "Test E2E Job 1";
@@ -15,7 +16,7 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#model-canva').should('be.visible');
         cy.window().its('LeaderLine')
 
-        //test de l'ajout d'un usagejourney avec d'abord submit d'un form vide et ensuite d'un form valide
+        // Create UJ one and two
         cy.get('#btn-add-usage-journey').click();
         cy.get('#btn-add-usage-journey').should('be.visible');
         cy.get('#btn-submit-form-add-usage-journey').click();
@@ -26,8 +27,14 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#btn-submit-form-add-usage-journey').click();
         cy.get('#form-add-usage-journey').should('not.exist');
 
-        //Le usagejourney doit être visible et ensuite on va lui ajouter deux usagejourneystep
+        cy.get('#btn-add-usage-journey').click();
+        cy.get('#name').type(ujName2);
+        cy.get('#btn-submit-form-add-usage-journey').click();
+        cy.get('#form-add-usage-journey').should('not.exist');
+
+        // User journeys must be visible then add user journey steps to UJ 1
         cy.get('div[id$="'+ujName.replaceAll(' ', '-')+'"]').should('have.class', 'leader-line-object')
+        cy.get('div[id$="'+ujName2.replaceAll(' ', '-')+'"]').should('have.class', 'leader-line-object')
         cy.get('div[id$="'+ujName.replaceAll(' ', '-')+'"]')
           .contains('button', 'Add usage journey step')
           .click();
@@ -51,7 +58,7 @@ describe('Test de la page d\'accueil', () => {
         cy.get('div[id*="'+ujName.replaceAll(' ', '-')+'"]').find('div[id*="'+ujsOne.replaceAll(' ', '-')+'"]').should('exist');
         cy.get('div[id*="'+ujName.replaceAll(' ', '-')+'"]').find('div[id*="'+ujsTwo.replaceAll(' ', '-')+'"]').should('exist');
 
-        //ajout d'un server
+        // Add server
         cy.get('#btn-add-server').click();
         cy.get('#formPanel').contains('form', 'Add new server').should('be.visible');
         cy.get('#name').type(server);
@@ -60,27 +67,24 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#formPanel form').find('button[type="submit"]').click();
 
         cy.get('div[id$="'+server.replaceAll(' ', '-')+'"]').should('have.class', 'list-group-item')
-        //get the button inside with attribute data-bs-target begin with '#flush-id' and ended with '-Test-E2E-Server'
+        // get the button inside with attribute data-bs-target begin with '#flush-id' and ended with '-Test-E2E-Server'
         cy.get('button[data-bs-target^="#flush-"][data-bs-target$="'+server.replaceAll(' ', '-')+'"]').click();
-        //get the button with attribute hx-get begin with '/model_builder/open-create-service-panel/' and ended with 'Test-E2E-Server'
+        // get the button with attribute hx-get begin with '/model_builder/open-create-service-panel/' and ended with 'Test-E2E-Server'
         cy.get('button[hx-get^="/model_builder/open-create-service-panel"][hx-get$="'+server.replaceAll(' ', '-')+'/"]').click();
         cy.get('#name').type(service);
         cy.get('#technology').select('php-symfony');
         cy.get('#formPanel form').find('button[type="submit"]').click();
         cy.get('button[hx-get^="/model_builder/open-edit-object-panel/"][hx-get$="'+service.replaceAll(' ', '-')+'/"]').should('be.visible');
 
-        //ajout de deux jobs
+        // Add jobs
         cy.get('button[data-bs-target^="#flush-"][data-bs-target$="'+ujsOne.replaceAll(' ', '-')+'"]').click();
-        //click sur le bouton avec les attributs hx-get et hx-vals qui contient l'id de ujOne
         cy.get('button[hx-get^="/model_builder/open_create_job_panel/"][hx-vals*="'+ujsOne.replaceAll(' ', '-')+'"]').click();
         cy.get('#name').type(jobOne);
         cy.get('#service').select(service);
         cy.get('#formPanel form').find('button[type="submit"]').click();
         cy.get('button[hx-get^="/model_builder/open-edit-object-panel/"][hx-get$="'+jobOne.replaceAll(' ', '-')+'/"]').should('be.visible');
 
-        //ajout de deux jobs
         cy.get('button[data-bs-target^="#flush-"][data-bs-target$="'+ujsTwo.replaceAll(' ', '-')+'"]').click();
-        //click sur le bouton avec les attributs hx-get et hx-vals qui contient l'id de ujOne
         cy.get('button[hx-get^="/model_builder/open_create_job_panel/"][hx-vals*="'+ujsTwo.replaceAll(' ', '-')+'"]').click();
         cy.get('#formPanel').should('be.visible');
         cy.get('#name').type(jobTwo);
@@ -88,7 +92,7 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#formPanel form').find('button[type="submit"]').click();
         cy.get('button[hx-get^="/model_builder/open-edit-object-panel/"][hx-get$="'+jobTwo.replaceAll(' ', '-')+'/"]').should('be.visible');
 
-        //ajout d'un usagePattern
+        // Add usagePattern
         cy.get('button').contains('Add usage pattern').click();
         cy.get('#formPanel').should('be.visible');
         cy.get('#name').type(upName);
@@ -121,7 +125,7 @@ describe('Test de la page d\'accueil', () => {
         cy.get('button[data-bs-target="#usage-pattern-attributes-modal-timeseries"]').click();
         cy.get('#usage-pattern-attributes-modal-timeseries').should('be.visible');
         cy.get('#timeframe_start_date').click();
-        //replace the date by 2026-01-01 in timeframe_start_date
+        // Replace the date by 2026-01-01 in timeframe_start_date
         cy.get('#timeframe_start_date').invoke('val', '2026-01-02').trigger('change');
         cy.get('#timeframe_value').invoke('val', '2').trigger('change');
         cy.get('#net_growth_rate_value').invoke('val', '25').trigger('change');
@@ -134,12 +138,11 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#formPanel').should('not.contain.html');
         cy.get('button[id^="button-id-"][id$="'+upName.replaceAll(' ', '-')+'"]').should('be.visible');
 
-        cy.get('button[id^="button-id-"][id$="Default-usage-journey-step"]').click();
-        //on attends quue le bouton soit enabled pour cliquer dessus
+        cy.get('button[id^="button-id-"][id$="Test-E2E-UJ-2"]').click();
         cy.wait(2000);
         cy.get('#btn-ask-delete').should('be.enabled').click();
         cy.get('button').contains('Yes, delete').should('be.enabled').click();
         cy.get("#model-builder-modal").should("not.exist");
-        cy.get('button[id^="button-id-"][id$="Default-usage-journey-step"]').should('not.exist');
+        cy.get('button[id^="button-id-"][id$="Test-E2E-UJ-2"]').should('not.exist');
     });
 });

@@ -182,7 +182,7 @@ def open_create_usage_pattern_panel(request):
 
     http_response = render(
         request, "model_builder/side_panels/usage_pattern_add.html", {
-            "usageJourneys": model_web.usage_journeys,
+            "usage_journeys": [{'efootprint_id': uj.efootprint_id, 'name':uj.name} for uj in model_web.usage_journeys],
             "networks": networks,
             "countries": countries,
             "devices": devices,
@@ -196,13 +196,6 @@ def open_create_usage_pattern_panel(request):
 
 def add_new_usage_journey(request):
     model_web = ModelWeb(request.session)
-
-    if not request.POST.getlist("uj_steps"):
-        mutable_post = request.POST.copy()
-        new_uj_step = UsageJourneyStep("Default usage journey step", SourceValue(1 * u.min), jobs=[])
-        add_new_efootprint_object_to_system(request.session, model_web, new_uj_step)
-        mutable_post.setlist('uj_steps', [new_uj_step.id])
-        request.POST = mutable_post
 
     new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, 'UsageJourney')
     added_obj = add_new_efootprint_object_to_system(request.session, model_web, new_efootprint_obj)
@@ -308,7 +301,8 @@ def add_new_usage_pattern(request):
     model_web = ModelWeb(request.session)
     new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, 'UsagePattern')
     added_obj = add_new_efootprint_object_to_system(request.session, model_web, new_efootprint_obj)
-    request.session["system_data"]["System"]["uuid-system-1"]["usage_patterns"].append(new_efootprint_obj.id)
+    system_id = next(iter(request.session["system_data"]["System"].keys()))
+    request.session["system_data"]["System"][system_id]["usage_patterns"].append(new_efootprint_obj.id)
     request.session.modified = True
 
     response = render(

@@ -381,17 +381,11 @@
 </div>
 
 <script>
-    window.usageJourneys = [
-        {% for usageJourney in usageJourneys %}
-            {'efootprint_id': '{{ usageJourney.efootprint_id }}', 'name':'{{ usageJourney.name }}' }
-        {% endfor %}
-    ]
-
     window.modalContent = {
         'country': { 'name': 'Countries', 'data':{{ countries|safe }} },
         'devices': { 'name': 'Devices', 'data':{{ devices|safe }} },
         'network': { 'name': 'Network', 'data': {{ networks|safe }} },
-        'usage-journey': { 'name': 'Network', 'data': usageJourneys }
+        'usage-journey': { 'name': 'UsageJourney', 'data': {{ usage_journeys|safe }} },
     }
 </script>
 

@@ -72,7 +72,8 @@ def delete_object(request, object_id):
     if obj_type == "UsagePattern":
         new_up_list = [up for up in system.get_efootprint_value("usage_patterns") if up.id != object_id]
         system.set_efootprint_value("usage_patterns", new_up_list)
-        request.session["system_data"]["System"]["uuid-system-1"]["usage_patterns"] = [up.id for up in new_up_list]
+        system_id = next(iter(request.session["system_data"]["System"].keys()))
+        request.session["system_data"]["System"][system_id]["usage_patterns"] = [up.id for up in new_up_list]
         request.session["system_data"]["UsagePattern"].pop(object_id)
         if len(new_up_list) == 0:
             del request.session["system_data"]["UsagePattern"]
