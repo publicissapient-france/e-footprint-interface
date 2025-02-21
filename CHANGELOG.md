@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.4.3] - 2025-02-21
+
+### Fixed
+- Temporary fix that increases precision of timeseries data for results, to avoid rounding effects. Will be better fixed when e-footprint’s to_json method is updated to have rounding depth as parameter.
+
 ## [0.4.2] - 2025-02-21
 
 ### Fixed

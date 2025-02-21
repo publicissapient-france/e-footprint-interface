@@ -138,16 +138,27 @@ class ModelWeb:
 
     @property
     def system_emissions(self):
+        def custom_hourly_quantities_to_json(hourly_quantities):
+            # TODO: Remove when e-footprint has been duly updated
+            output_dict = {
+                "label": hourly_quantities.label,
+                "values": list(map(lambda x: round(float(x), 5), hourly_quantities.value["value"].values._data)),
+                "unit": str(hourly_quantities.value.dtypes.iloc[0].units),
+                "start_date": hourly_quantities.value.index[0].strftime("%Y-%m-%d %H:%M:%S")
+            }
+
+            return output_dict
+
         emissions = {}
         energy_footprints = self.system.total_energy_footprints
-        emissions["Servers_and_storage_energy"] = (energy_footprints["Servers"] + energy_footprints["Storage"]
-                                                   ).to_json()
-        emissions["Devices_energy"] = energy_footprints["Devices"].to_json()
-        emissions["Network_energy"] = energy_footprints["Network"].to_json()
+        emissions["Servers_and_storage_energy"] = custom_hourly_quantities_to_json(
+            energy_footprints["Servers"] + energy_footprints["Storage"])
+        emissions["Devices_energy"] = custom_hourly_quantities_to_json(energy_footprints["Devices"])
+        emissions["Network_energy"] = custom_hourly_quantities_to_json(energy_footprints["Network"])
 
         fabrication_footprints = self.system.total_fabrication_footprints
-        emissions["Servers_and_storage_fabrication"] = (fabrication_footprints["Servers"] +
-                                                        fabrication_footprints["Storage"]).to_json()
-        emissions["Devices_fabrication"] = fabrication_footprints["Devices"].to_json()
+        emissions["Servers_and_storage_fabrication"] = custom_hourly_quantities_to_json(
+            fabrication_footprints["Servers"] + fabrication_footprints["Storage"])
+        emissions["Devices_fabrication"] = custom_hourly_quantities_to_json(fabrication_footprints["Devices"])
 
         return emissions
