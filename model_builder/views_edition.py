@@ -116,7 +116,7 @@ def generate_http_response_from_edit_html_and_events(
         "updateTopParentLines": {
             "topParentIds": top_parent_ids
         },
-        "closePanelAfterSwap": True
+        'closePanel': ''
     })
 
     return http_response

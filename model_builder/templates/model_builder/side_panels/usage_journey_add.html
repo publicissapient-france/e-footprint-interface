@@ -1,5 +1,4 @@
-
-<form class="panel p-4 text-start" id="form-add-usage-journey move-panel-close"
+<form class="panel p-4 text-start" id="form-add-usage-journey"
         hx-post="/model_builder/add-new-usage-journey/"
         {% if efootprint_id_of_parent_to_link_to %}
             hx-vals='{"efootprint_id_of_parent_to_link_to": "{{ efootprint_id_of_parent_to_link_to }}"}'
@@ -9,9 +8,8 @@
             hx-target="#uj-list"
             hx-swap="beforeend"
         {% endif %}
-        onsubmit="window.openPanel='close'"
+        data-panel-state=false
       hx-disabled-elt="button"
-
 >
     <div class="form-header" id="panel-header">
         <div class="w-100 text-end">
@@ -22,7 +20,7 @@
                     </h5>
                 </div>
                 <div class="col-2">
-                    <button type="button" class="btn btn-white move-panel-close" aria-label="Close">
+                    <button type="button" class="btn btn-white" aria-label="Close" data-panel-state=false>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
                           <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                         </svg>
@@ -33,13 +31,11 @@
     </div>
     <div class="form-body" id="panel-body">
         <div class="row text-start">
-
             <div class="col-12 mb-3">
                 <label for="name" class="form-label">Name</label>
                 <input type="text" class="form-control p-2" id="name" name="name" required
                 placeholder="{{ new_object_name }}">
             </div>
-
             {% for attr in object_structure.list_attributes %}
                 <div class="col-12 mb-3">
                     <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
@@ -52,10 +48,10 @@
                 <hr>
             {% endfor %}
             <div class="col-12 mb-3">
-                    <p>
-                       If you want to reuse steps that already exist in other usage journeys, select them in uj_steps.
-                    </p>
-                </div>
+                <p>
+                   If you want to reuse steps that already exist in other usage journeys, select them in uj_steps.
+                </p>
+            </div>
         </div>
         <div class="modal-footer border border-0">
             <button type="submit" id="btn-submit-form-add-usage-journey" class="btn btn-primary rounded-pill w-100">Save</button>

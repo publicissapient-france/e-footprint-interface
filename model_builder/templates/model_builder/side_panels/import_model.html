@@ -4,7 +4,7 @@
         enctype="multipart/form-data"
         hx-swap="innerHTML"
         hx-target="#main-content-block"
-        onsubmit="window.openPanel='close'"
+        onsubmit="removeAllLines();"
 >
     {% csrf_token %}
     <div class="form-header" id="panel-header">
@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="col-2">
-                    <button type="button" class="btn btn-white move-panel-close" aria-label="Close">
+                    <button type="button" class="btn btn-white" aria-label="Close" data-panel-state=false>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
                           <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                         </svg>
@@ -33,7 +33,7 @@
         <div class="row text-start">
             <div class="col-12 mb-3">
                 <label for="import-json-input" class="form-label">Choose a json file</label>
-                <input  class="form-control" id="import-json-input" name="import-json-input" type="file">
+                <input  class="form-control" id="import-json-input" name="import-json-input" type="file" required>
                 {% if uploadError %}
                     <p id="importModalPanelError" class="text-center font-bold text-red-1">{{uploadError}}</p>
                 {% endif %}

@@ -3,8 +3,8 @@
         hx-post="/model_builder/add-new-service/{{ server_id }}"
         hx-target="#{{ server_id }}-services"
         hx-swap="beforeend"
-        onsubmit="window.openPanel='close'"
         hx-disabled-elt="button"
+      data-panel-state=false
 >
     {% include "model_builder/side_panels/dynamic_form_structure.html" %}
 </form>

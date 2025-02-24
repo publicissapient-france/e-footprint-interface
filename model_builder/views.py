@@ -29,7 +29,10 @@ def model_builder_main(request, reboot=False):
 
     http_response = htmx_render(
         request, "model_builder/model-builder-main.html", context={"model_web": model_web})
-    http_response["HX-Trigger-After-Swap"] = "initLeaderLines"
+    http_response["HX-Trigger-After-Swap"] = json.dumps({
+        'initLeaderLines':'',
+        'closePanel': ''
+    })
 
     return http_response
 
@@ -69,7 +72,7 @@ def upload_json(request):
     http_response = render(request, "model_builder/model-builder-main.html",
                   context={"import_error_message": import_error_message})
     http_response["HX-Trigger-After-Swap"] = json.dumps({
-        "alertImportError"
+        "alertImportError":""
     })
     return http_response
 

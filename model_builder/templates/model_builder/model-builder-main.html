@@ -14,13 +14,14 @@
                                 <h5><b>Usage patterns</b></h5>
                             </div>
                             <div class="col-12 mt-2 justify-content-start text-start">
-                                <button class="w-75 btn btn-white dotted-border text-start fz-0-9 rounded-2 move-panel-open"
+                                <button class="w-75 btn btn-white dotted-border text-start fz-0-9 rounded-2"
                                 id="add_usage_pattern"
                                 hx-get="/model_builder/open-create-usage-pattern-panel/"
                                 hx-target="#formPanel"
                                 hx-trigger="click"
                                 hx-swap="innerHTML"
                                 hx-disabled-elt="button"
+                                data-panel-state=true
                                 >
                                 <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-3"  width="14px" height="14px" alt="add icon" />
                                 Add usage pattern
@@ -41,13 +42,15 @@
                                  <h5><b>Usage journeys</b></h5>
                             </div>
                             <div class="col-12 mt-2 justify-content-start text-start">
-                                <button class="w-75 btn btn-white dotted-border text-start fz-0-9 rounded-2 move-panel-open"
+                                <button class="w-75 btn btn-white dotted-border text-start fz-0-9 rounded-2"
                                         id="btn-add-usage-journey"
                                         hx-get="/model_builder/open-create-object-panel/UsageJourney/"
                                         hx-target="#formPanel"
                                         hx-trigger="click"
                                         hx-swap="innerHTML"
                                         hx-disabled-elt="button"
+                                        data-panel-state=true
+                                        data-panel-state=true
                                 >
                                     <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-3"  width="14px" height="14px" alt="add icon" />
                                     Add usage journey
@@ -71,13 +74,14 @@
                                 <h5><b>Infrastructure</b></h5>
                             </div>
                             <div class="col-12 mt-2 justify-content-start text-start" id="add_server">
-                                <button class="w-75 btn btn-white dotted-border text-start fz-0-9 rounded-2  move-panel-open"
+                                <button class="w-75 btn btn-white dotted-border text-start fz-0-9 rounded-2"
                                         id="btn-add-server"
                                 hx-get="/model_builder/open-create-server-panel/"
                                 hx-target="#formPanel"
                                 hx-trigger="click"
                                 hx-swap="innerHTML"
                                 hx-disabled-elt="button"
+                                data-panel-state=true
                                 >
                                     <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-3"  width="14px" height="14px" alt="add icon" />
                                     Add server

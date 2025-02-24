@@ -2,8 +2,8 @@
 <form class="container-fluid panel text-start p-4"
         hx-post="/model_builder/add-new-job/{{ efootprint_id_of_parent_to_link_to }}/"
         hx-swap="none"
-        onsubmit="window.openPanel='close'"
         hx-disabled-elt="button"
+        data-panel-state=false
 >
    {% with helper_message="To get support in defining your job, first create a server and add services to it." %}
         {% include "model_builder/side_panels/dynamic_form_structure.html" %}

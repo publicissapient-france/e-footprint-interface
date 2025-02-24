@@ -1,7 +1,12 @@
 // LEADERLINE
 
-window.openPanel = null
-window.panel = 0
+window.panelState = {
+    isOpen: false,
+    updateState(isOpen) {
+        this.isOpen = isOpen;
+        document.dispatchEvent(new CustomEvent("panelStateChanged", { detail: { isOpen } }));
+    }
+};
 
 window.dictLeaderLineOption = {
     'object-to-object': {
@@ -208,6 +213,8 @@ function initLeaderLines() {
 // ------------------------------------------------------------
 // HTMX AFTER SWAP
 
+document.addEventListener("panelStateChanged", updatePanelDisplay);
+
 document.body.addEventListener('removeLinesAndUpdateDataAttributes', function (event) {
     event.detail['elementIdsOfLinesToRemove'].forEach(elementIdWithLinesToRemove => {
         removeAllLinesDepartingFromElement(elementIdWithLinesToRemove);
@@ -251,11 +258,6 @@ document.body.addEventListener('setAccordionListeners', function (event) {
     });
 });
 
-document.body.addEventListener('closePanelAfterSwap', function (event) {
-    window.openPanel = 'close';
-    panelController();
-});
-
 window.initLeaderLines = initLeaderLines;
 
 // MODAL
@@ -282,45 +284,33 @@ function dropModalUnderstand(){
     document.getElementById("open-understand-modal").focus();
 }
 
-function movePanel(action){
+function updatePanelDisplay(event) {
+    removeAllLines();
+    let { isOpen } = event.detail;
     let modelCanva = document.getElementById("model-canva");
     let formPanel = document.getElementById("formPanel");
-    if (window.panel === 0 && action === 'open'){
+    if (isOpen) {
         modelCanva.classList.replace("col-12", "col-9");
         formPanel.classList.replace("d-none", "col-3");
-        window.panel = 1;
-    }
-    if(window.panel === 1 && action === 'close'){
+    } else {
         modelCanva.classList.replace("col-9", "col-12");
         formPanel.classList.replace("col-3", "d-none");
-        window.panel = 0;
-        formPanel.innerHTML = '';
+        formPanel.innerHTML = "";
     }
-    removeAllLines();
     initLeaderLines();
 }
 
+document.addEventListener('click', function(event) {
+    let btn = event.target.closest('button[data-panel-state], div[data-panel-state], img[data-panel-state]');
+    if (btn) {
+        let isOpen = btn.dataset.panelState === 'true';
+        window.panelState.updateState(isOpen);
+    }
+});
 
-function panelController(){
-    if (window.openPanel === 'open') {
-        movePanel("open");
-        window.openPanel = null;
-    }
-    if (window.openPanel === 'close') {
-        movePanel("close");
-        window.openPanel = null;
-    }
-}
-
-document.addEventListener("click", function(event) {
-    let button = event.target.closest("button");
-    if (button && button.classList.contains("move-panel-open")) {
-        window.openPanel = 'open';
-    }
-    if (button && button.classList.contains("move-panel-close")) {
-        window.openPanel = 'close';
-        panelController();
-    }
+document.addEventListener('closePanel', function(event) {
+    window.panelState.updateState(false);
+    hideLoadingBar();
 });
 
 document.addEventListener("htmx:beforeRequest", function() {
@@ -330,12 +320,15 @@ document.addEventListener("htmx:beforeRequest", function() {
     }
 });
 
-document.addEventListener("htmx:afterRequest", function() {
+document.addEventListener("htmx:afterSwap", function() {
+    hideLoadingBar();
+});
+
+function hideLoadingBar() {
     let progressBar = document.querySelector("#loading-bar .progress-bar");
     progressBar.style.animation = "none";
     progressBar.style.width = "0%";
-    panelController();
-});
+}
 
 
 

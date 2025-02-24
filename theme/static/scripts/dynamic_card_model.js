@@ -57,6 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
 window.addEventListener("load", function () {
     setTimeout(() => {
         initLeaderLines();
+        initHammer();
     }, 100);
 });
 
