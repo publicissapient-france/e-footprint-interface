@@ -31,20 +31,3 @@ function reverseIconAccordion(objectId){
     }
     updateLines();
 }
-
-window.resizeTimeout = null;
-
-window.addEventListener('resize', () => {
-    clearTimeout(window.resizeTimeout);
-    window.resizeTimeout = setTimeout(() => {
-        initLeaderLines();
-    }, 100);
-});
-
-window.addEventListener("load", function () {
-    setTimeout(() => {
-        initLeaderLines();
-    }, 100);
-});
-
-

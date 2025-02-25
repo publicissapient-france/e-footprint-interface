@@ -16,7 +16,7 @@ describe("Test - Import JSON", () => {
         cy.get('input[type="file"]').selectFile(fileTest);
         cy.get('button[type="submit"]').click();
 
-        cy.wait(5000);
+        cy.wait(1000);
 
         cy.get('a[id="btn-reboot-modeling"]').click();
 

@@ -138,3 +138,11 @@ function drawAreaResultChart(){
     let resultsTemporalGranularity = document.getElementById('results_temporal_granularity').value;
     updateAreaResultChart('line', resultsTemporalGranularity);
 }
+
+document.body.addEventListener("computeResultChart", function(event) {
+    let modalElement = document.getElementById("resultModal");
+    let modal = new bootstrap.Modal(modalElement);
+    modal.show();
+    drawAreaResultChart()
+    updateAreaResultChart('bar', 'year');
+});

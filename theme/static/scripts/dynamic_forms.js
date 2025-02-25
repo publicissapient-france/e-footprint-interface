@@ -1,4 +1,4 @@
-document.addEventListener("initAddPanel", function () {
+document.addEventListener("initDynamicForm", function () {
     const dynamicFormData = JSON.parse(document.getElementById('dynamic-form-data').textContent);
   /**
    * 1) SWITCH ELEMENT LOGIC

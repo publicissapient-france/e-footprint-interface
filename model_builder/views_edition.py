@@ -28,7 +28,7 @@ def open_edit_object_panel(request, object_id):
         context={"object_to_edit": obj_to_edit, "structure_dict": structure_dict,
                  "dynamic_form_data": dynamic_form_data})
 
-    http_response["HX-Trigger-After-Swap"] = "initAddPanel"
+    http_response["HX-Trigger-After-Swap"] = "initDynamicForm"
 
     return http_response
 

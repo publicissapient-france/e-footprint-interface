@@ -29,7 +29,7 @@ def model_builder_main(request, reboot=False):
 
     http_response = htmx_render(
         request, "model_builder/model_builder_main.html", context={"model_web": model_web})
-    http_response["HX-Trigger-After-Swap"] = "initLeaderLines"
+    http_response["HX-Trigger-After-Settle"] = "initLeaderLines"
 
     return http_response
 
@@ -57,7 +57,7 @@ def upload_json(request):
         except ValueError:
             import_error_message += "Invalid JSON data"
         try:
-            json_to_system(data)
+            json_to_system(data, launch_system_computations=False)
             request.session["system_data"] = data
             return redirect("model-builder")
         except Exception:

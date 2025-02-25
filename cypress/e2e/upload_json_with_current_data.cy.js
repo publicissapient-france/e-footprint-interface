@@ -38,10 +38,10 @@ describe("Test - Import JSON", () => {
         });
 
         cy.window().then((win) => {
-          cy.spy(win, 'removeAllLines').as('removeAllLines');
+          cy.spy(win, 'initLeaderLines').as('initLeaderLines');
         });
         cy.get('button[type="submit"]').click();
-        cy.get('@removeAllLines').should('have.been.called');
+        cy.get('@initLeaderLines').should('have.been.called');
 
         cy.get('button[id^="button-id-"][id$="'+upName.replaceAll(' ', '-')+'"]').should('exist').should('be.visible');
         cy.get('button[id^="button-id-"][id$="'+ujName.replaceAll(' ', '-')+'"]').should('exist').should('be.visible');

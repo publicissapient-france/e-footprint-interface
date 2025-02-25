@@ -40,7 +40,7 @@ def open_create_server_panel(request):
                   context={'structure_dict': structure_dict, "dynamic_form_data": dynamic_form_data,
                            "obj_type": "server"})
 
-    http_response["HX-Trigger-After-Swap"] = "initAddPanel"
+    http_response["HX-Trigger-After-Swap"] = "initDynamicForm"
 
     return http_response
 
@@ -58,7 +58,7 @@ def open_create_service_panel(request, server_efootprint_id):
             "server_id": server_efootprint_id, "structure_dict": services_dict, "dynamic_form_data": dynamic_form_data,
             "obj_type": "service"})
 
-    http_response["HX-Trigger-After-Swap"] = "initAddPanel"
+    http_response["HX-Trigger-After-Swap"] = "initDynamicForm"
 
     return http_response
 
@@ -122,7 +122,7 @@ def open_create_job_panel(request):
             "structure_dict": structure_dict, "dynamic_form_data": dynamic_form_data, "obj_type": "job",
             "efootprint_id_of_parent_to_link_to": request.GET.get('efootprint_id_of_parent_to_link_to')
         })
-    http_response["HX-Trigger-After-Swap"] = "initAddPanel"
+    http_response["HX-Trigger-After-Swap"] = "initDynamicForm"
 
     return http_response
 
