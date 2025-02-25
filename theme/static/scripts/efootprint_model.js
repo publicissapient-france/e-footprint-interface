@@ -1,13 +1,5 @@
 // LEADERLINE
 
-window.panelState = {
-    isOpen: false,
-    updateState(isOpen) {
-        this.isOpen = isOpen;
-        document.dispatchEvent(new CustomEvent("panelStateChanged", { detail: { isOpen } }));
-    }
-};
-
 window.dictLeaderLineOption = {
     'object-to-object': {
         color: "#9CA3AF",
@@ -178,8 +170,6 @@ function initLeaderLines() {
 // ------------------------------------------------------------
 // HTMX AFTER SWAP
 
-document.addEventListener("panelStateChanged", updatePanelDisplay);
-
 document.body.addEventListener('removeLinesAndUpdateDataAttributes', function (event) {
     event.detail['elementIdsOfLinesToRemove'].forEach(elementIdWithLinesToRemove => {
         removeAllLinesDepartingFromElement(elementIdWithLinesToRemove);
@@ -249,32 +239,33 @@ function dropModalUnderstand(){
     document.getElementById("open-understand-modal").focus();
 }
 
-function updatePanelDisplay(event) {
+function updatePanelOpen() {
     removeAllLines();
-    let { isOpen } = event.detail;
     let modelCanva = document.getElementById("model-canva");
     let formPanel = document.getElementById("formPanel");
-    if (isOpen) {
-        modelCanva.classList.replace("col-12", "col-9");
-        formPanel.classList.replace("d-none", "col-3");
-    } else {
-        modelCanva.classList.replace("col-9", "col-12");
-        formPanel.classList.replace("col-3", "d-none");
-        formPanel.innerHTML = "";
-    }
+    modelCanva.classList.replace("col-12", "col-9");
+    formPanel.classList.replace("d-none", "col-3");
+    initLeaderLines();
+}
+
+function updatePanelClose() {
+    removeAllLines();
+    let modelCanva = document.getElementById("model-canva");
+    let formPanel = document.getElementById("formPanel");
+    modelCanva.classList.replace("col-9", "col-12");
+    formPanel.classList.replace("col-3", "d-none");
+    formPanel.innerHTML = "";
     initLeaderLines();
 }
 
 document.addEventListener('click', function(event) {
-    let btn = event.target.closest('button[data-panel-state], div[data-panel-state], img[data-panel-state]');
-    if (btn) {
-        let isOpen = btn.dataset.panelState === 'true';
-        window.panelState.updateState(isOpen);
+    if(event.target.closest('[hx-target="#formPanel"]')){
+        updatePanelOpen();
     }
 });
 
 document.addEventListener('closePanel', function(event) {
-    window.panelState.updateState(false);
+    updatePanelClose()
     hideLoadingBar();
 });
 
@@ -294,7 +285,6 @@ function hideLoadingBar() {
     progressBar.style.animation = "none";
     progressBar.style.width = "0%";
 }
-
 
 
 

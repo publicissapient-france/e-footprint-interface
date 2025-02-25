@@ -27,7 +27,7 @@
                         hx-trigger="click"
                         hx-swap="innerHTML"
                         hx-disabled-elt="button"
-                        data-panel-state=true
+
                 >
                     {{ usage_journey_step.name}}
                 </button>
@@ -45,7 +45,7 @@
                                     hx-swap="innerHTML"
                                     hx-vals='{"efootprint_id_of_parent_to_link_to": "{{ usage_journey_step.efootprint_id }}"}'
                                     hx-disabled-elt="button"
-                                    data-panel-state=true
+
                             >
                                 <img src="{% static 'icons/add_icon.svg' %}" class="border-2 border-white me-3"  width="14px" height="14px" alt="add icon" />
                                 Add new job
