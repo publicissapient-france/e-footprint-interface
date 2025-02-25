@@ -27,7 +27,7 @@ def ask_delete_object(request, object_id):
                    f"To delete it, first delete or reorient these "
                    f"{web_obj.modeling_obj_containers[0].class_as_simple_str}s.")
 
-        http_response = render(request, "model_builder/modals/cant-delete-modal.html",
+        http_response = render(request, "model_builder/modals/cant_delete_modal.html",
             context={"msg": msg})
     else:
         message = f"Are you sure you want to delete this {web_obj.class_as_simple_str} ?"
@@ -49,7 +49,7 @@ def ask_delete_object(request, object_id):
                 sub_message = f"To delete only one {web_obj.class_as_simple_str}, break the mirroring link first."
 
         http_response = render(
-            request, "model_builder/modals/delete-card-modal.html",
+            request, "model_builder/modals/delete_card_modal.html",
             context={"obj": web_obj, "message": message, "sub_message": sub_message,
                      "remove_card_with_hyperscript": remove_card_with_hyperscript})
 

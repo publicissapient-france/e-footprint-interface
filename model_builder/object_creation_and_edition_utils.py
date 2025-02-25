@@ -169,7 +169,7 @@ def edit_object_in_system(request, obj_to_edit: ModelingObjectWeb):
 def render_exception_modal(request, exception):
     if os.environ.get("RAISE_EXCEPTIONS"):
         raise exception
-    http_response = render(request, "model_builder/modals/exception-modal.html", {
+    http_response = render(request, "model_builder/modals/exception_modal.html", {
         "msg": exception})
 
     http_response["HX-Trigger-After-Swap"] = "openModalDialog"

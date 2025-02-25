@@ -9,11 +9,10 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="icon" type="image/x-icon" href="/static/icons/sidenav/logo.svg"/>
         <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
-        <script src="{% static 'scripts/htmx.min.js' %}"></script>
-        <script src="{% static 'scripts/_hyperscript.min.js' %}"></script>
-        <script src="{% static 'scripts/leader-line.min.js' %}"></script>
-        <script src="{% static 'scripts/Sortable.min.js' %}"></script>
-        <script src="{% static 'scripts/dynamic_forms.js' %}"></script>
+        <script src="{% static 'scripts/external_librairies/htmx.min.js' %}"></script>
+        <script src="{% static 'scripts/external_librairies/_hyperscript.min.js' %}"></script>
+        <script src="{% static 'scripts/external_librairies/leader-line.min.js' %}"></script>
+        <script src="{% static 'scripts/external_librairies/Sortable.min.js' %}"></script>
         <script src="https://cdn.jsdelivr.net/npm/luxon@3.5.0/build/global/luxon.min.js"></script>
         <script src=" https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@^1"></script>
@@ -30,16 +29,15 @@
                 {% elif understand %}
                 {% include "understand.html" %}
                 {% elif modelBuilderMain %}
-                {% include "model_builder/model-builder-main.html" %}
+                {% include "model_builder/model_builder_main.html" %}
                 {% endif %}
             </main>
         </div>
-        {% bootstrap_javascript %}
-        <script src="{% static 'scripts/efootprint_model.js' %}"></script>
-        <script>
-            document.body.addEventListener('initLeaderLines', function (event) {
-               window.initLeaderLines();
-            });
-            </script>
+    {% bootstrap_javascript %}
+    <script src="{% static 'scripts/dynamic_forms.js' %}"></script>
+    <script src="{% static 'scripts/leaderline_utils.js' %}"></script>
+    <script src="{% static 'scripts/loading_bar.js' %}"></script>
+    <script src="{% static 'scripts/modal_utils.js' %}"></script>
+    <script src="{% static 'scripts/side_panel_utils.js' %}"></script>
     </body>
 </html>

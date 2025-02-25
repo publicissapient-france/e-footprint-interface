@@ -28,7 +28,7 @@ def model_builder_main(request, reboot=False):
     model_web = ModelWeb(request.session)
 
     http_response = htmx_render(
-        request, "model_builder/model-builder-main.html", context={"model_web": model_web})
+        request, "model_builder/model_builder_main.html", context={"model_web": model_web})
     http_response["HX-Trigger-After-Swap"] = "initLeaderLines"
 
     return http_response
@@ -66,7 +66,7 @@ def upload_json(request):
 
     import_error_message += "No file uploaded"
 
-    http_response = render(request, "model_builder/model-builder-main.html",
+    http_response = render(request, "model_builder/model_builder_main.html",
                   context={"import_error_message": import_error_message})
     http_response["HX-Trigger-After-Swap"] = json.dumps({
         "alertImportError":""
@@ -88,7 +88,7 @@ def result_chart(request):
         return render_exception_modal(request, e)
 
     http_response = htmx_render(
-        request, "model_builder/resultPanel.html", context={'model_web': model_web})
+        request, "model_builder/result_panel.html", context={'model_web': model_web})
 
     http_response["HX-Trigger-After-Swap"] = "computeResultChart"
 

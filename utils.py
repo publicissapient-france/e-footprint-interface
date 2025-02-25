@@ -5,7 +5,10 @@ from django.shortcuts import render
 def camelcase_html_filename_from_path(html_file_path: str):
     html_filename = html_file_path.split("/")[-1].replace(".html", "")
     if "-" in html_filename:
-        parts = html_filename.split("-")
+        raise ValueError(f"HTML file name should not contain '-', please rename {html_filename} to "
+                         f"{html_filename.replace('-', '_')}")
+    if "_" in html_filename:
+        parts = html_filename.split("_")
         html_filename = parts[0]
         for elt in parts[1:]:
             html_filename += elt.capitalize()

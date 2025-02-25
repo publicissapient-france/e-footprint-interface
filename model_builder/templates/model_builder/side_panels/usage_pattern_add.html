@@ -333,7 +333,7 @@
                                     <div id="collapse-daily-variation" class="accordion-collapse collapse show">
                                         <div class="accordion-body px-2">
                                             {% with variation="daily" dataVariations=dataDailyVariations %}
-                                                {% include 'model_builder/side_panels/variationBloc.html' %}
+                                                {% include 'model_builder/side_panels/variation_bloc.html' %}
                                             {% endwith %}
                                         </div>
                                     </div>
@@ -347,7 +347,7 @@
                                     <div id="collapse-weekly-variation" class="accordion-collapse collapse show">
                                         <div class="accordion-body px-2">
                                             {% with variation="weekly" dataVariations=dataWeeklyVariations %}
-                                                {% include 'model_builder/side_panels/variationBloc.html' %}
+                                                {% include 'model_builder/side_panels/variation_bloc.html' %}
                                             {% endwith %}
                                         </div>
                                     </div>
@@ -361,7 +361,7 @@
                                     <div id="collapse-seasonal-variation" class="accordion-collapse collapse show">
                                         <div class="accordion-body px-2">
                                             {% with variation="seasonal" dataVariations=dataSeasonalVariations %}
-                                                {% include 'model_builder/side_panels/variationBloc.html' %}
+                                                {% include 'model_builder/side_panels/variation_bloc.html' %}
                                             {% endwith %}
                                         </div>
                                     </div>
@@ -389,6 +389,6 @@
     }
 </script>
 
-<script src="{% static 'scripts/modalControllerUsagePattern.js' %}"></script>
-<script src="{% static 'scripts/formTimeseriesController.js' %}"></script>
+<script src="{% static 'scripts/usage_pattern_modal_controller.js' %}"></script>
+<script src="{% static 'scripts/form_timeseries_controller.js' %}"></script>
 <script src="{% static 'scripts/timeseries.js' %}"></script>
