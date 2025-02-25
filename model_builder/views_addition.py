@@ -204,7 +204,6 @@ def add_new_usage_journey(request):
     response["HX-Trigger-After-Swap"] = json.dumps({
         "updateTopParentLines": {"topParentIds": [added_obj.web_id]},
         "setAccordionListeners": {"accordionIds": [added_obj.web_id]},
-        'closePanel': ''
     })
 
     return response
@@ -240,10 +239,6 @@ def add_new_server(request):
     response = render(
         request, "model_builder/object_cards/server_card.html", {"server": added_obj})
 
-    response["HX-Trigger-After-Swap"] = json.dumps({
-        'closePanel': ''
-    })
-
     return response
 
 
@@ -263,9 +258,6 @@ def add_new_service(request, server_efootprint_id):
 
         response = render(request, "model_builder/object_cards/service_card.html",
                           context={"service": added_obj})
-        response["HX-Trigger-After-Swap"] = json.dumps({
-            'closePanel': ''
-        })
 
         return response
 
@@ -310,7 +302,6 @@ def add_new_usage_pattern(request):
     response["HX-Trigger-After-Swap"] = json.dumps({
         "updateTopParentLines": {"topParentIds": [added_obj.web_id]},
         "setAccordionListeners": {"accordionIds": [added_obj.web_id]},
-        'closePanel': ''
     })
 
     return response

@@ -115,8 +115,7 @@ def generate_http_response_from_edit_html_and_events(
     http_response["HX-Trigger-After-Swap"] = json.dumps({
         "updateTopParentLines": {
             "topParentIds": top_parent_ids
-        },
-        'closePanel': ''
+        }
     })
 
     return http_response

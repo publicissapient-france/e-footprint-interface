@@ -29,10 +29,7 @@ def model_builder_main(request, reboot=False):
 
     http_response = htmx_render(
         request, "model_builder/model-builder-main.html", context={"model_web": model_web})
-    http_response["HX-Trigger-After-Swap"] = json.dumps({
-        'initLeaderLines':'',
-        'closePanel': ''
-    })
+    http_response["HX-Trigger-After-Swap"] = "initLeaderLines"
 
     return http_response
 

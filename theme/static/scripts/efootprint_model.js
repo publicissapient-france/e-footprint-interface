@@ -39,11 +39,6 @@ window.dictLeaderLineOption = {
 
 window.allLines=[];
 
-window.oneRemValue = parseFloat(getComputedStyle(document.documentElement).fontSize);
-window.startElementWidth = 1
-window.startElementHeight = 1
-
-
 function updateLines() {
     Object.values(window.allLines).forEach(lineArray => {
         lineArray.forEach(line => {
@@ -239,33 +234,31 @@ function dropModalUnderstand(){
     document.getElementById("open-understand-modal").focus();
 }
 
-function updatePanelOpen() {
-    removeAllLines();
+function openSidePanel() {
     let modelCanva = document.getElementById("model-canva");
     let formPanel = document.getElementById("formPanel");
     modelCanva.classList.replace("col-12", "col-9");
     formPanel.classList.replace("d-none", "col-3");
-    initLeaderLines();
+    updateLines();
 }
 
-function updatePanelClose() {
-    removeAllLines();
+function closeAndEmptySidePanel() {
     let modelCanva = document.getElementById("model-canva");
     let formPanel = document.getElementById("formPanel");
     modelCanva.classList.replace("col-9", "col-12");
     formPanel.classList.replace("col-3", "d-none");
     formPanel.innerHTML = "";
-    initLeaderLines();
+    updateLines();
 }
 
 document.addEventListener('click', function(event) {
     if(event.target.closest('[hx-target="#formPanel"]')){
-        updatePanelOpen();
+        openSidePanel();
     }
 });
 
 document.addEventListener('closePanel', function(event) {
-    updatePanelClose()
+    closeAndEmptySidePanel()
     hideLoadingBar();
 });
 

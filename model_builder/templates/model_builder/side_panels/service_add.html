@@ -4,6 +4,7 @@
         hx-target="#{{ server_id }}-services"
         hx-swap="beforeend"
         hx-disabled-elt="button"
+        hx-on::after-request="closeAndEmptySidePanel()"
 >
     {% include "model_builder/side_panels/dynamic_form_structure.html" %}
 </form>
