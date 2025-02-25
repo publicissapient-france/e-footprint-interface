@@ -4,7 +4,11 @@
         enctype="multipart/form-data"
         hx-swap="innerHTML"
         hx-target="#main-content-block"
+<<<<<<< HEAD
         onsubmit="removeAllLines();"
+=======
+        onsubmit="window.openPanel='close'"
+>>>>>>> 66aff3e ([FIX/WIP] Simplify update leaderline logic and remove unnecessary updates)
 >
     {% csrf_token %}
     <div class="form-header" id="panel-header">

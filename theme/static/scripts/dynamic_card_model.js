@@ -37,21 +37,8 @@ window.resizeTimeout = null;
 window.addEventListener('resize', () => {
     clearTimeout(window.resizeTimeout);
     window.resizeTimeout = setTimeout(() => {
-        removeAllLines();
         initLeaderLines();
     }, 100);
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    const cards = document.querySelectorAll(".card")
-    cards.forEach(card => {
-        card.addEventListener("mouseover", function () {
-            updateLines();
-        });
-        card.addEventListener("mouseout", function () {
-            updateLines();
-        });
-    });
 });
 
 window.addEventListener("load", function () {

@@ -147,6 +147,7 @@ function addAccordionListener(accordion){
 }
 
 function initLeaderLines() {
+    removeAllLines();
     let leaderLineObjects = document.querySelectorAll('.leader-line-object');
     leaderLineObjects.forEach(leaderLineObject => {
         let leaderLineObjectParent = leaderLineObject.parentElement.closest('.leader-line-object');
@@ -190,13 +191,6 @@ document.body.addEventListener('removeLinesAndUpdateDataAttributes', function (e
 
 document.body.addEventListener('updateTopParentLines', function (event) {
     event.detail['topParentIds'].forEach(topParentId => {
-        let card = document.getElementById(topParentId);
-        card.addEventListener("mouseover", function () {
-            updateLines();
-        });
-        card.addEventListener("mouseout", function () {
-            updateLines();
-        });
         updateOrCreateLines(document.getElementById(topParentId));
     });
     updateLines();
