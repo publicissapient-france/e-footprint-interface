@@ -271,10 +271,6 @@ class DuplicatedJobWeb(ModelingObjectWeb):
     def accordion_children(self):
         return []
 
-    @property
-    def data_line_opt(self):
-        return "object-to-object-inside-card"
-
 
 class UsageJourneyStepWeb(ModelingObjectWeb):
     @property
@@ -345,10 +341,6 @@ class DuplicatedUsageJourneyStepWeb(UsageJourneyStepWeb):
             class_name = 'step-dot-line'
 
         return class_name
-
-    @property
-    def data_line_opt(self):
-        return "object-to-object-inside-card"
 
     @property
     def data_attributes_as_list_of_dict(self):

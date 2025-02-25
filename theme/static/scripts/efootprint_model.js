@@ -22,19 +22,6 @@ window.dictLeaderLineOption = {
         endSocket: "left",
         showEffectName: 'fade'
     },
-    'object-to-object-inside-card': {
-        color: "#9CA3AF",
-        size: 1,
-        startPlug: 'disc',
-        endPlug: 'disc',
-        startPlugColor: "#E5E7EB",
-        endPlugColor: "#E5E7EB",
-        startPlugSize: 5,
-        endPlugSize: 5,
-        startSocket: "right",
-        endSocket: "left",
-        showEffectName: 'fade'
-    },
     'vertical-step-swimlane': {
         path: 'straight',
         color: "#003235",
@@ -112,29 +99,7 @@ function updateOrCreateLines(element) {
                 const toElement = document.getElementById(toElementId);
                 if (toElement) {
                     let optLine = fromElement.getAttribute('data-line-opt');
-                    let line = null
-                    if(optLine ==='object-to-object-inside-card'){
-                        window.startElementWidth = fromElement.offsetWidth;
-                        window.startElementHeight = fromElement.offsetHeight;
-                        line = new LeaderLine(
-                            LeaderLine.pointAnchor(
-                                fromElement, {x: (window.startElementWidth + window.oneRemValue), y: (window.startElementHeight/2)}),
-                            toElement, window.dictLeaderLineOption[optLine]
-                        );
-                    } else if (optLine ==='step-dot-line'){
-                        window.startElementWidth = toElement.offsetWidth;
-                        window.startElementHeight = toElement.offsetHeight;
-                        line = new LeaderLine(
-                            fromElement,
-                            LeaderLine.pointAnchor(
-                                toElement, {x: (window.startElementWidth/2), y: (-window.oneRemValue/2)}
-                            ),
-                            window.dictLeaderLineOption[optLine]
-                        );
-                    }
-                    else{
-                        line = new LeaderLine(fromElement, toElement, window.dictLeaderLineOption[optLine]);
-                    }
+                    let line = new LeaderLine(fromElement, toElement, window.dictLeaderLineOption[optLine]);
                     window.allLines[fromElement.id].push(line);
                 }
             }
