@@ -31,7 +31,7 @@ def model_builder_main(request, reboot=False):
         request, "model_builder/model_builder_main.html", context={"model_web": model_web})
 
     if request.headers.get("HX-Request") == "true":
-        http_response["HX-Trigger-After-Settle"] = "initLeaderLines"
+        http_response["HX-Trigger-After-Settle"] = "initModelBuilderMain"
 
     return http_response
 

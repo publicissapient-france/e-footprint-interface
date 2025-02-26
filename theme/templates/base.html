@@ -39,17 +39,18 @@
         <script src="{% static 'scripts/loading_bar.js' %}"></script>
         <script src="{% static 'scripts/modal_utils.js' %}"></script>
         <script src="{% static 'scripts/side_panel_utils.js' %}"></script>
+        <script src="{% static 'scripts/model_builder_main.js' %}"></script>
         <script>
-            window.initLeaderLines = initLeaderLines;
+            window.initModelBuilderMain = initModelBuilderMain;
             window.allLines = new Map();
 
-            document.body.addEventListener('initLeaderLines', function (event) {
-               window.initLeaderLines();
+            document.body.addEventListener('initModelBuilderMain', function (event) {
+               window.initModelBuilderMain();
             });
 
             window.addEventListener("load", function () {
                 if (window.location.pathname === "/model_builder/") {
-                    window.initLeaderLines();
+                    window.initModelBuilderMain();
                 }
             });
 
