@@ -1,5 +1,3 @@
-// LEADERLINE
-
 window.dictLeaderLineOption = {
     'object-to-object': {
         color: "#9CA3AF",
@@ -36,8 +34,6 @@ window.dictLeaderLineOption = {
         dash: true
     }
 };
-
-window.allLines=[];
 
 function updateLines() {
     Object.values(window.allLines).forEach(lineArray => {
@@ -161,64 +157,52 @@ function initLeaderLines() {
     const scrollContainer = document.querySelector('#model-canva');
     scrollContainer.addEventListener('scroll', updateLines);
     updateLines();
+    setLeaderLineListeners();
 }
 
-// ------------------------------------------------------------
-// HTMX AFTER SWAP
-
-document.body.addEventListener('removeLinesAndUpdateDataAttributes', function (event) {
-    event.detail['elementIdsOfLinesToRemove'].forEach(elementIdWithLinesToRemove => {
-        removeAllLinesDepartingFromElement(elementIdWithLinesToRemove);
-        removeAllLinesArrivingAtElement(elementIdWithLinesToRemove);
-        let leaderlineObjectChildren = document.getElementById(elementIdWithLinesToRemove)
-            .querySelectorAll('.leader-line-object');
-        leaderlineObjectChildren.forEach(leaderlineObjectChild => {
-            removeAllLinesDepartingFromElement(leaderlineObjectChild.id);
-            removeAllLinesArrivingAtElement(leaderlineObjectChild.id);
+function setLeaderLineListeners() {
+    document.body.addEventListener('removeLinesAndUpdateDataAttributes', function (event) {
+        event.detail['elementIdsOfLinesToRemove'].forEach(elementIdWithLinesToRemove => {
+            removeAllLinesDepartingFromElement(elementIdWithLinesToRemove);
+            removeAllLinesArrivingAtElement(elementIdWithLinesToRemove);
+            let leaderlineObjectChildren = document.getElementById(elementIdWithLinesToRemove)
+                .querySelectorAll('.leader-line-object');
+            leaderlineObjectChildren.forEach(leaderlineObjectChild => {
+                removeAllLinesDepartingFromElement(leaderlineObjectChild.id);
+                removeAllLinesArrivingAtElement(leaderlineObjectChild.id);
+            });
+        });
+        event.detail['dataAttributeUpdates'].forEach(dataAttributeUpdate => {
+            let element = document.getElementById(dataAttributeUpdate['id']);
+            if (element) {
+                element.setAttribute('data-link-to', dataAttributeUpdate['data-link-to']);
+                if (dataAttributeUpdate['data-line-opt'] !== '') {
+                    element.setAttribute('data-line-opt', dataAttributeUpdate['data-line-opt']);
+                }
+                removeAllLinesDepartingFromElement(dataAttributeUpdate['id']);
+            }
         });
     });
-    event.detail['dataAttributeUpdates'].forEach(dataAttributeUpdate => {
-        let element = document.getElementById(dataAttributeUpdate['id']);
-        if (element) {
-            element.setAttribute('data-link-to', dataAttributeUpdate['data-link-to']);
-            if (dataAttributeUpdate['data-line-opt'] !== '') {
-                element.setAttribute('data-line-opt', dataAttributeUpdate['data-line-opt']);
-            }
-            removeAllLinesDepartingFromElement(dataAttributeUpdate['id']);
-        }
-    });
-});
 
-document.body.addEventListener('updateTopParentLines', function (event) {
-    event.detail['topParentIds'].forEach(topParentId => {
-        updateOrCreateLines(document.getElementById(topParentId));
-    });
-    updateLines();
-});
-
-document.body.addEventListener('setAccordionListeners', function (event) {
-    event.detail['accordionIds'].forEach(accordionId => {
-        addAccordionListener(document.getElementById(accordionId));
-    });
-});
-
-window.initLeaderLines = initLeaderLines;
-
-document.body.addEventListener('initLeaderLines', function (event) {
-   window.initLeaderLines();
-});
-
-window.resizeTimeout = null;
-
-window.addEventListener('resize', () => {
-    clearTimeout(window.resizeTimeout);
-    window.resizeTimeout = setTimeout(() => {
+    document.body.addEventListener('updateTopParentLines', function (event) {
+        event.detail['topParentIds'].forEach(topParentId => {
+            updateOrCreateLines(document.getElementById(topParentId));
+        });
         updateLines();
-    }, 100);
-});
+    });
 
-window.addEventListener("load", function () {
-    setTimeout(() => {
-        initLeaderLines();
-    }, 100);
-});
+    document.body.addEventListener('setAccordionListeners', function (event) {
+        event.detail['accordionIds'].forEach(accordionId => {
+            addAccordionListener(document.getElementById(accordionId));
+        });
+    });
+
+    window.resizeTimeout = null;
+
+    window.addEventListener('resize', () => {
+        clearTimeout(window.resizeTimeout);
+        window.resizeTimeout = setTimeout(() => {
+            updateLines();
+        }, 100);
+    });
+}

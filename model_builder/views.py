@@ -29,7 +29,9 @@ def model_builder_main(request, reboot=False):
 
     http_response = htmx_render(
         request, "model_builder/model_builder_main.html", context={"model_web": model_web})
-    http_response["HX-Trigger-After-Settle"] = "initLeaderLines"
+
+    if request.headers.get("HX-Request") == "true":
+        http_response["HX-Trigger-After-Settle"] = "initLeaderLines"
 
     return http_response
 

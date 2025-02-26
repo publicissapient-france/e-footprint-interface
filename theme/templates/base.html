@@ -34,9 +34,25 @@
             </main>
         </div>
     {% bootstrap_javascript %}
-    <script src="{% static 'scripts/dynamic_forms.js' %}"></script>
-    <script src="{% static 'scripts/loading_bar.js' %}"></script>
-    <script src="{% static 'scripts/modal_utils.js' %}"></script>
-    <script src="{% static 'scripts/side_panel_utils.js' %}"></script>
+        <script src="{% static 'scripts/leaderline_utils.js' %}"></script>
+        <script src="{% static 'scripts/dynamic_forms.js' %}"></script>
+        <script src="{% static 'scripts/loading_bar.js' %}"></script>
+        <script src="{% static 'scripts/modal_utils.js' %}"></script>
+        <script src="{% static 'scripts/side_panel_utils.js' %}"></script>
+        <script>
+            window.initLeaderLines = initLeaderLines;
+            window.allLines = new Map();
+
+            document.body.addEventListener('initLeaderLines', function (event) {
+               window.initLeaderLines();
+            });
+
+            window.addEventListener("load", function () {
+                if (window.location.pathname === "/model_builder/") {
+                    window.initLeaderLines();
+                }
+            });
+
+        </script>
     </body>
 </html>
