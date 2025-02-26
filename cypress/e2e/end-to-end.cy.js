@@ -139,10 +139,13 @@ describe('Test de la page d\'accueil', () => {
         cy.get('button[id^="button-id-"][id$="'+upName.replaceAll(' ', '-')+'"]').should('be.visible');
 
         cy.get('button[id^="button-id-"][id$="Test-E2E-UJ-2"]').click();
-        cy.wait(2000);
+        cy.wait(500);
         cy.get('#btn-ask-delete').should('be.enabled').click();
         cy.get('button').contains('Yes, delete').should('be.enabled').click();
         cy.get("#model-builder-modal").should("not.exist");
         cy.get('button[id^="button-id-"][id$="Test-E2E-UJ-2"]').should('not.exist');
+
+        cy.get('button[hx-get="/model_builder/result-chart/"]').click();
+        cy.get('#resultModal').should('be.visible');
     });
 });

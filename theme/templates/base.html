@@ -39,6 +39,7 @@
         <script src="{% static 'scripts/loading_bar.js' %}"></script>
         <script src="{% static 'scripts/modal_utils.js' %}"></script>
         <script src="{% static 'scripts/side_panel_utils.js' %}"></script>
+        <script src="{% static 'scripts/result_chart.js' %}"></script>
         <script src="{% static 'scripts/model_builder_main.js' %}"></script>
         <script>
             window.initModelBuilderMain = initModelBuilderMain;
@@ -54,6 +55,13 @@
                 }
             });
 
+            document.body.addEventListener("computeResultChart", function(event) {
+                let modalElement = document.getElementById("resultModal");
+                let modal = new bootstrap.Modal(modalElement);
+                modal.show();
+                drawAreaResultChart()
+                updateAreaResultChart('bar', 'year');
+            });
         </script>
     </body>
 </html>
