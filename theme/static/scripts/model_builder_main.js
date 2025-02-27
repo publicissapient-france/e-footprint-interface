@@ -1,19 +1,17 @@
 function initSortableObjectCards() {
-    document.addEventListener("DOMContentLoaded", function () {
-        const upList = new Sortable(document.getElementById("up-list"), {
-            animation: 150,
-            onEnd: updateLines
-        });
+    const upList = new Sortable(document.getElementById("up-list"), {
+        animation: 150,
+        onEnd: updateLines
+    });
 
-        const ujList = new Sortable(document.getElementById("uj-list"), {
-            animation: 150,
-            onEnd: updateLines
-        });
+    const ujList = new Sortable(document.getElementById("uj-list"), {
+        animation: 150,
+        onEnd: updateLines
+    });
 
-        const serverList = new Sortable(document.getElementById("server-list"), {
-            animation: 150,
-            onEnd: updateLines
-        });
+    const serverList = new Sortable(document.getElementById("server-list"), {
+        animation: 150,
+        onEnd: updateLines
     });
 }
 
