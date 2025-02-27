@@ -9,7 +9,7 @@ from efootprint.logger import logger
 
 from model_builder.views import result_chart
 from model_builder.views_addition import add_new_usage_pattern, add_new_service, add_new_job
-from model_builder.model_web import default_networks, default_hardwares, default_countries
+from model_builder.model_web import default_networks, default_devices, default_countries
 from model_builder.views_deletion import delete_object
 
 
@@ -34,7 +34,7 @@ class IntegrationTest(TestCase):
         post_data = QueryDict(mutable=True)
         post_data.update({
             'csrfmiddlewaretoken': ['ruwwTrYareoTugkh9MF7b5lhY3DF70xEwgHKAE6gHAYDvYZFDyr1YiXsV5VDJHKv'],
-            'devices': [list(default_hardwares().keys())[0]],
+            'devices': [list(default_devices().keys())[0]],
             'network': [list(default_networks().keys())[0]],
             'country': [list(default_countries().keys())[0]],
             'usage_journey': ['uuid-Daily-video-usage'],

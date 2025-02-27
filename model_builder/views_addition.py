@@ -1,15 +1,12 @@
 import json
 
-from efootprint.abstract_modeling_classes.source_objects import SourceValue
-from efootprint.constants.units import u
 from efootprint.core.all_classes_in_order import SERVER_CLASSES, SERVICE_CLASSES, SERVER_BUILDER_CLASSES
 from efootprint.core.hardware.storage import Storage
 from django.shortcuts import render
 from efootprint.core.usage.job import Job
-from efootprint.core.usage.usage_journey_step import UsageJourneyStep
 
 from model_builder.class_structure import generate_object_creation_structure, efootprint_class_structure
-from model_builder.model_web import ModelWeb, default_networks, default_countries, default_hardwares
+from model_builder.model_web import ModelWeb, default_networks, default_countries, default_devices
 from model_builder.object_creation_and_edition_utils import create_efootprint_obj_from_post_data, \
     add_new_efootprint_object_to_system, render_exception_modal
 from model_builder.views_edition import edit_object
@@ -130,55 +127,7 @@ def open_create_usage_pattern_panel(request):
     model_web = ModelWeb(request.session)
     networks = [{"efootprint_id": network["id"], "name": network["name"]} for network in default_networks().values()]
     countries = [{"efootprint_id": country["id"], "name": country["name"]} for country in default_countries().values()]
-    devices = [{"efootprint_id": device["id"], "name": device["name"]} for device in default_hardwares().values()]
-
-    dataDailyVariations = [
-        {'value': '0', 'label': '12am'},{ 'value': '1', 'label': '1am'},{ 'value': '2', 'label': '2am'},
-        { 'value': '3', 'label': '3am'},{'value': '4', 'label': '4am'},{ 'value': '5', 'label': '5am'},
-        { 'value': '6', 'label': '6am'},{ 'value': '7', 'label': '7am'},{'value': '8', 'label': '8am'},
-        { 'value': '9', 'label': '9am'},{ 'value': '10', 'label': '10am'},{ 'value': '11', 'label': '11am'},
-        {'value': '12', 'label': '12pm'},{ 'value': '13', 'label': '1pm'},{ 'value': '14', 'label': '2pm'},
-        { 'value': '15', 'label': '3pm'},{'value': '16', 'label': '4pm'},{ 'value': '17', 'label': '5pm'},
-        { 'value': '18', 'label': '6pm'},{ 'value': '19', 'label': '7pm'},{'value': '20', 'label': '8pm'},
-        { 'value': '21', 'label': '9pm'},{ 'value': '22', 'label': '10pm'},{ 'value': '23', 'label': '11pm'}
-    ]
-
-    dataWeeklyVariations = [
-        {'value': '0', 'label': 'Monday'},{'value': '1', 'label': 'Tuesday'},{'value': '2', 'label': 'Wednesday'},
-        {'value': '3', 'label': 'Thursday'},{'value': '4', 'label': 'Friday'},{'value': '5', 'label': 'Saturday'},
-        {'value': '6', 'label': 'Sunday'}
-    ]
-
-    dataSeasonalVariations = [
-        {'value': '0', 'label': 'January'},{'value': '1', 'label': 'February'},{'value': '2', 'label': 'March'},
-        {'value': '3', 'label': 'April'},{'value': '4', 'label': 'May'},{'value': '5', 'label': 'June'},
-        {'value': '6', 'label': 'July'},{'value': '7', 'label': 'August'},{'value': '8', 'label': 'September'},
-        {'value': '9', 'label': 'October'},{'value': '10', 'label': 'November'},{'value': '11', 'label': 'December'}
-    ]
-
-    dataDailyVariations = [
-        {'value': '0', 'label': '12am'},{ 'value': '1', 'label': '1am'},{ 'value': '2', 'label': '2am'},
-        { 'value': '3', 'label': '3am'},{'value': '4', 'label': '4am'},{ 'value': '5', 'label': '5am'},
-        { 'value': '6', 'label': '6am'},{ 'value': '7', 'label': '7am'},{'value': '8', 'label': '8am'},
-        { 'value': '9', 'label': '9am'},{ 'value': '10', 'label': '10am'},{ 'value': '11', 'label': '11am'},
-        {'value': '12', 'label': '12pm'},{ 'value': '13', 'label': '1pm'},{ 'value': '14', 'label': '2pm'},
-        { 'value': '15', 'label': '3pm'},{'value': '16', 'label': '4pm'},{ 'value': '17', 'label': '5pm'},
-        { 'value': '18', 'label': '6pm'},{ 'value': '19', 'label': '7pm'},{'value': '20', 'label': '8pm'},
-        { 'value': '21', 'label': '9pm'},{ 'value': '22', 'label': '10pm'},{ 'value': '23', 'label': '11pm'}
-    ]
-
-    dataWeeklyVariations = [
-        {'value': '0', 'label': 'Monday'},{'value': '1', 'label': 'Tuesday'},{'value': '2', 'label': 'Wednesday'},
-        {'value': '3', 'label': 'Thursday'},{'value': '4', 'label': 'Friday'},{'value': '5', 'label': 'Saturday'},
-        {'value': '6', 'label': 'Sunday'}
-    ]
-
-    dataSeasonalVariations = [
-        {'value': '0', 'label': 'January'},{'value': '1', 'label': 'February'},{'value': '2', 'label': 'March'},
-        {'value': '3', 'label': 'April'},{'value': '4', 'label': 'May'},{'value': '5', 'label': 'June'},
-        {'value': '6', 'label': 'July'},{'value': '7', 'label': 'August'},{'value': '8', 'label': 'September'},
-        {'value': '9', 'label': 'October'},{'value': '10', 'label': 'November'},{'value': '11', 'label': 'December'}
-    ]
+    devices = [{"efootprint_id": device["id"], "name": device["name"]} for device in default_devices().values()]
 
     http_response = render(
         request, "model_builder/side_panels/usage_pattern_add/usage_pattern_add.html", {
@@ -186,9 +135,6 @@ def open_create_usage_pattern_panel(request):
             "networks": networks,
             "countries": countries,
             "devices": devices,
-            'dataDailyVariations': dataDailyVariations,
-            'dataWeeklyVariations': dataWeeklyVariations,
-            'dataSeasonalVariations': dataSeasonalVariations
         })
 
     return http_response

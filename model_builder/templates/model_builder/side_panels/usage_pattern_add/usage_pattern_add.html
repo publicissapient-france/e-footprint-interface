@@ -3,7 +3,8 @@
         hx-post="/model_builder/add-new-usage-pattern/"
         hx-target="#up-list"
         hx-swap="beforeend"
-      hx-disabled-elt="button"
+        hx-disabled-elt="button"
+        hx-on::after-request="closeAndEmptySidePanel()"
 >
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <input type="hidden" name="devices" id="devices" value="">
@@ -162,16 +163,10 @@
 {% include 'model_builder/side_panels/usage_pattern_add/timeseries_modal.html' %}
 
 <script>
-    window.usageJourneys = [
-        {% for usageJourney in usageJourneys %}
-            {'efootprint_id': '{{ usageJourney.efootprint_id }}', 'name':'{{ usageJourney.name }}' }
-        {% endfor %}
-    ]
-
     window.modalContent = {
         'country': { 'name': 'Countries', 'data':{{ countries|safe }} },
         'devices': { 'name': 'Devices', 'data':{{ devices|safe }} },
         'network': { 'name': 'Network', 'data': {{ networks|safe }} },
-        'usage-journey': { 'name': 'UsageJourney', 'data': usageJourneys }
+        'usage-journey': { 'name': 'UsageJourney', 'data': {{ usage_journeys|safe }} }
     }
 </script>

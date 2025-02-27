@@ -58,8 +58,8 @@ class TestsClassStructure(TestCase):
 
         with open(os.path.join(model_web_root, "default_networks.json"), "r") as f:
             default_networks = json.load(f)
-        with open(os.path.join(model_web_root, "default_hardwares.json"), "r") as f:
-            default_hardwares = json.load(f)
+        with open(os.path.join(model_web_root, "default_devices.json"), "r") as f:
+            default_devices = json.load(f)
         with open(os.path.join(model_web_root, "default_countries.json"), "r") as f:
             default_countries = json.load(f)
 
@@ -69,7 +69,7 @@ class TestsClassStructure(TestCase):
         self.assertEqual(
             remove_ids_from_str(json.dumps(network_archetypes)), remove_ids_from_str(json.dumps(default_networks)))
         self.assertEqual(
-            remove_ids_from_str(json.dumps(hardware_archetypes)), remove_ids_from_str(json.dumps(default_hardwares)))
+            remove_ids_from_str(json.dumps(hardware_archetypes)), remove_ids_from_str(json.dumps(default_devices)))
         self.assertEqual(
             remove_ids_from_str(json.dumps(countries)), remove_ids_from_str(json.dumps(default_countries)))
 

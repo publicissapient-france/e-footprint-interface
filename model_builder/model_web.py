@@ -17,8 +17,8 @@ def default_networks():
     with open(os.path.join(model_web_root, "default_networks.json"), "r") as f:
         return json.load(f)
 
-def default_hardwares():
-    with open(os.path.join(model_web_root, "default_hardwares.json"), "r") as f:
+def default_devices():
+    with open(os.path.join(model_web_root, "default_devices.json"), "r") as f:
         return json.load(f)
 
 def default_countries():
@@ -26,7 +26,7 @@ def default_countries():
         return json.load(f)
 
 DEFAULT_OBJECTS_CLASS_MAPPING = {
-    "Network": default_networks, "Hardware": default_hardwares, "Country": default_countries}
+    "Network": default_networks, "Device": default_devices, "Country": default_countries}
 ATTRIBUTES_TO_SKIP_IN_FORMS = ["gpu_latency_alpha", "gpu_latency_beta", "fixed_nb_of_instances"]
 
 
