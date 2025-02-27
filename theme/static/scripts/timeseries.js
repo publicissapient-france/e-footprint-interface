@@ -84,19 +84,6 @@ window.optionsChartJs={
     }
 };
 
-function refreshFormValue(){
-    window.formValues = {
-        'modal_timeframe_start_date': document.getElementById('modal_timeframe_start_date'),
-        'modal_net_growth_rate_period': document.getElementById('modal_net_growth_rate_period'),
-        'modal_net_growth_rate_value': document.getElementById('modal_net_growth_rate_value'),
-        'modal_avg_nb_usage_journey_value': document.getElementById('modal_avg_nb_usage_journey_value'),
-        'modal_avg_nb_usage_journey_period': document.getElementById('modal_avg_nb_usage_journey_period'),
-        'modal_timeframe_value': document.getElementById('modal_timeframe_value'),
-        'modal_timeframe_range': document.getElementById('modal_timeframe_range')
-    }
-}
-
-
 function initOrUpdateChart(chartName, newData, newOptions) {
   let baseConfig = window.optionsChartJs[chartName];
   if (window.charts[chartName]) {
@@ -113,42 +100,38 @@ function initOrUpdateChart(chartName, newData, newOptions) {
 }
 
 function updateTimeseriesChart() {
-    refreshFormValue();
     let displayGranularity = document.getElementById('display_granularity').value;
     let variationsIndex = window.variationsIndex;
     let variationsValues = window.variationsValues;
     let aggregatedIndex = [];
     let aggregatedValues = [];
     let currentGroup = [];
-    let currentDate = luxon.DateTime.fromISO(window.formValues['modal_timeframe_start_date'].value)
+    let currentDate = luxon.DateTime.fromISO(document.getElementById('modal_timeframe_start_date').value)
 
     let normalizedIndex = variationsIndex.map(date =>
         luxon.DateTime.fromISO(date).toUTC().toISO()
     );
 
-    function reduceData(){
-        if (currentGroup.length > 0) {
-            aggregatedIndex.push(currentDate.toISO());
-            aggregatedValues.push(currentGroup.reduce((a, b) => a + b, 0));
-        }
-        return aggregatedValues;
-    }
-
     for (let i = 0; i < normalizedIndex.length; i++) {
         let date = luxon.DateTime.fromISO(normalizedIndex[i]);
         let value = variationsValues[i];
         while (date >= currentDate.plus({ [displayGranularity]: 1 })) {
-            reduceData();
+            if (currentGroup.length > 0) {
+                aggregatedIndex.push(currentDate.toISO());
+                aggregatedValues.push(currentGroup.reduce((a, b) => a + b, 0));
+            }
             currentDate = currentDate.plus({ [displayGranularity]: 1 });
             currentGroup = [];
         }
         currentGroup.push(value);
     }
-
-    aggregatedValues = reduceData();
+    if (currentGroup.length > 0) {
+        aggregatedIndex.push(currentDate.toISO());
+        aggregatedValues.push(currentGroup.reduce((a, b) => a + b, 0));
+    }
 
     initOrUpdateChart('timeSeriesChart', {
-    labels: aggregatedIndex,
+        labels: aggregatedIndex,
         datasets: [
             {
                 ...window.optionsChartJs.timeSeriesChart.data.datasets[0],
@@ -157,7 +140,7 @@ function updateTimeseriesChart() {
             }
         ]
     });
-    }
+}
 
 function initChart(){
     createTimeSeriesChart()
