@@ -1,9 +1,5 @@
-import os
-import json
 from unittest.mock import patch
 
-from django.contrib.sessions.middleware import SessionMiddleware
-from django.test import TestCase, RequestFactory
 from django.http import QueryDict
 from efootprint.abstract_modeling_classes.source_objects import SourceValue
 from efootprint.builders.services.generative_ai_ecologits import GenAIModel
@@ -17,24 +13,10 @@ from model_builder.class_structure import generate_object_edition_structure
 from model_builder.views_addition import add_new_service, add_new_job
 from model_builder.model_web import ModelWeb
 from model_builder.views_edition import edit_object
+from tests.model_builder.base_modeling_integration_test_class import TestModelingBase
 
 
-class TestViewsEdition(TestCase):
-    def setUp(self):
-        self.factory = RequestFactory()
-        system_data_path = os.path.join("tests", "model_builder", "default_system_data.json")
-
-        # Load system data
-        with open(system_data_path, "r") as f:
-            self.system_data = json.load(f)
-
-    def _add_session_to_request(self, request, system_data):
-        """Attach a session to the request object using Django's session middleware."""
-        middleware = SessionMiddleware(lambda req: None)
-        middleware.process_request(request)
-        request.session["system_data"] = system_data
-        request.session.save()
-
+class TestViewsEdition(TestModelingBase):
     def test_edition(self):
         logger.info(f"Creating service")
         post_data = QueryDict(mutable=True)

@@ -2,15 +2,19 @@ import os
 import re
 import json
 from unittest import TestCase
+import sys
+# Add project root to sys.path manually
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from efootprint.api_utils.json_to_system import modeling_object_classes_dict
 from efootprint.core.all_classes_in_order import SERVICE_CLASSES, SERVER_CLASSES, SERVICE_JOB_CLASSES, \
     SERVER_BUILDER_CLASSES
-from efootprint.core.hardware.hardware import Hardware
+from efootprint.core.hardware.device import Device
 from efootprint.core.hardware.network import Network
 from efootprint.core.usage.job import Job
+from efootprint.logger import logger
 
-from model_builder.class_structure import efootprint_class_structure, generate_object_creation_structure
+from model_builder.class_structure import (efootprint_class_structure, generate_object_creation_structure,
+                                           MODELING_OBJECT_CLASSES_DICT)
 from model_builder.model_web import model_web_root
 from utils import EFOOTPRINT_COUNTRIES
 
@@ -42,15 +46,16 @@ class TestsClassStructure(TestCase):
             self._test_dict_equal_to_ref(dynamic_data, tmp_dynamic_data_filepath)
 
     def test_object_structures(self):
-        for class_name in modeling_object_classes_dict.keys():
+        for class_name in MODELING_OBJECT_CLASSES_DICT.keys():
             obj_structure = efootprint_class_structure(class_name)
             with open(os.path.join(root_dir, "class_structures", f"{class_name}.json"), "r") as f:
                 ref_structure = json.load(f)
+            logger.info(f"Checking {class_name} structure")
             self.assertEqual(obj_structure, ref_structure)
 
     def test_default_objects(self):
         default_efootprint_networks = [network_archetype() for network_archetype in Network.archetypes()]
-        default_efootprint_hardwares = [Hardware.laptop(), Hardware.smartphone()]
+        default_efootprint_hardwares = [Device.laptop(), Device.smartphone()]
 
         network_archetypes = {network.id: network.to_json() for network in default_efootprint_networks}
         hardware_archetypes = {hardware.id: hardware.to_json() for hardware in default_efootprint_hardwares}
@@ -86,7 +91,7 @@ if __name__ == "__main__":
             "w") as f:
             json.dump(dynamic_data, f, indent=4)
 
-    for class_name in modeling_object_classes_dict.keys():
+    for class_name in MODELING_OBJECT_CLASSES_DICT.keys():
         print(class_name)
         with open(os.path.join(root_dir, "class_structures", f"{class_name}.json"), "w") as f:
             json.dump(efootprint_class_structure(class_name), f, indent=4)

@@ -527,13 +527,13 @@ openai = ["openai (>=1.12.0,<2.0.0)"]
 
 [[package]]
 name = "efootprint"
-version = "10.0.0"
+version = "10.0.1"
 description = "Digital service environmental footprint model"
 optional = false
 python-versions = "<4.0,>=3.12"
 files = [
-    {file = "efootprint-10.0.0-py3-none-any.whl", hash = "sha256:4917113eec4e1081232881dc92b38290f690196232a6e52646b6abdd9691b9b6"},
-    {file = "efootprint-10.0.0.tar.gz", hash = "sha256:82d768fb5945abd615b48dcb3dfc4598ab1306efcc49b16415b46985a1cd35fe"},
+    {file = "efootprint-10.0.1-py3-none-any.whl", hash = "sha256:83333095fd7d6c078b5135544f47c776d12e6aa789069cf36aa708e136432982"},
+    {file = "efootprint-10.0.1.tar.gz", hash = "sha256:6c166d4addb2d0a6c963573fa8e644bdcb608cd62b570b8a608def10305f99c9"},
 ]
 
 [package.dependencies]
@@ -2139,13 +2139,13 @@ pyasn1 = ">=0.1.3"
 
 [[package]]
 name = "setuptools"
-version = "75.8.1"
+version = "75.8.2"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "setuptools-75.8.1-py3-none-any.whl", hash = "sha256:3bc32c0b84c643299ca94e77f834730f126efd621de0cc1de64119e0e17dab1f"},
-    {file = "setuptools-75.8.1.tar.gz", hash = "sha256:65fb779a8f28895242923582eadca2337285f0891c2c9e160754df917c3d2530"},
+    {file = "setuptools-75.8.2-py3-none-any.whl", hash = "sha256:558e47c15f1811c1fa7adbd0096669bf76c1d3f433f58324df69f3f5ecac4e8f"},
+    {file = "setuptools-75.8.2.tar.gz", hash = "sha256:4880473a969e5f23f2a2be3646b2dfd84af9028716d398e46192f84bc36900d2"},
 ]
 
 [package.extras]
@@ -2415,4 +2415,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "50069e7603d352aa003354a42f7eb1628dd08c20d47600c2cdb028c6ca1e1a55"
+content-hash = "ff601ad415822176da2fb9d40f024801cb041e01d822927eb3281047736c9e7b"

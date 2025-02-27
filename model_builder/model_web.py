@@ -7,7 +7,7 @@ from efootprint.api_utils.json_to_system import json_to_system, json_to_explaina
 from efootprint.core.all_classes_in_order import SERVICE_CLASSES
 from efootprint.logger import logger
 
-from model_builder.class_structure import MODELING_OBJECT_CLASSES_DICT
+from model_builder.class_structure import MODELING_OBJECT_CLASSES_DICT, ABSTRACT_EFOOTPRINT_MODELING_CLASSES
 from model_builder.modeling_objects_web import wrap_efootprint_object
 from utils import EFOOTPRINT_COUNTRIES
 
@@ -48,8 +48,12 @@ class ModelWeb:
 
     def get_efootprint_objects_from_efootprint_type(self, obj_type):
         output_list = []
+        obj_type_class = MODELING_OBJECT_CLASSES_DICT.get(obj_type, None)
+        if obj_type_class is None:
+            obj_type_class = ABSTRACT_EFOOTPRINT_MODELING_CLASSES.get(obj_type, None)
+        assert obj_type_class is not None, f"Object type {obj_type} not found in efootprint classes."
         for existing_obj_type in self.response_objs.keys():
-            if issubclass(MODELING_OBJECT_CLASSES_DICT[existing_obj_type], MODELING_OBJECT_CLASSES_DICT[obj_type]):
+            if issubclass(MODELING_OBJECT_CLASSES_DICT[existing_obj_type], obj_type_class):
                 output_list += list(self.response_objs[existing_obj_type].values())
 
         return output_list

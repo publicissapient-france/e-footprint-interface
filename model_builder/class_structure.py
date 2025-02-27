@@ -7,9 +7,12 @@ from efootprint.core.all_classes_in_order import ALL_EFOOTPRINT_CLASSES
 from efootprint.core.hardware.server_base import ServerBase
 from efootprint.core.usage.job import JobBase
 
+from model_builder.efootprint_extensions.usage_pattern_from_form import UsagePatternFromForm
+
+_extension_classes = [UsagePatternFromForm]
 MODELING_OBJECT_CLASSES_DICT = {modeling_object_class.__name__: modeling_object_class
-                                for modeling_object_class in ALL_EFOOTPRINT_CLASSES}
-MODELING_OBJECT_CLASSES_DICT.update({"JobBase": JobBase, "ServerBase": ServerBase})
+                                for modeling_object_class in ALL_EFOOTPRINT_CLASSES + _extension_classes}
+ABSTRACT_EFOOTPRINT_MODELING_CLASSES = {"JobBase": JobBase, "ServerBase": ServerBase}
 
 
 def efootprint_class_structure(efootprint_class_str: str, model_web=None):

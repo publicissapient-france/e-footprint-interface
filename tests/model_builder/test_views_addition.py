@@ -12,24 +12,10 @@ from model_builder.views_addition import add_new_usage_pattern, add_new_service,
 from model_builder.model_web import default_networks, default_devices, default_countries
 from model_builder.views_deletion import delete_object
 from model_builder.views_edition import edit_object, open_edit_object_panel
+from tests.model_builder.base_modeling_integration_test_class import TestModelingBase
 
 
-class TestViewsAddition(TestCase):
-    def setUp(self):
-        self.factory = RequestFactory()
-        system_data_path = os.path.join("tests", "model_builder", "default_system_data.json")
-
-        # Load system data
-        with open(system_data_path, "r") as f:
-            self.system_data = json.load(f)
-
-    def _add_session_to_request(self, request, system_data):
-        """Attach a session to the request object using Django's session middleware."""
-        middleware = SessionMiddleware(lambda req: None)
-        middleware.process_request(request)
-        request.session["system_data"] = system_data
-        request.session.save()
-
+class TestViewsAddition(TestModelingBase):
     def test_add_new_usage_pattern(self):
         """Test that add_new_usage_pattern processes the request correctly and returns the expected response."""
         post_data = QueryDict(mutable=True)

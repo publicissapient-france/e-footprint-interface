@@ -22,7 +22,7 @@
     "list_attributes": [
         {
             "attr_name": "devices",
-            "object_type": "Hardware"
+            "object_type": "Device"
         }
     ],
     "str_attributes": [],

@@ -1,0 +1,72 @@
+{
+    "numerical_attributes": [
+        {
+            "attr_name": "modeling_duration",
+            "unit": "d",
+            "long_unit": "day",
+            "default_value": 365
+        },
+        {
+            "attr_name": "initial_usage_journey_volume",
+            "unit": "",
+            "long_unit": "dimensionless",
+            "default_value": 10000
+        },
+        {
+            "attr_name": "net_growth_rate",
+            "unit": "",
+            "long_unit": "dimensionless",
+            "default_value": 0.1
+        }
+    ],
+    "hourly_quantities_attributes": [],
+    "modeling_obj_attributes": [
+        {
+            "attr_name": "usage_journey",
+            "object_type": "UsageJourney"
+        },
+        {
+            "attr_name": "network",
+            "object_type": "Network"
+        },
+        {
+            "attr_name": "country",
+            "object_type": "Country"
+        }
+    ],
+    "list_attributes": [
+        {
+            "attr_name": "devices",
+            "object_type": "Device"
+        }
+    ],
+    "str_attributes": [
+        {
+            "attr_name": "initial_usage_journey_volume_timespan",
+            "list_values": [
+                "daily",
+                "monthly",
+                "yearly"
+            ]
+        }
+    ],
+    "conditional_str_attributes": [
+        {
+            "attr_name": "net_growth_rate_timespan",
+            "depends_on": "initial_usage_journey_volume_timespan",
+            "conditional_list_values": {
+                "daily": [
+                    "monthly",
+                    "yearly"
+                ],
+                "monthly": [
+                    "monthly",
+                    "yearly"
+                ],
+                "yearly": [
+                    "yearly"
+                ]
+            }
+        }
+    ]
+}

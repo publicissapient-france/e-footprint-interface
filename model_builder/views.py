@@ -1,5 +1,7 @@
 from django.shortcuts import redirect, render
 from efootprint.api_utils.json_to_system import json_to_system
+from efootprint import __version__ as efootprint_version
+from efootprint.logger import logger
 
 from model_builder.model_web import ModelWeb
 from model_builder.object_creation_and_edition_utils import render_exception_modal
@@ -25,7 +27,16 @@ def model_builder_main(request, reboot=False):
     if "system_data" not in request.session.keys():
         return redirect("model-builder", reboot="reboot")
 
+    if "efootprint_version" not in request.session["system_data"].keys():
+        request.session["system_data"]["efootprint_version"] = "9.1.4"
+    system_data_efootprint_version = request.session["system_data"]["efootprint_version"]
+
     model_web = ModelWeb(request.session)
+
+    if efootprint_version != system_data_efootprint_version:
+        logger.info(f"Upgraded system data from version {system_data_efootprint_version} to {efootprint_version}")
+        request.session["system_data"]["efootprint_version"] = efootprint_version
+        request.session.modified = True
 
     http_response = htmx_render(
         request, "model_builder/model_builder_main.html", context={"model_web": model_web})
