@@ -1,48 +1,50 @@
 function editFrequencyField(){
-    let occurrencePeriodUsageJourney = document.getElementById('modal_avg_nb_usage_journey_period');
-    let netGrowthRateDurationUnit = document.getElementById('modal_net_growth_rate_period');
-    let optionsToCopy = occurrencePeriodUsageJourney.querySelectorAll('option');
+    let initialUsageJourneyVolumeTimespan = document.getElementById('initial_usage_journey_volume_timespan');
+    let netGrowthRateTimespan = document.getElementById('net_growth_rate_timespan');
+    let optionsToCopy = initialUsageJourneyVolumeTimespan.querySelectorAll('option');
     let toCopy = false;
-    netGrowthRateDurationUnit.innerHTML = '';
+    netGrowthRateTimespan.innerHTML = '';
     optionsToCopy.forEach(function(option){
-        if(occurrencePeriodUsageJourney.value === option.value){
+        if(initialUsageJourneyVolumeTimespan.value === option.value){
             toCopy = true;
         }
         if(toCopy){
             let optionCopy = option.cloneNode(true);
-            netGrowthRateDurationUnit.appendChild(optionCopy);
+            netGrowthRateTimespan.appendChild(optionCopy);
         }
     });
     createTimeSeriesChart();
 }
 
 function createTimeSeriesChart(){
-    let timeframeStartDate = document.getElementById('modal_timeframe_start_date').value;
-    let timeframeDurationValue = parseInt(document.getElementById('modal_timeframe_value').value);
-    let timeframeDurationUnit = document.getElementById('modal_timeframe_range').value;
+    let startDate = document.getElementById('start_date').value;
+    let modelingDurationValue = parseInt(document.getElementById('modeling_duration_value').value);
+    let modelingDurationUnit = document.getElementById('modeling_duration_unit').value;
+    let netGrowRateInPercentage = parseInt(document.getElementById('net_growth_rate_in_percentage').value);
+    let netGrowthRateTimespan = document.getElementById('net_growth_rate_timespan').value;
+    let initialUsageJourneyVolume = parseInt(document.getElementById('initial_usage_journey_volume').value);
+    let initialUsageJourneyVolumeTimespan = document.getElementById('initial_usage_journey_volume_timespan').value;
 
-    let netGrowthRateDurationUnit = document.getElementById('modal_net_growth_rate_period').value;
-    let netGrowRateFactorValue = parseInt(document.getElementById('modal_net_growth_rate_value').value);
+    window.dailyUsageJourneyVolume = {};
 
-    let volumeUsageJourney = parseInt(document.getElementById('modal_avg_nb_usage_journey_value').value);
-    let occurrencePeriodUsageJourney = document.getElementById('modal_avg_nb_usage_journey_period').value;
+    let luxonStartDate = luxon.DateTime.fromISO(startDate);
+    let luxonModelingDuration = luxon.Duration.fromObject({ [modelingDurationUnit]: modelingDurationValue });
+    let luxonNetGrowthRateTimespan = luxon.Duration.fromObject({ [netGrowthRateTimespan]: 1 });
+    let luxonInitialUsageJourneyVolumeTimespan = luxon.Duration.fromObject({ [initialUsageJourneyVolumeTimespan]: 1 });
 
-    window.variationsIndex = [];
-    window.variationsValues = [];
+    let modelingDurationInDays = luxonModelingDuration.shiftTo('days')['days'];
+    let growthRateTimespanInDays = luxonNetGrowthRateTimespan.shiftTo('days')['days'];
+    let initialUsageJourneyVolumeTimespanInDays = luxonInitialUsageJourneyVolumeTimespan.shiftTo('days')['days'];
 
-    let luxonStartDate = luxon.DateTime.fromISO(timeframeStartDate);
-    let luxonNetGrowthRateDuration = luxon.Duration.fromObject({ [netGrowthRateDurationUnit]: 1 });
-    let luxonTimeframeDuration = luxon.Duration.fromObject({ [timeframeDurationUnit]: timeframeDurationValue });
-
-    let timeOccurrenceBasedOnNetGrowthRateDurationUnit = luxonTimeframeDuration.shiftTo(netGrowthRateDurationUnit+'s')[netGrowthRateDurationUnit+'s'];
+    let dailyGrowthRate = (1 + netGrowRateInPercentage/100) ** (1/growthRateTimespanInDays);
+    let firstDailyUsageJourneyVolume = initialUsageJourneyVolume / initialUsageJourneyVolumeTimespanInDays;
 
     let dateLooper = luxonStartDate;
-    for(let step = 0; step < timeOccurrenceBasedOnNetGrowthRateDurationUnit; step++){
-        window.variationsIndex.push(dateLooper.toISO());
-        let valueToPush =  volumeUsageJourney*luxonNetGrowthRateDuration.shiftTo(occurrencePeriodUsageJourney+'s')[occurrencePeriodUsageJourney+'s']
-        window.variationsValues.push(valueToPush);
-        volumeUsageJourney *= (1 + netGrowRateFactorValue/100);
-        dateLooper = luxonStartDate.plus({ [netGrowthRateDurationUnit]: (step+1) });
+    let dailyUsageJourneyVolume = firstDailyUsageJourneyVolume;
+    for(let day_nb = 0; day_nb < modelingDurationInDays; day_nb++){
+        window.dailyUsageJourneyVolume[dateLooper.toISO()] = dailyUsageJourneyVolume;
+        dailyUsageJourneyVolume *= dailyGrowthRate;
+        dateLooper = luxonStartDate.plus({ ["day"]: (day_nb+1)});
     }
     updateTimeseriesChart();
 }

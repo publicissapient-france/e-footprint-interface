@@ -27,22 +27,22 @@ describe('Test de la page d\'accueil', () => {
 
         cy.get('button[data-bs-target="#usage-pattern-attributes-modal-timeseries"]').click();
         cy.get('#usage-pattern-attributes-modal-timeseries').should('be.visible');
-        cy.get('#modal_timeframe_start_date').click();
-        cy.get('#modal_timeframe_start_date').invoke('val', '2026-01-02').trigger('change');
-        cy.get('#modal_timeframe_value').invoke('val', '2').trigger('change');
-        cy.get('#modal_net_growth_rate_value').invoke('val', '25').trigger('change');
-        cy.get('#modal_net_growth_rate_period').select('year');
+        cy.get('#start_date').click();
+        cy.get('#start_date').invoke('val', '2026-01-02').trigger('change');
+        cy.get('#modeling_duration_value').invoke('val', '2').trigger('change');
+        cy.get('#net_growth_rate_in_percentage').invoke('val', '25').trigger('change');
+        cy.get('#net_growth_rate_timespan').select('year');
         cy.wait(1000);
         cy.get('button[onclick^="copyTimeSeriesValueAndDisplayIcon()"]').click();
         cy.get('#usage-pattern-attributes-modal-timeseries').should('not.be.visible');
 
         cy.get('button[data-bs-target="#usage-pattern-attributes-modal-timeseries"]').click();
         cy.get('#usage-pattern-attributes-modal-timeseries').should('be.visible');
-        cy.get('#modal_timeframe_start_date').click();
-        cy.get('#modal_timeframe_start_date').invoke('val', '2027-01-02').trigger('change');
-        cy.get('#modal_timeframe_value').invoke('val', '5').trigger('change');
-        cy.get('#modal_net_growth_rate_value').invoke('val', '10').trigger('change');
-        cy.get('#modal_net_growth_rate_period').select('year');
+        cy.get('#start_date').click();
+        cy.get('#start_date').invoke('val', '2027-01-02').trigger('change');
+        cy.get('#modeling_duration_value').invoke('val', '5').trigger('change');
+        cy.get('#net_growth_rate_in_percentage').invoke('val', '10').trigger('change');
+        cy.get('#net_growth_rate_timespan').select('year');
         cy.wait(1000);
         cy.get('button[onclick^="copyTimeSeriesValueAndDisplayIcon()"]').click();
         cy.get('#usage-pattern-attributes-modal-timeseries').should('not.be.visible');

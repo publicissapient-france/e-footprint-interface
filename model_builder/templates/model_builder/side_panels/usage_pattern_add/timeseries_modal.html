@@ -34,8 +34,6 @@
                                                             name="display_granularity"
                                                         onchange="createTimeSeriesChart()">
                                                     >
-                                                        <option value="day">Day</option>
-                                                        <option value="week">Week</option>
                                                         <option value="month" selected>Month</option>
                                                         <option value="year">Year</option>
                                                     </select>
@@ -43,7 +41,7 @@
                                                 <div class="col-auto">
                                                     <button class="btn btn-white border border-1 border-body-tertiary rounded-pill fz-0-8"
                                                             id="reset_zoom"
-                                                        onclick="charts['timeSeriesChart'].resetZoom();">
+                                                        onclick="window.chart.resetZoom();">
                                                         Reset zoom
                                                     </button>
                                                 </div>
@@ -80,14 +78,14 @@
                                     <div id="collapse-help-build" class="accordion-collapse collapse show">
                                         <div class="accordion-body">
                                             <div class="mb-3 mx-2">
-                                                <label for="modal_timeframe_start_date" class="form-label w-100 text-start fz-0-8">Start date</label>
-                                                <input type="date" class="form-control" id="modal_timeframe_start_date" name="modal_timeframe_start_date" value="2025-01-01" onchange="createTimeSeriesChart()">
+                                                <label for="start_date" class="form-label w-100 text-start fz-0-8">Start date</label>
+                                                <input type="date" class="form-control" id="start_date" name="start_date" value="2025-01-01" onchange="createTimeSeriesChart()">
                                             </div>
                                             <div class="mb-3 mx-2">
-                                                <label for="modal_timeframe_value" class="form-label w-100 text-start">TimeFrame</label>
+                                                <label for="modeling_duration_value" class="form-label w-100 text-start">TimeFrame</label>
                                                 <div class="input-group">
-                                                    <input type="number" class="form-control" id="modal_timeframe_value" name="modal_timeframe_value" aria-describedby="basic-addon3 basic-addon4" value="1" onchange="createTimeSeriesChart()">
-                                                    <select class="input-group-text" id="modal_timeframe_range"  onchange="createTimeSeriesChart()">
+                                                    <input type="number" class="form-control" id="modeling_duration_value" name="modeling_duration_value" aria-describedby="basic-addon3 basic-addon4" value="1" onchange="createTimeSeriesChart()">
+                                                    <select class="input-group-text" id="modeling_duration_unit"  onchange="createTimeSeriesChart()">
                                                         <option value="month">Months</option>
                                                         <option value="year" selected>Years</option>
                                                     </select>
@@ -106,17 +104,17 @@
                                         <div class="accordion-body px-2">
                                             <div class="row mb-3 align-items-end">
                                                 <div class="col-6">
-                                                    <label for="modal_avg_nb_usage_journey_value" class="form-label w-100 text-start fz-0-8">Initial number of usage journeys</label>
+                                                    <label for="initial_usage_journey_volume" class="form-label w-100 text-start fz-0-8">Initial number of usage journeys</label>
                                                     <div class="input-group">
                                                         <input type="number" class="form-control fz-0-8"
-                                                               id="modal_avg_nb_usage_journey_value"
-                                                               name="modal_avg_nb_usage_journey_value"
+                                                               id="initial_usage_journey_volume"
+                                                               name="initial_usage_journey_volume"
                                                                aria-describedby="basic-addon3 basic-addon4"
                                                                value=10000
                                                                oninput="createTimeSeriesChart()">
                                                         <select class="input-group-text fz-0-8"
-                                                                id="modal_avg_nb_usage_journey_period"
-                                                                name="modal_avg_nb_usage_journey_period"
+                                                                id="initial_usage_journey_volume_timespan"
+                                                                name="initial_usage_journey_volume_timespan"
                                                                 onchange="editFrequencyField(true)">
                                                             <option value="month" selected>Monthly</option>
                                                             <option value="year">Yearly</option>
@@ -124,16 +122,16 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-6">
-                                                    <label for="modal_net_growth_rate_value" class="form-label w-100 text-start fz-0-8">Net growth rate (%)</label>
+                                                    <label for="net_growth_rate_in_percentage" class="form-label w-100 text-start fz-0-8">Net growth rate (%)</label>
                                                     <div class="input-group">
                                                         <input type="number"
                                                                class="form-control fz-0-8"
-                                                               id="modal_net_growth_rate_value"
-                                                               name="modal_net_growth_rate_value"
+                                                               id="net_growth_rate_in_percentage"
+                                                               name="net_growth_rate_in_percentage"
                                                                aria-describedby="basic-addon3 basic-addon4"
                                                                value=10
                                                                oninput="createTimeSeriesChart()">
-                                                        <select class="input-group-text fz-0-8" id="modal_net_growth_rate_period"
+                                                        <select class="input-group-text fz-0-8" id="net_growth_rate_timespan"
                                                                 onchange="createTimeSeriesChart()">
                                                             <option value="month" selected>Monthly</option>
                                                             <option value="year">Yearly</option>
