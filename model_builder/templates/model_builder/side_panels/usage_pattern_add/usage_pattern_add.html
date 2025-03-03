@@ -7,15 +7,14 @@
         hx-on::after-request="closeAndEmptySidePanel()"
 >
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <input type="hidden" name="date_hourly_usage_journey_starts" id="date_hourly_usage_journey_starts" value="">
-    <input type="hidden" name="list_hourly_usage_journey_starts" id="list_hourly_usage_journey_starts" value="">
-    <input type="hidden" name="timeframe_start_date" id="timeframe_start_date" value="">
-    <input type="hidden" name="net_growth_rate_period" id="net_growth_rate_period" value="">
-    <input type="hidden" name="net_growth_rate_value" id="net_growth_rate_value" value="">
-    <input type="hidden" name="avg_nb_usage_journey_value" id="avg_nb_usage_journey_value" value="">
-    <input type="hidden" name="avg_nb_usage_journey_period" id="avg_nb_usage_journey_period" value="">
-    <input type="hidden" name="timeframe_value" id="timeframe_value" value="">
-    <input type="hidden" name="timeframe_range" id="timeframe_range" value="">
+    <input type="hidden" name="start_date" id="start_date" value="">
+    <input type="hidden" name="modeling_duration_value" id="modeling_duration_value" value="">
+    <input type="hidden" name="modeling_duration_unit" id="modeling_duration_unit" value="">
+    <input type="hidden" name="net_growth_rate_in_percentage" id="net_growth_rate_in_percentage" value="">
+    <input type="hidden" name="net_growth_rate_timespan" id="net_growth_rate_timespan" value="">
+    <input type="hidden" name="initial_usage_journey_volume" id="initial_usage_journey_volume" value="">
+    <input type="hidden" name="initial_usage_journey_volume_timespan" id="initial_usage_journey_volume_timespan" value="">
+
     <div class="text-end">
         <button type="button" class="btn btn-white" aria-label="Close"
                 onclick="closePanel()">

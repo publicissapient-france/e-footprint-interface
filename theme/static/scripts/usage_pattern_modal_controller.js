@@ -2,15 +2,6 @@ function copyTimeSeriesValueAndDisplayIcon() {
     let modalElement = document.getElementById('usage-pattern-attributes-modal-timeseries');
     let modalInstance = bootstrap.Modal.getInstance(modalElement);
     let backdrop = document.querySelector('.modal-backdrop');
-    document.getElementById('date_hourly_usage_journey_starts').value = document.getElementById('start_date').value;
-    document.getElementById('list_hourly_usage_journey_starts').value = window.variationsValues.toString();
-    document.getElementById('timeframe_start_date').value = document.getElementById('start_date').value;
-    document.getElementById('net_growth_rate_period').value = document.getElementById('net_growth_rate_timespan').value;
-    document.getElementById('net_growth_rate_value').value = document.getElementById('net_growth_rate_in_percentage').value;
-    document.getElementById('avg_nb_usage_journey_value').value = document.getElementById('initial_usage_journey_volume').value;
-    document.getElementById('avg_nb_usage_journey_period').value = document.getElementById('initial_usage_journey_volume_timespan').value;
-    document.getElementById('timeframe_value').value = document.getElementById('modeling_duration_value').value;
-    document.getElementById('timeframe_range').value = document.getElementById('modeling_duration_unit').value;
     window.charts['timeSeriesChart'].destroy();
     window.charts['timeSeriesChart'] = null;
     document.getElementById('timeSeriesChart').innerHTML = '';

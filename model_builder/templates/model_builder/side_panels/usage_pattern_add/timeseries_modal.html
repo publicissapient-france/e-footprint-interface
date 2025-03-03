@@ -79,13 +79,25 @@
                                         <div class="accordion-body">
                                             <div class="mb-3 mx-2">
                                                 <label for="start_date" class="form-label w-100 text-start fz-0-8">Start date</label>
-                                                <input type="date" class="form-control" id="start_date" name="start_date" value="2025-01-01" onchange="createTimeSeriesChart()">
+                                                <input type="date" class="form-control"
+                                                       name="start_date"
+                                                       value="2025-01-01"
+                                                       _="on load set #start_date's value to my value
+                                                          on input set #start_date's value to my value then createTimeSeriesChart()"
+                                                       >
                                             </div>
                                             <div class="mb-3 mx-2">
                                                 <label for="modeling_duration_value" class="form-label w-100 text-start">TimeFrame</label>
                                                 <div class="input-group">
-                                                    <input type="number" class="form-control" id="modeling_duration_value" name="modeling_duration_value" aria-describedby="basic-addon3 basic-addon4" value="1" onchange="createTimeSeriesChart()">
-                                                    <select class="input-group-text" id="modeling_duration_unit"  onchange="createTimeSeriesChart()">
+                                                    <input type="number" class="form-control"
+                                                           name="modeling_duration_value"
+                                                           value="3"
+                                                           _="on load set #modeling_duration_value's value to my value
+                                                           on input set #modeling_duration_value's value to my value then createTimeSeriesChart()"  aria-describedby="basic-addon3 basic-addon4">
+                                                    <select class="input-group-text"
+                                                            name="modeling_duration_unit"
+                                                            _="on load set #modeling_duration_unit's value to my value
+                                                            on change set #modeling_duration_unit's value to my value then createTimeSeriesChart()">
                                                         <option value="month">Months</option>
                                                         <option value="year" selected>Years</option>
                                                     </select>
@@ -107,15 +119,17 @@
                                                     <label for="initial_usage_journey_volume" class="form-label w-100 text-start fz-0-8">Initial number of usage journeys</label>
                                                     <div class="input-group">
                                                         <input type="number" class="form-control fz-0-8"
-                                                               id="initial_usage_journey_volume"
                                                                name="initial_usage_journey_volume"
-                                                               aria-describedby="basic-addon3 basic-addon4"
                                                                value=10000
-                                                               oninput="createTimeSeriesChart()">
+                                                               _="on load set #initial_usage_journey_volume's value to my value
+                                                               on input set #initial_usage_journey_volume's value to my value then createTimeSeriesChart()"
+                                                               aria-describedby="basic-addon3 basic-addon4"
+                                                               >
                                                         <select class="input-group-text fz-0-8"
-                                                                id="initial_usage_journey_volume_timespan"
                                                                 name="initial_usage_journey_volume_timespan"
-                                                                onchange="editFrequencyField(true)">
+                                                                _="on load set #initial_usage_journey_volume_timespan's value to my value
+                                                            on change set #initial_usage_journey_volume_timespan's value to my value then editFrequencyField(true) then createTimeSeriesChart()"
+                                                            >
                                                             <option value="month" selected>Monthly</option>
                                                             <option value="year">Yearly</option>
                                                         </select>
@@ -126,13 +140,16 @@
                                                     <div class="input-group">
                                                         <input type="number"
                                                                class="form-control fz-0-8"
-                                                               id="net_growth_rate_in_percentage"
                                                                name="net_growth_rate_in_percentage"
-                                                               aria-describedby="basic-addon3 basic-addon4"
+                                                               _="on load set #net_growth_rate_in_percentage's value to my value
+                                                            on input set #net_growth_rate_in_percentage's value to my value then createTimeSeriesChart()"
                                                                value=10
-                                                               oninput="createTimeSeriesChart()">
-                                                        <select class="input-group-text fz-0-8" id="net_growth_rate_timespan"
-                                                                onchange="createTimeSeriesChart()">
+                                                               aria-describedby="basic-addon3 basic-addon4"
+                                                               >
+                                                        <select class="input-group-text fz-0-8"
+                                                                name="net_growth_rate_timespan"
+                                                                _="on load set #net_growth_rate_timespan's value to my value
+                                                            on change set #net_growth_rate_timespan's value to my value then createTimeSeriesChart()">
                                                             <option value="month" selected>Monthly</option>
                                                             <option value="year">Yearly</option>
                                                         </select>
