@@ -2,8 +2,8 @@ function copyTimeSeriesValueAndDisplayIcon() {
     let modalElement = document.getElementById('usage-pattern-attributes-modal-timeseries');
     let modalInstance = bootstrap.Modal.getInstance(modalElement);
     let backdrop = document.querySelector('.modal-backdrop');
-    window.charts['timeSeriesChart'].destroy();
-    window.charts['timeSeriesChart'] = null;
+    window.chart.destroy();
+    window.charts = null;
     document.getElementById('timeSeriesChart').innerHTML = '';
     if (modalInstance) {
         modalInstance.hide();
@@ -19,6 +19,7 @@ function copyTimeSeriesValueAndDisplayIcon() {
         </svg>
         Add Time Series
     `;
+    cleanModal();
 }
 
 function cleanModal() {

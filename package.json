@@ -9,17 +9,23 @@
         "test:e2e": "npm run cy:run",
         "cy:open": "cypress open",
         "cy:run": "cypress run",
-        "cy:verify": "cypress verify"
+        "cy:verify": "cypress verify",
+        "jest": "jest"
     },
     "devDependencies": {
         "@types/node": "^20.12",
         "cypress": "^14.0",
         "cypress-multi-reporters": "^1.6",
+        "jest-environment-jsdom": "^29.7.0",
+        "luxon": "^3.5.0",
         "sass": "^1.81",
         "typescript": "^5.4"
     },
     "dependencies": {
         "bootstrap": "^5.3",
         "chart.js": "^4.4"
+    },
+    "jest": {
+        "testEnvironment": "jsdom"
     }
 }
