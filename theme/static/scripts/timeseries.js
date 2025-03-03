@@ -37,6 +37,24 @@ window.chartJSOptions = {
     }
 };
 
+window.avalaibleOptionsTimeGranularity = {
+    "month": [{'label':'Monthly','value':'month'}, {'label':'Yearly','value':'year'}],
+    "year": [{'label':'Yearly','value':'year'}]
+}
+
+function editFrequencyField(){
+    let initialUsageJourneyVolumeTimespan = document.querySelector("select" + "[name='initial_usage_journey_volume_timespan']").value;
+    let netGrowthRateTimespan = document.querySelector("select" + "[name='net_growth_rate_timespan']");
+    netGrowthRateTimespan.innerHTML = '';
+    let optionsToFill = window.avalaibleOptionsTimeGranularity[initialUsageJourneyVolumeTimespan];
+    optionsToFill.forEach((option) => {
+        let optionElement = document.createElement('option');
+        optionElement.value = option.value;
+        optionElement.textContent = option.label;
+        netGrowthRateTimespan.appendChild(optionElement);
+    });
+}
+
 function sumUsageJourneyVolumeByDisplayGranularity(dailyUsageJourneyVolume, displayGranularity) {
     let aggregatedData = {};
     Object.keys(dailyUsageJourneyVolume).forEach((date, index) => {

@@ -1,21 +1,3 @@
-function editFrequencyField(){
-    let initialUsageJourneyVolumeTimespan = document.getElementById('initial_usage_journey_volume_timespan');
-    let netGrowthRateTimespan = document.getElementById('net_growth_rate_timespan');
-    let optionsToCopy = initialUsageJourneyVolumeTimespan.querySelectorAll('option');
-    let toCopy = false;
-    netGrowthRateTimespan.innerHTML = '';
-    optionsToCopy.forEach(function(option){
-        if(initialUsageJourneyVolumeTimespan.value === option.value){
-            toCopy = true;
-        }
-        if(toCopy){
-            let optionCopy = option.cloneNode(true);
-            netGrowthRateTimespan.appendChild(optionCopy);
-        }
-    });
-    createTimeSeriesChart();
-}
-
 function createTimeSeriesChart(){
     let startDate = document.getElementById('start_date').value;
     let modelingDurationValue = parseInt(document.getElementById('modeling_duration_value').value);
