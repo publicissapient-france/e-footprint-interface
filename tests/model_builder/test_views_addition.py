@@ -1,10 +1,4 @@
-import os
-import json
-
 from efootprint.logger import logger
-
-from django.contrib.sessions.middleware import SessionMiddleware
-from django.test import TestCase, RequestFactory
 from django.http import QueryDict
 
 from model_builder.views import model_builder_main
@@ -16,8 +10,7 @@ from tests.model_builder.base_modeling_integration_test_class import TestModelin
 
 
 class TestViewsAddition(TestModelingBase):
-    def test_add_new_usage_pattern(self):
-        """Test that add_new_usage_pattern processes the request correctly and returns the expected response."""
+    def test_add_new_usage_pattern_from_form(self):
         post_data = QueryDict(mutable=True)
         post_data.update({
             'csrfmiddlewaretoken': ['ruwwTrYareoTugkh9MF7b5lhY3DF70xEwgHKAE6gHAYDvYZFDyr1YiXsV5VDJHKv'],
@@ -25,11 +18,15 @@ class TestViewsAddition(TestModelingBase):
             'network': [list(default_networks().keys())[0]],
             'country': [list(default_countries().keys())[0]],
             'usage_journey': ['uuid-Daily-video-usage'],
-            'date_hourly_usage_journey_starts': ['2025-02-01'],
-            'list_hourly_usage_journey_starts': ['6,6,6,6,6,6,69,9,9,9,9,9,10,10,10,10,10,10,10,10,10'],
+            'start_date': ['2025-02-01'],
+            'modeling_duration_value': ["5"],
+            "modeling_duration_unit": ["month"],
+            "net_growth_rate_in_percentage": ["10"],
+            "net_growth_rate_timespan": ["year"],
+            "initial_usage_journey_volume": ["1000"],
+            "initial_usage_journey_volume_timespan": ["year"],
             'name': ['2New usage pattern'],
         })
-
         add_request = self.factory.post('/add_new_usage_pattern/', data=post_data)
         self._add_session_to_request(add_request, self.system_data)  # Attach a valid session
         len_system_up = len(add_request.session["system_data"]["System"]["uuid-system-1"]["usage_patterns"])
@@ -37,8 +34,10 @@ class TestViewsAddition(TestModelingBase):
         response = add_new_usage_pattern(add_request)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(add_request.session["system_data"]["UsagePattern"]), len_system_up + 1)
-        up_id = list(add_request.session["system_data"]["UsagePattern"].keys())[-1]
+        self.assertEqual(len(add_request.session["system_data"]["System"]["uuid-system-1"]["usage_patterns"]),
+                         len_system_up + 1)
+        self.assertEqual(len(add_request.session["system_data"]["UsagePatternFromForm"]),1)
+        up_id = list(add_request.session["system_data"]["UsagePatternFromForm"].keys())[-1]
 
         logger.info("Open edit usage pattern panel")
         open_edit_panel_request = self.factory.get(f'/model_builder/open-edit-object-panel/{up_id}/')
@@ -48,10 +47,10 @@ class TestViewsAddition(TestModelingBase):
 
         logger.info("Edit usage pattern")
         post_data = QueryDict(mutable=True)
-        post_data.update({"name": ['2New usage pattern'],
+        post_data.update({"name": ['New up name'],
                           'network': [list(default_networks().keys())[1]],
-                          'list_hourly_usage_journey_starts': ['6,6,6,6,6,6,69,9,9,9,9,9,10,10,10,10,10,10,10,10,10'],
-                          'date_hourly_usage_journey_starts': ['2025-02-02']})
+                          "modeling_duration_unit": ["year"],
+                          'start_date': ['2025-02-02']})
         edit_request = self.factory.post(f'/model_builder/edit-usage-pattern/{up_id}/', data=post_data)
         self._add_session_to_request(edit_request, add_request.session["system_data"])
 
@@ -59,8 +58,7 @@ class TestViewsAddition(TestModelingBase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            add_request.session["system_data"]["UsagePattern"][up_id]["hourly_usage_journey_starts"]["start_date"][:10],
-            "2025-02-02")
+            add_request.session["system_data"]["UsagePatternFromForm"][up_id]["start_date"]["value"][:10], "2025-02-02")
 
         logger.info("Reloading page")
         results_request = self.factory.get('/model_builder/')
@@ -76,10 +74,9 @@ class TestViewsAddition(TestModelingBase):
         response = delete_object(delete_request, up_id)
 
         self.assertEqual(response.status_code, 204)
-        self.assertNotIn(up_id, add_request.session["system_data"]["UsagePattern"])
+        self.assertNotIn(up_id, add_request.session["system_data"]["UsagePatternFromForm"])
         self.assertEqual(
             len(delete_request.session["system_data"]["System"]["uuid-system-1"]["usage_patterns"]), len_system_up)
-
 
     def test_add_web_service_then_web_job(self):
         post_data = QueryDict(mutable=True)

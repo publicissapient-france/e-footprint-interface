@@ -53,19 +53,19 @@
     "list_attributes": [],
     "str_attributes": [
         {
-            "attr_name": "server_type",
-            "list_values": [
-                "autoscaling",
-                "on-premise",
-                "serverless"
-            ]
-        },
-        {
             "attr_name": "provider",
             "list_values": [
                 "aws",
                 "azure",
                 "scaleway"
+            ]
+        },
+        {
+            "attr_name": "server_type",
+            "list_values": [
+                "autoscaling",
+                "on-premise",
+                "serverless"
             ]
         }
     ],

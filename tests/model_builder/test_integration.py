@@ -20,8 +20,13 @@ class IntegrationTest(TestModelingBase):
             'network': [list(default_networks().keys())[0]],
             'country': [list(default_countries().keys())[0]],
             'usage_journey': ['uuid-Daily-video-usage'],
-            'date_hourly_usage_journey_starts': ['2025-02-01'],
-            'list_hourly_usage_journey_starts': ['6,6,6,6,6,6,69,9,9,9,9,9,10,10,10,10,10,10,10,10,10'],
+            'start_date': ['2025-02-01'],
+            'modeling_duration_value': ["5"],
+            "modeling_duration_unit": ["month"],
+            "net_growth_rate_in_percentage": ["10"],
+            "net_growth_rate_timespan": ["year"],
+            "initial_usage_journey_volume": ["1000"],
+            "initial_usage_journey_volume_timespan": ["year"],
             'name': ['2New usage pattern'],
         })
 
@@ -33,7 +38,7 @@ class IntegrationTest(TestModelingBase):
         response = add_new_usage_pattern(up_request)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(up_request.session["system_data"]["UsagePattern"]), len_system_up + 1)
+        self.assertEqual(len(up_request.session["system_data"]["UsagePatternFromForm"]), 1)
 
         logger.info(f"Creating service")
         post_data = QueryDict(mutable=True)

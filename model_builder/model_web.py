@@ -36,7 +36,7 @@ class ModelWeb:
         start = time()
         self.system_data = session_data["system_data"]
         self.response_objs, self.flat_efootprint_objs_dict = json_to_system(
-            self.system_data, launch_system_computations)
+            self.system_data, launch_system_computations, efootprint_classes_dict=MODELING_OBJECT_CLASSES_DICT)
         self.system = wrap_efootprint_object(list(self.response_objs["System"].values())[0], self)
         if set_trigger_modeling_updates_to_false:
             self.set_all_trigger_modeling_updates_to_false()

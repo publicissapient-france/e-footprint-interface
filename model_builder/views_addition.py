@@ -236,8 +236,9 @@ def add_new_job(request, usage_journey_step_efootprint_id):
 
 def add_new_usage_pattern(request):
     model_web = ModelWeb(request.session)
-    new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, 'UsagePattern')
+    new_efootprint_obj = create_efootprint_obj_from_post_data(request, model_web, 'UsagePatternFromForm')
     added_obj = add_new_efootprint_object_to_system(request.session, model_web, new_efootprint_obj)
+    new_efootprint_obj.to_json()
     system_id = next(iter(request.session["system_data"]["System"].keys()))
     request.session["system_data"]["System"][system_id]["usage_patterns"].append(new_efootprint_obj.id)
     request.session.modified = True

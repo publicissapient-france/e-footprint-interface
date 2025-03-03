@@ -400,6 +400,7 @@ wrapper_mapping = {
     "UsageJourneyStep": UsageJourneyStepWeb,
     "UsageJourney": UsageJourneyWeb,
     "UsagePattern": UsagePatternWeb,
+    "UsagePatternFromForm": UsagePatternWeb,
     "Job": JobWeb,
     "GenAIJob": JobWeb,
     "VideoStreamingJob": JobWeb,

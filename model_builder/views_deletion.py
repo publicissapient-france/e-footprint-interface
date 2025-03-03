@@ -2,6 +2,7 @@ import json
 
 from django.http import HttpResponse
 from django.shortcuts import render
+from efootprint.core.usage.usage_pattern import UsagePattern
 from efootprint.logger import logger
 
 from model_builder.class_structure import efootprint_class_structure
@@ -62,21 +63,22 @@ def delete_object(request, object_id):
     model_web = ModelWeb(request.session)
 
     web_obj = model_web.get_web_object_from_efootprint_id(object_id)
-    obj_type = web_obj.class_as_simple_str
+    obj_type = web_obj.efootprint_class
     system = model_web.system
 
     elements_with_lines_to_remove = []
 
     http_response = HttpResponse(status=204)
 
-    if obj_type == "UsagePattern":
+    if issubclass(obj_type, UsagePattern):
         new_up_list = [up for up in system.get_efootprint_value("usage_patterns") if up.id != object_id]
         system.set_efootprint_value("usage_patterns", new_up_list)
         system_id = next(iter(request.session["system_data"]["System"].keys()))
         request.session["system_data"]["System"][system_id]["usage_patterns"] = [up.id for up in new_up_list]
-        request.session["system_data"]["UsagePattern"].pop(object_id)
+        obj_type_str = obj_type.__name__
+        request.session["system_data"][obj_type_str].pop(object_id)
         if len(new_up_list) == 0:
-            del request.session["system_data"]["UsagePattern"]
+            del request.session["system_data"][obj_type_str]
         request.session.modified = True
         elements_with_lines_to_remove.append(object_id)
     elif isinstance(web_obj, JobWeb) or isinstance(web_obj, UsageJourneyStepWeb):

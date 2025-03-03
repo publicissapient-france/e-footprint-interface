@@ -259,26 +259,6 @@
             "fields": [
                 {
                     "input_type": "select",
-                    "id": "server_type",
-                    "name": "server_type",
-                    "selected": null,
-                    "options": [
-                        {
-                            "label": "autoscaling",
-                            "value": "autoscaling"
-                        },
-                        {
-                            "label": "on-premise",
-                            "value": "on-premise"
-                        },
-                        {
-                            "label": "serverless",
-                            "value": "serverless"
-                        }
-                    ]
-                },
-                {
-                    "input_type": "select",
                     "id": "provider",
                     "name": "provider",
                     "selected": null,
@@ -294,6 +274,26 @@
                         {
                             "label": "scaleway",
                             "value": "scaleway"
+                        }
+                    ]
+                },
+                {
+                    "input_type": "select",
+                    "id": "server_type",
+                    "name": "server_type",
+                    "selected": null,
+                    "options": [
+                        {
+                            "label": "autoscaling",
+                            "value": "autoscaling"
+                        },
+                        {
+                            "label": "on-premise",
+                            "value": "on-premise"
+                        },
+                        {
+                            "label": "serverless",
+                            "value": "serverless"
                         }
                     ]
                 },

@@ -10,6 +10,6 @@
     "hourly_quantities_attributes": [],
     "modeling_obj_attributes": [],
     "list_attributes": [],
-    "str_attributes": [],
+    "str_attributes": [{"attr_name": "timezone", "default_value": "Europe/Paris"}],
     "conditional_str_attributes": []
 }

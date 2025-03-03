@@ -134,11 +134,11 @@ function createOrUpdateTimeSeriesChart(){
 
     const ctx = document.getElementById("timeSeriesChart").getContext('2d');
         window.chart = new Chart(ctx, {
-            type: "line",
+            type: "bar",
             data: {
             labels: Object.keys(usageJourneyVolume),
             datasets: [{
-                label: 'User journeys',
+                label: 'Usage journeys',
                 borderColor: '#017E7E',
                 backgroundColor: '#017E7E',
                 data: Object.values(usageJourneyVolume),

@@ -50,8 +50,11 @@ class TestsClassStructure(TestCase):
             obj_structure = efootprint_class_structure(class_name)
             with open(os.path.join(root_dir, "class_structures", f"{class_name}.json"), "r") as f:
                 ref_structure = json.load(f)
+            with open(os.path.join(root_dir, "class_structures", f"{class_name}_tmp.json"), "w") as f:
+                json.dump(obj_structure, f, indent=4)
             logger.info(f"Checking {class_name} structure")
             self.assertEqual(obj_structure, ref_structure)
+            os.remove(os.path.join(root_dir, "class_structures", f"{class_name}_tmp.json"))
 
     def test_default_objects(self):
         default_efootprint_networks = [network_archetype() for network_archetype in Network.archetypes()]

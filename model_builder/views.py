@@ -70,7 +70,8 @@ def upload_json(request):
         except ValueError:
             import_error_message += "Invalid JSON data"
         try:
-            json_to_system(data, launch_system_computations=False)
+            from model_builder.class_structure import MODELING_OBJECT_CLASSES_DICT
+            json_to_system(data, launch_system_computations=False, efootprint_classes_dict=MODELING_OBJECT_CLASSES_DICT)
             request.session["system_data"] = data
             return redirect("model-builder")
         except Exception:

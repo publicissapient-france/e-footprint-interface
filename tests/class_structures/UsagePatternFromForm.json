@@ -1,10 +1,10 @@
 {
     "numerical_attributes": [
         {
-            "attr_name": "modeling_duration",
-            "unit": "d",
-            "long_unit": "day",
-            "default_value": 365
+            "attr_name": "modeling_duration_value",
+            "unit": "",
+            "long_unit": "dimensionless",
+            "default_value": 3
         },
         {
             "attr_name": "initial_usage_journey_volume",
@@ -13,7 +13,7 @@
             "default_value": 10000
         },
         {
-            "attr_name": "net_growth_rate",
+            "attr_name": "net_growth_rate_in_percentage",
             "unit": "",
             "long_unit": "dimensionless",
             "default_value": 0.1
@@ -42,11 +42,22 @@
     ],
     "str_attributes": [
         {
+            "attr_name": "start_date",
+            "default_value": "2025-01-01"
+        },
+        {
+            "attr_name": "modeling_duration_unit",
+            "list_values": [
+                "month",
+                "year"
+            ]
+        },
+        {
             "attr_name": "initial_usage_journey_volume_timespan",
             "list_values": [
-                "daily",
-                "monthly",
-                "yearly"
+                "day",
+                "month",
+                "year"
             ]
         }
     ],
@@ -55,16 +66,16 @@
             "attr_name": "net_growth_rate_timespan",
             "depends_on": "initial_usage_journey_volume_timespan",
             "conditional_list_values": {
-                "daily": [
-                    "monthly",
-                    "yearly"
+                "day": [
+                    "month",
+                    "year"
                 ],
-                "monthly": [
-                    "monthly",
-                    "yearly"
+                "month": [
+                    "month",
+                    "year"
                 ],
-                "yearly": [
-                    "yearly"
+                "year": [
+                    "year"
                 ]
             }
         }
