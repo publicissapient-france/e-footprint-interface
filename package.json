@@ -12,7 +12,7 @@
         "cy:verify": "cypress verify"
     },
     "devDependencies": {
-        "@types/node": "^20.12",
+        "@types/node": "^22.13",
         "cypress": "^14.0",
         "cypress-multi-reporters": "^1.6",
         "sass": "^1.81",
