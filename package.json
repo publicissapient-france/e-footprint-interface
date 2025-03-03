@@ -15,7 +15,7 @@
         "@types/node": "^20.12",
         "cypress": "^14.0",
         "cypress-multi-reporters": "^1.6",
-        "sass": "^1.81",
+        "sass": "^1.85",
         "typescript": "^5.4"
     },
     "dependencies": {
