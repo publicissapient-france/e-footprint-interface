@@ -8,20 +8,6 @@ window.chartJSOptions = {
                 tooltipFormat: 'yyyy',
                 unit: 'year'
             },
-            ticks: {
-                autoSkip: true,
-                maxTicksLimit: 10,
-                callback: function(value, index, values) {
-                    let displayGranularityElement = document.getElementById('display_granularity');
-                    let displayGranularity = displayGranularityElement ? displayGranularityElement.value : "year";
-                    let dateObj = luxon.DateTime.fromMillis(value);
-                    if (displayGranularity === "month") {
-                        return dateObj.toFormat("MMM-yyyy");
-                    } else {
-                        return `${dateObj.year}`;
-                    }
-                }
-            },
             title: { display: false },
             grid: { display: false }
         },

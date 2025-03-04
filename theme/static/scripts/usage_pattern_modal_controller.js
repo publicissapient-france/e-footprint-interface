@@ -3,7 +3,7 @@ function copyTimeSeriesValueAndDisplayIcon() {
     let modalInstance = bootstrap.Modal.getInstance(modalElement);
     let backdrop = document.querySelector('.modal-backdrop');
     window.chart.destroy();
-    window.charts = null;
+    window.chart = null;
     document.getElementById('timeSeriesChart').innerHTML = '';
     if (modalInstance) {
         modalInstance.hide();
