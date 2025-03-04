@@ -71,6 +71,8 @@ def upload_json(request):
             import_error_message += "Invalid JSON data"
         try:
             from model_builder.class_structure import MODELING_OBJECT_CLASSES_DICT
+            if "efootprint_version" not in data.keys():
+                data["efootprint_version"] = "9.1.4"
             json_to_system(data, launch_system_computations=False, efootprint_classes_dict=MODELING_OBJECT_CLASSES_DICT)
             request.session["system_data"] = data
             return redirect("model-builder")
