@@ -19,18 +19,5 @@ function copyTimeSeriesValueAndDisplayIcon() {
         </svg>
         Add Time Series
     `;
-    cleanModal();
-}
-
-function cleanModal() {
-    let modalElement = document.getElementById('usage-pattern-attributes-modal-timeseries');
-    let modalInstance = bootstrap.Modal.getInstance(modalElement);
-    let backdrop = document.querySelector('.modal-backdrop');
-    if (modalInstance) {
-        modalInstance.hide();
-    }
-    if(backdrop) {
-        backdrop.remove();
-    }
-    modalElement.remove();
+    document.getElementById('save_usage_pattern_btn').focus();
 }

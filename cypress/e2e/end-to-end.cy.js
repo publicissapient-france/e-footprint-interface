@@ -108,8 +108,8 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#usage-pattern-attributes-modal-timeseries input[name="net_growth_rate_in_percentage"]').click();
         cy.get('#usage-pattern-attributes-modal-timeseries input[name="net_growth_rate_in_percentage"]').invoke('val', '25').trigger('change');
         cy.get('#usage-pattern-attributes-modal-timeseries select[name="net_growth_rate_timespan"]').select('year');
-
         cy.get('#save_time_series_btn').click();
+
         cy.wait(1000);
         cy.get('#save_usage_pattern_btn').click();
         cy.get('#usage-pattern-attributes-modal-timeseries').should('not.exist');

@@ -5,11 +5,22 @@ window.chartJSOptions = {
         x: {
             type: 'time',
             time: {
-                tooltipFormat: 'yyyy'
+                tooltipFormat: 'yyyy',
+                unit: 'year'
             },
             ticks: {
                 autoSkip: true,
-                maxTicksLimit: 10
+                maxTicksLimit: 10,
+                callback: function(value, index, values) {
+                    let displayGranularityElement = document.getElementById('display_granularity');
+                    let displayGranularity = displayGranularityElement ? displayGranularityElement.value : "year";
+                    let dateObj = luxon.DateTime.fromMillis(value);
+                    if (displayGranularity === "month") {
+                        return dateObj.toFormat("MMM-yyyy");
+                    } else {
+                        return `${dateObj.year}`;
+                    }
+                }
             },
             title: { display: false },
             grid: { display: false }
@@ -130,7 +141,8 @@ function createOrUpdateTimeSeriesChart(){
 
     let displayGranularityToolTipOption = {"month": "MMM yyyy", "year": "yyyy"};
 
-    window.chartJSOptions.scales.x.time.tooltipFormat = displayGranularityToolTipOption[displayGranularity];
+    window.chartJSOptions.scales.x.time.unit = displayGranularity === "month" ? "month" : "year";
+    window.chartJSOptions.scales.x.time.tooltipFormat = displayGranularity === "month" ? "MMM yyyy" : "yyyy";
 
     const ctx = document.getElementById("timeSeriesChart").getContext('2d');
         window.chart = new Chart(ctx, {
