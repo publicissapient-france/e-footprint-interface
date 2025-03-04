@@ -135,6 +135,8 @@ def open_create_usage_pattern_panel(request):
             "networks": networks,
             "countries": countries,
             "devices": devices,
+            "htmxPost" : '/model_builder/add-new-usage-pattern/',
+            "title": "Add new usage pattern"
         })
 
     return http_response

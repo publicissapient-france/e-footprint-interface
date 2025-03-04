@@ -1,6 +1,6 @@
 {% load static %}
 <form class="container-fluid panel text-start"
-        hx-post="/model_builder/add-new-usage-pattern/"
+        hx-post="{{ htmxPost }}"
         hx-target="#up-list"
         hx-swap="beforeend"
         hx-disabled-elt="button"
@@ -25,7 +25,7 @@
     </div>
     <div class="form-header p-1" id="panel-header">
         <h5 id="formModalLabel" class="mt-4">
-            <b>Add new usage pattern</b>
+            <b>{{ title }}</b>
         </h5>
     </div>
     <div class="form-body p-1" id="panel-body">
