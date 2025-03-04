@@ -55,7 +55,9 @@ function editFrequencyField(){
     });
 }
 
-function computeUsageJourneyVolume(startDate, modelingDurationValue, modelingDurationUnit, netGrowRateInPercentage, netGrowthRateTimespan, initialUsageJourneyVolume, initialUsageJourneyVolumeTimespan) {
+function computeUsageJourneyVolume(
+    startDate, modelingDurationValue, modelingDurationUnit, netGrowRateInPercentage, netGrowthRateTimespan,
+    initialUsageJourneyVolume, initialUsageJourneyVolumeTimespan) {
     let dailyUsageJourneyVolume = {};
 
     let luxonStartDate = luxon.DateTime.fromISO(startDate);
@@ -78,6 +80,20 @@ function computeUsageJourneyVolume(startDate, modelingDurationValue, modelingDur
         dateLooper = luxonStartDate.plus({ ["day"]: (day_nb+1)});
     }
     return dailyUsageJourneyVolume;
+}
+
+function updateUsageJourneyVolumeTimeseries(){
+    let startDate = document.getElementById('start_date').value;
+    let modelingDurationValue = parseInt(document.getElementById('modeling_duration_value').value);
+    let modelingDurationUnit = document.getElementById('modeling_duration_unit').value;
+    let netGrowRateInPercentage = parseInt(document.getElementById('net_growth_rate_in_percentage').value);
+    let netGrowthRateTimespan = document.getElementById('net_growth_rate_timespan').value;
+    let initialUsageJourneyVolume = parseInt(document.getElementById('initial_usage_journey_volume').value);
+    let initialUsageJourneyVolumeTimespan = document.getElementById('initial_usage_journey_volume_timespan').value;
+
+    window.dailyUsageJourneyVolume = computeUsageJourneyVolume(
+        startDate, modelingDurationValue, modelingDurationUnit, netGrowRateInPercentage, netGrowthRateTimespan,
+        initialUsageJourneyVolume, initialUsageJourneyVolumeTimespan);
 }
 
 function sumUsageJourneyVolumeByDisplayGranularity(dailyUsageJourneyVolume, displayGranularity) {
@@ -103,17 +119,9 @@ function sumUsageJourneyVolumeByDisplayGranularity(dailyUsageJourneyVolume, disp
 }
 
 function createOrUpdateTimeSeriesChart(){
-    let startDate = document.getElementById('start_date').value;
-    let modelingDurationValue = parseInt(document.getElementById('modeling_duration_value').value);
-    let modelingDurationUnit = document.getElementById('modeling_duration_unit').value;
-    let netGrowRateInPercentage = parseInt(document.getElementById('net_growth_rate_in_percentage').value);
-    let netGrowthRateTimespan = document.getElementById('net_growth_rate_timespan').value;
-    let initialUsageJourneyVolume = parseInt(document.getElementById('initial_usage_journey_volume').value);
-    let initialUsageJourneyVolumeTimespan = document.getElementById('initial_usage_journey_volume_timespan').value;
-
-    window.dailyUsageJourneyVolume = computeUsageJourneyVolume(startDate, modelingDurationValue, modelingDurationUnit, netGrowRateInPercentage, netGrowthRateTimespan, initialUsageJourneyVolume, initialUsageJourneyVolumeTimespan);
     let displayGranularity = document.getElementById('display_granularity').value;
-    let usageJourneyVolume = sumUsageJourneyVolumeByDisplayGranularity(window.dailyUsageJourneyVolume, displayGranularity);
+    let usageJourneyVolume = sumUsageJourneyVolumeByDisplayGranularity(
+        window.dailyUsageJourneyVolume, displayGranularity);
 
     if (window.chart) {
         window.chart.destroy();
@@ -141,6 +149,7 @@ function createOrUpdateTimeSeriesChart(){
             options: window.chartJSOptions
     });
 }
+
 if (typeof module !== "undefined" && module.exports) {
     module.exports = {
         computeUsageJourneyVolume,

@@ -32,7 +32,7 @@
                                                     <select class="form-select light-select fz-0-8 h-30"
                                                             id="display_granularity"
                                                             name="display_granularity"
-                                                        onchange="createOrUpdateTimeSeriesChart()">
+                                                        _="on input createOrUpdateTimeSeriesChart()">
                                                     >
                                                         <option value="month" selected>Month</option>
                                                         <option value="year">Year</option>
@@ -83,7 +83,9 @@
                                                        name="start_date"
                                                        value="2025-01-01"
                                                        _="on load set #start_date's value to my value
-                                                          on input set #start_date's value to my value then createOrUpdateTimeSeriesChart()"
+                                                          on input set #start_date's value to my value
+                                                          then updateUsageJourneyVolumeTimeseries()
+                                                          then createOrUpdateTimeSeriesChart()"
                                                        >
                                             </div>
                                             <div class="mb-3 mx-2">
@@ -93,11 +95,16 @@
                                                            name="modeling_duration_value"
                                                            value="3"
                                                            _="on load set #modeling_duration_value's value to my value
-                                                           on input set #modeling_duration_value's value to my value then createOrUpdateTimeSeriesChart()"  aria-describedby="basic-addon3 basic-addon4">
+                                                           on input set #modeling_duration_value's value to my value
+                                                           then updateUsageJourneyVolumeTimeseries()
+                                                           then createOrUpdateTimeSeriesChart()"
+                                                           aria-describedby="basic-addon3 basic-addon4">
                                                     <select class="input-group-text"
                                                             name="modeling_duration_unit"
                                                             _="on load set #modeling_duration_unit's value to my value
-                                                            on change set #modeling_duration_unit's value to my value then createOrUpdateTimeSeriesChart()">
+                                                            on change set #modeling_duration_unit's value to my value
+                                                            then updateUsageJourneyVolumeTimeseries()
+                                                            then createOrUpdateTimeSeriesChart()">
                                                         <option value="month">Months</option>
                                                         <option value="year" selected>Years</option>
                                                     </select>
@@ -122,13 +129,17 @@
                                                                name="initial_usage_journey_volume"
                                                                value=10000
                                                                _="on load set #initial_usage_journey_volume's value to my value
-                                                               on input set #initial_usage_journey_volume's value to my value then createOrUpdateTimeSeriesChart()"
+                                                               on input set #initial_usage_journey_volume's value to my value
+                                                               then updateUsageJourneyVolumeTimeseries()
+                                                               then createOrUpdateTimeSeriesChart()"
                                                                aria-describedby="basic-addon3 basic-addon4"
                                                                >
                                                         <select class="input-group-text fz-0-8"
                                                                 name="initial_usage_journey_volume_timespan"
                                                                 _="on load set #initial_usage_journey_volume_timespan's value to my value
-                                                            on change set #initial_usage_journey_volume_timespan's value to my value then editFrequencyField(true) then createOrUpdateTimeSeriesChart()"
+                                                            on change set #initial_usage_journey_volume_timespan's value to my value
+                                                            then editFrequencyField(true)
+                                                            then updateUsageJourneyVolumeTimeseries() then createOrUpdateTimeSeriesChart()"
                                                             >
                                                             <option value="month" selected>Monthly</option>
                                                             <option value="year">Yearly</option>
@@ -142,14 +153,18 @@
                                                                class="form-control fz-0-8"
                                                                name="net_growth_rate_in_percentage"
                                                                _="on load set #net_growth_rate_in_percentage's value to my value
-                                                            on input set #net_growth_rate_in_percentage's value to my value then createOrUpdateTimeSeriesChart()"
+                                                            on input set #net_growth_rate_in_percentage's value to my value
+                                                            then updateUsageJourneyVolumeTimeseries()
+                                                            then createOrUpdateTimeSeriesChart()"
                                                                value=10
                                                                aria-describedby="basic-addon3 basic-addon4"
                                                                >
                                                         <select class="input-group-text fz-0-8"
                                                                 name="net_growth_rate_timespan"
                                                                 _="on load set #net_growth_rate_timespan's value to my value
-                                                            on change set #net_growth_rate_timespan's value to my value then createOrUpdateTimeSeriesChart()">
+                                                            on change set #net_growth_rate_timespan's value to my value
+                                                            then updateUsageJourneyVolumeTimeseries()
+                                                            then createOrUpdateTimeSeriesChart()">
                                                             <option value="month" selected>Monthly</option>
                                                             <option value="year">Yearly</option>
                                                         </select>
@@ -173,4 +188,8 @@
     </div>
 </div>
 
-<script>document.getElementById('usage-pattern-attributes-modal-timeseries').addEventListener('shown.bs.modal', createOrUpdateTimeSeriesChart);</script>
+<script>document.getElementById('usage-pattern-attributes-modal-timeseries').addEventListener(
+    'shown.bs.modal', function() {
+        updateUsageJourneyVolumeTimeseries();
+        createOrUpdateTimeSeriesChart();
+    });</script>
