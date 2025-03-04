@@ -23,16 +23,27 @@ def open_edit_object_panel(request, object_id):
         countries = [{"efootprint_id": country["id"], "name": country["name"]} for country in
                      default_countries().values()]
         devices = [{"efootprint_id": device["id"], "name": device["name"]} for device in default_devices().values()]
+        usage_journeys = [{'efootprint_id': uj.efootprint_id, 'name': uj.name} for uj in model_web.usage_journeys]
+
+        modeling_obj_attributes = [
+            {"attr_name": "devices", "existing_objects": devices,
+             "selected_efootprint_id": obj_to_edit.devices[0].efootprint_id},
+            {"attr_name": "network", "existing_objects": networks,
+             "selected_efootprint_id": obj_to_edit.network.efootprint_id},
+            {"attr_name": "country", "existing_objects": countries,
+             "selected_efootprint_id": obj_to_edit.country.efootprint_id},
+            {"attr_name": "usage_journey", "existing_objects": usage_journeys,
+             "selected_efootprint_id": obj_to_edit.usage_journey.efootprint_id},
+        ]
+
         return render(request, "model_builder/side_panels/usage_pattern_add/usage_pattern_add.html",
 {
-            "usagePattern": obj_to_edit,
-            "usage_journeys": [{'efootprint_id': uj.efootprint_id, 'name':uj.name} for uj in model_web.usage_journeys],
-            "networks": networks,
-            "countries": countries,
-            "devices": devices,
-            "htmxPost" : '/model_builder/add-new-usage-pattern/',
+            "modeling_obj_attributes": modeling_obj_attributes,
+            "usage_pattern_input_values": obj_to_edit,
+            "htmxPost" : f'/model_builder/edit-object/{obj_to_edit.efootprint_id}/',
             "title": "Edit usage pattern"
         })
+
     structure_dict, dynamic_form_data = generate_object_edition_structure(
         obj_to_edit, attributes_to_skip=ATTRIBUTES_TO_SKIP_IN_FORMS)
     if isinstance(obj_to_edit, ServerWeb):

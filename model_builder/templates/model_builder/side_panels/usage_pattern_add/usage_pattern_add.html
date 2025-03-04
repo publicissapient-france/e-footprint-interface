@@ -32,45 +32,29 @@
         <div class="row text-start">
             <div class="col-12 mt-3 mb-5">
                 <label for="name" class="form-label w-100 text-start">Name</label>
-                <input type="text" class="form-control p-2" id="name" name="name" placeholder="New usage pattern" required>
+                <input type="text" class="form-control p-2" id="name" name="name"
+                       {% if usage_pattern_input_values.name %}
+                            value="{{ usage_pattern_input_values.name }}"
+                       {% else %}
+                            placeholder="New usage pattern"
+                       {% endif %}
+                       required>
             </div>
             <div class="col-12">
                 <p class="mt-4">
                     Create a new usage pattern by defining its device mix, network mix, country mix, usage over time, and linking it to a usage journey.
                 </p>
             </div>
-            <div class="col-12 mb-3">
-                <label for="devices" class="form-label w-100 text-start fz-0-8">Devices</label>
-                <select class="form-select light-select fz-0-8 h-30"  id="devices"  name="devices" required>
-                    {% for device in devices %}
-                        <option value="{{ device.efootprint_id }}" {% if forloop.counter == 1 %}selected{% endif %}>{{ device.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-12 mb-3">
-                <label for="country" class="form-label w-100 text-start fz-0-8">Country</label>
-                <select class="form-select light-select fz-0-8 h-30"  id="country"  name="country" required>
-                    {% for country in countries %}
-                        <option value="{{ country.efootprint_id }}" {% if forloop.counter == 1 %}selected{% endif %}>{{ country.name }} </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-12 mb-3">
-                <label for="network" class="form-label w-100 text-start fz-0-8">Networks</label>
-                <select class="form-select light-select fz-0-8 h-30"  id="network"  name="network" required>
-                    {% for network in networks %}
-                        <option value="{{ network.efootprint_id }}" {% if forloop.counter == 1 %}selected{% endif %}>{{ network.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-12 mb-3">
-                <label for="usage_journey" class="form-label w-100 text-start fz-0-8">Usage Journeys</label>
-                <select class="form-select light-select fz-0-8 h-30"  id="usage_journey"  name="usage_journey" required>
-                    {% for usage_journey in usage_journeys %}
-                        <option value="{{ usage_journey.efootprint_id }}" {% if forloop.counter == 1 %}selected{% endif %}>{{ usage_journey.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+            {% for attr in modeling_obj_attributes %}
+                <div class="col-12 mb-3">
+                    <label for="{{ attr.attr_name }}" class="form-label w-100 text-start fz-0-8">{{ attr.attr_name }}</label>
+                    <select class="form-select light-select fz-0-8 h-30" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}">
+                        {% for obj in attr.existing_objects %}
+                             <option value="{{ obj.efootprint_id }}" {% if attr.attr_value.efootprint_id == attr.selected_efootprint_id %}selected{% endif %}>{{ obj.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endfor %}
             <div class="col-12 mb-3">
                 <button type="button" id="add-time-series-btn" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" data-bs-toggle="modal" data-bs-target="#usage-pattern-attributes-modal-timeseries">
                         Add time series

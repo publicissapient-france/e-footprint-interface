@@ -33,7 +33,6 @@
                                                             id="display_granularity"
                                                             name="display_granularity"
                                                         _="on input createOrUpdateTimeSeriesChart()">
-                                                    >
                                                         <option value="month" selected>Month</option>
                                                         <option value="year">Year</option>
                                                     </select>
@@ -81,7 +80,7 @@
                                                 <label for="start_date" class="form-label w-100 text-start fz-0-8">Start date</label>
                                                 <input type="date" class="form-control"
                                                        name="start_date"
-                                                       value="2025-01-01"
+                                                       value="{{ usage_pattern_input_values.start_date.value }}"
                                                        _="on load set #start_date's value to my value
                                                           on input set #start_date's value to my value
                                                           then updateUsageJourneyVolumeTimeseries()
@@ -93,7 +92,7 @@
                                                 <div class="input-group">
                                                     <input type="number" class="form-control"
                                                            name="modeling_duration_value"
-                                                           value="3"
+                                                           value="{{ usage_pattern_input_values.modeling_duration_value.magnitude }}"
                                                            _="on load set #modeling_duration_value's value to my value
                                                            on input set #modeling_duration_value's value to my value
                                                            then updateUsageJourneyVolumeTimeseries()
@@ -105,8 +104,8 @@
                                                             on change set #modeling_duration_unit's value to my value
                                                             then updateUsageJourneyVolumeTimeseries()
                                                             then createOrUpdateTimeSeriesChart()">
-                                                        <option value="month">Months</option>
-                                                        <option value="year" selected>Years</option>
+                                                        <option value="month" {% if usage_pattern_input_values.modeling_duration_unit.value == "month" %}selected{% endif %}>Months</option>
+                                                        <option value="year" {% if usage_pattern_input_values.modeling_duration_unit.value == "year" %}selected{% endif %}>Years</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -127,7 +126,7 @@
                                                     <div class="input-group">
                                                         <input type="number" class="form-control fz-0-8"
                                                                name="initial_usage_journey_volume"
-                                                               value=10000
+                                                               value="{{ usage_pattern_input_values.initial_usage_journey_volume.magnitude }}"
                                                                _="on load set #initial_usage_journey_volume's value to my value
                                                                on input set #initial_usage_journey_volume's value to my value
                                                                then updateUsageJourneyVolumeTimeseries()
@@ -141,8 +140,8 @@
                                                             then editFrequencyField()
                                                             then updateUsageJourneyVolumeTimeseries() then createOrUpdateTimeSeriesChart()"
                                                             >
-                                                            <option value="month" selected>Monthly</option>
-                                                            <option value="year">Yearly</option>
+                                                            <option value="month" {% if usage_pattern_input_values.initial_usage_journey_volume_timespan.value == "month" %}selected{% endif %}>Monthly</option>
+                                                            <option value="year" {% if usage_pattern_input_values.initial_usage_journey_volume_timespan.value == "year" %}selected{% endif %}>Yearly</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -156,7 +155,7 @@
                                                             on input set #net_growth_rate_in_percentage's value to my value
                                                             then updateUsageJourneyVolumeTimeseries()
                                                             then createOrUpdateTimeSeriesChart()"
-                                                               value=10
+                                                               value="{{ usage_pattern_input_values.net_growth_rate_in_percentage.magnitude }}"
                                                                aria-describedby="basic-addon3 basic-addon4"
                                                                >
                                                         <select class="input-group-text fz-0-8"
@@ -165,8 +164,8 @@
                                                             on change set #net_growth_rate_timespan's value to my value
                                                             then updateUsageJourneyVolumeTimeseries()
                                                             then createOrUpdateTimeSeriesChart()">
-                                                            <option value="month" selected>Monthly</option>
-                                                            <option value="year">Yearly</option>
+                                                            <option value="month" {% if usage_pattern_input_values.net_growth_rate_timespan.value == "month" %}selected{% endif %}>Monthly</option>
+                                                            <option value="year" {% if usage_pattern_input_values.net_growth_rate_timespan.value == "year" %}selected{% endif %}>Yearly</option>
                                                         </select>
                                                     </div>
                                                 </div>

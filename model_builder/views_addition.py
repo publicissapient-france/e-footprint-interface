@@ -6,6 +6,7 @@ from django.shortcuts import render
 from efootprint.core.usage.job import Job
 
 from model_builder.class_structure import generate_object_creation_structure, efootprint_class_structure
+from model_builder.efootprint_extensions.usage_pattern_from_form import UsagePatternFromForm
 from model_builder.model_web import ModelWeb, default_networks, default_countries, default_devices
 from model_builder.object_creation_and_edition_utils import create_efootprint_obj_from_post_data, \
     add_new_efootprint_object_to_system, render_exception_modal
@@ -128,13 +129,21 @@ def open_create_usage_pattern_panel(request):
     networks = [{"efootprint_id": network["id"], "name": network["name"]} for network in default_networks().values()]
     countries = [{"efootprint_id": country["id"], "name": country["name"]} for country in default_countries().values()]
     devices = [{"efootprint_id": device["id"], "name": device["name"]} for device in default_devices().values()]
+    usage_journeys = [{'efootprint_id': uj.efootprint_id, 'name':uj.name} for uj in model_web.usage_journeys]
+
+    modeling_obj_attributes = [
+        {"attr_name": "devices", "existing_objects": devices, "selected_efootprint_id": devices[0]["efootprint_id"]},
+        {"attr_name": "network", "existing_objects": networks, "selected_efootprint_id": networks[0]["efootprint_id"]},
+        {"attr_name": "country", "existing_objects": countries,
+         "selected_efootprint_id": countries[0]["efootprint_id"]},
+        {"attr_name": "usage_journey", "existing_objects": usage_journeys,
+         "selected_efootprint_id": usage_journeys[0]["efootprint_id"]},
+    ]
 
     http_response = render(
         request, "model_builder/side_panels/usage_pattern_add/usage_pattern_add.html", {
-            "usage_journeys": [{'efootprint_id': uj.efootprint_id, 'name':uj.name} for uj in model_web.usage_journeys],
-            "networks": networks,
-            "countries": countries,
-            "devices": devices,
+            "modeling_obj_attributes": modeling_obj_attributes,
+            "usage_pattern_input_values": UsagePatternFromForm.default_values(),
             "htmxPost" : '/model_builder/add-new-usage-pattern/',
             "title": "Add new usage pattern"
         })
