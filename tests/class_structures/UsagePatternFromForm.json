@@ -16,7 +16,7 @@
             "attr_name": "net_growth_rate_in_percentage",
             "unit": "",
             "long_unit": "dimensionless",
-            "default_value": 0.1
+            "default_value": 10
         }
     ],
     "hourly_quantities_attributes": [],
