@@ -15,9 +15,6 @@ describe("Test - Import JSON", () => {
         cy.get('input[type="file"]').selectFile(fileTest);
         cy.get('button[type="submit"]').click();
 
-        cy.get('button[data-bs-target^="#flush-"][data-bs-target$="'+ujsOne.replaceAll(' ', '-')+'"]').click();
-        cy.get('button[data-bs-target^="#flush-"][data-bs-target$="'+ujsTwo.replaceAll(' ', '-')+'"]').click();
-
         cy.get('button[hx-get^="/model_builder/open_create_job_panel/"][hx-vals*="'+ujsOne.replaceAll(' ', '-')+'"]').click();
         cy.get('#name').type(jobOne);
         cy.get('#service').select(service);
