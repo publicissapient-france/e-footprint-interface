@@ -39,7 +39,7 @@ def open_edit_object_panel(request, object_id):
         return render(request, "model_builder/side_panels/usage_pattern/usage_pattern_edit.html",
 {
             "modeling_obj_attributes": modeling_obj_attributes,
-            "usage_pattern_to_edit": obj_to_edit,
+            "object_to_edit": obj_to_edit,
         })
 
     structure_dict, dynamic_form_data = generate_object_edition_structure(

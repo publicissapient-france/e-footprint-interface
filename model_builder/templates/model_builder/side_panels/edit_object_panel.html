@@ -1,71 +1,31 @@
-<form class="container-fluid panel text-start p-4"
-      hx-post="/model_builder/edit-object/{{ object_to_edit.efootprint_id }}/"
-      hx-swap="none"
-      hx-disabled-elt="button"
-      hx-on::after-request="closeAndEmptySidePanel()"
->
+{% extends "model_builder/side_panels/edit_object_panel_structure.html" %}
 
-    <div class="form-header row align-items-center" id="panel-header">
-        <div class="col-10 text-start row justify-content-start align-items-center py-2">
-            <div id="formModalLabel" class="h5 col-auto m-0">
-                <b>Edit {{ object_to_edit.name }}</b>
-            </div>
-            <div class="col-auto">
-                <button type="button" class="btn border border-2 border-light rounded-2" aria-label="Delete" id="btn-ask-delete"
-                        hx-get="/model_builder/ask-delete-object/{{ object_to_edit.efootprint_id }}/"
-                        hx-swap="innerHTML"
-                        hx-target="#modal-container">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                        <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <div class="col-2 text-end">
-            {% include "model_builder/side_panels/components/close_side_panel_cross.html" %}
-        </div>
-    </div>
-    <div class="form-body p-1" id="panel-body">
-        <div class="row text-start">
-            <div class="col-12 mb-3">
-                <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control p-2" id="name" name="name" value="{{ object_to_edit.name }}">
-            </div>
+{% block edit_form_content %}
+    {% for field in structure_dict.fields %}
+        {% include "model_builder/side_panels/dynamic_form_field.html" %}
+    {% endfor %}
 
-            {% for field in structure_dict.fields %}
-                {% include "model_builder/side_panels/dynamic_form_field.html" %}
-            {% endfor %}
-
-            {% for attr in structure_dict.modeling_obj_attributes %}
-                <div class="col-12 mb-3">
-                    <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
-                    <select class="form-control p-2" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}">
-                        {% for obj in attr.existing_objects %}
-                             <option value="{{ obj.efootprint_id }}" {% if attr.attr_value.efootprint_id == obj.efootprint_id %}selected{% endif %}>{{ obj.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            {% endfor %}
-
-            {% for attr in structure_dict.list_attributes %}
-                <div class="col-12 mb-3">
-                    <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
-                    <select class="form-control p-2" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}" multiple>
-                        {% for obj in attr.existing_objects %}
-                             <option value="{{ obj.efootprint_id }}" {% for obj_selected in attr.attr_value %}{% if obj_selected.efootprint_id == obj.efootprint_id %}selected{% endif %}{% endfor %} >{{ obj.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <hr>
-            {% endfor %}
+    {% for attr in structure_dict.modeling_obj_attributes %}
+        <div class="col-12 mb-3">
+            <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
+            <select class="form-control p-2" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}">
+                {% for obj in attr.existing_objects %}
+                     <option value="{{ obj.efootprint_id }}" {% if attr.attr_value.efootprint_id == obj.efootprint_id %}selected{% endif %}>{{ obj.name }}</option>
+                {% endfor %}
+            </select>
         </div>
-    </div>
-    <div class="form-footer p-1" id="panel-footer">
-        <div class="row justify-content-between">
-            <div class="col-12">
-                <button type="submit" class="btn btn-primary rounded-pill w-100">Save</button>
-            </div>
+    {% endfor %}
+
+    {% for attr in structure_dict.list_attributes %}
+        <div class="col-12 mb-3">
+            <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
+            <select class="form-control p-2" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}" multiple>
+                {% for obj in attr.existing_objects %}
+                     <option value="{{ obj.efootprint_id }}" {% for obj_selected in attr.attr_value %}{% if obj_selected.efootprint_id == obj.efootprint_id %}selected{% endif %}{% endfor %} >{{ obj.name }}</option>
+                {% endfor %}
+            </select>
         </div>
-    </div>
-{{ dynamic_form_data|json_script:"dynamic-form-data" }}
-</form>
+        <hr>
+    {% endfor %}
+    {{ dynamic_form_data|json_script:"dynamic-form-data" }}
+{% endblock %}
