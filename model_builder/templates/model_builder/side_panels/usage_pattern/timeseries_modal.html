@@ -92,7 +92,7 @@
                                                 <div class="input-group">
                                                     <input type="number" class="form-control"
                                                            name="modeling_duration_value"
-                                                           value="{{ usage_pattern_input_values.modeling_duration_value.magnitude }}"
+                                                           value="{{ usage_pattern_input_values.modeling_duration_value.magnitude|floatformat }}"
                                                            _="on load set #modeling_duration_value's value to my value
                                                            on input set #modeling_duration_value's value to my value
                                                            then updateUsageJourneyVolumeTimeseries()
@@ -126,7 +126,7 @@
                                                     <div class="input-group">
                                                         <input type="number" class="form-control fz-0-8"
                                                                name="initial_usage_journey_volume"
-                                                               value="{{ usage_pattern_input_values.initial_usage_journey_volume.magnitude }}"
+                                                               value="{{ usage_pattern_input_values.initial_usage_journey_volume.magnitude|floatformat }}"
                                                                _="on load set #initial_usage_journey_volume's value to my value
                                                                on input set #initial_usage_journey_volume's value to my value
                                                                then updateUsageJourneyVolumeTimeseries()
@@ -155,7 +155,7 @@
                                                             on input set #net_growth_rate_in_percentage's value to my value
                                                             then updateUsageJourneyVolumeTimeseries()
                                                             then createOrUpdateTimeSeriesChart()"
-                                                               value="{{ usage_pattern_input_values.net_growth_rate_in_percentage.magnitude }}"
+                                                               value="{{ usage_pattern_input_values.net_growth_rate_in_percentage.magnitude|floatformat }}"
                                                                aria-describedby="basic-addon3 basic-addon4"
                                                                >
                                                         <select class="input-group-text fz-0-8"
