@@ -15,7 +15,7 @@
     </div>
     <div class="form-body p-1" id="panel-body">
         <div class="row text-start">
-            <div class="col-12 mt-3 mb-5">
+            <div class="col-12 my-2">
                 <label for="name" class="form-label w-100 text-start">Name</label>
                 <input type="text" class="form-control p-2" id="name" name="name"
                        placeholder="New usage pattern"
@@ -27,13 +27,11 @@
                 </p>
             </div>
 
-            {% include "model_builder/side_panels/usage_pattern/usage_pattern_form.html" %}
-
-            <div class="col-12 mb-3">
-                <button type="button" id="add-time-series-btn" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" data-bs-toggle="modal" data-bs-target="#usage-pattern-attributes-modal-timeseries">
-                        Add time series
-                </button>
+            <div class="accordion" id="accordionFormUsagePattern">
+                {% include "model_builder/side_panels/usage_pattern/usage_pattern_form.html" %}
+                {% include "model_builder/side_panels/usage_pattern/timeseries_part_form.html" %}
             </div>
+
         </div>
     </div>
     <div class="form-footer p-1" id="panel-footer">
@@ -44,5 +42,3 @@
         </div>
     </div>
 </form>
-
-{% include 'model_builder/side_panels/usage_pattern/timeseries_modal.html' %}

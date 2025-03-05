@@ -1,0 +1,108 @@
+<div class="accordion-item">
+    <h2 class="accordion-header">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-help-build" aria-expanded="true" aria-controls="collapse-help-build">
+            Help me build my time series
+        </button>
+    </h2>
+    <div id="collapse-help-build" class="accordion-collapse collapse show">
+        <div class="accordion-body">
+            <div class="mb-3 mx-2">
+                <label for="start_date" class="form-label w-100 text-start fz-0-8">Start date</label>
+                <input type="date" class="form-control"
+                       name="start_date"
+                       id="start_date"
+                       value="{{ usage_pattern_input_values.start_date.value }}"
+                       _="
+                          on input
+                            updateUsageJourneyVolumeTimeseries()
+                            then createOrUpdateTimeSeriesChart()"
+                       >
+            </div>
+            <div class="mb-3 mx-2">
+                <label for="modeling_duration_value" class="form-label w-100 text-start">TimeFrame</label>
+                <div class="input-group">
+                    <input type="number" class="form-control"
+                           name="modeling_duration_value"
+                           id="modeling_duration_value"
+                           value="{{ usage_pattern_input_values.modeling_duration_value.magnitude|floatformat }}"
+                           max=10
+                           _="on change applyMaxLimitOnModelingDurationValue()"
+                           aria-describedby="basic-addon3 basic-addon4">
+                    <select class="input-group-text"
+                            name="modeling_duration_unit"
+                            id="modeling_duration_unit"
+                            _="
+                            on change
+                                if my value is 'year' then
+                                    if #modeling_duration_value's value > 10
+                                        set {max:10, value:10} on #modeling_duration_value
+                                        set #modeling_duration_value's value to 10
+                                    else
+                                        set {max:10} on #modeling_duration_value
+                                    end
+                                else
+                                    set {max:120} on #modeling_duration_value
+                                end
+                                then updateUsageJourneyVolumeTimeseries()
+                                then createOrUpdateTimeSeriesChart()"
+                    >
+                        <option value="month" {% if usage_pattern_input_values.modeling_duration_unit.value == "month" %}selected{% endif %}>Months</option>
+                        <option value="year" {% if usage_pattern_input_values.modeling_duration_unit.value == "year" %}selected{% endif %}>Years</option>
+                    </select>
+                </div>
+                <div class="hidden text-danger fz-0-8" id="modeling_duration_value_error_message"></div>
+            </div>
+            <div class="row mb-3 align-items-end">
+                <div class="col-12 mb-3">
+                    <label for="initial_usage_journey_volume" class="form-label w-100 text-start fz-0-8">Initial number of usage journeys</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control fz-0-8"
+                               name="initial_usage_journey_volume"
+                               id="initial_usage_journey_volume"
+                               value="{{ usage_pattern_input_values.initial_usage_journey_volume.magnitude|floatformat }}"
+                               _="on input
+                                    updateUsageJourneyVolumeTimeseries()
+                                    then createOrUpdateTimeSeriesChart()"
+                               aria-describedby="basic-addon3 basic-addon4"
+                       >
+                        <select class="input-group-text fz-0-8"
+                                name="initial_usage_journey_volume_timespan"
+                                id="initial_usage_journey_volume_timespan"
+                                _="on change
+                                    updateUsageJourneyVolumeTimeseries()
+                                    then createOrUpdateTimeSeriesChart()"
+                        >
+                            <option value="month" {% if usage_pattern_input_values.initial_usage_journey_volume_timespan.value == "month" %}selected{% endif %}>Monthly</option>
+                            <option value="year" {% if usage_pattern_input_values.initial_usage_journey_volume_timespan.value == "year" %}selected{% endif %}>Yearly</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label for="net_growth_rate_in_percentage" class="form-label w-100 text-start fz-0-8">Net growth rate (%)</label>
+                    <div class="input-group">
+                        <input type="number"
+                               class="form-control fz-0-8"
+                               name="net_growth_rate_in_percentage"
+                               id="net_growth_rate_in_percentage"
+                               _="on input
+                                    updateUsageJourneyVolumeTimeseries()
+                                    then createOrUpdateTimeSeriesChart()"
+                               value="{{ usage_pattern_input_values.net_growth_rate_in_percentage.magnitude|floatformat }}"
+                               aria-describedby="basic-addon3 basic-addon4"
+                               >
+                        <select class="input-group-text fz-0-8"
+                                name="net_growth_rate_timespan"
+                                id="net_growth_rate_timespan"
+                                _="on change
+                                    updateUsageJourneyVolumeTimeseries()
+                                    then createOrUpdateTimeSeriesChart()"
+                        >
+                            <option value="month" {% if usage_pattern_input_values.net_growth_rate_timespan.value == "month" %}selected{% endif %}>Monthly</option>
+                            <option value="year" {% if usage_pattern_input_values.net_growth_rate_timespan.value == "year" %}selected{% endif %}>Yearly</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

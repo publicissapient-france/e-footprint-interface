@@ -12,6 +12,7 @@ function closeAndEmptySidePanel() {
     modelCanva.classList.replace("col-9", "col-12");
     formPanel.classList.replace("col-3", "d-none");
     formPanel.innerHTML = "";
+    closeTimeseriesChart();
     updateLines();
 }
 

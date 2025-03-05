@@ -294,10 +294,10 @@ body{
     overflow-y: auto;
 }
 
-#usage-pattern-attributes-modal-timeseries .accordion-button,
-#usage-pattern-attributes-modal-timeseries .accordion-header,
-#usage-pattern-attributes-modal-timeseries .accordion-button:not(.collapsed),
-#usage-pattern-attributes-modal-timeseries .accordion-button:not(.collapsed):after{
+#modal-timeseries-chart .accordion-button,
+#modal-timeseries-chart .accordion-header,
+#modal-timeseries-chart .accordion-button:not(.collapsed),
+#modal-timeseries-chart .accordion-button:not(.collapsed):after{
     background-color: #F9FAFB;
 }
 
@@ -340,4 +340,17 @@ body{
     text-align: center;
     /* gray/500 */
     color: #6B7280;
+}
+
+
+.chartTimeseries{
+    position: absolute;
+    height: 70vh !important;
+    width: 50vw !important;
+    z-index: 9999 !important;
+    top: 15vh !important;
+    left: 24vw !important;
+    border-radius: 15px;
+    background-color: #FFFFFF;
+    padding: 2rem;
 }

@@ -39,8 +39,27 @@ window.avalaibleOptionsTimeGranularity = {
     "year": [{'label':'Yearly','value':'year'}]
 }
 
-function applyMaxLimitOnModalModelingDurationValue() {
-    let inputValue = document.getElementById("modal_modeling_duration_value");
+function openTimeseriesChart() {
+    let element = document.getElementById("chartTimeseries");
+    element.classList.remove("d-none");
+    element.classList.add("d-block");
+    updateUsageJourneyVolumeTimeseries();
+    createOrUpdateTimeSeriesChart();
+}
+
+function closeTimeseriesChart() {
+    if(window.chart){
+        let element = document.getElementById("chartTimeseries");
+        element.classList.remove("d-block");
+        element.classList.add("d-none");
+        window.chart.destroy();
+        window.chart = null;
+    }
+}
+
+
+function applyMaxLimitOnModelingDurationValue() {
+    let inputValue = document.getElementById("modeling_duration_value");
     let currentValue = parseInt(inputValue.value);
     let maxValue = parseInt(inputValue.max);
     let errorElement = document.getElementById('modeling_duration_value_error_message');
@@ -100,6 +119,7 @@ function computeUsageJourneyVolume(
 }
 
 function updateUsageJourneyVolumeTimeseries(){
+    console.log("hello")
     let startDate = document.getElementById('start_date').value;
     let modelingDurationValue = parseInt(document.getElementById('modeling_duration_value').value);
     let modelingDurationUnit = document.getElementById('modeling_duration_unit').value;

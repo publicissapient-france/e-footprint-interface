@@ -1,19 +1,23 @@
 <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-<input type="hidden" name="start_date" id="start_date" value="">
-<input type="hidden" name="modeling_duration_value" id="modeling_duration_value" value="">
-<input type="hidden" name="modeling_duration_unit" id="modeling_duration_unit" value="">
-<input type="hidden" name="net_growth_rate_in_percentage" id="net_growth_rate_in_percentage" value="">
-<input type="hidden" name="net_growth_rate_timespan" id="net_growth_rate_timespan" value="">
-<input type="hidden" name="initial_usage_journey_volume" id="initial_usage_journey_volume" value="">
-<input type="hidden" name="initial_usage_journey_volume_timespan" id="initial_usage_journey_volume_timespan" value="">
 
 {% for attr in modeling_obj_attributes %}
-    <div class="col-12 mb-3">
-        <label for="{{ attr.attr_name }}" class="form-label w-100 text-start fz-0-8">{{ attr.attr_name }}</label>
-        <select class="form-select light-select fz-0-8 h-30" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}">
-            {% for obj in attr.existing_objects %}
-                 <option value="{{ obj.efootprint_id }}" {% if obj.efootprint_id == attr.selected_efootprint_id %}selected{% endif %}>{{ obj.name }}</option>
-            {% endfor %}
-        </select>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-attribute-{{ attr.attr_name }}" aria-expanded="true" aria-controls="collapse-attribute-{{ attr.attr_name }}">
+                {{ attr.attr_name }}
+            </button>
+        </h2>
+        <div id="collapse-attribute-{{ attr.attr_name }}" class="accordion-collapse collapse show">
+            <div class="accordion-body row">
+                <div class="col-12 mb-3">
+                    <label for="{{ attr.attr_name }}" class="form-label w-100 text-start fz-0-8">Select a {{ attr.attr_name }}:</label>
+                    <select class="form-select light-select fz-0-8 h-30" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}">
+                        {% for obj in attr.existing_objects %}
+                             <option value="{{ obj.efootprint_id }}" {% if obj.efootprint_id == attr.selected_efootprint_id %}selected{% endif %}>{{ obj.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
     </div>
 {% endfor %}

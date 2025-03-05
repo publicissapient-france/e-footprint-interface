@@ -1,15 +1,9 @@
 {% extends "model_builder/side_panels/edit_object_panel_structure.html" %}
 
 {% block edit_form_content %}
-    {% include "model_builder/side_panels/usage_pattern/usage_pattern_form.html" with usage_pattern_input_values=object_to_edit %}
 
-    <div class="col-12 mb-3">
-        <button type="button" id="add-time-series-btn" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" data-bs-toggle="modal" data-bs-target="#usage-pattern-attributes-modal-timeseries">
-                Edit time series
-        </button>
+    <div class="accordion" id="accordionFormUsagePattern">
+        {% include "model_builder/side_panels/usage_pattern/usage_pattern_form.html" with usage_pattern_input_values=object_to_edit %}
+        {% include "model_builder/side_panels/usage_pattern/timeseries_part_form.html" with usage_pattern_input_values=object_to_edit %}
     </div>
-{% endblock %}
-
-{% block edit_form_modal %}
-    {% include 'model_builder/side_panels/usage_pattern/timeseries_modal.html' with usage_pattern_input_values=object_to_edit %}
 {% endblock %}
