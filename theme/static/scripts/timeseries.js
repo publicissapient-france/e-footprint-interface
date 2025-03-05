@@ -39,6 +39,26 @@ window.avalaibleOptionsTimeGranularity = {
     "year": [{'label':'Yearly','value':'year'}]
 }
 
+function applyMaxLimitOnModalModelingDurationValue() {
+    let inputValue = document.getElementById("modal_modeling_duration_value");
+    let currentValue = parseInt(inputValue.value);
+    let maxValue = parseInt(inputValue.max);
+    let errorElement = document.getElementById('modeling_duration_value_error_message');
+    if(currentValue <= 0 || isNaN(currentValue) || !currentValue){
+        errorElement.innerHTML = "Modeling duration value must be greater than 0 and can't be empty";
+        errorElement.style.display = "block";
+    }else if (currentValue > maxValue) {
+        errorElement.innerHTML = `Modeling duration value must be less than or equal to ${maxValue}`;
+        errorElement.style.display = "block";
+    }else{
+        errorElement.innerHTML ='';
+        errorElement.style.display = "none";
+        document.getElementById('modeling_duration_value').value = currentValue;
+        updateUsageJourneyVolumeTimeseries();
+        createOrUpdateTimeSeriesChart();
+    }
+}
+
 function editFrequencyField(){
     let initialUsageJourneyVolumeTimespan = document.querySelector("select" + "[name='initial_usage_journey_volume_timespan']").value;
     let netGrowthRateTimespan = document.querySelector("select" + "[name='net_growth_rate_timespan']");

@@ -92,22 +92,34 @@
                                                 <div class="input-group">
                                                     <input type="number" class="form-control"
                                                            name="modeling_duration_value"
+                                                           id="modal_modeling_duration_value"
                                                            value="{{ usage_pattern_input_values.modeling_duration_value.magnitude|floatformat }}"
+                                                           max=10
                                                            _="on load set #modeling_duration_value's value to my value
-                                                           on input set #modeling_duration_value's value to my value
-                                                           then updateUsageJourneyVolumeTimeseries()
-                                                           then createOrUpdateTimeSeriesChart()"
+                                                            on change applyMaxLimitOnModalModelingDurationValue()"
                                                            aria-describedby="basic-addon3 basic-addon4">
                                                     <select class="input-group-text"
                                                             name="modeling_duration_unit"
+                                                            id="modal_modeling_duration_unit"
                                                             _="on load set #modeling_duration_unit's value to my value
                                                             on change set #modeling_duration_unit's value to my value
+                                                            then if my value is 'year' then
+                                                                if #modal_modeling_duration_value's value > 10
+                                                                    set {max:10, value:10} on #modal_modeling_duration_value
+                                                                    set #modeling_duration_value's value to 10
+                                                                else
+                                                                    set {max:10} on #modal_modeling_duration_value
+                                                                end
+                                                            else
+                                                                set {max:120} on #modal_modeling_duration_value
+                                                            end
                                                             then updateUsageJourneyVolumeTimeseries()
                                                             then createOrUpdateTimeSeriesChart()">
                                                         <option value="month" {% if usage_pattern_input_values.modeling_duration_unit.value == "month" %}selected{% endif %}>Months</option>
                                                         <option value="year" {% if usage_pattern_input_values.modeling_duration_unit.value == "year" %}selected{% endif %}>Years</option>
                                                     </select>
                                                 </div>
+                                                <div class="hidden text-danger fz-0-8" id="modeling_duration_value_error_message"></div>
                                             </div>
                                         </div>
                                     </div>
