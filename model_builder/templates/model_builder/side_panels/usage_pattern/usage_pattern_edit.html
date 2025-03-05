@@ -1,0 +1,42 @@
+<form class="container-fluid panel text-start"
+        hx-post="/model_builder/edit-object/{{ usage_pattern_to_edit.efootprint_id }}/"
+        hx-swap="none"
+        hx-disabled-elt="button"
+        hx-on::after-request="closeAndEmptySidePanel()"
+>
+    <div class="text-end">
+        {% include "model_builder/side_panels/components/close_side_panel_cross.html" %}
+    </div>
+    <div class="form-header p-1" id="panel-header">
+        <h5 id="formModalLabel" class="mt-4">
+            <b>Edit usage pattern</b>
+        </h5>
+    </div>
+    <div class="form-body p-1" id="panel-body">
+        <div class="row text-start">
+            <div class="col-12 mt-3 mb-5">
+                <label for="name" class="form-label w-100 text-start">Name</label>
+                <input type="text" class="form-control p-2" id="name" name="name"
+                       value="{{ usage_pattern_to_edit.name }}"
+                       required>
+            </div>
+
+            {% include "model_builder/side_panels/usage_pattern/usage_pattern_form.html" with usage_pattern_input_values=usage_pattern_to_edit %}
+
+            <div class="col-12 mb-3">
+                <button type="button" id="add-time-series-btn" class="btn rounded-pill bg-white border border-1 border-body-tertiary rounded-pill px-4 fz-0-9" data-bs-toggle="modal" data-bs-target="#usage-pattern-attributes-modal-timeseries">
+                        Edit time series
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="form-footer p-1" id="panel-footer">
+        <div class="row justify-content-between">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary rounded-pill w-100" id="save_usage_pattern_btn">Save</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% include 'model_builder/side_panels/usage_pattern/timeseries_modal.html' %}

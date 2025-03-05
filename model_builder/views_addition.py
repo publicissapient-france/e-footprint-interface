@@ -141,11 +141,9 @@ def open_create_usage_pattern_panel(request):
     ]
 
     http_response = render(
-        request, "model_builder/side_panels/usage_pattern_add/usage_pattern_add.html", {
+        request, "model_builder/side_panels/usage_pattern/usage_pattern_add.html", {
             "modeling_obj_attributes": modeling_obj_attributes,
             "usage_pattern_input_values": UsagePatternFromForm.default_values(),
-            "htmxPost" : '/model_builder/add-new-usage-pattern/',
-            "title": "Add new usage pattern"
         })
 
     return http_response

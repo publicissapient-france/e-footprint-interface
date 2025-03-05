@@ -36,12 +36,10 @@ def open_edit_object_panel(request, object_id):
              "selected_efootprint_id": obj_to_edit.usage_journey.efootprint_id},
         ]
 
-        return render(request, "model_builder/side_panels/usage_pattern_add/usage_pattern_add.html",
+        return render(request, "model_builder/side_panels/usage_pattern/usage_pattern_edit.html",
 {
             "modeling_obj_attributes": modeling_obj_attributes,
-            "usage_pattern_input_values": obj_to_edit,
-            "htmxPost" : f'/model_builder/edit-object/{obj_to_edit.efootprint_id}/',
-            "title": "Edit usage pattern"
+            "usage_pattern_to_edit": obj_to_edit,
         })
 
     structure_dict, dynamic_form_data = generate_object_edition_structure(

@@ -6,26 +6,14 @@
         hx-target="#main-content-block"
 >
     {% csrf_token %}
-    <div class="form-header" id="panel-header">
-        <div class="w-100 text-end">
-            <div class="row align-items-center">
-                <div class="col-10 text-start">
-                    <div class="row justify-content-start align-items-center py-2">
-                        <div class="col-auto">
-                            <h5 id="formModalLabel" class="m-0">
-                                <b>Import a model </b>
-                            </h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-2">
-                    <button type="button" class="btn btn-white" aria-label="Close" onclick="closeAndEmptySidePanel()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                          <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
+    <div class="form-header w-100 text-end row align-items-center" id="panel-header">
+        <div class="col-10 text-start row justify-content-start align-items-center py-2 col-auto m-0">
+            <h5 id="formModalLabel">
+                <b>Import a model </b>
+            </h5>
+        </div>
+        <div class="col-2">
+            {% include "model_builder/side_panels/components/close_side_panel_cross.html" %}
         </div>
     </div>
     <div class="form-body p-1" id="panel-body">
