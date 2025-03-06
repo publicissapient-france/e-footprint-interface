@@ -5,8 +5,15 @@
         <div class="accordion-item">
             <h6 class="accordion-header d-flex align-items-center">
                 <button type="button" class="chevron-btn btn btn-link p-0 me-2 text-black"
-                        data-bs-toggle="collapse" data-bs-target="#flush-{{ server.web_id }}" onclick="reverseIconAccordion('{{ server.web_id }}')" aria-expanded="true" aria-controls="collapseOne">
-                        <svg id="icon_accordion_{{ server.web_id }}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                        data-bs-toggle="collapse"
+                        data-bs-target="#flush-{{ server.web_id }}"
+                        onclick="reverseIconAccordion('{{ server.web_id }}')"
+                        aria-expanded="{% if server.installed_services|length == 0 %}true{% else %}false{% endif %}"
+                        aria-controls="flush-{{ server.web_id }}">
+                        <svg id="icon_accordion_{{ server.web_id }}" xmlns="http://www.w3.org/2000/svg"
+                             width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                             class="bi bi-chevron-right {% if server.installed_services|length == 0 %}chevron-rotate{% endif %}"
+                             viewBox="0 0 16 16">
                             <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M4.646 1.646l6 6-6 6" />
                         </svg>
                 </button>
@@ -22,7 +29,9 @@
                     {{ server.name}}
                 </button>
             </h6>
-            <div id="flush-{{ server.web_id }}" class="accordion-collapse collapse accordion-all" data-bs-parent="#{{ server.web_id }}">
+            <div id="flush-{{ server.web_id }}"
+                 class="accordion-collapse collapse accordion-all  {% if server.installed_services|length == 0 %}show{% endif %}"
+                 data-bs-parent="#{{ server.web_id }}">
                 <div class="accordion-body text-start">
                     <p>Services</p>
                     <div class="row mx-0 my-0 align-items-center rounded-2" id="{{ server.web_id }}-services" style="z-index: 1000 !important; background-color: #ffffff !important;">

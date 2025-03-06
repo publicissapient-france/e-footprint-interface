@@ -67,8 +67,6 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#formPanel form').find('button[type="submit"]').click();
 
         cy.get('div[id$="'+server.replaceAll(' ', '-')+'"]').should('have.class', 'list-group-item')
-        // get the button inside with attribute data-bs-target begin with '#flush-id' and ended with '-Test-E2E-Server'
-        cy.get('button[data-bs-target^="#flush-"][data-bs-target$="'+server.replaceAll(' ', '-')+'"]').click();
         // get the button with attribute hx-get begin with '/model_builder/open-create-service-panel/' and ended with 'Test-E2E-Server'
         cy.get('button[hx-get^="/model_builder/open-create-service-panel"][hx-get$="'+server.replaceAll(' ', '-')+'/"]').click();
         cy.get('#name').type(service);

@@ -25,7 +25,6 @@ describe('Test de la page d\'accueil', () => {
         });
         cy.get('#formPanel form').find('button[type="submit"]').click();
         cy.get('div[id$="'+server.replaceAll(' ', '-')+'"]').should('have.class', 'list-group-item')
-        cy.get('button[data-bs-target^="#flush-"][data-bs-target$="'+server.replaceAll(' ', '-')+'"]').click();
         cy.get('button[hx-get^="/model_builder/open-create-service-panel"][hx-get$="'+server.replaceAll(' ', '-')+'/"]').click();
         cy.get('#name').type(service);
         cy.get('#provider').select(providerName1);
