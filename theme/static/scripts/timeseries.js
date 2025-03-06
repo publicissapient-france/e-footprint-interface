@@ -119,7 +119,6 @@ function computeUsageJourneyVolume(
 }
 
 function updateUsageJourneyVolumeTimeseries(){
-    console.log("hello")
     let startDate = document.getElementById('start_date').value;
     let modelingDurationValue = parseInt(document.getElementById('modeling_duration_value').value);
     let modelingDurationUnit = document.getElementById('modeling_duration_unit').value;
