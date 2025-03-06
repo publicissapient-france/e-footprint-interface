@@ -17,6 +17,9 @@ def open_edit_object_panel(request, object_id):
     model_web = ModelWeb(request.session)
     obj_to_edit = model_web.get_web_object_from_efootprint_id(object_id)
 
+    structure_dict, dynamic_form_data = generate_object_edition_structure(
+        obj_to_edit, attributes_to_skip=ATTRIBUTES_TO_SKIP_IN_FORMS)
+
     if isinstance(obj_to_edit, UsagePatternWeb):
         networks = [{"efootprint_id": network["id"], "name": network["name"]} for network in
                     default_networks().values()]
@@ -36,24 +39,28 @@ def open_edit_object_panel(request, object_id):
              "selected_efootprint_id": obj_to_edit.usage_journey.efootprint_id},
         ]
 
-        return render(request, "model_builder/side_panels/usage_pattern/usage_pattern_edit.html",
-{
-            "modeling_obj_attributes": modeling_obj_attributes,
-            "object_to_edit": obj_to_edit,
-        })
+        dynamic_selects = dynamic_form_data["dynamic_lists"]
+        dynamic_selects[0]["list_value"] = {
+            key: [{"label": {"day": "Daily", "month": "Monthly", "year": "Yearly"}[elt], "value": elt} for elt in value]
+            for key, value in dynamic_selects[0]["list_value"].items()
+        }
 
-    structure_dict, dynamic_form_data = generate_object_edition_structure(
-        obj_to_edit, attributes_to_skip=ATTRIBUTES_TO_SKIP_IN_FORMS)
-    if isinstance(obj_to_edit, ServerWeb):
-        # TODO: remove when developing the storage edition feature
-        structure_dict["modeling_obj_attributes"] = []
-    if obj_to_edit.class_as_simple_str in [service_class.__name__ for service_class in SERVICE_CLASSES]:
-        structure_dict["modeling_obj_attributes"] = []
+        http_response = render(
+            request, "model_builder/side_panels/usage_pattern/usage_pattern_edit.html",
+            {"modeling_obj_attributes": modeling_obj_attributes,
+             "object_to_edit": obj_to_edit, "dynamic_form_data": {"dynamic_selects": dynamic_selects}}
+        )
+    else:
+        if isinstance(obj_to_edit, ServerWeb):
+            # TODO: remove when developing the storage edition feature
+            structure_dict["modeling_obj_attributes"] = []
+        if obj_to_edit.class_as_simple_str in [service_class.__name__ for service_class in SERVICE_CLASSES]:
+            structure_dict["modeling_obj_attributes"] = []
 
-    http_response = render(
-        request, "model_builder/side_panels/edit_object_panel.html",
-        context={"object_to_edit": obj_to_edit, "structure_dict": structure_dict,
-                 "dynamic_form_data": dynamic_form_data})
+        http_response = render(
+            request, "model_builder/side_panels/edit_object_panel.html",
+            context={"object_to_edit": obj_to_edit, "structure_dict": structure_dict,
+                     "dynamic_form_data": dynamic_form_data})
 
     http_response["HX-Trigger-After-Swap"] = "initDynamicForm"
 

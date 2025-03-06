@@ -51,30 +51,47 @@ document.addEventListener("initDynamicForm", function () {
     if (!filterElem || !targetElem) return;
 
     const filterKey = filterElem.value;
-
-    targetElem.innerHTML = "";
-
     const items = listValue[filterKey] || []; // fallback to empty array
 
-    if (type === "datalist") {
-      // items are simple strings
-      items.forEach((item) => {
-        const option = document.createElement("option");
-        option.value = item;
-        targetElem.appendChild(option);
-      });
-    } else if (type === "select") {
-      // items are objects with {label, value}
-      items.forEach(({ label, value }) => {
-        const option = document.createElement("option");
-        option.value = value;
-        option.textContent = label;
-        targetElem.appendChild(option);
-      });
+    // Check if options are already present
+    const existingOptions = Array.from(targetElem.options).map(opt => opt.value);
+    const newOptions = items.map(item => (type === "datalist" ? item : item.value));
 
-      targetElem.dispatchEvent(new Event("change", { bubbles: true }));
+    if (existingOptions.length === newOptions.length && existingOptions.every((val, idx) => val === newOptions[idx])) {
+        return; // If options are the same, don't update
+    }
+
+    // Preserve the selected value if possible
+    const selectedValue = targetElem.value;
+
+    // Clear existing options
+    targetElem.innerHTML = "";
+
+    if (type === "datalist") {
+        // items are simple strings
+        items.forEach((item) => {
+            const option = document.createElement("option");
+            option.value = item;
+            targetElem.appendChild(option);
+        });
+    } else if (type === "select") {
+        // items are objects with {label, value}
+        items.forEach(({ label, value }) => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = label;
+            targetElem.appendChild(option);
+        });
+
+        // Restore selected value if it still exists
+        if (newOptions.includes(selectedValue)) {
+            targetElem.value = selectedValue;
+        }
+
+        targetElem.dispatchEvent(new Event("change", { bubbles: true }));
     }
   }
+
 
   /**
    * 2) Handle DYNAMIC LISTS (for <datalist>)

@@ -34,11 +34,6 @@ window.chartJSOptions = {
     }
 };
 
-window.avalaibleOptionsTimeGranularity = {
-    "month": [{'label':'Monthly','value':'month'}, {'label':'Yearly','value':'year'}],
-    "year": [{'label':'Yearly','value':'year'}]
-}
-
 function openTimeseriesChart() {
     let element = document.getElementById("chartTimeseries");
     element.classList.remove("d-none");
@@ -56,7 +51,6 @@ function closeTimeseriesChart() {
         window.chart = null;
     }
 }
-
 
 function applyMaxLimitOnModelingDurationValue() {
     let inputValue = document.getElementById("modeling_duration_value");
@@ -76,19 +70,6 @@ function applyMaxLimitOnModelingDurationValue() {
         errorElement.innerHTML ='';
         errorElement.style.display = "none";
     }
-}
-
-function editFrequencyField(){
-    let initialUsageJourneyVolumeTimespan = document.querySelector("select" + "[name='initial_usage_journey_volume_timespan']").value;
-    let netGrowthRateTimespan = document.querySelector("select" + "[name='net_growth_rate_timespan']");
-    netGrowthRateTimespan.innerHTML = '';
-    let optionsToFill = window.avalaibleOptionsTimeGranularity[initialUsageJourneyVolumeTimespan];
-    optionsToFill.forEach((option) => {
-        let optionElement = document.createElement('option');
-        optionElement.value = option.value;
-        optionElement.textContent = option.label;
-        netGrowthRateTimespan.appendChild(optionElement);
-    });
 }
 
 function computeUsageJourneyVolume(

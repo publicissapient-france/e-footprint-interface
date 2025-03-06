@@ -144,11 +144,22 @@ def open_create_usage_pattern_panel(request):
          "selected_efootprint_id": usage_journeys[0]["efootprint_id"]},
     ]
 
+    structure_dict, dynamic_form_data = generate_object_creation_structure([UsagePatternFromForm], "Usage pattern")
+
+    dynamic_lists = dynamic_form_data["dynamic_lists"]
+    dynamic_lists[0]["list_value"] = {
+        key: [{"label": {"day": "Daily", "month": "Monthly", "year": "Yearly"}[elt], "value": elt} for elt in value]
+        for key, value in dynamic_lists[0]["list_value"].items()
+    }
+
     http_response = render(
         request, "model_builder/side_panels/usage_pattern/usage_pattern_add.html", {
             "modeling_obj_attributes": modeling_obj_attributes,
             "usage_pattern_input_values": UsagePatternFromForm.default_values(),
+            "dynamic_form_data": {"dynamic_selects": dynamic_lists},
         })
+
+    http_response["HX-Trigger-After-Swap"] = "initDynamicForm"
 
     return http_response
 
