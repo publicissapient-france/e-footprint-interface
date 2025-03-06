@@ -126,10 +126,14 @@ def open_create_job_panel(request):
 
 def open_create_usage_pattern_panel(request):
     model_web = ModelWeb(request.session)
+    usage_journeys = [{'efootprint_id': uj.efootprint_id, 'name': uj.name} for uj in model_web.usage_journeys]
+    if len(usage_journeys) == 0:
+        error = PermissionError("You need to have created at least one usage journey to create a usage pattern.")
+        return render_exception_modal(request, error)
+
     networks = [{"efootprint_id": network["id"], "name": network["name"]} for network in default_networks().values()]
     countries = [{"efootprint_id": country["id"], "name": country["name"]} for country in default_countries().values()]
     devices = [{"efootprint_id": device["id"], "name": device["name"]} for device in default_devices().values()]
-    usage_journeys = [{'efootprint_id': uj.efootprint_id, 'name':uj.name} for uj in model_web.usage_journeys]
 
     modeling_obj_attributes = [
         {"attr_name": "devices", "existing_objects": devices, "selected_efootprint_id": devices[0]["efootprint_id"]},

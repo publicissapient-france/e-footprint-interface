@@ -11,6 +11,7 @@ from efootprint.core.all_classes_in_order import SERVICE_CLASSES, SERVER_CLASSES
 from efootprint.core.hardware.device import Device
 from efootprint.core.hardware.network import Network
 from efootprint.core.usage.job import Job
+from model_builder.efootprint_extensions.usage_pattern_from_form import UsagePatternFromForm
 from efootprint.logger import logger
 
 from model_builder.class_structure import (efootprint_class_structure, generate_object_creation_structure,
@@ -21,7 +22,7 @@ from utils import EFOOTPRINT_COUNTRIES
 
 obj_creation_structure_dict = {
         "Service": SERVICE_CLASSES, "Server": SERVER_CLASSES + SERVER_BUILDER_CLASSES,
-        "Job": [Job] + SERVICE_JOB_CLASSES}
+        "Job": [Job] + SERVICE_JOB_CLASSES, "UsagePattern": [UsagePatternFromForm]}
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
 
