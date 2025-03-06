@@ -60,21 +60,21 @@ function closeTimeseriesChart() {
 
 function applyMaxLimitOnModelingDurationValue() {
     let inputValue = document.getElementById("modeling_duration_value");
+    let inputUnit = document.getElementById("modeling_duration_unit").value;
     let currentValue = parseInt(inputValue.value);
     let maxValue = parseInt(inputValue.max);
     let errorElement = document.getElementById('modeling_duration_value_error_message');
     if(currentValue <= 0 || isNaN(currentValue) || !currentValue){
         errorElement.innerHTML = "Modeling duration value must be greater than 0 and can't be empty";
         errorElement.style.display = "block";
+        if (inputUnit === 'month'){inputValue.value= 12}else{inputValue.value= 1}
     }else if (currentValue > maxValue) {
         errorElement.innerHTML = `Modeling duration value must be less than or equal to ${maxValue}`;
         errorElement.style.display = "block";
+        inputValue.value = maxValue;
     }else{
         errorElement.innerHTML ='';
         errorElement.style.display = "none";
-        document.getElementById('modeling_duration_value').value = currentValue;
-        updateUsageJourneyVolumeTimeseries();
-        createOrUpdateTimeSeriesChart();
     }
 }
 
