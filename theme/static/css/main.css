@@ -309,7 +309,7 @@ body{
 #modal-timeseries-chart .accordion-header,
 #modal-timeseries-chart .accordion-button:not(.collapsed),
 #modal-timeseries-chart .accordion-button:not(.collapsed):after{
-    background-color: #F9FAFB;
+    background-color: #F3F4F6;
 }
 
 .light-select{
@@ -364,6 +364,18 @@ body{
     border-radius: 15px;
     background-color: #FFFFFF;
     padding: 2rem;
+}
+
+
+.accordion-header-panel,
+.accordion-header-panel .show,
+.accordion-header-panel .collapsed,
+.accordion-button:not(.collapsed) {
+    background-color: #F3F4F6 !important;
+}
+
+.accordion-header-panel:hover{
+    background-color: #bfbfc1 !important;
 }
 
 @keyframes grow {

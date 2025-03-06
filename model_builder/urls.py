@@ -35,4 +35,8 @@ urlpatterns = [
     path("result-chart/", views.result_chart, name="result-chart"),
     path("open-import-json-panel/", views.open_import_json_panel, name="open-import-json-panel"),
     path("upload-json/", views.upload_json, name="upload-json"),
+    path('display-calculus-graph/<efootprint_id>/<attr_name>/', model_builder.views.display_calculus_graph,
+         name='display-calculus-graph'),
+    path('graph/<cache_key>/<efootprint_id>/<attr_name>/<graph_key>', model_builder.views.get_calculus_graph,
+         name='get-graph'),
 ]

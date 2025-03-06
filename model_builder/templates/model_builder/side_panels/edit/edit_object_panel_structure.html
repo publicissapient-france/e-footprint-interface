@@ -1,3 +1,5 @@
+{% load static %}
+
 <form class="container-fluid panel text-start p-4"
       hx-post="/model_builder/edit-object/{{ object_to_edit.efootprint_id }}/"
       hx-swap="none"
@@ -35,9 +37,44 @@
                 <label for="name" class="form-label">Name</label>
                 <input type="text" class="form-control p-2" id="name" name="name" value="{{ object_to_edit.name }}">
             </div>
-
-            {% block edit_form_content %}
-            {% endblock %}
+            <div class="col-12">
+                <div class="accordion" id="accordionAllAttributes">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header accordion-header-panel">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInputAttributes" aria-expanded="true" aria-controls="collapseInputAttributes">
+                            {{ object_to_edit.class_as_simple_str }} attributes
+                        </button>
+                        </h2>
+                        <div id="collapseInputAttributes" class="accordion-collapse collapse show" data-bs-parent="#accordionAllAttributes">
+                            <div class="accordion-body row gy-2">
+                                {% block edit_form_content %}
+                                {% endblock %}
+                            </div>
+                        </div>
+                    </div>
+                    {% if object_belongs_to_computable_system and object_to_edit.calculated_attributes|length > 0 %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header accordion-header-panel">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCalculatedAttributes" aria-expanded="false" aria-controls="collapseCalculatedAttributes">
+                            Calculated attributes
+                        </button>
+                        </h2>
+                        <div id="collapseCalculatedAttributes" class="accordion-collapse collapse" data-bs-parent="#accordionAllAttributes">
+                            <div class="accordion-body row gy-2">
+                                {% for item in object_to_edit.calculated_attributes %}
+                                    <div class="col-10">
+                                        <input disabled name="calculated_attributes{{ item }}" value="{{ item }}" class="form-control">
+                                    </div>
+                                    <div class="col-2">
+                                        <a href="{% url 'display-calculus-graph' object_to_edit.efootprint_id item %}" target="_blank"><img src="{% static 'icons/calculus-graph.svg' %}" alt="calculus-graph-icon"></a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
     <div class="form-footer p-1" id="panel-footer">

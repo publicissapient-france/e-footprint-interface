@@ -193,3 +193,5 @@ if os.getenv('DJANGO_PROD') == 'True':
     # [END gaestd_py_django_database_config]
     # [END db_setup]
 
+X_FRAME_OPTIONS = "SAMEORIGIN"
+CSP_FRAME_ANCESTORS = ["'self'"]

@@ -24,6 +24,11 @@ describe('Test de la page d\'accueil', () => {
 
         cy.get('button').contains('Add usage pattern').click();
         cy.get('#formPanel').should('be.visible');
+        cy.get('#timeSeriesChart').then(($canvas) =>{
+            let canvas = $canvas[0]
+            let ctx = canvas.getContext('2d');
+            expect(ctx).not.to.be.null;
+        });
         cy.get('#name').type(upNameOne);
 
         cy.get('#start_date').click();
@@ -35,8 +40,15 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#net_growth_rate_timespan').select('year');
         cy.get('#save_usage_pattern_btn').click();
 
+
+
         cy.get('button').contains('Add usage pattern').click();
         cy.get('#formPanel').should('be.visible');
+        cy.get('#timeSeriesChart').then(($canvas) =>{
+            let canvas = $canvas[0]
+            let ctx = canvas.getContext('2d');
+            expect(ctx).not.to.be.null;
+        });
         cy.get('#name').type(upNameTwo);
         cy.get('#start_date').click();
         cy.get('#start_date').invoke('val', '2027-01-02').trigger('change');
@@ -48,7 +60,12 @@ describe('Test de la page d\'accueil', () => {
 
         cy.get('#save_usage_pattern_btn').click();
         cy.get('#formPanel').should('not.contain.html');
-        cy.get('button[id^="button-id-"][id$="'+upNameOne.replaceAll(' ', '-')+'"]').should('be.visible');
-
+        cy.wait(500)
+        cy.get('button[id^="button-id-"][id$="'+upNameOne.replaceAll(' ', '-')+'"]').should('be.visible').click();
+        cy.get('#timeSeriesChart').then(($canvas) =>{
+            let canvas = $canvas[0]
+            let ctx = canvas.getContext('2d');
+            expect(ctx).not.to.be.null;
+        });
     });
 });

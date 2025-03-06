@@ -4,8 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.6.0] - 2025-03-13
+
+### Added
+- Calculated attributes section in object edit panel to allow the user to explore computation graphs.
+
 ## [0.5.0] - 2025-02-24
 
+### Changed
 - Explode the navbar into a new navbar and a dedicated toolbar for the model 
   builder.
 - Add a swipe effect to open and visualize the result panel.

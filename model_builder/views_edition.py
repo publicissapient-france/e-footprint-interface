@@ -21,6 +21,10 @@ def open_edit_object_panel(request, object_id):
     structure_dict, dynamic_form_data = generate_object_edition_structure(
         obj_to_edit, attributes_to_skip=ATTRIBUTES_TO_SKIP_IN_FORMS)
 
+    object_belongs_to_computable_system = False
+    if (len(model_web.system.servers) > 0) and (len(obj_to_edit.systems) > 0):
+        object_belongs_to_computable_system = True
+
     if issubclass(obj_to_edit.efootprint_class, UsagePatternFromForm):
         networks = [{"efootprint_id": network["id"], "name": network["name"]} for network in
                     default_networks().values()]
@@ -49,7 +53,8 @@ def open_edit_object_panel(request, object_id):
         http_response = render(
             request, "model_builder/side_panels/usage_pattern/usage_pattern_edit.html",
             {"modeling_obj_attributes": modeling_obj_attributes,
-             "object_to_edit": obj_to_edit, "dynamic_form_data": {"dynamic_selects": dynamic_selects}}
+             "object_to_edit": obj_to_edit, "dynamic_form_data": {"dynamic_selects": dynamic_selects},
+             "object_belongs_to_computable_system": object_belongs_to_computable_system}
         )
     else:
         if isinstance(obj_to_edit, ServerWeb):
@@ -59,9 +64,14 @@ def open_edit_object_panel(request, object_id):
             structure_dict["modeling_obj_attributes"] = []
 
         http_response = render(
-            request, "model_builder/side_panels/edit_object_panel.html",
-            context={"object_to_edit": obj_to_edit, "structure_dict": structure_dict,
-                     "dynamic_form_data": dynamic_form_data})
+            request,
+            "model_builder/side_panels/edit/edit_object_panel.html",
+            context={
+                "object_to_edit": obj_to_edit,
+                "structure_dict": structure_dict,
+                "dynamic_form_data": dynamic_form_data,
+                "object_belongs_to_computable_system": object_belongs_to_computable_system
+            })
 
     http_response["HX-Trigger-After-Swap"] = "initDynamicForm"
 
