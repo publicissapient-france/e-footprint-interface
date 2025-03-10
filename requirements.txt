@@ -24,7 +24,7 @@ google-api-python-client==2.130.0 ; python_version >= "3.12" and python_version 
 google-auth-httplib2==0.2.0 ; python_version >= "3.12" and python_version < "4.0"
 google-auth==2.38.0 ; python_version >= "3.12" and python_version < "4.0"
 google-cloud-secret-manager==2.23.1 ; python_version >= "3.12" and python_version < "4.0"
-googleapis-common-protos==1.68.0 ; python_version >= "3.12" and python_version < "4.0"
+googleapis-common-protos==1.69.1 ; python_version >= "3.12" and python_version < "4.0"
 googleapis-common-protos[grpc]==1.68.0 ; python_version >= "3.12" and python_version < "4.0"
 grpc-google-iam-v1==0.14.0 ; python_version >= "3.12" and python_version < "4.0"
 grpcio-status==1.70.0 ; python_version >= "3.12" and python_version < "4.0"
