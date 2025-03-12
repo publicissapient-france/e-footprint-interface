@@ -85,3 +85,10 @@ Select E2E Testing in the Cypress window that opens and choose the browser you w
 Then click on the test file you want to run i nthe specs tabs
 
 ```
+
+## js unit tests
+
+```shell
+npm install jest --global
+jest
+```

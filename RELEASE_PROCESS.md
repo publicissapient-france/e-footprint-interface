@@ -32,9 +32,18 @@ Make sure css files are up to date.
 npm run watch
 ```
 
+if necessary, run
+
+```shell
+npm install jest --global
+```
+
+to install jest.
+
 ```shell
 poetry run python manage.py test tests
 npm run test:e2e
+jest
 ```
 
 ## Make new version commit, starting with [Vx.y.z]

@@ -37,15 +37,11 @@
                             _="
                             on change
                                 if my value is 'year' then
-                                    if #modeling_duration_value's value > 10
-                                        set {max:10, value:10} on #modeling_duration_value
-                                        set #modeling_duration_value's value to 10
-                                    else
-                                        set {max:10} on #modeling_duration_value
-                                    end
+                                    set {max:10} on #modeling_duration_value
                                 else
                                     set {max:120} on #modeling_duration_value
                                 end
+                                then applyMaxLimitOnModelingDurationValue()
                                 then updateUsageJourneyVolumeTimeseries()
                                 then createOrUpdateTimeSeriesChart()"
                     >
