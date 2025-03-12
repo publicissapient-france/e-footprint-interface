@@ -7,9 +7,10 @@ from django.template.loader import render_to_string
 from efootprint.core.all_classes_in_order import SERVICE_CLASSES
 
 from model_builder.class_structure import generate_object_edition_structure
+from model_builder.efootprint_extensions.usage_pattern_from_form import UsagePatternFromForm
 from model_builder.model_web import ModelWeb, ATTRIBUTES_TO_SKIP_IN_FORMS, default_networks, default_countries, \
     default_devices
-from model_builder.modeling_objects_web import ServerWeb, UsagePatternWeb
+from model_builder.modeling_objects_web import ServerWeb
 from model_builder.object_creation_and_edition_utils import edit_object_in_system, render_exception_modal
 
 
@@ -20,7 +21,7 @@ def open_edit_object_panel(request, object_id):
     structure_dict, dynamic_form_data = generate_object_edition_structure(
         obj_to_edit, attributes_to_skip=ATTRIBUTES_TO_SKIP_IN_FORMS)
 
-    if isinstance(obj_to_edit, UsagePatternWeb):
+    if issubclass(obj_to_edit.efootprint_class, UsagePatternFromForm):
         networks = [{"efootprint_id": network["id"], "name": network["name"]} for network in
                     default_networks().values()]
         countries = [{"efootprint_id": country["id"], "name": country["name"]} for country in
