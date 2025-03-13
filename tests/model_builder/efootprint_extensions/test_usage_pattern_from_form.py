@@ -1,8 +1,10 @@
 import unittest
+from datetime import datetime
 from unittest.mock import MagicMock
 
 import numpy as np
 import pandas as pd
+import pytz
 
 from efootprint.abstract_modeling_classes.source_objects import SourceValue, SourceObject
 from efootprint.constants.units import u
@@ -20,6 +22,7 @@ class TestUsagePatternFromForm(unittest.TestCase):
         self.mock_devices = [MagicMock(spec=Device, id="device-id"), MagicMock(spec=Device, id="device-id2")]
         self.mock_network = MagicMock(spec=Network, id = "network-id")
         self.mock_country = MagicMock(spec=Country, id = "FR-id")
+        self.mock_country.timezone = SourceObject(pytz.timezone('Europe/Paris'))
 
         self.monthly_source = SourceObject("month", label="Monthly timespan")
         self.yearly_source = SourceObject("year", label="Yearly timespan")
@@ -119,6 +122,10 @@ class TestUsagePatternFromForm(unittest.TestCase):
         # 2 months ~ 60.874 days
         self.assertAlmostEqual(modeling_duration, 2 * 30.437, places=2)
 
+    def test_update_local_timezone_start_date(self):
+        self.usage_pattern.update_local_timezone_start_date()
+        self.assertEqual(datetime(2025, 1, 1, 1), self.usage_pattern.local_timezone_start_date.value)
+
     def test_update_hourly_usage_journey_starts_no_growth_2_days(self):
         """
         If daily usage is constant over 2 days, we want to see that the resulting
@@ -136,6 +143,7 @@ class TestUsagePatternFromForm(unittest.TestCase):
 
         # We only want a 2-day modeling duration => 48 hours
         self.usage_pattern.modeling_duration = SourceValue(2.0 * u.day)
+        self.usage_pattern.local_timezone_start_date = SourceObject(datetime(2025, 1, 1))
 
         self.usage_pattern.update_hourly_usage_journey_starts()
 
@@ -169,6 +177,7 @@ class TestUsagePatternFromForm(unittest.TestCase):
         self.usage_pattern.update_daily_growth_rate()
 
         self.usage_pattern.modeling_duration = SourceValue(2.0 * u.day)
+        self.usage_pattern.local_timezone_start_date = SourceObject(datetime(2025, 1, 1))
         self.usage_pattern.update_hourly_usage_journey_starts()
 
         hourly_df = self.usage_pattern.hourly_usage_journey_starts.value
@@ -189,6 +198,7 @@ class TestUsagePatternFromForm(unittest.TestCase):
         self.usage_pattern.update_first_daily_usage_journey_volume()
         self.usage_pattern.update_daily_growth_rate()
         self.usage_pattern.update_modeling_duration()
+        self.usage_pattern.update_local_timezone_start_date()
         self.usage_pattern.update_hourly_usage_journey_starts()
         self.usage_pattern.trigger_modeling_updates = True
 

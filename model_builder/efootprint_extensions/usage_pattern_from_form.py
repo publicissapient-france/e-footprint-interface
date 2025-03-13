@@ -1,8 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List
 
 import pandas as pd
 import numpy as np
+import pytz
+from efootprint.abstract_modeling_classes.explainable_object_base_class import ExplainableObject
 from efootprint.abstract_modeling_classes.explainable_objects import ExplainableQuantity, EmptyExplainableObject, \
     ExplainableHourlyQuantities
 from efootprint.abstract_modeling_classes.source_objects import SourceValue, SourceObject, SourceHourlyValues
@@ -71,11 +73,12 @@ class UsagePatternFromForm(UsagePattern):
         self.first_daily_usage_journey_volume = EmptyExplainableObject()
         self.daily_growth_rate = EmptyExplainableObject()
         self.modeling_duration = EmptyExplainableObject()
+        self.local_timezone_start_date = EmptyExplainableObject()
 
     @property
     def calculated_attributes(self) -> List[str]:
         return (["first_daily_usage_journey_volume", "daily_growth_rate", "modeling_duration",
-                 "hourly_usage_journey_starts"] + super().calculated_attributes)
+                 "local_timezone_start_date", "hourly_usage_journey_starts"] + super().calculated_attributes)
 
     @staticmethod
     def _timestamp_sourceobject_to_explainable_quantity(timestamp_sourceobject: SourceObject):
@@ -112,6 +115,21 @@ class UsagePatternFromForm(UsagePattern):
 
         self.modeling_duration = modeling_duration.set_label(f"{self.name} modeling duration")
 
+    def update_local_timezone_start_date(self):
+        utc_start_date = datetime.strptime(self.start_date.value, "%Y-%m-%d")
+
+        utc_tz = pytz.timezone('UTC')
+        current_time = datetime.now()
+        time_diff = self.country.timezone.value.utcoffset(current_time) - utc_tz.utcoffset(current_time)
+        time_diff_in_hours = int(time_diff.total_seconds() / 3600)
+
+        local_start_date = utc_start_date + timedelta(hours=time_diff_in_hours)
+
+        self.local_timezone_start_date = ExplainableObject(
+            local_start_date, left_parent=self.start_date, right_parent=self.country.timezone,
+            operator="converted to local timezone",
+            label=f"{self.name} local timezone {self.country.timezone} start date")
+
     def update_hourly_usage_journey_starts(self):
         num_days = self.modeling_duration.to(u.day).magnitude
         days = np.arange(num_days)
@@ -125,15 +143,14 @@ class UsagePatternFromForm(UsagePattern):
         # each day’s hourly value remains constant (daily value divided equally among 24 hours).
         hourly_values = np.repeat(daily_values / 24, 24)
 
-        start = datetime.strptime(self.start_date.value, "%Y-%m-%d")
-        hourly_index = pd.period_range(start=start, periods=len(hourly_values), freq='h')
+        hourly_index = pd.period_range(start=self.local_timezone_start_date.value, periods=len(hourly_values), freq='h')
         values_df = pd.DataFrame({"value": hourly_values}, index=hourly_index, dtype=f"pint[]")
 
         self.hourly_usage_journey_starts = ExplainableHourlyQuantities(
             values_df, left_parent=self.first_daily_usage_journey_volume, right_parent=self.daily_growth_rate,
             operator="exponentially growing with daily rate"
         ).generate_explainable_object_with_logical_dependency(
-            self.start_date
+            self.local_timezone_start_date
         ).generate_explainable_object_with_logical_dependency(
             self.modeling_duration
         ).set_label(
