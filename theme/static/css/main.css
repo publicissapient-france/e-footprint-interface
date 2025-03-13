@@ -143,7 +143,7 @@ body{
     width: 100vw;
     height: 5vh;
     cursor: pointer;
-    z-index: 100;
+    z-index: 3000 !important;
     padding: 0;
 }
 
@@ -165,10 +165,6 @@ body{
 
 .panel{
     border-left: rgba(138,138,138,0.24) solid 2px;
-}
-
-#formPanel .form-control{
-    z-index: 9999 !important;
 }
 
 .left-shadow{
@@ -358,7 +354,7 @@ body{
     position: absolute;
     height: 70vh !important;
     width: 50vw !important;
-    z-index: 9999 !important;
+    z-index: 2000 !important;
     top: 15vh !important;
     left: 24vw !important;
     border-radius: 15px;

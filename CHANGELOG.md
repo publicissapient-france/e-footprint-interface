@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.6.1] - 2025-03-13
 
 ### Fixed
- - Press enter in timeseries form will not submit form.
+ - Updating modeling duration value in usage pattern form updates time series graph.
+ - Start date is internally converted into local timezone start date in UsagePatternFromForm so that when it is converted to UTC it is the same date as the one selected by the user.
+ - Make sure form inputs don’t overlay result chart.
 
 ## [0.6.0] - 2025-03-13
 
