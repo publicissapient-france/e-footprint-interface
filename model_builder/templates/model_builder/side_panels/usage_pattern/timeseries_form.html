@@ -26,7 +26,7 @@
                            id="modeling_duration_value"
                            value="{{ usage_pattern_input_values.modeling_duration_value.magnitude|floatformat }}"
                            max=10
-                           _="on change applyMaxLimitOnModelingDurationValue()
+                           _="on input applyMaxLimitOnModelingDurationValue()
                             then updateUsageJourneyVolumeTimeseries()
                             then createOrUpdateTimeSeriesChart()
                             "
