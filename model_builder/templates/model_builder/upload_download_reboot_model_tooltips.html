@@ -1,5 +1,5 @@
 {% load static %}
-<div class="row bg-white border border-top-2 border-light justify-content-between">
+<div class="row bg-white border border-top-2 border-light justify-content-between px-0 mx-0">
     <div class="col-auto p-2">
         <p class="lead m-0 ms-5 text-body-tertiary">
             My digital service
@@ -9,7 +9,7 @@
         <div class="row text-end me-4">
             <div class="col-auto">
                 <button hx-get="{% url 'open-import-json-panel' %}"
-                        hx-target="#formPanel"
+                        hx-target="#sidePanel"
                         hx-swap="innerHTML"
                         hx-disabled-elt="button"
                         class="nav-link d-flex flex-row gap-2  mx-2 move-panel-open">

@@ -22,7 +22,7 @@ describe('Test de la page d\'accueil', () => {
         cy.get('div[id$="'+ujName.replaceAll(' ', '-')+'"]').should('have.class', 'leader-line-object')
 
         cy.get('button').contains('Add usage pattern').click();
-        cy.get('#formPanel').should('be.visible');
+        cy.get('#sidePanel').should('be.visible');
         cy.get('#name').type(upNameOne);
 
         cy.get('#start_date').click();

@@ -1,9 +1,9 @@
 {% load static %}
-<div class="container-fluid p-0" id="model-builder-page">
-    <div class="row g-0">
-        <div class="col-12" id="model-canva">
+<div class="container-fluid px-0 mx-0 w-100" id="model-builder-page">
+    <div class="row g-0 px-0 mx-0">
+        <div class="col-12 px-0 mx-0" id="model-canva">
             {% include 'model_builder/upload_download_reboot_model_tooltips.html' %}
-            <div class="row my-3 mx-0 px-2 gx-3 ">
+            <div class="row my-3 mx-0 px-0 gx-3">
                 <div class="col-4">
                     <div class="rounded-4 p-4 list-object-efootprint" id="usage-pattern-container">
                         <div class="row mb-4">
@@ -14,7 +14,7 @@
                                 <button class="w-75 btn btn-white dotted-border text-start fz-0-9 rounded-2"
                                 id="add_usage_pattern"
                                 hx-get="/model_builder/open-create-usage-pattern-panel/"
-                                hx-target="#formPanel"
+                                hx-target="#sidePanel"
                                 hx-trigger="click"
                                 hx-swap="innerHTML"
                                 hx-disabled-elt="button"
@@ -41,7 +41,7 @@
                                 <button class="w-75 btn btn-white dotted-border text-start fz-0-9 rounded-2"
                                         id="btn-add-usage-journey"
                                         hx-get="/model_builder/open-create-object-panel/UsageJourney/"
-                                        hx-target="#formPanel"
+                                        hx-target="#sidePanel"
                                         hx-trigger="click"
                                         hx-swap="innerHTML"
                                         hx-disabled-elt="button"
@@ -72,7 +72,7 @@
                                 <button class="w-75 btn btn-white dotted-border text-start fz-0-9 rounded-2"
                                         id="btn-add-server"
                                 hx-get="/model_builder/open-create-server-panel/"
-                                hx-target="#formPanel"
+                                hx-target="#sidePanel"
                                 hx-trigger="click"
                                 hx-swap="innerHTML"
                                 hx-disabled-elt="button"
@@ -92,8 +92,8 @@
                 </div>
             </div>
         </div>
+        <div class="col-3 d-none transition-width" id="sidePanel"></div>
     </div>
-    <div class="col-3 d-none transition-width" id="formPanel"></div>
 </div>
 
 <div id="panel-result-btn"

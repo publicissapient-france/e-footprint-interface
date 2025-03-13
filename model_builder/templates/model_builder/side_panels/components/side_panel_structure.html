@@ -1,0 +1,28 @@
+<div class="container-fluid text-start py-3" id="sidePanelContent">
+    <div class="form-header" id="panel-header">
+        <div class="w-100 text-end">
+            <div class="row align-items-center">
+                <div class="col-8 text-start">
+                    <h5 id="formModalLabel" class="m-0">
+                        <b>{{ header_name }}</b>
+                    </h5>
+                </div>
+                <div class="col-2">
+                    {% block link_to_delete_object %}
+                    {% endblock %}
+                </div>
+                <div class="col-2">
+                    {% include "model_builder/side_panels/components/close_side_panel_cross.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-body" id="panel-body">
+        <div class="row text-start">
+            <div class="col-12 mb-3">
+                {% block form_body %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>

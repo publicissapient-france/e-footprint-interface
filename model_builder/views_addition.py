@@ -35,8 +35,12 @@ def open_create_server_panel(request):
         SERVER_CLASSES + SERVER_BUILDER_CLASSES, "Server type", ["fixed_nb_of_instances"])
 
     http_response = render(request, f"model_builder/side_panels/server_add.html",
-                  context={'structure_dict': structure_dict, "dynamic_form_data": dynamic_form_data,
-                           "obj_type": "server"})
+                  context={
+                      'structure_dict': structure_dict,
+                      "dynamic_form_data": dynamic_form_data,
+                      "obj_type": "server",
+                      "header_name": "Add new server"
+                  })
 
     http_response["HX-Trigger-After-Swap"] = "initDynamicForm"
 
@@ -53,8 +57,12 @@ def open_create_service_panel(request, server_efootprint_id):
 
     http_response = render(
         request, "model_builder/side_panels/service_add.html", {
-            "server_id": server_efootprint_id, "structure_dict": services_dict, "dynamic_form_data": dynamic_form_data,
-            "obj_type": "service"})
+            "server_id": server_efootprint_id,
+            "structure_dict": services_dict,
+            "dynamic_form_data": dynamic_form_data,
+            "obj_type": "service",
+            "header_name": "Add new service"
+        })
 
     http_response["HX-Trigger-After-Swap"] = "initDynamicForm"
 
@@ -117,8 +125,11 @@ def open_create_job_panel(request):
 
     http_response = render(
         request, "model_builder/side_panels/job_add.html", {
-            "structure_dict": structure_dict, "dynamic_form_data": dynamic_form_data, "obj_type": "job",
-            "efootprint_id_of_parent_to_link_to": request.GET.get('efootprint_id_of_parent_to_link_to')
+            "structure_dict": structure_dict,
+            "dynamic_form_data": dynamic_form_data,
+            "obj_type": "job",
+            "efootprint_id_of_parent_to_link_to": request.GET.get('efootprint_id_of_parent_to_link_to'),
+            "header_name": "Add new job"
         })
     http_response["HX-Trigger-After-Swap"] = "initDynamicForm"
 
@@ -157,6 +168,7 @@ def open_create_usage_pattern_panel(request):
             "modeling_obj_attributes": modeling_obj_attributes,
             "usage_pattern_input_values": UsagePatternFromForm.default_values(),
             "dynamic_form_data": {"dynamic_selects": dynamic_lists},
+            'header_name': "Add new usage pattern"
         })
 
     http_response["HX-Trigger-After-Swap"] = "initDynamicForm"

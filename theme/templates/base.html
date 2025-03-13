@@ -29,7 +29,7 @@
         <div id="loading-bar" class="bg-body-tertiary">
             <div class="progress-bar"></div>
         </div>
-        <main id="main-content-block" class="text-center w-100" style="height: 93vh;">
+        <main id="main-content-block" class="text-center w-100">
             {% if home %}
             {% include "home.html" %}
             {% elif understand %}
@@ -37,11 +37,11 @@
             {% elif modelBuilderMain %}
             {% include "model_builder/model_builder_main.html" %}
             {% endif %}
-        </main>
+        </div>
     </div>
     {% bootstrap_javascript %}
         <script src="{% static 'scripts/leaderline_utils.js' %}"></script>
-    <script src="{% static 'scripts/hammer_utils.js' %}"></script>
+        <script src="{% static 'scripts/hammer_utils.js' %}"></script>
         <script src="{% static 'scripts/dynamic_forms.js' %}"></script>
         <script src="{% static 'scripts/loading_bar.js' %}"></script>
         <script src="{% static 'scripts/modal_utils.js' %}"></script>

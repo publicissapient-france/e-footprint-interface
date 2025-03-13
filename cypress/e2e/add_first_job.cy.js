@@ -18,13 +18,13 @@ describe("Test - Import JSON", () => {
         cy.get('button[hx-get^="/model_builder/open_create_job_panel/"][hx-vals*="'+ujsOne.replaceAll(' ', '-')+'"]').click();
         cy.get('#name').type(jobOne);
         cy.get('#service').select(service);
-        cy.get('#formPanel form').find('button[type="submit"]').click();
+        cy.get('#sidePanel form').find('button[type="submit"]').click();
 
         cy.get('button[hx-get^="/model_builder/open_create_job_panel/"][hx-vals*="'+ujsTwo.replaceAll(' ', '-')+'"]').click();
-        cy.get('#formPanel').should('be.visible');
+        cy.get('#sidePanel').should('be.visible');
         cy.get('#name').type(jobTwo);
         cy.get('#service').select(service);
-        cy.get('#formPanel form').find('button[type="submit"]').click();
+        cy.get('#sidePanel form').find('button[type="submit"]').click();
 
         cy.get("button[id^='button-id-'][id$='"+jobOne.replaceAll(' ', '-')+"']").should('exist');
         cy.get('button[hx-get^="/model_builder/open_create_job_panel/"][hx-vals*="'+ujsOne.replaceAll(' ', '-')+'"]').should('exist');

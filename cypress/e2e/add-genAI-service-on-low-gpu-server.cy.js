@@ -10,10 +10,10 @@ describe('Test de la page d\'accueil', () => {
 
         //ajout d'un server
         cy.get('#btn-add-server').click();
-        cy.get('#formPanel').contains('form', 'Add new server').should('be.visible');
+        cy.get('#sidePanel').contains('div', 'Add new server').should('be.visible');
         cy.get('#name').type(server);
         cy.get('#type_object_available').select('GPUServer');
-        cy.get('#formPanel form').find('button[type="submit"]').click();
+        cy.get('#sidePanel form').find('button[type="submit"]').click();
 
         cy.get('div[id$="'+server.replaceAll(' ', '-')+'"]').should('have.class', 'list-group-item')
         cy.get('button[data-bs-target^="#flush-"][data-bs-target$="'+server.replaceAll(' ', '-')+'"]').click();
@@ -21,7 +21,7 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#name').type(service);
         cy.get('#provider').select('openai');
         cy.get('#model_name').type('gpt-4');
-        cy.get('#formPanel form').find('button[type="submit"]').click();
+        cy.get('#sidePanel form').find('button[type="submit"]').click();
 
         cy.get('#model-builder-modal').should('be.visible');
         cy.get('#model-builder-modal').contains('but is asked');

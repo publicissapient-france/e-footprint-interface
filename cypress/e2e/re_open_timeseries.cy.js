@@ -23,7 +23,7 @@ describe('Test de la page d\'accueil', () => {
         cy.get('div[id$="'+ujName.replaceAll(' ', '-')+'"]').should('have.class', 'leader-line-object')
 
         cy.get('button').contains('Add usage pattern').click();
-        cy.get('#formPanel').should('be.visible');
+        cy.get('#sidePanel').should('be.visible');
         cy.get('#timeSeriesChart').then(($canvas) =>{
             let canvas = $canvas[0]
             let ctx = canvas.getContext('2d');
@@ -43,7 +43,7 @@ describe('Test de la page d\'accueil', () => {
 
 
         cy.get('button').contains('Add usage pattern').click();
-        cy.get('#formPanel').should('be.visible');
+        cy.get('#sidePanel').should('be.visible');
         cy.get('#timeSeriesChart').then(($canvas) =>{
             let canvas = $canvas[0]
             let ctx = canvas.getContext('2d');
@@ -59,7 +59,7 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#net_growth_rate_timespan').select('month');
 
         cy.get('#save_usage_pattern_btn').click();
-        cy.get('#formPanel').should('not.contain.html');
+        cy.get('#sidePanel').should('not.contain.html');
         cy.wait(500)
         cy.get('button[id^="button-id-"][id$="'+upNameOne.replaceAll(' ', '-')+'"]').should('be.visible').click();
         cy.get('#timeSeriesChart').then(($canvas) =>{

@@ -21,7 +21,7 @@
                         class="btn btn-white ms-1 text-start fz-0-8"
                         type="button"
                         hx-get="/model_builder/open-edit-object-panel/{{ server.efootprint_id }}/"
-                        hx-target="#formPanel"
+                        hx-target="#sidePanel"
                         hx-trigger="click"
                         hx-swap="innerHTML"
                         hx-disabled-elt="button"
@@ -41,7 +41,7 @@
                     </div>
                     <button class="btn btn-white text-start p-0 fz-0-8 dotted-border h-100 w-100 rounded-2 p-2"
                             hx-get="/model_builder/open-create-service-panel/{{ server.efootprint_id }}/"
-                            hx-target="#formPanel"
+                            hx-target="#sidePanel"
                             hx-trigger="click"
                             hx-swap="innerHTML"
                             hx-disabled-elt="button"

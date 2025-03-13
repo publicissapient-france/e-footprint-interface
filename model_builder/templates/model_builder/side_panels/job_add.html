@@ -1,10 +1,13 @@
-<form class="container-fluid panel text-start p-4"
-        hx-post="/model_builder/add-new-job/{{ efootprint_id_of_parent_to_link_to }}/"
-        hx-swap="none"
-        hx-disabled-elt="button"
-        hx-on::after-request="closeAndEmptySidePanel()"
->
-   {% with helper_message="To get support in defining your job, first create a server and add services to it." %}
-        {% include "model_builder/side_panels/dynamic_add_object_form_content.html" %}
-    {% endwith %}
-</form>
+{% extends "model_builder/side_panels/components/side_panel_structure.html" %}
+
+{% block form_body %}
+    <form hx-post="/model_builder/add-new-job/{{ efootprint_id_of_parent_to_link_to }}/"
+            hx-swap="none"
+            hx-disabled-elt="button"
+            hx-on::after-request="closeAndEmptySidePanel()"
+    >
+       {% with helper_message="To get support in defining your job, first create a server and add services to it." %}
+            {% include "model_builder/side_panels/dynamic_add_object_form_content.html" %}
+        {% endwith %}
+    </form>
+{% endblock %}

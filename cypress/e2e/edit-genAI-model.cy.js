@@ -15,7 +15,7 @@ describe('Test de la page d\'accueil', () => {
 
         //ajout d'un server
         cy.get('#btn-add-server').click();
-        cy.get('#formPanel').contains('form', 'Add new server').should('be.visible');
+        cy.get('#sidePanel').contains('div', 'Add new server').should('be.visible');
         cy.get('#name').type(server);
         cy.get('#type_object_available').select('GPUServer');
         // get ram_per_gpu and compute inside the #collapse_GPUServer
@@ -23,21 +23,21 @@ describe('Test de la page d\'accueil', () => {
             cy.get('#ram_per_gpu').focus().type('{selectall}{backspace}512').blur();
             cy.get('#compute').focus().type('{selectall}{backspace}10').blur();
         });
-        cy.get('#formPanel form').find('button[type="submit"]').click();
+        cy.get('#sidePanel form').find('button[type="submit"]').click();
         cy.get('div[id$="'+server.replaceAll(' ', '-')+'"]').should('have.class', 'list-group-item')
         cy.get('button[hx-get^="/model_builder/open-create-service-panel"][hx-get$="'+server.replaceAll(' ', '-')+'/"]').click();
         cy.get('#name').type(service);
         cy.get('#provider').select(providerName1);
         cy.get('#model_name').type(modelName1);
-        cy.get('#formPanel form').find('button[type="submit"]').click();
+        cy.get('#sidePanel form').find('button[type="submit"]').click();
 
         //edit du service
         cy.get('button').contains(service).click();
 
         cy.get('#provider').select(providerName2);
         cy.get('#model_name').clear().type(modelName2);
-        cy.get('#formPanel form').find('button[type="submit"]').click();
+        cy.get('#sidePanel form').find('button[type="submit"]').click();
 
-        cy.get('#formPanel').should('not.contain.html');
+        cy.get('#sidePanel').should('not.contain.html');
     });
 });

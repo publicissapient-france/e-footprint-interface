@@ -1,6 +1,5 @@
 
 html{
-    height: 100vh !important;
     margin: 0;
     padding: 0;
 }
@@ -10,8 +9,7 @@ body{
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
     color: #111928;
     font-size: 0.8em;
-    height: 100vh !important;
-    padding: 0;
+    padding: 50px 0 0 0;
     margin: 0;
 }
 
@@ -39,6 +37,9 @@ body{
     width: 0%;
     background-color: #0d6efd; /* Couleur de la barre animée */
     animation: none;
+}
+.navbar{
+    height: 50px!important;
 }
 
 .navbar-item-active{
@@ -123,18 +124,28 @@ body{
 }
 
 #model-builder-page{
-    height: 93vh !important;
+    overflow: hidden;
 }
 
 #model-canva{
-    height: 93vh !important;
-    overflow: auto;
     background-color: white;
-    padding-bottom: 10vh;
+    overflow-y: auto;
+}
+
+#sidePanel {
+    border-radius: 0;
+    border: none;
+    background: #FFFFFF;
+    height: calc(100vh - 50px);
+    position: fixed;
+    width: 25%;
+    right: 0;
+    top: 52px;
+    overflow-y: auto;
 }
 
 .list-object-efootprint{
-    min-height: 93vh !important;
+    min-height: 80vh !important;
 }
 
 .panel-result-btn{
@@ -151,41 +162,14 @@ body{
     height: 5vh;
 }
 
-#formPanel {
-    position : absolute;
-    width: 25%;
-    bottom: 0;
-    right: 0;
-    height: 93vh !important;
-    border-radius: 0;
-    border: none;
-    overflow: auto;
-    background-color:#ffffff;
-}
-
-.panel{
-    border-left: rgba(138,138,138,0.24) solid 2px;
-}
-
 .left-shadow{
     box-shadow: -5px 0 8px 4px rgba(138,138,138,0.24);
     -webkit-box-shadow: -5px 0 9px 4px rgba(138,138,138,0.24);
     -moz-box-shadow: -5px 0 8px 4px rgba(138,138,138,0.24);
 }
 
-#formPanel form{
-    height: 93vh !important;
-}
-
 .form-body{
-    height: 70vh !important;
-    overflow-y: auto;
     padding: 2em;
-}
-
-.form-body-b{
-    height: 70vh !important;
-    overflow-y: auto;
 }
 
 .chevron-rotate {
@@ -351,7 +335,7 @@ body{
 
 
 .chartTimeseries{
-    position: absolute;
+    position: fixed;
     height: 70vh !important;
     width: 50vw !important;
     z-index: 2000 !important;

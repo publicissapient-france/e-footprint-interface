@@ -1,4 +1,7 @@
-<form class="panel p-4 text-start" id="form-add-usage-journey"
+{% extends "model_builder/side_panels/components/side_panel_structure.html" %}
+
+{% block form_body %}
+    <form id="form-add-usage-journey" class="my-3"
         hx-post="/model_builder/add-new-usage-journey/"
         {% if efootprint_id_of_parent_to_link_to %}
             hx-vals='{"efootprint_id_of_parent_to_link_to": "{{ efootprint_id_of_parent_to_link_to }}"}'
@@ -8,49 +11,40 @@
             hx-target="#uj-list"
             hx-swap="beforeend"
         {% endif %}
-      hx-disabled-elt="button"
-      hx-on::after-request="closeAndEmptySidePanel()"
->
-    <div class="form-header" id="panel-header">
-        <div class="w-100 text-end">
-            <div class="row align-items-center">
-                <div class="col-10 text-start">
-                    <h5 id="formModalLabel" class="m-0">
-                        <b>{{ header_name }}</b>
-                    </h5>
-                </div>
-                <div class="col-2">
-                    {% include "model_builder/side_panels/components/close_side_panel_cross.html" %}
-                </div>
-            </div>
+        hx-disabled-elt="button"
+        hx-on::after-request="closeAndEmptySidePanel()"
+    >
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text"
+                   class="form-control p-2"
+                   id="name"
+                   name="name"
+                   required
+                   placeholder="{{ new_object_name }}">
         </div>
-    </div>
-    <div class="form-body" id="panel-body">
-        <div class="row text-start">
-            <div class="col-12 mb-3">
-                <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control p-2" id="name" name="name" required
-                placeholder="{{ new_object_name }}">
+        {% for attr in object_structure.list_attributes %}
+            <div class="mb-3">
+                <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
+                <select class="form-control p-2" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}" multiple>
+                    {% for obj in attr.existing_objects %}
+                         <option value="{{ obj.efootprint_id }}">{{ obj.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
-            {% for attr in object_structure.list_attributes %}
-                <div class="col-12 mb-3">
-                    <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
-                    <select class="form-control p-2" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}" multiple>
-                        {% for obj in attr.existing_objects %}
-                             <option value="{{ obj.efootprint_id }}">{{ obj.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <hr>
-            {% endfor %}
-            <div class="col-12 mb-3">
-                <p>
-                   If you want to reuse steps that already exist in other usage journeys, select them in uj_steps.
-                </p>
-            </div>
+            <hr>
+        {% endfor %}
+        <div class="mb-3">
+            <p>
+               If you want to reuse steps that already exist in other usage journeys, select them in uj_steps.
+            </p>
         </div>
-        <div class="modal-footer border border-0">
-            <button type="submit" id="btn-submit-form-add-usage-journey" class="btn btn-primary rounded-pill w-100">Save</button>
+        <div class="my-3">
+                <button type="submit"
+                    id="btn-submit-form-add-usage-journey"
+                    class="btn btn-primary rounded-pill w-100">
+                Save
+            </button>
         </div>
-    </div>
-</form>
+    </form>
+{% endblock %}

@@ -57,7 +57,8 @@ def model_builder_main(request, reboot=False):
     return http_response
 
 def open_import_json_panel(request):
-    return render(request, "model_builder/side_panels/import_model.html")
+    return render(request, "model_builder/side_panels/import_model.html", context={
+              'header_name':'Import a model'})
 
 def download_json(request):
     data = request.session.get('system_data', {})

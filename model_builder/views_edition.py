@@ -52,9 +52,13 @@ def open_edit_object_panel(request, object_id):
 
         http_response = render(
             request, "model_builder/side_panels/usage_pattern/usage_pattern_edit.html",
-            {"modeling_obj_attributes": modeling_obj_attributes,
-             "object_to_edit": obj_to_edit, "dynamic_form_data": {"dynamic_selects": dynamic_selects},
-             "object_belongs_to_computable_system": object_belongs_to_computable_system}
+            {
+                "modeling_obj_attributes": modeling_obj_attributes,
+                "object_to_edit": obj_to_edit,
+                "dynamic_form_data": {"dynamic_selects": dynamic_selects},
+                "object_belongs_to_computable_system": object_belongs_to_computable_system,
+                "header_name": f"Edit {obj_to_edit.name}"
+            }
         )
     else:
         if isinstance(obj_to_edit, ServerWeb):
@@ -70,7 +74,8 @@ def open_edit_object_panel(request, object_id):
                 "object_to_edit": obj_to_edit,
                 "structure_dict": structure_dict,
                 "dynamic_form_data": dynamic_form_data,
-                "object_belongs_to_computable_system": object_belongs_to_computable_system
+                "object_belongs_to_computable_system": object_belongs_to_computable_system,
+                "header_name": f"Edit {obj_to_edit.name}"
             })
 
     http_response["HX-Trigger-After-Swap"] = "initDynamicForm"
