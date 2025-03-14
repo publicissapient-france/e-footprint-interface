@@ -106,7 +106,10 @@ def result_chart(request):
             exception = ValueError(
                 "No impact could be computed because the modeling is incomplete. Please make sure you have at least "
                 "one usage pattern linked to a usage journey with at least one step making a request to a server.")
-            return render_exception_modal(request, exception)
+            http_response = render(request, "model_builder/modals/exception_modal.html", {
+                "msg": exception})
+            http_response["HX-Trigger-After-Swap"] = "openModalDialogExceptionResultRaised"
+            return http_response
         else:
             # Launch system computations
             model_web.system.after_init()

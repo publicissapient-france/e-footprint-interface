@@ -5,6 +5,18 @@ document.body.addEventListener("openModalDialog", function(event) {
     modal.show();
 });
 
+document.body.addEventListener("openModalDialogExceptionResultRaised", function(event) {
+    console.log('openModalDialogExceptionResultRaised')
+    let modalElement = document.getElementById("model-builder-modal");
+    let modal = new bootstrap.Modal(modalElement);
+    modal.show();
+    //wait 1sec
+    setTimeout(function(){
+         hidePanelResult();
+    }, 100);
+
+});
+
 function dropModal(id){
     let modalElement = document.getElementById(id);
     let modalInstance = bootstrap.Modal.getInstance(modalElement);
