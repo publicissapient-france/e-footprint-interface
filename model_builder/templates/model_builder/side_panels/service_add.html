@@ -1,9 +1,0 @@
-<form class="container-fluid panel text-start p-4"
-        hx-post="/model_builder/add-new-service/{{ server_id }}"
-        hx-target="#{{ server_id }}-services"
-        hx-swap="beforeend"
-        hx-disabled-elt="button"
-        hx-on::after-request="closeAndEmptySidePanel()"
->
-    {% include "model_builder/side_panels/dynamic_add_object_form_content.html" %}
-</form>
