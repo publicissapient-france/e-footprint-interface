@@ -1,5 +1,5 @@
-describe('Test de la page d\'accueil', () => {
-    it('Ouvre la page d\'accueil et interagit avec un bouton', () => {
+describe('Try to install LLM on too small GPU server', () => {
+    it('Make sure error modal is raised', () => {
         let server = "Test E2E Server";
         let service = "Test E2E Service";
 

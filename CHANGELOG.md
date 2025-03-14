@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.6.2] 2025-03-14
+
+### Changed
+- Side panel template has been introduced to have similar structure between all  
+  creations/editions objects.
+- Simplify the html structure of the model-canvas div.
+
+### Fixed
+- When results can’t be computed a modal is displayed to inform the user that the model is 
+  incomplete but it was covered by the empty result panel which wasn't hidden.
+
 ## [0.6.1] - 2025-03-13
 
 ### Fixed

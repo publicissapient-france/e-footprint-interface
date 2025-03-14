@@ -1,5 +1,5 @@
 describe("Test - Import JSON", () => {
-    it("Pick one JSON file and check trasnfert status", () => {
+    it("Import one JSON file and check that objects exist", () => {
         let ujName = "Test E2E UJ";
         let ujsOne = "Test E2E UJ 1";
         let ujsTwo = "Test E2E UJ 2";
