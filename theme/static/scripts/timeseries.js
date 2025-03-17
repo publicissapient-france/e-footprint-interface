@@ -100,7 +100,7 @@ function computeUsageJourneyVolume(
 }
 
 function updateUsageJourneyVolumeTimeseries(){
-    let startDate = document.getElementById('start_date').value;
+    let startDate = luxon.DateTime.fromISO(document.getElementById('start_date').value);
     let modelingDurationValue = parseInt(document.getElementById('modeling_duration_value').value);
     let modelingDurationUnit = document.getElementById('modeling_duration_unit').value;
     let netGrowRateInPercentage = parseInt(document.getElementById('net_growth_rate_in_percentage').value);

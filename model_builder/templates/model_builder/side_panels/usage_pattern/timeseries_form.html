@@ -8,7 +8,7 @@
         <div class="accordion-body">
             <div class="mb-3 mx-2">
                 <label for="start_date" class="form-label w-100 text-start fz-0-8">Start date</label>
-                <input type="date" class="form-control"
+                <input type="text" class="form-control"
                        name="start_date"
                        id="start_date"
                        value="{{ usage_pattern_input_values.start_date.value }}"
@@ -107,5 +107,9 @@
 </div>
 {{ dynamic_form_data|json_script:"dynamic-form-data" }}
 <script>
+    flatpickr('#start_date', {
+        enableTime: false,
+        dateFormat: "Y-m-d"
+    });
     openTimeseriesChart();
 </script>

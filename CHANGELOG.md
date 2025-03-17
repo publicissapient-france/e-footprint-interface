@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.6.3] 2025-03-17
+
+### Fixed
+- Fix the date format in form related to USagePattern by using JS libray 
+  flatPickr.
+- Update Cypress tests folders
+
 ## [0.6.2] 2025-03-14
 
 ### Changed
