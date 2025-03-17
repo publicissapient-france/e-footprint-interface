@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## [0.6.5] 2025-03-18
+
+### Changed
+- Model can now be named and the name can be changed.
+- Tooltips now have hover text.
+- JSON export filenames follow this pattern : "[date/time] [model name].e-f.json".
+
+### Fixed
+- SVG url for usageJourney in understand page has been fixed.
+
 ## [0.6.4] 2025-03-17
 
 ### Changed

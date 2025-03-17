@@ -49,6 +49,7 @@ system 1 footprints.html
 .vscode
 
 cypress/screenshots
+cypress/downloads
 cloud-sql-proxy
 .flake8
 pylintrc

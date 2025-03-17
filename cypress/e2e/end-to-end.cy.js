@@ -122,6 +122,7 @@ describe('Test de la page d\'accueil', () => {
         cy.get('button').contains('Yes, delete').should('be.enabled').click();
         cy.get("#model-builder-modal").should("not.exist");
         cy.get('button[id^="button-id-"][id$="Test-E2E-UJ-2"]').should('not.exist');
+
         cy.get('#btn-open-panel-result').click();
         cy.get('#lineChart').should('be.visible');
         cy.get('#inner-panel-result').should('be.visible').find('div[onclick="hidePanelResult()"]').click();

@@ -180,3 +180,12 @@ def edit_object(request, object_id, model_web=None):
 
     return generate_http_response_from_edit_html_and_events(
         response_html, ids_of_web_elements_with_lines_to_remove, data_attribute_updates, top_parent_ids)
+
+def save_model_name(request):
+    if request.method == "POST":
+        model_web = ModelWeb(request.session)
+        obj_to_edit = model_web.system
+        edited_obj = edit_object_in_system(request, obj_to_edit)
+        return HttpResponse(status=204)
+    else:
+        return HttpResponse(status=400)

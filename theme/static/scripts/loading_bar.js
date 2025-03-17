@@ -5,7 +5,7 @@ document.addEventListener("htmx:beforeRequest", function() {
     }
 });
 
-document.addEventListener("htmx:afterSwap", function() {
+document.addEventListener("htmx:afterRequest", function() {
     hideLoadingBar();
 });
 

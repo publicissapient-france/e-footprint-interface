@@ -20,6 +20,7 @@ function initModelBuilderMain() {
     initSortableObjectCards();
     initSidePanel();
     initHammer();
+    resizeSystemNameHeader();
 }
 
 function reverseIconAccordion(objectId){
@@ -31,4 +32,19 @@ function reverseIconAccordion(objectId){
         icon.classList.add('chevron-rotate');
     }
     updateLines();
+}
+
+
+function resizeSystemNameHeader() {
+    let systemNameHeader = document.getElementById('SystemNameHeader');
+
+    let span = document.createElement("span");
+    span.style.visibility = "hidden";
+    span.style.position = "absolute";
+    span.style.whiteSpace = "pre";
+    span.style.font = window.getComputedStyle(systemNameHeader).font;
+    document.body.appendChild(span);
+    span.textContent = systemNameHeader.value;
+    systemNameHeader.style.width = `${span.offsetWidth + 5}px`;
+    document.body.removeChild(span);
 }

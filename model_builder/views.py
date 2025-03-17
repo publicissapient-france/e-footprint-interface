@@ -1,5 +1,6 @@
 import random
 import string
+from datetime import datetime
 from operator import index
 
 from django.shortcuts import redirect, render
@@ -63,9 +64,11 @@ def open_import_json_panel(request):
 def download_json(request):
     data = request.session.get('system_data', {})
     json_data = json.dumps(data, indent=4)
+    system_name = request.session["system_data"]['System'][
+        next(iter(request.session["system_data"]['System'].keys()), None)]['name']
+    current_date_time = datetime.now().strftime("%Y-%m-%d %H:%M")
     response = HttpResponse(json_data, content_type='application/json')
-    response['Content-Disposition'] = f'attachment; filename="efootprint-model-system-data.json"'
-
+    response['Content-Disposition'] = f'attachment; filename="{current_date_time} {system_name}.e-f.json"'
     return response
 
 def upload_json(request):
@@ -174,3 +177,5 @@ def display_calculus_graph(request, efootprint_id, attr_name):
         "graphs": graphs,
         'iframe_height': iframe_height,
     })
+
+

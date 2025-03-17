@@ -1,14 +1,15 @@
 describe("Test - Toolbars import/export/reboot", () => {
-    it("Import one JSON file when the model is empty and check that objects has been adde", () => {
-        let ujName = "Test E2E UJ";
-        let ujsOne = "Test E2E UJ 1";
-        let ujsTwo = "Test E2E UJ 2";
-        let server = "Test E2E Server";
-        let service = "Test E2E Service";
-        let jobOne = "Test E2E Job 1";
-        let jobTwo = "Test E2E Job 2";
-        let upName = "Test E2E Usage Pattern";
+    let ujName = "Test E2E UJ";
+    let ujsOne = "Test E2E UJ 1";
+    let ujsTwo = "Test E2E UJ 2";
+    let server = "Test E2E Server";
+    let service = "Test E2E Service";
+    let jobOne = "Test E2E Job 1";
+    let jobTwo = "Test E2E Job 2";
+    let upName = "Test E2E Usage Pattern";
+    let newSystemName = "New_system_name";
 
+    it("Import one JSON file when the model is empty and check that objects have been added", () => {
         cy.visit("/");
         cy.get('#btn-start-modeling-my-service').click();
         cy.get('#model-canva').should('be.visible');
@@ -33,15 +34,6 @@ describe("Test - Toolbars import/export/reboot", () => {
 
     it("Import a new JSON file when the model already contained objets to check previous objects are removed and" +
         "  new objets has been added", () => {
-        let ujName = "Test E2E UJ";
-        let ujsOne = "Test E2E UJ 1";
-        let ujsTwo = "Test E2E UJ 2";
-        let server = "Test E2E Server";
-        let service = "Test E2E Service";
-        let jobOne = "Test E2E Job 1";
-        let jobTwo = "Test E2E Job 2";
-        let upName = "Test E2E Usage Pattern";
-
         cy.visit("/");
         cy.get('#btn-start-modeling-my-service').click();
         cy.get('#model-canva').should('be.visible');
@@ -87,15 +79,6 @@ describe("Test - Toolbars import/export/reboot", () => {
     });
 
     it("check if we reset the model all objets and leaderlines have been removed", () => {
-        let ujName = "Test E2E UJ";
-        let ujsOne = "Test E2E UJ 1";
-        let ujsTwo = "Test E2E UJ 2";
-        let server = "Test E2E Server";
-        let service = "Test E2E Service";
-        let jobOne = "Test E2E Job 1";
-        let jobTwo = "Test E2E Job 2";
-        let upName = "Test E2E Usage Pattern";
-
         cy.visit("/");
         cy.get('#btn-start-modeling-my-service').click();
         cy.get('button[hx-get="/model_builder/open-import-json-panel/"]').click();
@@ -118,5 +101,53 @@ describe("Test - Toolbars import/export/reboot", () => {
 
         //any svg with class leader-line should not exist
         cy.get('svg[class="leader-line"]').should('not.exist');
+    });
+
+    it("Change the name of the model and check that the name has been changed", () => {
+        cy.visit("/");
+        cy.get('#btn-start-modeling-my-service').click();
+        cy.get('button[hx-get="/model_builder/open-import-json-panel/"]').click();
+        let fileTest = 'cypress/fixtures/efootprint-model-system-data.json'
+        cy.get('input[type="file"]').selectFile(fileTest);
+        cy.get('button[type="submit"]').click();
+
+        cy.wait(500);
+
+        cy.get('#SystemNameHeader').clear().invoke('val', newSystemName).trigger('input').wait(1200);
+        cy.visit("/model_builder/");
+        cy.get('#SystemNameHeader').should('have.value', newSystemName);
+    });
+
+    it("Export a model and check that the file has been downloaded and is correctly named", () => {
+        cy.visit("/");
+        cy.get('#btn-start-modeling-my-service').click();
+        cy.get('button[hx-get="/model_builder/open-import-json-panel/"]').click();
+        let fileTest = 'cypress/fixtures/efootprint-model-system-data.json'
+        cy.get('input[type="file"]').selectFile(fileTest);
+        cy.get('button[type="submit"]').click();
+
+        cy.wait(500);
+
+        let now = new Date();
+        let nowUtc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+        let day = String(nowUtc.getDate()).padStart(2, '0');
+        let month = String(nowUtc.getMonth() + 1).padStart(2, '0');
+        let year = nowUtc.getFullYear();
+        let hours = String(nowUtc.getHours()).padStart(2, '0');
+        let minutes = String(nowUtc.getMinutes()).padStart(2, '0');
+        let fileName = `${year}-${month}-${day} ${hours}:${minutes} system 1.e-f.json`;
+
+        //to get the filedownload in cypress, we need to remove the target blank attribute
+        cy.intercept('GET', '**/download-json/**').as('fileDownload');
+        cy.get('a[href="download-json/"]')
+          .invoke('removeAttr', 'target')
+          .click();
+
+        cy.wait('@fileDownload').then((interception) => {
+            const contentDisposition = interception.response.headers['content-disposition'];
+            expect(contentDisposition).to.include('attachment');
+            expect(contentDisposition).to.include(fileName);
+        });
+
     });
 });

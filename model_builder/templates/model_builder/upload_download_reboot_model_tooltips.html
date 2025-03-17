@@ -1,9 +1,18 @@
 {% load static %}
 <div class="row bg-white border border-top-2 border-light justify-content-between px-0 mx-0">
     <div class="col-auto p-2">
-        <p class="lead m-0 ms-5 text-body-tertiary">
-            My digital service
-        </p>
+        <input
+            name="name"
+            id="SystemNameHeader"
+            type="text"
+            class="lead m-0 ms-5 text-body-tertiary border-0"
+            value="{{ model_web.system.name}}"
+            _="on input resizeSystemNameHeader()"
+            hx-post="{% url 'save-model-name' %}"
+            hx-trigger="input delay:1s"
+            hx-include="this"
+            hx-swap="none"
+        >
     </div>
     <div class="col-auto p-2">
         <div class="row text-end me-4">
@@ -51,4 +60,8 @@
 <script>
     window.popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
     window.popoverList = [...window.popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+
+    document.addEventListener("DOMContentLoaded", () => {
+        resizeSystemNameHeader();
+    });
 </script>
