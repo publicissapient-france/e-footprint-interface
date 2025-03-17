@@ -95,7 +95,8 @@ describe('Test de la page d\'accueil', () => {
 
         //get input  with name start_date in #modal-timeseries-chart
         cy.get('#start_date').click();
-        cy.get('#start_date').invoke('val', '2026-01-02').trigger('change');
+        cy.get('input[class="numInput cur-year"]').type('2026');
+        cy.get('span[aria-label="January 1, 2026"]').click()
         cy.get('#modeling_duration_value').click();
         cy.get('#modeling_duration_value').invoke('val', '2').trigger('change');
         cy.get('#net_growth_rate_in_percentage').click();

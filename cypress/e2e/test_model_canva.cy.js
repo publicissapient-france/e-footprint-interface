@@ -1,5 +1,6 @@
-describe("Test - Import JSON", () => {
-    it("Pick one JSON file and check transfert status", () => {
+describe("Test - Model Canva div", () => {
+    it("Try to create a new job on a empty UJ Step to check the button 'add new job' and the newest is correctly" +
+        " positioned", () => {
         let ujName = "Test E2E UJ";
         let ujsOne = "Test E2E UJ 1";
         let ujsTwo = "Test E2E UJ 2";
