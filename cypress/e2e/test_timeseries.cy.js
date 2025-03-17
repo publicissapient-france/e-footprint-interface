@@ -13,10 +13,6 @@ describe('Tests dedicated to the timeseries generation', () => {
 
         cy.get('#btn-add-usage-journey').click();
         cy.get('#btn-add-usage-journey').should('be.visible');
-        cy.get('#btn-submit-form-add-usage-journey').click();
-        cy.get('#name').then(($input) => {
-            expect($input[0].validationMessage).to.not.be.empty;
-        });
         cy.get('#name').type(ujName);
         cy.get('#btn-submit-form-add-usage-journey').click();
         cy.get('#form-add-usage-journey').should('not.exist');
@@ -84,10 +80,6 @@ describe('Tests dedicated to the timeseries generation', () => {
 
         cy.get('#btn-add-usage-journey').click();
         cy.get('#btn-add-usage-journey').should('be.visible');
-        cy.get('#btn-submit-form-add-usage-journey').click();
-        cy.get('#name').then(($input) => {
-            expect($input[0].validationMessage).to.not.be.empty;
-        });
         cy.get('#name').type(ujName);
         cy.get('#btn-submit-form-add-usage-journey').click();
         cy.get('#form-add-usage-journey').should('not.exist');

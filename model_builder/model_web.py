@@ -117,8 +117,16 @@ class ModelWeb:
         return self.get_web_objects_from_efootprint_type("GPUServer")
 
     @property
+    def jobs(self):
+        return self.get_web_objects_from_efootprint_type("JobBase")
+
+    @property
     def usage_journeys(self):
         return self.get_web_objects_from_efootprint_type("UsageJourney")
+
+    @property
+    def usage_journey_steps(self):
+        return self.get_web_objects_from_efootprint_type("UsageJourneyStep")
 
     @property
     def countries(self):

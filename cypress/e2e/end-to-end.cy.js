@@ -19,15 +19,17 @@ describe('Test de la page d\'accueil', () => {
         // Create UJ one and two
         cy.get('#btn-add-usage-journey').click();
         cy.get('#btn-add-usage-journey').should('be.visible');
-        cy.get('#btn-submit-form-add-usage-journey').click();
-        cy.get('#name').then(($input) => {
-        expect($input[0].validationMessage).to.not.be.empty;
-        });
+        cy.get('#name').clear();
         cy.get('#name').type(ujName);
         cy.get('#btn-submit-form-add-usage-journey').click();
         cy.get('#form-add-usage-journey').should('not.exist');
 
         cy.get('#btn-add-usage-journey').click();
+        cy.get('#name').clear();
+        cy.get('#btn-submit-form-add-usage-journey').click();
+        cy.get('#name').then(($input) => {
+            expect($input[0].validationMessage).to.not.be.empty;
+        });
         cy.get('#name').type(ujName2);
         cy.get('#btn-submit-form-add-usage-journey').click();
         cy.get('#form-add-usage-journey').should('not.exist');
@@ -39,6 +41,8 @@ describe('Test de la page d\'accueil', () => {
           .contains('button', 'Add usage journey step')
           .click();
         cy.get('#sidePanel').contains('div', 'Add new usage journey step').should('be.visible');
+        //erase all the text in the input with id name
+        cy.get('#name').clear();
         cy.get('#name').type(ujsOne);
         cy.get('#user_time_spent').type('10.1');
         cy.get('#sidePanel form').find('button[type="submit"]').click();
@@ -49,6 +53,7 @@ describe('Test de la page d\'accueil', () => {
           .contains('button', 'Add usage journey step')
           .click();
         cy.get('#sidePanel').contains('div', 'Add new usage journey step').should('be.visible');
+        cy.get('#name').clear();
         cy.get('#name').type(ujsTwo);
         cy.get('#user_time_spent').type('20,2');
         cy.get('#sidePanel form').find('button[type="submit"]').click();
@@ -61,6 +66,7 @@ describe('Test de la page d\'accueil', () => {
         // Add server
         cy.get('#btn-add-server').click();
         cy.get('#sidePanel').contains('div', 'Add new server').should('be.visible');
+        cy.get('#name').clear();
         cy.get('#name').type(server);
         cy.get('#type_object_available').select('BoaviztaCloudServer');
         cy.get('#instance_type').type('c4.8xlarge');
@@ -69,6 +75,7 @@ describe('Test de la page d\'accueil', () => {
         cy.get('div[id$="'+server.replaceAll(' ', '-')+'"]').should('have.class', 'list-group-item')
         // get the button with attribute hx-get begin with '/model_builder/open-create-service-panel/' and ended with 'Test-E2E-Server'
         cy.get('button[hx-get^="/model_builder/open-create-service-panel"][hx-get$="'+server.replaceAll(' ', '-')+'/"]').click();
+        cy.get('#name').clear();
         cy.get('#name').type(service);
         cy.get('#technology').select('php-symfony');
         cy.get('#sidePanel form').find('button[type="submit"]').click();
@@ -76,6 +83,7 @@ describe('Test de la page d\'accueil', () => {
 
         // Add jobs
         cy.get('button[hx-get^="/model_builder/open_create_job_panel/"][hx-vals*="'+ujsOne.replaceAll(' ', '-')+'"]').click();
+        cy.get('#name').clear();
         cy.get('#name').type(jobOne);
         cy.get('#service').select(service);
         cy.get('#sidePanel form').find('button[type="submit"]').click();
@@ -83,6 +91,7 @@ describe('Test de la page d\'accueil', () => {
 
         cy.get('button[hx-get^="/model_builder/open_create_job_panel/"][hx-vals*="'+ujsTwo.replaceAll(' ', '-')+'"]').click();
         cy.get('#sidePanel').should('be.visible');
+        cy.get('#name').clear();
         cy.get('#name').type(jobTwo);
         cy.get('#service').select(service);
         cy.get('#sidePanel form').find('button[type="submit"]').click();
@@ -91,6 +100,7 @@ describe('Test de la page d\'accueil', () => {
         // Add usagePattern
         cy.get('button').contains('Add usage pattern').click();
         cy.get('#sidePanel').should('be.visible');
+        cy.get('#name').clear();
         cy.get('#name').type(upName);
 
         //get input  with name start_date in #modal-timeseries-chart

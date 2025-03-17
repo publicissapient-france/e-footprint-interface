@@ -14,6 +14,7 @@ from model_builder.views_edition import edit_object
 
 
 def open_create_object_panel(request, object_type):
+    model_web = ModelWeb(request.session)
     new_object_structure = efootprint_class_structure(object_type, ModelWeb(request.session))
     assert object_type in ["UsageJourney", "UsageJourneyStep"]
     template_name_mapping = {
@@ -27,10 +28,14 @@ def open_create_object_panel(request, object_type):
     if request.GET.get("name"):
         context_data["new_object_name"] = request.GET["name"]
 
+    context_data["obj_type"] = object_type
+    context_data["next_efootprint_object_rank"] = len(model_web.__getattribute__(f"{template_name}s")) + 1
+
     return render(request, f"model_builder/side_panels/{template_name}_add.html", context=context_data)
 
 
 def open_create_server_panel(request):
+    model_web = ModelWeb(request.session)
     structure_dict, dynamic_form_data = generate_object_creation_structure(
         SERVER_CLASSES + SERVER_BUILDER_CLASSES, "Server type", ["fixed_nb_of_instances"])
 
@@ -39,7 +44,8 @@ def open_create_server_panel(request):
                       'structure_dict': structure_dict,
                       "dynamic_form_data": dynamic_form_data,
                       "obj_type": "server",
-                      "header_name": "Add new server"
+                      "header_name": "Add new server",
+                      "next_efootprint_object_rank": len(model_web.servers) + 1
                   })
 
     http_response["HX-Trigger-After-Swap"] = "initDynamicForm"
@@ -61,7 +67,8 @@ def open_create_service_panel(request, server_efootprint_id):
             "structure_dict": services_dict,
             "dynamic_form_data": dynamic_form_data,
             "obj_type": "service",
-            "header_name": "Add new service"
+            "header_name": "Add new service",
+            "next_efootprint_object_rank": len(model_web.services) + 1
         })
 
     http_response["HX-Trigger-After-Swap"] = "initDynamicForm"
@@ -129,7 +136,8 @@ def open_create_job_panel(request):
             "dynamic_form_data": dynamic_form_data,
             "obj_type": "job",
             "efootprint_id_of_parent_to_link_to": request.GET.get('efootprint_id_of_parent_to_link_to'),
-            "header_name": "Add new job"
+            "header_name": "Add new job",
+            "next_efootprint_object_rank": len(model_web.jobs) + 1
         })
     http_response["HX-Trigger-After-Swap"] = "initDynamicForm"
 
@@ -168,7 +176,9 @@ def open_create_usage_pattern_panel(request):
             "modeling_obj_attributes": modeling_obj_attributes,
             "usage_pattern_input_values": UsagePatternFromForm.default_values(),
             "dynamic_form_data": {"dynamic_selects": dynamic_lists},
-            'header_name': "Add new usage pattern"
+            'header_name': "Add new usage pattern",
+            'obj_type': "Usage pattern",
+            "next_efootprint_object_rank": len(model_web.usage_patterns) + 1
         })
 
     http_response["HX-Trigger-After-Swap"] = "initDynamicForm"

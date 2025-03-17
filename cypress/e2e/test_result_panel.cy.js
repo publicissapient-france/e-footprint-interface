@@ -25,7 +25,7 @@ describe("Test - Result panel", () => {
         cy.get('button').contains('Go back').should('be.exist');
     });
 
-    it("Check if the model is can be calculated the panel is displayed and can be swipe down", () => {
+    it("Check that when the model can be calculated the panel is displayed and can be swiped down", () => {
         let upName = "Test E2E Usage Pattern";
 
         cy.visit("/");
