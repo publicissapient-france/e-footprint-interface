@@ -2,34 +2,10 @@ const { computeUsageJourneyVolume, sumUsageJourneyVolumeByDisplayGranularity } =
 const { DateTime, Duration } = require("luxon");
 global.luxon = { DateTime, Duration };
 
-let startDate = '2021-01-01';
-let modelingDurationValue = 1;
-let modelingDurationUnit = 'year';
-let netGrowRateInPercentage = 10;
-let netGrowthRateTimespan = 'month';
-let initialUsageJourneyVolume = 1000;
-let initialUsageJourneyVolumeTimespan = 'month';
-let testDailyUsageJourneyVolume = computeUsageJourneyVolume(
-    startDate,
-    modelingDurationValue,
-    modelingDurationUnit,
-    netGrowRateInPercentage,
-    netGrowthRateTimespan,
-    initialUsageJourneyVolume,
-    initialUsageJourneyVolumeTimespan
-)
-
 test(
-    'computeUsageJourneyVolume_check_length_return_value', () => {
+    'usage journey volume array has right length - yearly case', () => {
     let dailyUsageJourneyVolume = computeUsageJourneyVolume(
-        startDate,
-        modelingDurationValue,
-        modelingDurationUnit,
-        netGrowRateInPercentage,
-        netGrowthRateTimespan,
-        initialUsageJourneyVolume,
-        initialUsageJourneyVolumeTimespan
-    )
+        '2021-01-01', 1, "year", 10, "month", 1000, "month")
     expect(Object.keys(dailyUsageJourneyVolume).length).toBe(365);
 });
 
@@ -37,16 +13,9 @@ test(
 With luxon when a month is shifted in days, 1 month equal to 30 days
  */
 test(
-    'computeUsageJourneyVolume_check_first_value_monthly', () => {
+    'First daily usage journey volume is computed correctly when no growth - monthly case', () => {
         let dailyUsageJourneyVolume = computeUsageJourneyVolume(
-            startDate,
-            modelingDurationValue,
-            modelingDurationUnit,
-            netGrowRateInPercentage,
-            netGrowthRateTimespan,
-            initialUsageJourneyVolume,
-            initialUsageJourneyVolumeTimespan
-        )
+        '2021-01-01', 1, "year", 0, "month", 1000, "month")
         let firstDay = Object.keys(dailyUsageJourneyVolume)[0];
         let computedValue = dailyUsageJourneyVolume[firstDay];
         let expectedValue = 1000 / 30;
@@ -58,17 +27,9 @@ test(
 With luxon when a year  is shifted in days, 1 year equal to 365 days
  */
 test(
-    'computeUsageJourneyVolume_check_first_value_yearly', () => {
-        initialUsageJourneyVolumeTimespan = 'year';
+    'First daily usage journey volume is computed correctly when no growth - yearly case', () => {
         let dailyUsageJourneyVolume = computeUsageJourneyVolume(
-            startDate,
-            modelingDurationValue,
-            modelingDurationUnit,
-            netGrowRateInPercentage,
-            netGrowthRateTimespan,
-            initialUsageJourneyVolume,
-            initialUsageJourneyVolumeTimespan
-        )
+        '2021-01-01', 1, "year", 0, "month", 1000, "year")
         let firstDay = Object.keys(dailyUsageJourneyVolume)[0];
         let computedValue = dailyUsageJourneyVolume[firstDay];
         let expectedValue = 1000 / 365;
@@ -77,17 +38,33 @@ test(
 )
 
 test(
-    'computeUsageJourneyVolume_check_growth_rate_monthly', () => {
-        let netGrowRateInPercentage = 20;
+    "Sum over initial usage journey volume timespan is equal to user input - yearly case", () => {
         let dailyUsageJourneyVolume = computeUsageJourneyVolume(
-            startDate,
-            modelingDurationValue,
-            modelingDurationUnit,
-            netGrowRateInPercentage,
-            netGrowthRateTimespan,
-            initialUsageJourneyVolume,
-            initialUsageJourneyVolumeTimespan
-        )
+        '2021-01-01', 1, "year", 0, "month", 1000, "year")
+        let sumOver365FirstDays = 0;
+        for (let i = 0; i < 365; i++) {
+            sumOver365FirstDays += dailyUsageJourneyVolume[Object.keys(dailyUsageJourneyVolume)[i]];
+        }
+        expect(sumOver365FirstDays).toBeCloseTo(1000, 2);
+    }
+)
+
+test(
+    "Sum over initial usage journey volume timespan is equal to user input - monthly case", () => {
+        let dailyUsageJourneyVolume = computeUsageJourneyVolume(
+        '2021-01-01', 1, "year", 0, "month", 1000, "month")
+        let sumOver365FirstDays = 0;
+        for (let i = 0; i < 30; i++) {
+            sumOver365FirstDays += dailyUsageJourneyVolume[Object.keys(dailyUsageJourneyVolume)[i]];
+        }
+        expect(sumOver365FirstDays).toBeCloseTo(1000, 2);
+    }
+)
+
+test(
+    'Daily growth rate is correctly computed - monthly case', () => {
+        let dailyUsageJourneyVolume = computeUsageJourneyVolume(
+        '2021-01-01', 1, "year", 20, "month", 1000, "month")
         let firstDay = Object.keys(dailyUsageJourneyVolume)[0];
         let secondDay = Object.keys(dailyUsageJourneyVolume)[1];
         let dailyGrowthRate = dailyUsageJourneyVolume[secondDay]/dailyUsageJourneyVolume[firstDay];
@@ -97,18 +74,9 @@ test(
 )
 
 test(
-    'computeUsageJourneyVolume_check_growth_rate_yearly', () => {
-        netGrowRateInPercentage = 30;
-        netGrowthRateTimespan = 'year';
+    'Daily growth rate is correctly computed - yearly case', () => {
         let dailyUsageJourneyVolume = computeUsageJourneyVolume(
-            startDate,
-            modelingDurationValue,
-            modelingDurationUnit,
-            netGrowRateInPercentage,
-            netGrowthRateTimespan,
-            initialUsageJourneyVolume,
-            initialUsageJourneyVolumeTimespan
-        )
+        '2021-01-01', 1, "year", 30, "year", 1000, "month")
         let firstDay = Object.keys(dailyUsageJourneyVolume)[0];
         let secondDay = Object.keys(dailyUsageJourneyVolume)[1];
         let dailyGrowthRate = dailyUsageJourneyVolume[secondDay]/dailyUsageJourneyVolume[firstDay];
@@ -117,24 +85,16 @@ test(
     }
 )
 
-test('sumUsageJourneyVolumeByDisplayGranularity_monthly-check_length', () => {
-    let displayGranularity = 'month';
-    let aggregatedData = sumUsageJourneyVolumeByDisplayGranularity(testDailyUsageJourneyVolume, displayGranularity);
+test('Monthly displayed data has right length', () => {
+    let testDailyUsageJourneyVolume = computeUsageJourneyVolume(
+        '2021-01-01', 1, "year", 10, "month", 1000, "month")
+    let aggregatedData = sumUsageJourneyVolumeByDisplayGranularity(testDailyUsageJourneyVolume, "month");
     expect(Object.keys(aggregatedData).length).toBe(12);
 })
 
-test('sumUsageJourneyVolumeByDisplayGranularity_yearly-check_length', () => {
-    let displayGranularity = 'year';
-    let modelingDurationValue = 2;
+test('Yearly displayed data has right length', () => {
     let dailyUsageJourneyVolume = computeUsageJourneyVolume(
-        startDate,
-        modelingDurationValue,
-        modelingDurationUnit,
-        netGrowRateInPercentage,
-        netGrowthRateTimespan,
-        initialUsageJourneyVolume,
-        initialUsageJourneyVolumeTimespan
-    )
-    let aggregatedData = sumUsageJourneyVolumeByDisplayGranularity(dailyUsageJourneyVolume, displayGranularity);
+        '2021-01-01', 2, "year", 10, "month", 1000, "month")
+    let aggregatedData = sumUsageJourneyVolumeByDisplayGranularity(dailyUsageJourneyVolume, "year");
     expect(Object.keys(aggregatedData).length).toBe(2);
 })

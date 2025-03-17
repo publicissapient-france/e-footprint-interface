@@ -87,7 +87,14 @@ function computeUsageJourneyVolume(
     let initialUsageJourneyVolumeTimespanInDays = luxonInitialUsageJourneyVolumeTimespan.shiftTo('days')['days'];
 
     let dailyGrowthRate = (1 + netGrowRateInPercentage/100) ** (1/growthRateTimespanInDays);
-    let firstDailyUsageJourneyVolume = initialUsageJourneyVolume / initialUsageJourneyVolumeTimespanInDays;
+    let exponentialGrowthSumOverInitialUsageJourneyVolumeTimespan;
+    if (dailyGrowthRate === 1) {
+        exponentialGrowthSumOverInitialUsageJourneyVolumeTimespan = initialUsageJourneyVolumeTimespanInDays;
+    } else {
+        exponentialGrowthSumOverInitialUsageJourneyVolumeTimespan =
+        (dailyGrowthRate ** initialUsageJourneyVolumeTimespanInDays - 1) / (dailyGrowthRate - 1);
+    }
+    let firstDailyUsageJourneyVolume = initialUsageJourneyVolume / exponentialGrowthSumOverInitialUsageJourneyVolumeTimespan;
 
     let dateLooper = luxonStartDate;
     let dailyUsageJourneyVolumeLooper = firstDailyUsageJourneyVolume;

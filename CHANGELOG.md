@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.6.3] 2025-03-17
 
 ### Fixed
-- Fix the date format in form related to USagePattern by using JS libray 
-  flatPickr.
-- Update Cypress tests folders
+- Initial number of visits on first day is now computed so that the sum of visits over the first initial usage journey volume timespan is equal to user input. For example, if modeling start date is 2025-04-01 (April is a month with exactly 30 days) and the user inputs 10000 initial visits monthly, the sum of visits for April should be 10000 (despite the fact that growth is computed daily).
+
+### Changed
+- Force usage pattern date format to YYYY/MM/DD.
+- Update Cypress test structure.
 
 ## [0.6.2] 2025-03-14
 

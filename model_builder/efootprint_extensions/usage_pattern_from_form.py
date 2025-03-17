@@ -70,32 +70,25 @@ class UsagePatternFromForm(UsagePattern):
         self.net_growth_rate_in_percentage = net_growth_rate_in_percentage.set_label(
             f"{self.name} net growth rate in percentage")
         self.net_growth_rate_timespan = net_growth_rate_timespan.set_label(f"{self.name} net growth rate timespan")
-        self.first_daily_usage_journey_volume = EmptyExplainableObject()
         self.daily_growth_rate = EmptyExplainableObject()
+        self.first_daily_usage_journey_volume = EmptyExplainableObject()
         self.modeling_duration = EmptyExplainableObject()
         self.local_timezone_start_date = EmptyExplainableObject()
 
     @property
     def calculated_attributes(self) -> List[str]:
-        return (["first_daily_usage_journey_volume", "daily_growth_rate", "modeling_duration",
+        return (["daily_growth_rate", "first_daily_usage_journey_volume", "modeling_duration",
                  "local_timezone_start_date", "hourly_usage_journey_starts"] + super().calculated_attributes)
 
     @staticmethod
     def _timestamp_sourceobject_to_explainable_quantity(timestamp_sourceobject: SourceObject):
-        unit_mapping = {"day": u.day, "month": u.month, "year": u.year}
-        timespan_unit = unit_mapping[timestamp_sourceobject.value.lower()]
+        unit_day_mapping = {"day": 1, "month": 30, "year": 365}
+        timespan_unit = timestamp_sourceobject.value.lower()
         timespan = ExplainableQuantity(
-            1 * timespan_unit, label=f"1 {timespan_unit}").generate_explainable_object_with_logical_dependency(
-            timestamp_sourceobject)
+            unit_day_mapping[timespan_unit] * u.day, label=f"1 {timespan_unit}"
+        ).generate_explainable_object_with_logical_dependency(timestamp_sourceobject)
 
         return timespan
-
-    def update_first_daily_usage_journey_volume(self):
-        timespan = self._timestamp_sourceobject_to_explainable_quantity(self.initial_usage_journey_volume_timespan)
-        init_vol = self.initial_usage_journey_volume / timespan
-
-        self.first_daily_usage_journey_volume = init_vol.to("1/day").set_label(
-            f"{self.name} initial daily usage journey volume")
 
     def update_daily_growth_rate(self):
         timespan = self._timestamp_sourceobject_to_explainable_quantity(self.net_growth_rate_timespan)
@@ -106,6 +99,24 @@ class UsagePatternFromForm(UsagePattern):
         self.daily_growth_rate = ExplainableQuantity(
             daily_rate * u.dimensionless, left_parent=self.net_growth_rate_in_percentage, right_parent=timespan,
             operator="combined and converted to daily growth rate").set_label(f"{self.name} daily growth rate")
+
+    def update_first_daily_usage_journey_volume(self):
+        timespan = self._timestamp_sourceobject_to_explainable_quantity(self.initial_usage_journey_volume_timespan)
+        timespan_in_days = timespan.to(u.day).magnitude
+        if self.daily_growth_rate.magnitude == 1:
+            exponential_daily_growth_sum_over_timespan_value = timespan_in_days
+        else:
+            exponential_daily_growth_sum_over_timespan_value = (
+                (self.daily_growth_rate.magnitude ** timespan_in_days - 1) / (self.daily_growth_rate.magnitude - 1))
+        exponential_daily_growth_sum_over_timespan = ExplainableQuantity(
+            exponential_daily_growth_sum_over_timespan_value * u.dimensionless,
+            left_parent=self.daily_growth_rate, right_parent=timespan,
+            operator="daily geometric sum over")
+
+        init_vol = self.initial_usage_journey_volume / exponential_daily_growth_sum_over_timespan
+
+        self.first_daily_usage_journey_volume = init_vol.to(u.dimensionless).set_label(
+            f"{self.name} initial daily usage journey volume")
 
     def update_modeling_duration(self):
         modeling_duration = ExplainableQuantity(
@@ -137,7 +148,7 @@ class UsagePatternFromForm(UsagePattern):
         # Compute the daily usage journeys (daily constant value) with exponential growth.
         # Each day, the volume grows by daily_rate from the previous day.
         daily_values = (
-            self.first_daily_usage_journey_volume.to(1 / u.day).magnitude * self.daily_growth_rate.magnitude ** days)
+            self.first_daily_usage_journey_volume.to(u.dimensionless).magnitude * self.daily_growth_rate.magnitude ** days)
 
         # Since the exponential growth is computed daily,
         # each day’s hourly value remains constant (daily value divided equally among 24 hours).

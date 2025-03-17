@@ -62,31 +62,6 @@ class TestUsagePatternFromForm(unittest.TestCase):
         # Also check one of the parent's attributes:
         self.assertIn("devices_energy", attrs)
 
-    def test_update_first_daily_usage_journey_volume_monthly(self):
-        """
-        If initial usage is 1000 journeys per 'monthly' timespan,
-        we should see (approximately) 1000 / (1 month in days) journeys per day.
-        Pint usually interprets 1 * month as ~30.437 days, so we check accordingly.
-        """
-        self.usage_pattern.update_first_daily_usage_journey_volume()
-        # Convert to 1/day to get a numeric value
-        val_per_day = self.usage_pattern.first_daily_usage_journey_volume.to("1/day").magnitude
-
-        # 1 month ~ 30.437 days => 1000 / 30.437 ~ 32.84 journeys/day
-        self.assertAlmostEqual(val_per_day, 1000.0 / 30.437, places=2)
-
-    def test_update_first_daily_usage_journey_volume_yearly(self):
-        """
-        If initial usage is 1000 journeys per 'yearly' timespan,
-        we should see 1000 / (1 year in days) journeys per day.
-        """
-        # We'll switch to "year" to check
-        self.usage_pattern.initial_usage_journey_volume_timespan = SourceObject("year")
-        self.usage_pattern.update_first_daily_usage_journey_volume()
-
-        val_per_day = self.usage_pattern.first_daily_usage_journey_volume.to("1/day").magnitude
-        self.assertAlmostEqual(val_per_day, 1000.0 / 365.25, places=3)
-
     def test_update_daily_growth_rate_yearly_20_percent(self):
         """
         For a 20% net growth over 1 year, the daily growth factor is:
@@ -95,7 +70,7 @@ class TestUsagePatternFromForm(unittest.TestCase):
         self.usage_pattern.update_daily_growth_rate()
         daily_rate = self.usage_pattern.daily_growth_rate.to(u.dimensionless).magnitude
 
-        # Approx (1.2)^(1/365.25) ~ 1.0005
+        # Approx (1.2)^(1/365) ~ 1.0005
         expected = 1.0005
         self.assertAlmostEqual(daily_rate, expected, places=4)
 
@@ -108,9 +83,48 @@ class TestUsagePatternFromForm(unittest.TestCase):
         self.usage_pattern.update_daily_growth_rate()
 
         daily_rate = self.usage_pattern.daily_growth_rate.magnitude
-        # If we assume 1 month ~ 30.437 days => daily_rate = 1.3^(1/30.437)
-        expected = 1.00866
+        # If we assume 1 month ~ 30 days => daily_rate = 1.3^(1/30)
+        expected = 1.00878
         self.assertAlmostEqual(daily_rate, expected, places=5)
+
+    def test_update_first_daily_usage_journey_volume_monthly_no_growth_rate(self):
+        """
+        If initial usage is 1000 journeys per 'monthly' timespan and there is no growth,
+        we should see (approximately) 1000 / (1 month in days) journeys per day.
+        Pint usually interprets 1 * month as ~30.437 days, so we check accordingly.
+        """
+        self.usage_pattern.daily_growth_rate = SourceValue(1 * u.dimensionless)
+        self.usage_pattern.update_first_daily_usage_journey_volume()
+        val_per_day = self.usage_pattern.first_daily_usage_journey_volume.to(u.dimensionless).magnitude
+
+        # 1 month ~ 30 days => 1000 / 30 ~ 33.33 journeys/day
+        self.assertAlmostEqual(val_per_day, 1000.0 / 30, places=2)
+
+    def test_update_first_daily_usage_journey_volume_yearly_no_growth_rate(self):
+        """
+        If initial usage is 1000 journeys per 'yearly' timespan and there is no growth,
+        we should see 1000 / (1 year in days) journeys per day.
+        """
+        # We'll switch to "year" to check
+        self.usage_pattern.initial_usage_journey_volume_timespan = SourceObject("year")
+        self.usage_pattern.daily_growth_rate = SourceValue(1 * u.dimensionless)
+        self.usage_pattern.update_first_daily_usage_journey_volume()
+
+        val_per_day = self.usage_pattern.first_daily_usage_journey_volume.to(u.dimensionless).magnitude
+        self.assertAlmostEqual(val_per_day, 1000.0 / 365, places=3)
+
+    def test_sum_over_first_month_is_very_close_to_initial_usage_journey_volume_input(self):
+        self.usage_pattern.net_growth_rate_timespan = SourceObject("month")
+        self.usage_pattern.update_daily_growth_rate()
+        self.usage_pattern.update_first_daily_usage_journey_volume()
+        self.usage_pattern.update_modeling_duration()
+        self.usage_pattern.update_local_timezone_start_date()
+        self.usage_pattern.update_hourly_usage_journey_starts()
+
+        nb_visits_over_first_30_days = sum(self.usage_pattern.hourly_usage_journey_starts.value_as_float_list[:30*24])
+
+        self.assertAlmostEqual(
+            nb_visits_over_first_30_days, self.usage_pattern.initial_usage_journey_volume.magnitude, places=1)
 
     def test_update_modeling_duration(self):
         """
@@ -195,8 +209,8 @@ class TestUsagePatternFromForm(unittest.TestCase):
         self.assertTrue(np.allclose(day1_hours, 200.1 / 24, atol=1e-3))
 
     def test_variations_on_inputs_update_computations(self):
-        self.usage_pattern.update_first_daily_usage_journey_volume()
         self.usage_pattern.update_daily_growth_rate()
+        self.usage_pattern.update_first_daily_usage_journey_volume()
         self.usage_pattern.update_modeling_duration()
         self.usage_pattern.update_local_timezone_start_date()
         self.usage_pattern.update_hourly_usage_journey_starts()
