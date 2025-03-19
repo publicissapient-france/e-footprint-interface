@@ -1,15 +1,15 @@
 describe('Test de la page d\'accueil', () => {
     it('Ouvre la page d\'accueil et interagit avec un bouton', () => {
 
-        let ujName = "Test E2E UJ";
-        let ujName2 = "Test E2E UJ 2";
+        let ujNameOne = "Test E2E UJ 1";
+        let ujNameTwo = "Test E2E UJ 2";
         let ujsOne = "Test E2E UJS 1";
         let ujsTwo = "Test E2E UJS 2";
         let server = "Test E2E Server";
         let service = "Test E2E Service";
         let jobOne = "Test E2E Job 1";
         let jobTwo = "Test E2E Job 2";
-        let upName = "Test E2E Usage Pattern";
+        let upNameOne = "Test E2E Usage Pattern 1";
         let defaulId = "button-uid-my-first-usage-journey-1"
 
         cy.visit("/");
@@ -28,7 +28,7 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#btn-add-usage-journey').click();
         cy.get('#btn-add-usage-journey').should('be.visible');
         cy.get('#name').clear();
-        cy.get('#name').type(ujName);
+        cy.get('#name').type(ujNameOne);
         cy.get('#btn-submit-form-add-usage-journey').click();
         cy.get('#form-add-usage-journey').should('not.exist');
 
@@ -38,14 +38,14 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#name').then(($input) => {
             expect($input[0].validationMessage).to.not.be.empty;
         });
-        cy.get('#name').type(ujName2);
+        cy.get('#name').type(ujNameTwo);
         cy.get('#btn-submit-form-add-usage-journey').click();
         cy.get('#form-add-usage-journey').should('not.exist');
 
         // User journeys must be visible then add user journey steps to UJ 1
-        cy.get('div[id$="'+ujName.replaceAll(' ', '-')+'"]').should('have.class', 'leader-line-object')
-        cy.get('div[id$="'+ujName2.replaceAll(' ', '-')+'"]').should('have.class', 'leader-line-object')
-        cy.get('div[id$="'+ujName.replaceAll(' ', '-')+'"]')
+        cy.get('div[id$="'+ujNameOne.replaceAll(' ', '-')+'"]').should('have.class', 'leader-line-object')
+        cy.get('div[id$="'+ujNameTwo.replaceAll(' ', '-')+'"]').should('have.class', 'leader-line-object')
+        cy.get('div[id$="'+ujNameOne.replaceAll(' ', '-')+'"]')
           .contains('button', 'Add usage journey step')
           .click();
         cy.get('#sidePanel').contains('div', 'Add new usage journey step').should('be.visible');
@@ -56,8 +56,8 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#sidePanel form').find('button[type="submit"]').click();
         cy.get('#sidePanel').should('exist').find('div').should('not.exist');
         // @ts-ignore
-        cy.get('div[id$="'+ujName.replaceAll(' ', '-')+'"]').should('have.class', 'leader-line-object')
-        cy.get('div[id$="'+ujName.replaceAll(' ', '-')+'"]')
+        cy.get('div[id$="'+ujNameOne.replaceAll(' ', '-')+'"]').should('have.class', 'leader-line-object')
+        cy.get('div[id$="'+ujNameOne.replaceAll(' ', '-')+'"]')
           .contains('button', 'Add usage journey step')
           .click();
         cy.get('#sidePanel').contains('div', 'Add new usage journey step').should('be.visible');
@@ -66,10 +66,10 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#user_time_spent').type('20,2');
         cy.get('#sidePanel form').find('button[type="submit"]').click();
         cy.get('#sidePanel').should('exist').find('form').should('not.exist');
-        cy.get('div[id$="'+ujName.replaceAll(' ', '-')+'"]').should('have.class', 'leader-line-object')
+        cy.get('div[id$="'+ujNameOne.replaceAll(' ', '-')+'"]').should('have.class', 'leader-line-object')
         //on vérifie que les deux ujs ont bien été ajoutés
-        cy.get('div[id*="'+ujName.replaceAll(' ', '-')+'"]').find('div[id*="'+ujsOne.replaceAll(' ', '-')+'"]').should('exist');
-        cy.get('div[id*="'+ujName.replaceAll(' ', '-')+'"]').find('div[id*="'+ujsTwo.replaceAll(' ', '-')+'"]').should('exist');
+        cy.get('div[id*="'+ujNameOne.replaceAll(' ', '-')+'"]').find('div[id*="'+ujsOne.replaceAll(' ', '-')+'"]').should('exist');
+        cy.get('div[id*="'+ujNameOne.replaceAll(' ', '-')+'"]').find('div[id*="'+ujsTwo.replaceAll(' ', '-')+'"]').should('exist');
 
         // Add server
         cy.get('#btn-add-server').click();
@@ -109,7 +109,7 @@ describe('Test de la page d\'accueil', () => {
         cy.get('button').contains('Add usage pattern').click();
         cy.get('#sidePanel').should('be.visible');
         cy.get('#name').clear();
-        cy.get('#name').type(upName);
+        cy.get('#name').type(upNameOne);
 
         //get input  with name start_date in #modal-timeseries-chart
         cy.get('#start_date').click();
@@ -122,10 +122,10 @@ describe('Test de la page d\'accueil', () => {
         cy.get('#net_growth_rate_timespan').select('year');
         cy.get('#save_usage_pattern_btn').click();
         cy.get('#sidePanel').should('not.contain.html');
-        cy.get('button[id^="button-id-"][id$="'+upName.replaceAll(' ', '-')+'"]').should('be.visible');
+        cy.get('button[id^="button-id-"][id$="'+upNameOne.replaceAll(' ', '-')+'"]').should('be.visible');
         cy.get('button[id^="button-id-"][id$="Test-E2E-UJ-2"]').click();
         cy.wait(500);
-        cy.get('button[hx-get^="/model_builder/ask-delete-object/"][hx-get$="'+ujName2.replaceAll(' ', '-')+'/"]').should('be.visible').click();
+        cy.get('button[hx-get^="/model_builder/ask-delete-object/"][hx-get$="'+ujNameTwo.replaceAll(' ', '-')+'/"]').should('be.visible').click();
         cy.wait(500);
         cy.get('button').contains('Yes, delete').should('be.enabled').click();
         cy.get("#model-builder-modal").should("not.exist");

@@ -103,18 +103,32 @@ def upload_json(request):
     return http_response
 
 def result_chart(request):
-    try:
-        model_web = ModelWeb(request.session)
-        if len(model_web.system.servers) == 0:
-            exception = ValueError(
-                "No impact could be computed because the modeling is incomplete. Please make sure you have at least "
-                "one usage pattern linked to a usage journey with at least one step making a request to a server.")
-            http_response =  render_exception_modal(request, exception)
+    model_web = ModelWeb(request.session)
+    exception = None
 
-            return http_response
-        else:
-            # Launch system computations
-            model_web.system.after_init()
+    if len(model_web.system.servers) == 0:
+        exception = ValueError(
+            "No impact could be computed because the modeling is incomplete. Please make sure you have at least "
+            "one usage pattern linked to a usage journey with at least one step making a request to a server.")
+    else:
+        usage_journeys_linked_to_usage_pattern_and_without_uj_steps = []
+        for usage_journey in model_web.usage_journeys:
+            if len(usage_journey.usage_patterns) > 0 and len(usage_journey.uj_steps) == 0:
+                usage_journeys_linked_to_usage_pattern_and_without_uj_steps.append(usage_journey)
+
+        if len(usage_journeys_linked_to_usage_pattern_and_without_uj_steps) > 0:
+            exception = ValueError(
+                f"The following usage journeys have a usage pattern but no usage journey step: "
+                f"{[uj.name for uj in usage_journeys_linked_to_usage_pattern_and_without_uj_steps]}. "
+                f"Please link at least one usage journey step to each of them so that the model can be computed."
+            )
+
+    if exception is not None:
+        http_response = render_exception_modal(request, exception)
+        return http_response
+
+    try:
+        model_web.system.after_init()
     except Exception as e:
         return render_exception_modal(request, e)
 

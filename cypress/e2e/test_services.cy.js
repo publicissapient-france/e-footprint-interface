@@ -7,17 +7,15 @@ describe('Test services', () => {
         let providerName2 = "mistralai";
         let modelName2 = "mistral-small";
 
-
         cy.visit("/");
         cy.get('#btn-start-modeling-my-service').click();
         cy.get('#model-canva').should('be.visible');
 
-
-        //ajout d'un server
         cy.get('#btn-add-server').click();
         cy.get('#sidePanel').contains('div', 'Add new server').should('be.visible');
         cy.get('#name').type(server);
         cy.get('#type_object_available').select('GPUServer');
+
         // get ram_per_gpu and compute inside the #collapse_GPUServer
         cy.get('#collapse_GPUServer').within(() => {
             cy.get('#ram_per_gpu').focus().type('{selectall}{backspace}512').blur();
@@ -49,8 +47,6 @@ describe('Test services', () => {
         cy.get('#btn-start-modeling-my-service').click();
         cy.get('#model-canva').should('be.visible');
 
-
-        //ajout d'un server
         cy.get('#btn-add-server').click();
         cy.get('#sidePanel').contains('div', 'Add new server').should('be.visible');
         cy.get('#name').type(server);

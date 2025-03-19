@@ -2,7 +2,6 @@ describe('Tests dedicated to the timeseries generation', () => {
     it('Check if we can open several times the form about usage patten and chart is always displayed', () => {
 
         let ujName = "Test E2E UJ";
-
         let upNameOne = "Test E2E Usage Pattern 1";
         let upNameTwo = "Test E2E Usage Pattern 2";
 

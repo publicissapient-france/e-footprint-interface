@@ -1,14 +1,11 @@
 describe("Test - Model Canva div", () => {
     it("Try to create a new job on a empty UJ Step to check the button 'add new job' and the newest is correctly" +
         " positioned", () => {
-        let ujName = "Test E2E UJ";
         let ujsOne = "Test E2E UJ 1";
         let ujsTwo = "Test E2E UJ 2";
-        let server = "Test E2E Server";
         let service = "Test E2E Service";
         let jobOne = "Test E2E Job 1";
         let jobTwo = "Test E2E Job 2";
-        let upName = "Test E2E Usage Pattern";
 
         cy.visit("/model_builder/");
         cy.get('button[hx-get="/model_builder/open-import-json-panel/"]').click();

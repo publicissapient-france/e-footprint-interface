@@ -1,15 +1,8 @@
 import "cypress-real-events";
 describe("Test - Result panel", () => {
-    it("Check if the model cannot be calculated if the modal exception is displayed and the result panel not showed", () => {
-        let ujName = "Test E2E UJ";
-        let ujsOne = "Test E2E UJ 1";
-        let ujsTwo = "Test E2E UJ 2";
-        let server = "Test E2E Server";
-        let service = "Test E2E Service";
-        let jobOne = "Test E2E Job 1";
-        let jobTwo = "Test E2E Job 2";
-        let upName = "Test E2E Usage Pattern";
+    let ujNameTwo = "Test E2E UJ 2";
 
+    it("Check if the model cannot be calculated if the modal exception is displayed and the result panel not showed", () => {
         cy.visit("/model_builder/");
         cy.get('button[hx-get="/model_builder/open-import-json-panel/"]').click();
         let fileTest = 'cypress/fixtures/efootprint-model-no-job.json'
@@ -52,4 +45,25 @@ describe("Test - Result panel", () => {
         .realTouch('move', { x: 100, y: 400 })
         .realTouch('end', { x: 100, y: 400 });
     });
+
+    it("check if an exception modal is displayed when the calculation is launched with an UsageJourney without any" +
+    " UserJourneyStep", () => {
+        cy.visit("/model_builder/");
+        cy.get('button[hx-get="/model_builder/open-import-json-panel/"]').click();
+        let fileTest = 'cypress/fixtures/model-test-uj-not-linked-to-uj-step.json'
+        cy.get('input[type="file"]').selectFile(fileTest);
+        cy.get('button[type="submit"]').click();
+
+        cy.get('#btn-open-panel-result')
+        .realTouch('start', { x: 100, y: 300 })
+        .realTouch('move', { x: 100, y: 200 })
+        .realTouch('end', { x: 100, y: 200 });
+
+        cy.get('#panel-result-btn').should('not.have.css', 'height', '93vh');
+        cy.get('button').contains('Go back').should('be.exist');
+        cy.get("#exception-msg").should("exist")
+            .should("include.text","The following usage journeys have a usage pattern but no usage journey step")
+            .should("include.text",ujNameTwo)
+    });
+
 });

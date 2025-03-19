@@ -4,12 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.6.6] 2025-03-19
+## [0.6.6] 2025-03-20
 
 ### Changed
 
 - Add a default UsageJourney and a default UsageJourneyStep 
   in default modeling.
+- Display an exception modal when the model can't be computed due to usage journeys with no steps.
 
 ## [0.6.5] 2025-03-18
 
