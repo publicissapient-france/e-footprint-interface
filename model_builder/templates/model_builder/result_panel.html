@@ -22,33 +22,26 @@
         <p class="h5">
             Total CO2 emissions over time
         </p>
-         <div class="row align-items-center mb-2" id="form-result-panel">
+        <canvas id="lineChart" style="max-height: 600px;"></canvas>
+    </div>
+    <div class="col-12 my-3 shadow rounded-2 p-4">
+        <p class="h5" id="barChartTitle">
+            Yearly CO2 emissions
+        </p>
+        <div class="row align-items-center mb-2" id="form-result-panel">
             <div class="col-auto">
                 <label for="results_temporal_granularity" class="form-label w-100 text-start fz-0-8">Time granularity</label>
                 <select class="form-select light-select fz-0-8 h-30"
                         id="results_temporal_granularity"
                         name="results_temporal_granularity"
-                        onchange="drawAreaResultChart()">
-                    <option value="day">Day</option>
-                    <option value="week">Week</option>
-                    <option value="month" selected>Month</option>
-                    <option value="year">Year</option>
+                        onchange="drawBarResultChart()"
+                        _="on change set #barChartTitle.innerText to my.value.charAt(0).toUpperCase() + my.value.slice(1) + 'ly CO2 emissions'"
+                >
+                    <option value="month">Month</option>
+                    <option value="year" selected>Year</option>
                 </select>
             </div>
-            <div class="col-auto">
-                <button class="btn btn-white border border-1 border-body-tertiary rounded-pill fz-0-8"
-                    id="reset_zoom"
-                    onclick="charts['lineChart'].resetZoom();charts['barStackedChart'].resetZoom();">
-                    Reset zoom
-                </button>
-            </div>
         </div>
-        <canvas id="lineChart" style="max-height: 600px;"></canvas>
-    </div>
-    <div class="col-12 my-3 shadow rounded-2 p-4">
-        <p class="h5 ">
-            Yearly CO2 emissions
-        </p>
         <canvas id="barChart" style="max-height: 600px;"></canvas>
     </div>
 </div>

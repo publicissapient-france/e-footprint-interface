@@ -66,4 +66,36 @@ describe("Test - Result panel", () => {
             .should("include.text",ujNameTwo)
     });
 
+    it("Check if labels on bar chart has been updated when granularity changed", () => {
+        let upName = "Test E2E Usage Pattern";
+        cy.visit("/model_builder/");
+        cy.get('#model-canva').should('be.visible');
+        cy.get('button[hx-get="/model_builder/open-import-json-panel/"]').click();
+        let fileTest = 'cypress/fixtures/efootprint-model-system-data.json'
+        cy.get('input[type="file"]').selectFile(fileTest);
+        cy.get('button[type="submit"]').click();
+        cy.wait(1000);
+        cy.get('button[id^="button-id-"][id$="'+upName.replaceAll(' ', '-')+'"]').should('exist').should('be.visible');
+
+        cy.get('#btn-open-panel-result')
+        .realTouch('start', { x: 100, y: 300 })
+        .realTouch('move', { x: 100, y: 200 })
+        .realTouch('end', { x: 100, y: 200 });
+
+        cy.window().its('charts').should('exist');
+        cy.get('select#results_temporal_granularity').select('year');
+        cy.window().its('charts').its('barChart').then((chart) => {
+            chart.data.labels.forEach(label => {
+                expect(label.length).to.equal(4);
+            });
+        });
+        cy.get('select#results_temporal_granularity').select('month');
+
+         cy.window().its('charts').its('barChart').then((chart) => {
+            chart.data.labels.forEach(label => {
+                expect(label.length).to.be.greaterThan(6);
+            });
+        });
+    });
+
 });

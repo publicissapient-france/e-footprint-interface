@@ -22,12 +22,13 @@ function updateAreaResultChart(chartType, resultsTemporalGranularity){
             scales: {
                 x: {
                     stacked: true,
-                    title: {
-                        display: true,
-                        text: "Years",
-                        color: "rgb(107,114,128)",
-                        align: 'start'
+                    type: 'time',
+                    time: {
+                        tooltipFormat: 'yyyy',
+                        unit: 'year'
                     },
+                    title: { display: false },
+                    grid: { display: false }
                 },
                 y: {
                     stacked: true,
@@ -75,47 +76,41 @@ function updateAreaResultChart(chartType, resultsTemporalGranularity){
     }
 
     let startDate = luxon.DateTime.fromFormat(emissions['Servers_and_storage_energy']['start_date'], "yyyy-MM-dd HH:mm:ss");
-    let nbElements = emissions['Servers_and_storage_energy']['values'].length
-    let endDate = startDate.plus(luxon.Duration.fromObject({ hours: nbElements }));
-    let resultsTemporalGranularityDuration = luxon.Duration.fromObject({ [resultsTemporalGranularity]: 1 });
     let labels = [];
-    let rawValuesIndex = 0;
-    let computedValuesIndex = 0;
-    if (chartType === "line") {
-        labels.push(startDate.toISODate());
-        computedValuesIndex += 1;
-    }
+    let aggregated_emissions_data = {}
 
-    while (startDate.plus(resultsTemporalGranularityDuration) <= endDate){
-        let nextDate = startDate.plus(resultsTemporalGranularityDuration);
-        let nbHours = nextDate.diff(startDate, 'hours').hours;
-        let limitIndex = rawValuesIndex + nbHours;
-        for (const hardwareType of Object.keys(dataByHardwareType)) {
-            let sumOverPeriod = 0;
-            for (let i = rawValuesIndex; i < limitIndex; i++){
-                if (i < emissions[hardwareType]['values'].length){
-                    sumOverPeriod += emissions[hardwareType]['values'][i];
-                }
-            }
-            // Convert to metric tons
-            sumOverPeriod = sumOverPeriod / 1000;
-            if (chartType === "line") {
-                let previousCumulativeValue = dataByHardwareType[hardwareType]["data"][computedValuesIndex - 1];
-                dataByHardwareType[hardwareType]["data"].push(sumOverPeriod + previousCumulativeValue);
-            }else{
-                dataByHardwareType[hardwareType]["data"].push(sumOverPeriod);
-            }
+    for (const hardwareType of Object.keys(dataByHardwareType)) {
+        let dictValue = emissions[hardwareType]['values']
+        let dictIndex = [];
+        let dictStartDate = luxon.DateTime.fromFormat(
+            emissions[hardwareType]['start_date'],
+            "yyyy-MM-dd HH:mm:ss",
+            { zone: "utc" }
+        );
+        for(let startHour = 0; startHour < dictValue.length; startHour++) {
+            dictIndex.push(dictStartDate.plus({ hours: startHour }).toISODate());
         }
-        if (chartType === "line") {
-            labels.push(nextDate.toISODate());
+        let dict = dictIndex.reduce(function(acc, val, index){
+            if (!acc[val]) {
+                acc[val] = 0;
+            }
+            acc[val] += dictValue[index];
+            return acc;
+        }, {});
+        aggregated_emissions_data[hardwareType] = sumValueByDisplayGranularity(dict, resultsTemporalGranularity);
+        let value_to_copy = Object.values(aggregated_emissions_data[hardwareType]);
+        if(chartType=='bar'){
+            dataByHardwareType[hardwareType]["data"].push(...value_to_copy);
         }else{
-            labels.push(startDate.toISODate() + " to " + nextDate.toISODate());
+            let cumulative_sum = value_to_copy[0];
+            for(let item=1; item < value_to_copy.length; item++){
+                cumulative_sum += value_to_copy[item]
+                dataByHardwareType[hardwareType]["data"].push(cumulative_sum)
+            }
         }
-        rawValuesIndex += nbHours;
-        computedValuesIndex += 1;
-        startDate = nextDate;
     }
 
+    labels = Object.keys(aggregated_emissions_data['Servers_and_storage_energy']);
     let chartData = {labels: labels, datasets: []}
 
     for (const hardwareType of Object.keys(dataByHardwareType)) {
@@ -125,16 +120,20 @@ function updateAreaResultChart(chartType, resultsTemporalGranularity){
     config["data"] = chartData;
     config["type"] = chartType;
 
-    let area_ctx = document.getElementById(chartType + "Chart").getContext("2d");
-    if(window.charts[chartType] == null){
-        window.charts[chartType] = new Chart(area_ctx, config);
-    }else{
-        window.charts[chartType].data = chartData;
-        window.charts[chartType].update();
+    config.options.scales.x.time.unit = resultsTemporalGranularity === "month" ? "month" : "year";
+    config.options.scales.x.time.tooltipFormat = resultsTemporalGranularity === "month" ? "MMM yyyy" : "yyyy";
+
+    if (window.charts[chartType+'Chart']) {
+        window.charts[chartType+'Chart'].destroy();
+        window.charts[chartType+'Chart'] = null;
     }
+
+    let area_ctx = document.getElementById(chartType + "Chart").getContext("2d");
+
+    window.charts[chartType+'Chart'] = new Chart(area_ctx, config);
 }
 
-function drawAreaResultChart(){
+function drawBarResultChart(){
     let resultsTemporalGranularity = document.getElementById('results_temporal_granularity').value;
-    updateAreaResultChart('line', resultsTemporalGranularity);
+    updateAreaResultChart('bar', resultsTemporalGranularity);
 }
