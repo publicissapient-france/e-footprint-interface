@@ -99,8 +99,10 @@ describe("Test - Toolbars import/export/reboot", () => {
         cy.get('button[id^="button-id-"][id$="'+jobTwo.replaceAll(' ', '-')+'"]').should('not.exist');
         cy.get('button[id^="id-"][id$="'+service.replaceAll(' ', '-')+'"]').should('not.exist');
 
-        //any svg with class leader-line should not exist
-        cy.get('svg[class="leader-line"]').should('not.exist');
+        //there is only one card and it must cointain the text "My first usage journey"
+        cy.get('div[class*="card"]').should('have.length',1);
+        cy.get('div[class*="card"]').should('contain.text','My first usage journey');
+        cy.get('div[class*="card"]').should('contain.text','My first usage journey step');
     });
 
     it("Change the name of the model and check that the name has been changed", () => {

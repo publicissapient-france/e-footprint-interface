@@ -10,11 +10,19 @@ describe('Test de la page d\'accueil', () => {
         let jobOne = "Test E2E Job 1";
         let jobTwo = "Test E2E Job 2";
         let upName = "Test E2E Usage Pattern";
+        let defaulId = "button-uid-my-first-usage-journey-1"
 
         cy.visit("/");
         cy.get('#btn-start-modeling-my-service').click();
         cy.get('#model-canva').should('be.visible');
         cy.window().its('LeaderLine')
+
+        //delete default card
+        cy.get('button[id="'+defaulId+'"]').click();
+        cy.wait(500);
+        cy.get('button[hx-get^="/model_builder/ask-delete-object/"][hx-get$="/model_builder/ask-delete-object/uid-my-first-usage-journey-1/"]').should('be.visible').click();
+        cy.wait(500);
+        cy.get('button').contains('Yes, delete').should('be.enabled').click();
 
         // Create UJ one and two
         cy.get('#btn-add-usage-journey').click();
