@@ -1,4 +1,4 @@
-const { computeUsageJourneyVolume, sumUsageJourneyVolumeByDisplayGranularity } = require('../theme/static/scripts/timeseries.js');
+const {computeUsageJourneyVolume} = require('../theme/static/scripts/usage_pattern_timeseries.js');
 const { DateTime, Duration } = require("luxon");
 global.luxon = { DateTime, Duration };
 
@@ -84,17 +84,3 @@ test(
         expect(dailyGrowthRate).toBeCloseTo(expectedValue, 4);
     }
 )
-
-test('Monthly displayed data has right length', () => {
-    let testDailyUsageJourneyVolume = computeUsageJourneyVolume(
-        '2021-01-01', 1, "year", 10, "month", 1000, "month")
-    let aggregatedData = sumUsageJourneyVolumeByDisplayGranularity(testDailyUsageJourneyVolume, "month");
-    expect(Object.keys(aggregatedData).length).toBe(12);
-})
-
-test('Yearly displayed data has right length', () => {
-    let dailyUsageJourneyVolume = computeUsageJourneyVolume(
-        '2021-01-01', 2, "year", 10, "month", 1000, "month")
-    let aggregatedData = sumUsageJourneyVolumeByDisplayGranularity(dailyUsageJourneyVolume, "year");
-    expect(Object.keys(aggregatedData).length).toBe(2);
-})

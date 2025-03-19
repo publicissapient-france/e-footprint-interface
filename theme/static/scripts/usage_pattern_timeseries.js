@@ -1,5 +1,3 @@
-window.usageJourneyVolumeTimeseries = null;
-
 window.chartJSOptions = {
     scales: {
         x: {
@@ -38,7 +36,6 @@ function openTimeseriesChart() {
     let element = document.getElementById("chartTimeseries");
     element.classList.remove("d-none");
     element.classList.add("d-block");
-    updateUsageJourneyVolumeTimeseries();
     createOrUpdateTimeSeriesChart();
 }
 
@@ -70,6 +67,48 @@ function applyMaxLimitOnModelingDurationValue() {
         errorElement.innerHTML ='';
         errorElement.style.display = "none";
     }
+}
+
+function createOrUpdateTimeSeriesChart(){
+    let startDate = luxon.DateTime.fromISO(document.getElementById('start_date').value);
+    let modelingDurationValue = parseInt(document.getElementById('modeling_duration_value').value);
+    let modelingDurationUnit = document.getElementById('modeling_duration_unit').value;
+    let netGrowRateInPercentage = parseInt(document.getElementById('net_growth_rate_in_percentage').value);
+    let netGrowthRateTimespan = document.getElementById('net_growth_rate_timespan').value;
+    let initialUsageJourneyVolume = parseInt(document.getElementById('initial_usage_journey_volume').value);
+    let initialUsageJourneyVolumeTimespan = document.getElementById('initial_usage_journey_volume_timespan').value;
+
+    let dailyUsageJourneyVolume = computeUsageJourneyVolume(
+        startDate, modelingDurationValue, modelingDurationUnit, netGrowRateInPercentage, netGrowthRateTimespan,
+        initialUsageJourneyVolume, initialUsageJourneyVolumeTimespan);
+
+    let displayGranularity = document.getElementById('display_granularity').value;
+    let usageJourneyVolume = sumDailyValuesByDisplayGranularity(dailyUsageJourneyVolume, displayGranularity);
+
+    if (window.chart) {
+        window.chart.destroy();
+        window.chart = null;
+    }
+
+    window.chartJSOptions.scales.x.time.unit = displayGranularity === "month" ? "month" : "year";
+    window.chartJSOptions.scales.x.time.tooltipFormat = displayGranularity === "month" ? "MMM yyyy" : "yyyy";
+
+    const ctx = document.getElementById("timeSeriesChart").getContext('2d');
+    window.chart = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: Object.keys(usageJourneyVolume),
+            datasets: [{
+                label: 'Usage journeys',
+                borderColor: '#017E7E',
+                backgroundColor: '#017E7E',
+                data: Object.values(usageJourneyVolume),
+                fill: false,
+                tension: 0.5
+            }]
+        },
+        options: window.chartJSOptions
+    });
 }
 
 function computeUsageJourneyVolume(
@@ -106,78 +145,8 @@ function computeUsageJourneyVolume(
     return dailyUsageJourneyVolume;
 }
 
-function updateUsageJourneyVolumeTimeseries(){
-    let startDate = luxon.DateTime.fromISO(document.getElementById('start_date').value);
-    let modelingDurationValue = parseInt(document.getElementById('modeling_duration_value').value);
-    let modelingDurationUnit = document.getElementById('modeling_duration_unit').value;
-    let netGrowRateInPercentage = parseInt(document.getElementById('net_growth_rate_in_percentage').value);
-    let netGrowthRateTimespan = document.getElementById('net_growth_rate_timespan').value;
-    let initialUsageJourneyVolume = parseInt(document.getElementById('initial_usage_journey_volume').value);
-    let initialUsageJourneyVolumeTimespan = document.getElementById('initial_usage_journey_volume_timespan').value;
-
-    window.dailyUsageJourneyVolume = computeUsageJourneyVolume(
-        startDate, modelingDurationValue, modelingDurationUnit, netGrowRateInPercentage, netGrowthRateTimespan,
-        initialUsageJourneyVolume, initialUsageJourneyVolumeTimespan);
-}
-
-function sumUsageJourneyVolumeByDisplayGranularity(dailyUsageJourneyVolume, displayGranularity) {
-    let aggregatedData = {};
-    Object.keys(dailyUsageJourneyVolume).forEach((date, index) => {
-        let dateObj = luxon.DateTime.fromISO(date);
-        let key;
-
-        if (displayGranularity === "month") {
-            key = `${dateObj.year}-${String(dateObj.month).padStart(2, "0")}`;
-        } else if (displayGranularity === "year") {
-            key = `${dateObj.year}`;
-        } else {
-            key = date;
-        }
-        if (!aggregatedData[key]) {
-            aggregatedData[key] = 0;
-        }
-        aggregatedData[key] += dailyUsageJourneyVolume[date];
-    });
-
-    return aggregatedData;
-}
-
-function createOrUpdateTimeSeriesChart(){
-    let displayGranularity = document.getElementById('display_granularity').value;
-    let usageJourneyVolume = sumUsageJourneyVolumeByDisplayGranularity(
-        window.dailyUsageJourneyVolume, displayGranularity);
-
-    if (window.chart) {
-        window.chart.destroy();
-        window.chart = null;
-    }
-
-    let displayGranularityToolTipOption = {"month": "MMM yyyy", "year": "yyyy"};
-
-    window.chartJSOptions.scales.x.time.unit = displayGranularity === "month" ? "month" : "year";
-    window.chartJSOptions.scales.x.time.tooltipFormat = displayGranularity === "month" ? "MMM yyyy" : "yyyy";
-
-    const ctx = document.getElementById("timeSeriesChart").getContext('2d');
-        window.chart = new Chart(ctx, {
-            type: "bar",
-            data: {
-            labels: Object.keys(usageJourneyVolume),
-            datasets: [{
-                label: 'Usage journeys',
-                borderColor: '#017E7E',
-                backgroundColor: '#017E7E',
-                data: Object.values(usageJourneyVolume),
-                fill: false,
-                tension: 0.5
-            }]
-        },
-            options: window.chartJSOptions
-    });
-}
-
 if (typeof module !== "undefined" && module.exports) {
     module.exports = {
-        computeUsageJourneyVolume,
-        sumUsageJourneyVolumeByDisplayGranularity
+        computeUsageJourneyVolume
     };
 }

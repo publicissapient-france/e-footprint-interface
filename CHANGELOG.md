@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.6.7] 2025-03-25
+
+### Changed
+- In result panel time granularity can now only be chosen for bar chart and not for line chart anymore.
+- In result panel monthly and yearly values are expressed in a calendar way (e.g. january 2025) instead of with dates.
+
+### Fixed
+- efootprint rounding error by upgrading to 10.0.4
+- Possibility to have user journey with duration of 0 by upgrading to efootprint 10.0.4
+
 ## [0.6.6] 2025-03-20
 
 ### Changed

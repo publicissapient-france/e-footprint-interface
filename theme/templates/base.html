@@ -20,7 +20,7 @@
         <script src="{% static 'scripts/external_librairies/chart_js_adapter_luxon.min.js' %}"></script>
         <script src="{% static 'scripts/external_librairies/chart_js_plugin_zoom.min.js' %}"></script>
         <script src="{% static 'scripts/external_librairies/flatpickr.min.js' %}"></script>
-        <script src="{% static 'scripts/timeseries.js' %}"></script>
+        <script src="{% static 'scripts/usage_pattern_timeseries.js' %}"></script>
 
 </head>
 
@@ -47,8 +47,9 @@
         <script src="{% static 'scripts/loading_bar.js' %}"></script>
         <script src="{% static 'scripts/modal_utils.js' %}"></script>
         <script src="{% static 'scripts/side_panel_utils.js' %}"></script>
-        <script src="{% static 'scripts/result_chart.js' %}"></script>
+        <script src="{% static 'scripts/result_charts.js' %}"></script>
         <script src="{% static 'scripts/model_builder_main.js' %}"></script>
+        <script src="{% static 'scripts/timeseries_utils.js' %}"></script>
         <script>
             window.initModelBuilderMain = initModelBuilderMain;
             window.allLines = new Map();
@@ -65,8 +66,9 @@
 
             document.body.addEventListener("computeResultChart", function(event) {
                 displayPanelResult();
-                drawAreaResultChart();
-                updateAreaResultChart('bar', 'year');
+                window.hardwareTypeDailyEmissions = convertHourlyToDailyEmissionsByHardwareType(window.emissions);
+                drawResultChart('line', 'month');
+                drawBarResultChart();
             });
         </script>
     </body>

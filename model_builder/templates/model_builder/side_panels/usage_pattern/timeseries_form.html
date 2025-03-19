@@ -13,9 +13,7 @@
                        id="start_date"
                        value="{{ usage_pattern_input_values.start_date.value }}"
                        _="
-                          on input
-                            updateUsageJourneyVolumeTimeseries()
-                            then createOrUpdateTimeSeriesChart()"
+                          on input createOrUpdateTimeSeriesChart()"
                        >
             </div>
             <div class="mb-3 mx-2">
@@ -27,7 +25,6 @@
                            value="{{ usage_pattern_input_values.modeling_duration_value.magnitude|floatformat }}"
                            max=10
                            _="on input applyMaxLimitOnModelingDurationValue()
-                            then updateUsageJourneyVolumeTimeseries()
                             then createOrUpdateTimeSeriesChart()
                             "
                            aria-describedby="basic-addon3 basic-addon4">
@@ -42,7 +39,6 @@
                                     set {max:120} on #modeling_duration_value
                                 end
                                 then applyMaxLimitOnModelingDurationValue()
-                                then updateUsageJourneyVolumeTimeseries()
                                 then createOrUpdateTimeSeriesChart()"
                     >
                         <option value="month" {% if usage_pattern_input_values.modeling_duration_unit.value == "month" %}selected{% endif %}>Months</option>
@@ -59,17 +55,13 @@
                                name="initial_usage_journey_volume"
                                id="initial_usage_journey_volume"
                                value="{{ usage_pattern_input_values.initial_usage_journey_volume.magnitude|floatformat }}"
-                               _="on input
-                                    updateUsageJourneyVolumeTimeseries()
-                                    then createOrUpdateTimeSeriesChart()"
+                               _="on input createOrUpdateTimeSeriesChart()"
                                aria-describedby="basic-addon3 basic-addon4"
                        >
                         <select class="input-group-text fz-0-8"
                                 name="initial_usage_journey_volume_timespan"
                                 id="initial_usage_journey_volume_timespan"
-                                _="on change
-                                    updateUsageJourneyVolumeTimeseries()
-                                    then createOrUpdateTimeSeriesChart()"
+                                _="on change createOrUpdateTimeSeriesChart()"
                         >
                             <option value="month" {% if usage_pattern_input_values.initial_usage_journey_volume_timespan.value == "month" %}selected{% endif %}>Monthly</option>
                             <option value="year" {% if usage_pattern_input_values.initial_usage_journey_volume_timespan.value == "year" %}selected{% endif %}>Yearly</option>
@@ -83,18 +75,14 @@
                                class="form-control fz-0-8"
                                name="net_growth_rate_in_percentage"
                                id="net_growth_rate_in_percentage"
-                               _="on input
-                                    updateUsageJourneyVolumeTimeseries()
-                                    then createOrUpdateTimeSeriesChart()"
+                               _="on input createOrUpdateTimeSeriesChart()"
                                value="{{ usage_pattern_input_values.net_growth_rate_in_percentage.magnitude|floatformat }}"
                                aria-describedby="basic-addon3 basic-addon4"
                                >
                         <select class="input-group-text fz-0-8"
                                 name="net_growth_rate_timespan"
                                 id="net_growth_rate_timespan"
-                                _="on change
-                                    updateUsageJourneyVolumeTimeseries()
-                                    then createOrUpdateTimeSeriesChart()"
+                                _="on change createOrUpdateTimeSeriesChart()"
                         >
                             <option value="month" {% if usage_pattern_input_values.net_growth_rate_timespan.value == "month" %}selected{% endif %}>Monthly</option>
                             <option value="year" {% if usage_pattern_input_values.net_growth_rate_timespan.value == "year" %}selected{% endif %}>Yearly</option>
