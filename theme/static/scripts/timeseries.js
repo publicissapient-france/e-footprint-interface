@@ -120,9 +120,9 @@ function updateUsageJourneyVolumeTimeseries(){
         initialUsageJourneyVolume, initialUsageJourneyVolumeTimespan);
 }
 
-function sumValueByDisplayGranularity(dailyUsageJourneyVolume, displayGranularity) {
+function sumDailyValuesByDisplayGranularity(dailyValues, displayGranularity) {
     let aggregatedData = {};
-    Object.keys(dailyUsageJourneyVolume).forEach((date, index) => {
+    Object.keys(dailyValues).forEach((date, index) => {
         let dateObj = luxon.DateTime.fromISO(date);
         let key;
 
@@ -136,7 +136,7 @@ function sumValueByDisplayGranularity(dailyUsageJourneyVolume, displayGranularit
         if (!aggregatedData[key]) {
             aggregatedData[key] = 0;
         }
-        aggregatedData[key] += dailyUsageJourneyVolume[date];
+        aggregatedData[key] += dailyValues[date];
     });
 
     return aggregatedData;
@@ -144,15 +144,13 @@ function sumValueByDisplayGranularity(dailyUsageJourneyVolume, displayGranularit
 
 function createOrUpdateTimeSeriesChart(){
     let displayGranularity = document.getElementById('display_granularity').value;
-    let usageJourneyVolume = sumValueByDisplayGranularity(
+    let usageJourneyVolume = sumDailyValuesByDisplayGranularity(
         window.dailyUsageJourneyVolume, displayGranularity);
 
     if (window.chart) {
         window.chart.destroy();
         window.chart = null;
     }
-
-    let displayGranularityToolTipOption = {"month": "MMM yyyy", "year": "yyyy"};
 
     window.chartJSOptions.scales.x.time.unit = displayGranularity === "month" ? "month" : "year";
     window.chartJSOptions.scales.x.time.tooltipFormat = displayGranularity === "month" ? "MMM yyyy" : "yyyy";
@@ -178,6 +176,6 @@ function createOrUpdateTimeSeriesChart(){
 if (typeof module !== "undefined" && module.exports) {
     module.exports = {
         computeUsageJourneyVolume,
-        sumUsageJourneyVolumeByDisplayGranularity: sumValueByDisplayGranularity
+        sumDailyValuesByDisplayGranularity
     };
 }

@@ -75,29 +75,30 @@ function updateAreaResultChart(chartType, resultsTemporalGranularity){
         }
     }
 
-    let startDate = luxon.DateTime.fromFormat(emissions['Servers_and_storage_energy']['start_date'], "yyyy-MM-dd HH:mm:ss");
     let labels = [];
     let aggregated_emissions_data = {}
 
     for (const hardwareType of Object.keys(dataByHardwareType)) {
-        let dictValue = emissions[hardwareType]['values']
-        let dictIndex = [];
-        let dictStartDate = luxon.DateTime.fromFormat(
-            emissions[hardwareType]['start_date'],
-            "yyyy-MM-dd HH:mm:ss",
-            { zone: "utc" }
-        );
-        for(let startHour = 0; startHour < dictValue.length; startHour++) {
-            dictIndex.push(dictStartDate.plus({ hours: startHour }).toISODate());
+        let values = emissions[hardwareType]['values']
+        let startDate = luxon.DateTime.fromFormat(emissions[hardwareType]['start_date'], "yyyy-MM-dd HH:mm:ss",
+            { zone: "utc" });
+        let datesCorrespondingToValueTimestamps = [];
+        for(let nbHoursSinceFirstValue = 0; nbHoursSinceFirstValue < values.length; nbHoursSinceFirstValue++) {
+            datesCorrespondingToValueTimestamps.push(startDate.plus({ hours: nbHoursSinceFirstValue }).toISODate());
         }
-        let dict = dictIndex.reduce(function(acc, val, index){
-            if (!acc[val]) {
-                acc[val] = 0;
-            }
-            acc[val] += dictValue[index];
-            return acc;
-        }, {});
-        aggregated_emissions_data[hardwareType] = sumValueByDisplayGranularity(dict, resultsTemporalGranularity);
+        let dailyDateValueSumDict = datesCorrespondingToValueTimestamps.reduce(
+            function(previousDict, dateAtIndex, index){
+                if (!previousDict[dateAtIndex]) {
+                    previousDict[dateAtIndex] = 0;
+                }
+                previousDict[dateAtIndex] += values[index];
+                return previousDict;
+            },
+            /* initial value of previousDict */
+            {}
+        );
+        aggregated_emissions_data[hardwareType] = sumDailyValuesByDisplayGranularity(
+            dailyDateValueSumDict, resultsTemporalGranularity);
         let value_to_copy = Object.values(aggregated_emissions_data[hardwareType]);
         if(chartType=='bar'){
             dataByHardwareType[hardwareType]["data"].push(...value_to_copy);
