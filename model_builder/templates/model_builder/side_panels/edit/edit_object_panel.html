@@ -1,31 +1,133 @@
-{% extends "model_builder/side_panels/edit/edit_object_panel_structure.html" %}
+{% extends "model_builder/side_panels/components/side_panel_structure.html" %}
+{% load static %}
 
-{% block edit_form_content %}
-    {% for field in structure_dict.fields %}
-        {% include "model_builder/side_panels/dynamic_form_field.html" %}
-    {% endfor %}
+{% block link_to_delete_object %}
+    <button id="btn-ask-delete"
+            type="button"
+            class="btn border border-2 border-light rounded-2"
+            aria-label="Delete"
+            hx-get="/model_builder/ask-delete-object/{{ object_to_edit.efootprint_id }}/"
+            hx-swap="innerHTML"
+            hx-target="#modal-container"
+            hx-on::after-request="closeAndEmptySidePanel()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+        </svg>
+    </button>
+{% endblock %}
 
-    {% for attr in structure_dict.modeling_obj_attributes %}
-        <div class="col-12 mb-3">
-            <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
-            <select class="form-control p-2" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}">
-                {% for obj in attr.existing_objects %}
-                     <option value="{{ obj.efootprint_id }}" {% if attr.attr_value.efootprint_id == obj.efootprint_id %}selected{% endif %}>{{ obj.name }}</option>
-                {% endfor %}
-            </select>
+{% block form_body %}
+    <div class="accordion my-3" id="accordionAllAttributes">
+        <div class="accordion-item">
+            <h2 class="accordion-header accordion-header-panel">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInputAttributes" aria-expanded="true" aria-controls="collapseInputAttributes">
+                {{ object_to_edit.class_as_simple_str }} attributes
+            </button>
+            </h2>
+            <div id="collapseInputAttributes" class="accordion-collapse collapse show" data-bs-parent="#accordionAllAttributes">
+                <div class="accordion-body row gy-2">
+                    <form class="my-3"
+                            autocomplete="off"
+                            {% if object_to_edit_type != "Server" %}
+                                hx-post="/model_builder/edit-object/{{ object_to_edit.efootprint_id }}/"
+                                hx-swap="none"
+                                hx-disabled-elt="button"
+                                hx-on::after-request="closeAndEmptySidePanel()"
+                                id="sidePanelForm"
+                            {% else %}
+                                id="formServer"
+                            {% endif %}
+                          >
+                        <input type="hidden" value="{{ object_to_edit.efootprint_id }}" name="server_id" id="server_id">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text"
+                                   class="form-control p-2"
+                                   id="name" name="name"
+                                   value="{{ object_to_edit.name }}">
+                        </div>
+                        {% if object_to_edit_type == 'UsagePattern' %}
+                            {% include "model_builder/side_panels/usage_pattern/usage_pattern_edit.html" %}
+                        {%  else %}
+                            {% include "model_builder/side_panels/edit/edit_object_form_content.html" %}
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
         </div>
-    {% endfor %}
-
-    {% for attr in structure_dict.list_attributes %}
-        <div class="col-12 mb-3">
-            <label for="{{ attr.attr_name }}" class="form-label">{{ attr.attr_name }}</label>
-            <select class="form-control p-2" id="{{ attr.attr_name }}" name="{{ attr.attr_name }}" multiple>
-                {% for obj in attr.existing_objects %}
-                     <option value="{{ obj.efootprint_id }}" {% for obj_selected in attr.attr_value %}{% if obj_selected.efootprint_id == obj.efootprint_id %}selected{% endif %}{% endfor %} >{{ obj.name }}</option>
-                {% endfor %}
-            </select>
+        {% if object_to_edit_type == 'Server' %}
+            <div class="accordion-item">
+                <h2 class="accordion-header accordion-header-panel">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInputStorageAttributes" aria-expanded="true" aria-controls="collapseInputStorageAttributes">
+                    Storage attributes
+                </button>
+                </h2>
+                <div id="collapseInputStorageAttributes" class="accordion-collapse collapse show" data-bs-parent="#accordionAllAttributes">
+                    <div class="accordion-body row gy-2">
+                        <form class="my-3"
+                            autocomplete="off"
+                            id="formStorage"
+                        >
+                            <input type="hidden" value="{{ storage_to_edit.efootprint_id }}" name="storage_id" id="storage_id">
+                            <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text"
+                                   class="form-control p-2"
+                                   id="name" name="name"
+                                   value="{{ storage_to_edit.name }}">
+                        </div>
+                            {% include "model_builder/side_panels/edit/edit_object_form_content.html" with structure_dict=storage_structure_dict dynamic_form_data=storage_dynamic_form_data  %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% if object_belongs_to_computable_system and object_to_edit.calculated_attributes|length > 0 %}
+        <div class="accordion-item">
+            <h2 class="accordion-header accordion-header-panel">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCalculatedAttributes" aria-expanded="false" aria-controls="collapseCalculatedAttributes">
+                Calculated attributes
+            </button>
+            </h2>
+            <div id="collapseCalculatedAttributes" class="accordion-collapse collapse" data-bs-parent="#accordionAllAttributes">
+                <div class="accordion-body row gy-2">
+                    {% for item in object_to_edit.calculated_attributes %}
+                        <div class="col-10">
+                            <input disabled name="calculated_attributes{{ item }}" value="{{ item }}" class="form-control">
+                        </div>
+                        <div class="col-2">
+                            <a href="{% url 'display-calculus-graph' object_to_edit.efootprint_id item %}" target="_blank"><img src="{% static 'icons/calculus-graph.svg' %}" alt="calculus-graph-icon"></a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
-        <hr>
-    {% endfor %}
-    {{ dynamic_form_data|json_script:"dynamic-form-data" }}
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <button
+                id="btn-submit-form"
+                class="btn btn-primary rounded-pill w-100"
+                {% if object_to_edit_type == 'Server' %}
+                    hx-post="/model_builder/edit-object/{{ object_to_edit.efootprint_id }}/"
+                    hx-swap="none"
+                    hx-disabled-elt="button"
+                    hx-on::after-request="closeAndEmptySidePanel()"
+                    hx-on::after-request="closeAndEmptySidePanel()"
+                    hx-vals="js:{
+                        server: Object.fromEntries(new FormData(document.getElementById('formServer'))),
+                        storage: Object.fromEntries(new FormData(document.getElementById('formStorage')))
+                    }"
+                {% else %}
+                    onclick="document.getElementById('sidePanelForm').requestSubmit()"
+                {% endif %}
+        >
+            Save
+        </button>
+    </div>
+
+{% endblock %}
+
+{% block script_form %}
 {% endblock %}

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.7.0] - 2025-03-27
+
+### Changed
+- In add server panel, there is now a dedicated part of the form to define 
+  storage object.
+- In edit panel, when users want to edit a server, the storage object is 
+  now displayed in a dedicated accordion item and both objects can be edited.
+
 ## [0.6.8] 2025-03-27
 
 ### Fixed

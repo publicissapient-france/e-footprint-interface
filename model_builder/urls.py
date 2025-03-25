@@ -40,4 +40,5 @@ urlpatterns = [
     path('graph/<cache_key>/<efootprint_id>/<attr_name>/<graph_key>', model_builder.views.get_calculus_graph,
          name='get-graph'),
     path('save-model-name/', model_builder.views_edition.save_model_name, name='save-model-name'),
+    path('edit-storage-server/', model_builder.views_edition.edit_storage_server, name='edit-storage-server'),
 ]
