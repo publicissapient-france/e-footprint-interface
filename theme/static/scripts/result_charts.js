@@ -63,11 +63,11 @@ window.baseChartConfigByHardwareType = {
 function drawResultChart(chartType, resultsTemporalGranularity){
     let chartData = {labels: [], datasets: []}
 
-    for (const hardwareType of Object.keys(window.hardwareTypeDailyEmissions)) {
+    for (const hardwareType of Object.keys(window.emissions["values"])) {
         let hardwareTypeDataAndConfig = {...window.baseChartConfigByHardwareType[hardwareType]};
         let chartValues = Object.values(
             sumDailyValuesByDisplayGranularity(
-                window.hardwareTypeDailyEmissions[hardwareType], resultsTemporalGranularity));
+                window.emissions["dates"], window.emissions["values"][hardwareType], resultsTemporalGranularity));
         if(chartType === "line"){
             chartValues = cumulativeSumFromArray(chartValues)
             hardwareTypeDataAndConfig["borderWidth"] = 1;
@@ -78,8 +78,7 @@ function drawResultChart(chartType, resultsTemporalGranularity){
     }
 
     chartData.labels = generateTimeIndexLabels(
-        window.emissions['Servers_and_storage_energy']['start_date'], resultsTemporalGranularity,
-        chartData["datasets"][0]["data"].length);
+        window.emissions["dates"][0], resultsTemporalGranularity, chartData["datasets"][0]["data"].length);
 
     window.chartJSOptions.scales.x.time.unit = resultsTemporalGranularity === "month" ? "month" : "year";
     window.chartJSOptions.scales.x.time.tooltipFormat = resultsTemporalGranularity === "month" ? "MMM yyyy" : "yyyy";
@@ -102,38 +101,4 @@ function drawResultChart(chartType, resultsTemporalGranularity){
 function drawBarResultChart(){
     let resultsTemporalGranularity = document.getElementById('results_temporal_granularity').value;
     drawResultChart('bar', resultsTemporalGranularity);
-}
-
-
-
-function convertHourlyToDailyEmissionsByHardwareType(emissions) {
-    let dailyEmissionsDataByHardwareType = {}
-
-    for (const hardwareType of Object.keys(emissions)) {
-        let values = emissions[hardwareType]['values']
-        let startDate = luxon.DateTime.fromFormat(emissions[hardwareType]['start_date'], "yyyy-MM-dd HH:mm:ss",
-            {zone: "utc"});
-        let datesCorrespondingToValueTimestamps = [];
-        for (let nbHoursSinceFirstValue = 0; nbHoursSinceFirstValue < values.length; nbHoursSinceFirstValue++) {
-            datesCorrespondingToValueTimestamps.push(startDate.plus({hours: nbHoursSinceFirstValue}).toISODate());
-        }
-        dailyEmissionsDataByHardwareType[hardwareType] = datesCorrespondingToValueTimestamps.reduce(
-            function (previousDict, dateAtIndex, index) {
-                if (!previousDict[dateAtIndex]) {
-                    previousDict[dateAtIndex] = 0;
-                }
-                previousDict[dateAtIndex] += values[index];
-                return previousDict;
-            },
-            /* initial value of previousDict */
-            {}
-        )
-    }
-    return dailyEmissionsDataByHardwareType;
-}
-
-if (typeof module !== "undefined" && module.exports) {
-    module.exports = {
-        convertHourlyToDailyEmissionsByHardwareType
-    };
 }

@@ -63,13 +63,6 @@
                     window.initModelBuilderMain();
                 }
             });
-
-            document.body.addEventListener("computeResultChart", function(event) {
-                displayPanelResult();
-                window.hardwareTypeDailyEmissions = convertHourlyToDailyEmissionsByHardwareType(window.emissions);
-                drawResultChart('line', 'month');
-                drawBarResultChart();
-            });
         </script>
     </body>
 </html>

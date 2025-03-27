@@ -135,8 +135,6 @@ def result_chart(request):
     http_response = htmx_render(
         request, "model_builder/result_panel.html", context={'model_web': model_web})
 
-    http_response["HX-Trigger-After-Swap"] = "computeResultChart"
-
     return http_response
 
 def get_calculus_graph(request, cache_key, efootprint_id, attr_name, graph_key):

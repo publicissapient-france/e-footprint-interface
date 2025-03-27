@@ -13,14 +13,16 @@ const {computeUsageJourneyVolume} = require("../theme/static/scripts/usage_patte
 test('Monthly displayed data has right length', () => {
     let testDailyUsageJourneyVolume = computeUsageJourneyVolume(
         '2021-01-01', 1, "year", 10, "month", 1000, "month")
-    let aggregatedData = sumDailyValuesByDisplayGranularity(testDailyUsageJourneyVolume, "month");
+    let aggregatedData = sumDailyValuesByDisplayGranularity(
+        Object.keys(testDailyUsageJourneyVolume), Object.values(testDailyUsageJourneyVolume), "month");
     expect(Object.keys(aggregatedData).length).toBe(12);
 })
 
 test('Yearly displayed data has right length', () => {
     let dailyUsageJourneyVolume = computeUsageJourneyVolume(
         '2021-01-01', 2, "year", 10, "month", 1000, "month")
-    let aggregatedData = sumDailyValuesByDisplayGranularity(dailyUsageJourneyVolume, "year");
+    let aggregatedData = sumDailyValuesByDisplayGranularity(
+        Object.keys(dailyUsageJourneyVolume), Object.values(dailyUsageJourneyVolume), "year");
     expect(Object.keys(aggregatedData).length).toBe(2);
 })
 
@@ -28,7 +30,7 @@ test(
     'Check generateTimeIndexLabels return an Array with the right number of elements and check' +
     ' each elements of the list with Month parameter' +
     ' ', () => {
-        let startDate = "2025-06-01 00:00:00";
+        let startDate = "2025-06-01";
         let granularity = "month";
         let nbValues = 24;
 
@@ -47,7 +49,7 @@ test(
     'Check generateTimeIndexLabels return an Array with the right number of elements and check' +
     ' each elements of the list with Year parameter' +
     ' ', () => {
-        let startDate = "2025-06-01 00:00:00";
+        let startDate = "2025-06-01";
         let granularity = "year";
         let nbValues = 20;
 

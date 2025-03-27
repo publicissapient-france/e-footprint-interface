@@ -83,7 +83,8 @@ function createOrUpdateTimeSeriesChart(){
         initialUsageJourneyVolume, initialUsageJourneyVolumeTimespan);
 
     let displayGranularity = document.getElementById('display_granularity').value;
-    let usageJourneyVolume = sumDailyValuesByDisplayGranularity(dailyUsageJourneyVolume, displayGranularity);
+    let usageJourneyVolume = sumDailyValuesByDisplayGranularity(
+        Object.keys(dailyUsageJourneyVolume), Object.values(dailyUsageJourneyVolume), displayGranularity);
 
     if (window.chart) {
         window.chart.destroy();

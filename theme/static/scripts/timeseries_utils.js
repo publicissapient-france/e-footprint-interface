@@ -1,23 +1,21 @@
-function sumDailyValuesByDisplayGranularity(dailyValues, displayGranularity) {
-    let aggregatedData = {};
-    Object.keys(dailyValues).forEach((date, index) => {
-        let dateObj = luxon.DateTime.fromISO(date);
-        let key;
-
-        if (displayGranularity === "month") {
-            key = `${dateObj.year}-${String(dateObj.month).padStart(2, "0")}`;
-        } else if (displayGranularity === "year") {
-            key = `${dateObj.year}`;
-        } else {
-            key = date;
-        }
-        if (!aggregatedData[key]) {
-            aggregatedData[key] = 0;
-        }
-        aggregatedData[key] += dailyValues[date];
-    });
-
-    return aggregatedData;
+function sumDailyValuesByDisplayGranularity(dates, dailyValues, displayGranularity) {
+    return dates.reduce(
+        function (previousDict, dateAtIndex, index) {
+            let dateObj = luxon.DateTime.fromISO(dateAtIndex);
+            let key;
+            if (displayGranularity === "month") {
+                key = `${dateObj.year}-${String(dateObj.month).padStart(2, "0")}`;
+            } else if (displayGranularity === "year") {
+                key = `${dateObj.year}`;
+            } else {
+                key = dateAtIndex;
+            }
+            if (!previousDict[key]) {
+                previousDict[key] = 0;
+            }
+            previousDict[key] += dailyValues[index];
+            return previousDict;
+        }, {});
 }
 
 function cumulativeSumFromArray(input){
@@ -32,7 +30,7 @@ function cumulativeSumFromArray(input){
 }
 
 function generateTimeIndexLabels(startDate, granularity, nbValues){
-    startDate = luxon.DateTime.fromFormat(startDate, "yyyy-MM-dd HH:mm:ss",{zone: "utc"});
+    startDate = luxon.DateTime.fromFormat(startDate, "yyyy-MM-dd",{zone: "utc"});
     let labels = [];
     let dateLooper;
     let label;

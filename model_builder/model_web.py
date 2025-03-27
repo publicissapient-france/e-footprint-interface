@@ -2,10 +2,14 @@ import json
 import os
 from time import time
 
+import numpy as np
+import pandas as pd
 from django.contrib.sessions.backends.base import SessionBase
+from efootprint.abstract_modeling_classes.explainable_objects import EmptyExplainableObject, ExplainableHourlyQuantities
 from efootprint.api_utils.json_to_system import json_to_system, json_to_explainable_object
 from efootprint.core.all_classes_in_order import SERVICE_CLASSES
 from efootprint.logger import logger
+from efootprint.constants.units import u
 
 from model_builder.class_structure import MODELING_OBJECT_CLASSES_DICT, ABSTRACT_EFOOTPRINT_MODELING_CLASSES
 from model_builder.modeling_objects_web import wrap_efootprint_object
@@ -148,29 +152,62 @@ class ModelWeb:
     def usage_patterns(self):
         return self.get_web_objects_from_efootprint_type("UsagePattern")
 
+    def get_reindexed_system_energy_and_fabrication_footprint_as_df_dict(self):
+        energy_footprints = self.system.total_energy_footprints
+        fabrication_footprints = self.system.total_fabrication_footprints
+
+        all_explainable_hourly_quantities_values = [
+            elt for elt in list(energy_footprints.values()) + list(fabrication_footprints.values())
+            if isinstance(elt, ExplainableHourlyQuantities)]
+
+        combined_index = pd.period_range(
+            start=min(
+                explainable_hourly_quantities.value.index.min() for explainable_hourly_quantities in
+                all_explainable_hourly_quantities_values),
+            end=max(explainable_hourly_quantities.value.index.max() for explainable_hourly_quantities in
+                    all_explainable_hourly_quantities_values),
+            freq='h'
+        )
+
+        for footprint_dict in [energy_footprints, fabrication_footprints]:
+            for key, explainable_hourly_quantities in footprint_dict.items():
+                if isinstance(explainable_hourly_quantities, EmptyExplainableObject):
+                    footprint_dict[key] = pd.DataFrame(
+                {"value": np.full(shape=len(combined_index), fill_value=0.0)}, index=combined_index, dtype="pint[kg]")
+                else:
+                    footprint_dict[key] = explainable_hourly_quantities.value.reindex(combined_index, fill_value=0)
+
+        return energy_footprints, fabrication_footprints, combined_index
+
     @property
     def system_emissions(self):
-        def custom_hourly_quantities_to_json(hourly_quantities):
-            # TODO: Remove when e-footprint has been duly updated
-            output_dict = {
-                "label": hourly_quantities.label,
-                "values": list(map(lambda x: round(float(x), 5), hourly_quantities.value["value"].values._data)),
-                "unit": str(hourly_quantities.value.dtypes.iloc[0].units),
-                "start_date": hourly_quantities.value.index[0].strftime("%Y-%m-%d %H:%M:%S")
-            }
+        energy_footprints, fabrication_footprints, combined_index = (
+            self.get_reindexed_system_energy_and_fabrication_footprint_as_df_dict())
 
-            return output_dict
+        # Resample all dataframes to daily frequency
+        hours = combined_index.view('int64')
+        days_since_epoch = hours // 24
+        unique_days, unique_days_indices = np.unique(days_since_epoch, return_inverse=True)
 
-        emissions = {}
-        energy_footprints = self.system.total_energy_footprints
-        emissions["Servers_and_storage_energy"] = custom_hourly_quantities_to_json(
-            energy_footprints["Servers"] + energy_footprints["Storage"])
-        emissions["Devices_energy"] = custom_hourly_quantities_to_json(energy_footprints["Devices"])
-        emissions["Network_energy"] = custom_hourly_quantities_to_json(energy_footprints["Network"])
+        def to_rounded_daily_values_list(df, rounding_depth=5):
+            daily_sums = np.bincount(unique_days_indices, weights=df["value"].pint.to(u.kg).values)
 
-        fabrication_footprints = self.system.total_fabrication_footprints
-        emissions["Servers_and_storage_fabrication"] = custom_hourly_quantities_to_json(
-            fabrication_footprints["Servers"] + fabrication_footprints["Storage"])
-        emissions["Devices_fabrication"] = custom_hourly_quantities_to_json(fabrication_footprints["Devices"])
+            return np.round(daily_sums, rounding_depth).tolist()
+
+        values = {
+            "Servers_and_storage_energy": to_rounded_daily_values_list(
+            energy_footprints["Servers"] + energy_footprints["Storage"]),
+            "Devices_energy": to_rounded_daily_values_list(energy_footprints["Devices"]),
+            "Network_energy": to_rounded_daily_values_list(energy_footprints["Network"]),
+            "Servers_and_storage_fabrication": to_rounded_daily_values_list(
+            fabrication_footprints["Servers"] + fabrication_footprints["Storage"]),
+            "Devices_fabrication": to_rounded_daily_values_list(fabrication_footprints["Devices"])
+        }
+
+        date_index = pd.to_datetime(unique_days, unit='D', origin="1970-01-01")
+        emissions = {
+            "dates": date_index.strftime("%Y-%m-%d").tolist(),
+            "values": values
+        }
 
         return emissions
