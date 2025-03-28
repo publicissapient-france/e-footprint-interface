@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.6.8] 2025-03-27
 
 ### Fixed
-- Make sure all footprint values share same period index and compute daily aggregagtion server side instead of client side. This fixes results in case the model is made of usage patterns with disjoint time periods.
+- Make sure all footprint values share same period index and compute daily aggregation server side instead of client side. This fixes results in case the model is made of usage patterns with disjoint time periods.
 
 ## [0.6.7] 2025-03-25
 

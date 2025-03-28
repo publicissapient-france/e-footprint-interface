@@ -44,7 +44,7 @@ def open_create_server_panel(request):
         [Storage], "Storage type", ["fixed_nb_of_instances"])
 
 
-    http_response = render(request, f"model_builder/side_panels/server_add.html",
+    http_response = render(request, f"model_builder/side_panels/server/server_add.html",
                 context={
                     'structure_dict': structure_dict,
                     "dynamic_form_data": dynamic_form_data,

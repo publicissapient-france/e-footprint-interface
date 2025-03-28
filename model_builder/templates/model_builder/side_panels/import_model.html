@@ -1,7 +1,7 @@
 {% extends "model_builder/side_panels/components/side_panel_structure.html" %}
 {% load static %}
 
-{% block form_body %}
+{% block panel_body %}
 <form class="my-3"
         hx-post="{% url 'upload-json' %}"
         hx-disabled-elt="button"

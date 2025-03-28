@@ -1,10 +1,9 @@
 {% extends "model_builder/side_panels/components/side_panel_structure.html" %}
 {% load static %}
 
-{% block form_body %}
-    <form id="formServer"
-    >
-        {% with helper_message="How to choose the server type?<br><br>“GPUserver” to get help on configuring servers for AI use.<br><br>“BoavistaCloudServer” to get help on configuring servers for all other kinds of use.<br><br>“Server” to fully customize your server." %}
+{% block panel_body %}
+    <form id="formServer">
+        {% with helper_message="How to choose the server type?<br><br>“GPUserver” to get help on configuring servers for AI use.<br><br>“BoaviztaCloudServer” to get help on configuring servers for all other kinds of use.<br><br>“Server” to fully customize your server." %}
             {% include "model_builder/side_panels/dynamic_add_object_form_content.html" %}
         {% endwith %}
     </form>

@@ -49,10 +49,11 @@ def edit_object(request, object_id, model_web=None):
             model_web = ModelWeb(request.session)
         obj_to_edit = model_web.get_web_object_from_efootprint_id(object_id)
         if issubclass(obj_to_edit.efootprint_class, ServerBase):
-             return edit_storage_server(request, model_web)
-        else:
-            response_html, ids_of_web_elements_with_lines_to_remove, data_attribute_updates, top_parent_ids = (
-                compute_edit_object_html_and_event_response(request.POST, object_id, model_web))
+            storage_data = json.loads(request.POST.get('storage'))
+            storage = model_web.get_web_object_from_efootprint_id(storage_data["storage_id"])
+            edit_object_in_system(storage_data, storage)
+        response_html, ids_of_web_elements_with_lines_to_remove, data_attribute_updates, top_parent_ids = (
+            compute_edit_object_html_and_event_response(request.POST, obj_to_edit))
     except Exception as e:
         return render_exception_modal(request, e)
 
@@ -96,7 +97,7 @@ def generate_usage_pattern_edit_panel_http_response(
     }
 
     http_response = render(
-        request, "model_builder/side_panels/edit/edit_object_panel.html",
+        request, "model_builder/side_panels/usage_pattern/usage_pattern_edit.html",
         {
             "modeling_obj_attributes": modeling_obj_attributes,
             "object_to_edit": obj_to_edit,
@@ -119,7 +120,7 @@ def generate_server_edit_panel_http_response(
 
     http_response = render(
         request,
-        "model_builder/side_panels/edit/edit_object_panel.html",
+        "model_builder/side_panels/server/server_edit.html",
         context={
             "object_to_edit": obj_to_edit,
             "structure_dict": structure_dict,
@@ -147,7 +148,7 @@ def generate_generic_edit_panel_http_response(
     dynamic_form_data: dict):
     http_response = render(
         request,
-        "model_builder/side_panels/edit/edit_object_panel.html",
+        "model_builder/side_panels/edit/edit_panel__generic.html",
         context={
             "object_to_edit": obj_to_edit,
             "structure_dict": structure_dict,
@@ -158,10 +159,9 @@ def generate_generic_edit_panel_http_response(
 
     return http_response
 
-def compute_edit_object_html_and_event_response(edit_form_data: QueryDict, object_id, model_web):
+def compute_edit_object_html_and_event_response(edit_form_data: QueryDict, obj_to_edit: ModelingObjectWeb):
     data_attribute_updates = []
     ids_of_web_elements_with_lines_to_remove = []
-    obj_to_edit = model_web.get_web_object_from_efootprint_id(object_id)
     accordion_children_before_edit = {}
     for duplicated_card in obj_to_edit.duplicated_cards:
         accordion_children_before_edit[duplicated_card] = copy(duplicated_card.accordion_children)
@@ -242,20 +242,3 @@ def generate_http_response_from_edit_html_and_events(
     })
 
     return http_response
-
-
-def edit_storage_server(request, model_web=None):
-    server_data = json.loads(request.POST.get('server'))
-    storage_data = json.loads(request.POST.get('storage'))
-    try:
-        if model_web is None:
-            model_web = ModelWeb(request.session)
-        storage= model_web.get_web_object_from_efootprint_id(storage_data["storage_id"])
-        edited_storage = edit_object_in_system(storage_data, storage)
-        response_html, ids_of_web_elements_with_lines_to_remove, data_attribute_updates, top_parent_ids = (
-            compute_edit_object_html_and_event_response(server_data, server_data["server_id"], model_web))
-    except Exception as e:
-        return render_exception_modal(request, e)
-
-    return generate_http_response_from_edit_html_and_events(
-        response_html, ids_of_web_elements_with_lines_to_remove, data_attribute_updates, top_parent_ids)

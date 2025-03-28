@@ -1,6 +1,6 @@
 {% extends "model_builder/side_panels/components/side_panel_structure.html" %}
 
-{% block form_body %}
+{% block panel_body %}
     <form id="sidePanelForm" class="my-3"
             hx-post="/model_builder/add-new-usage-journey-step/{{ efootprint_id_of_parent_to_link_to }}/"
             hx-swap="none"
