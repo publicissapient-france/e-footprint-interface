@@ -96,6 +96,9 @@ def generate_usage_pattern_edit_panel_http_response(
         for key, value in dynamic_selects[0]["list_value"].items()
     }
 
+    calculated_attributes = [
+        {'id': obj_to_edit.efootprint_id, 'name': '', 'calculated_attributes': obj_to_edit.calculated_attributes}]
+
     http_response = render(
         request, "model_builder/side_panels/usage_pattern/usage_pattern_edit.html",
         {
@@ -104,7 +107,8 @@ def generate_usage_pattern_edit_panel_http_response(
             "object_to_edit_type": 'UsagePattern',
             "dynamic_form_data": {"dynamic_selects": dynamic_selects},
             "object_belongs_to_computable_system": object_belongs_to_computable_system,
-            "header_name": f"Edit {obj_to_edit.name}"
+            "header_name": f"Edit {obj_to_edit.name}",
+            "objects_and_calculated_attributes":calculated_attributes
         }
     )
 
@@ -118,6 +122,13 @@ def generate_server_edit_panel_http_response(
     storage_structure_dict, storage_dynamic_form_data = generate_object_edition_structure(
         storage_to_edit, attributes_to_skip=ATTRIBUTES_TO_SKIP_IN_FORMS)
 
+    calculated_attributes = [
+        {'id': obj_to_edit.efootprint_id, 'name': obj_to_edit.name, 'calculated_attributes':
+            obj_to_edit.calculated_attributes},
+        {'id': obj_to_edit.efootprint_id, 'name': storage_to_edit.name, 'calculated_attributes':
+            storage_to_edit.calculated_attributes},
+    ]
+
     http_response = render(
         request,
         "model_builder/side_panels/server/server_edit.html",
@@ -130,7 +141,8 @@ def generate_server_edit_panel_http_response(
             "storage_dynamic_form_data": storage_dynamic_form_data,
             "object_to_edit_type": 'Server',
             "object_belongs_to_computable_system": object_belongs_to_computable_system,
-            "header_name": f"Edit {obj_to_edit.name}"
+            "header_name": f"Edit {obj_to_edit.name}",
+            "objects_and_calculated_attributes":calculated_attributes
         })
 
     return http_response
@@ -146,6 +158,8 @@ def generate_service_edit_panel_http_response(
 def generate_generic_edit_panel_http_response(
     request, structure_dict: dict, obj_to_edit: ModelingObjectWeb, object_belongs_to_computable_system: bool,
     dynamic_form_data: dict):
+    calculated_attributes = [
+        {'id': obj_to_edit.efootprint_id, 'name': '', 'calculated_attributes': obj_to_edit.calculated_attributes}]
     http_response = render(
         request,
         "model_builder/side_panels/edit/edit_panel__generic.html",
@@ -154,7 +168,8 @@ def generate_generic_edit_panel_http_response(
             "structure_dict": structure_dict,
             "dynamic_form_data": dynamic_form_data,
             "object_belongs_to_computable_system": object_belongs_to_computable_system,
-            "header_name": f"Edit {obj_to_edit.name}"
+            "header_name": f"Edit {obj_to_edit.name}",
+            "objects_and_calculated_attributes":calculated_attributes
         })
 
     return http_response

@@ -31,13 +31,15 @@
                     </h2>
                     <div id="collapseCalculatedAttributes" class="accordion-collapse collapse" data-bs-parent="#accordionAllAttributes">
                         <div class="accordion-body row gy-2">
-                            {% for item in object_to_edit.calculated_attributes %}
-                                <div class="col-10">
-                                    <input disabled name="calculated_attributes{{ item }}" value="{{ item }}" class="form-control">
-                                </div>
-                                <div class="col-2">
-                                    <a href="{% url 'display-calculus-graph' object_to_edit.efootprint_id item %}" target="_blank"><img src="{% static 'icons/calculus-graph.svg' %}" alt="calculus-graph-icon"></a>
-                                </div>
+                            {% for object_and_calculated_attributes in objects_and_calculated_attributes %}
+                                {% for calculated_attribute in object_and_calculated_attributes.calculated_attributes %}
+                                    <div class="col-10">
+                                        <input disabled name="calculated_attributes{{ object_and_calculated_attributes.name }}_{{ calculated_attribute }}" value="{{ object_and_calculated_attributes.name }} {{ calculated_attribute }}" class="form-control">
+                                    </div>
+                                    <div class="col-2">
+                                        <a href="{% url 'display-calculus-graph' object_and_calculated_attributes.id calculated_attribute %}" target="_blank"><img src="{% static 'icons/calculus-graph.svg' %}" alt="calculus-graph-icon"></a>
+                                    </div>
+                                {% endfor %}
                             {% endfor %}
                         </div>
                     </div>

@@ -41,6 +41,7 @@ class TestsClassStructure(TestCase):
             tmp_structure_filepath = os.path.join(
                 root_dir, "class_structures", f"{class_category_name}_creation_structure_tmp.json")
             structure, dynamic_data = generate_object_creation_structure(class_list, header=class_category_name)
+            logger.info(f"Checking {class_category_name} structure")
             self._test_dict_equal_to_ref(structure, tmp_structure_filepath)
             tmp_dynamic_data_filepath = os.path.join(
                 root_dir, "class_structures", f"{class_category_name}_creation_dynamic_data_tmp.json")

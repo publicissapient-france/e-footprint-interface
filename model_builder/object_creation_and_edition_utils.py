@@ -1,5 +1,7 @@
+import json
 import os
 from datetime import datetime
+from urllib.parse import urlencode
 
 from django.http import QueryDict
 from django.shortcuts import render
@@ -120,7 +122,7 @@ def edit_object_in_system(edit_form_data: QueryDict, obj_to_edit: ModelingObject
             new_value.set_label(current_value.label)
             obj_to_edit.set_efootprint_value(attr_dict["attr_name"], new_value)
     for mod_obj in obj_structure["modeling_obj_attributes"]:
-        if mod_obj["attr_name"] in edit_form_data.keys():
+        if mod_obj["attr_name"] in edit_form_data.keys() and mod_obj["attr_name"] != 'storage':
             new_mod_obj_id = edit_form_data[mod_obj["attr_name"]]
             current_mod_obj_id = getattr(obj_to_edit, mod_obj["attr_name"]).efootprint_id
             if new_mod_obj_id != current_mod_obj_id:
