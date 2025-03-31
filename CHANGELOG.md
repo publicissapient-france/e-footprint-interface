@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.7.1] - 2025-03-31
+
+### Fixed
+
+- CSS changed on times series forms fields.
+- Change trigger to apply check function on timeseries form fields from input to change.
+- Update exception message when the model can't be computed due to usage journeys with no steps.
+- Update export filename to notice hour timezone in the filename.
+
 ## [0.7.0] - 2025-03-31
 
 ### Changed

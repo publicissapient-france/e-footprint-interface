@@ -68,7 +68,7 @@ def download_json(request):
         next(iter(request.session["system_data"]['System'].keys()), None)]['name']
     current_date_time = datetime.now().strftime("%Y-%m-%d %H:%M")
     response = HttpResponse(json_data, content_type='application/json')
-    response['Content-Disposition'] = f'attachment; filename="{current_date_time} {system_name}.e-f.json"'
+    response['Content-Disposition'] = f'attachment; filename="{current_date_time}_UTC {system_name}.e-f.json"'
     return response
 
 def upload_json(request):
@@ -118,9 +118,11 @@ def result_chart(request):
 
         if len(usage_journeys_linked_to_usage_pattern_and_without_uj_steps) > 0:
             exception = ValueError(
-                f"The following usage journeys have a usage pattern but no usage journey step: "
+                f"The following usage journey(s) have no usage journey step: "
                 f"{[uj.name for uj in usage_journeys_linked_to_usage_pattern_and_without_uj_steps]}. "
-                f"Please link at least one usage journey step to each of them so that the model can be computed."
+                f"Please add at least one step in each of the above usage journey(s), so that the model can be computed."
+                f"(Alternatively, if they are work in progress, you can delete the usage patterns pointing to them: in"
+                f"that way the usage journeys will be ignored in the computation.)"
             )
 
     if exception is not None:

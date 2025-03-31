@@ -96,7 +96,7 @@ describe('Tests dedicated to the timeseries generation', () => {
         cy.get('#modeling_duration_value_error_message').should('not.contain.html');
 
 
-        cy.get('#modeling_duration_value').invoke('val', '15').trigger('input');
+        cy.get('#modeling_duration_value').invoke('val', '15').trigger('change');
         cy.get('#modeling_duration_value').invoke('attr', 'max').then((maxValue) => {
             cy.get('#modeling_duration_value')
             .invoke('val')
@@ -108,7 +108,7 @@ describe('Tests dedicated to the timeseries generation', () => {
                 'contain.text', `Modeling duration value must be less than or equal to ${maxValue}`);
         });
 
-        cy.get('#modeling_duration_value').invoke('val', '0').trigger('input');
+        cy.get('#modeling_duration_value').invoke('val', '0').trigger('change');
         cy.get('#modeling_duration_value').invoke('attr', 'max').then((maxValue) => {
             cy.get('#modeling_duration_value')
             .invoke('val')
@@ -122,10 +122,10 @@ describe('Tests dedicated to the timeseries generation', () => {
 
         cy.get('#modeling_duration_unit').select('month');
 
-        cy.get('#modeling_duration_value').invoke('val', '12').trigger('input');
+        cy.get('#modeling_duration_value').invoke('val', '12').trigger('change');
         cy.get('#modeling_duration_value_error_message').should('not.contain.html');
 
-        cy.get('#modeling_duration_value').invoke('val', '150').trigger('input');
+        cy.get('#modeling_duration_value').invoke('val', '150').trigger('change');
         cy.get('#modeling_duration_value').invoke('attr', 'max').then((maxValue) => {
             cy.get('#modeling_duration_value')
             .invoke('val')
@@ -137,7 +137,8 @@ describe('Tests dedicated to the timeseries generation', () => {
                 'contain.text', `Modeling duration value must be less than or equal to ${maxValue}`);
         });
 
-        cy.get('#modeling_duration_value').invoke('val', '0').trigger('input');
+
+        cy.get('#modeling_duration_value').invoke('val', '0').trigger('change');
         cy.get('#modeling_duration_value').invoke('attr', 'max').then((maxValue) => {
             cy.get('#modeling_duration_value')
             .invoke('val')
@@ -152,5 +153,6 @@ describe('Tests dedicated to the timeseries generation', () => {
         cy.get('#modeling_duration_value').invoke('val', '24').trigger('input');
         cy.get('#modeling_duration_value').invoke('val', '12').trigger('input');
         cy.get('#modeling_duration_value_error_message').should('not.contain.html');
+
     });
 });
