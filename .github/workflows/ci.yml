@@ -34,7 +34,7 @@ jobs:
               run: poetry run python manage.py test
 
             - name: Use Node.js
-              uses: actions/setup-node@v4
+              uses: actions/setup-node@v5
               with:
                   node-version: 20.8.1
                   cache: "npm"
