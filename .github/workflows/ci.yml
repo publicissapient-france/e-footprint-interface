@@ -43,7 +43,7 @@ jobs:
               run: npm ci
 
             - name: E2E Tests
-              uses: cypress-io/github-action@v6
+              uses: cypress-io/github-action@v7
               id: e2e-tests
               with:
                   browser: firefox
